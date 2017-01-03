@@ -430,6 +430,7 @@
 				B62056041E19DD23002494AB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		B62056051E19DD23002494AB /* Build configuration list for PBXNativeTarget "RolePlayingCoreTests" */ = {
 			isa = XCConfigurationList;
@@ -438,6 +439,7 @@
 				B62056071E19DD23002494AB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
