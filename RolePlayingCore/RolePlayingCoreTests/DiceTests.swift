@@ -3,17 +3,26 @@
 //  RolePlayingCore
 //
 //  Created by Brian Arnold on 11/12/16.
-//  Copyright © 2016 Brian Arnold. All rights reserved.
+//  Copyright © 2016-2017 Brian Arnold. All rights reserved.
 //
 
 import XCTest
 
 import RolePlayingCore
 
-/// Use a sample size large enough to hit relatively tight ranges of 
-/// expected mean values below.
-let sampleSize = 512
 
+
+/// Use a sample size large enough to hit relatively tight ranges of
+/// expected mean, min and max values below.
+let sampleSize = 1024
+
+/// Consequences of testing with the random number generator are:
+///
+///  - Tolerance may be wide enough in some cases that they may not catch all regressions (false positives)
+///  - Once in a blue moon, tests may fail just outside of the tolerance (false negatives)
+///
+/// As modest countermeasure, print statements were added to the test output, so that 
+/// manual inspection can be performed, to help determine what might be happenening.
 
 class DiceTests: XCTestCase {
     
@@ -42,28 +51,31 @@ class DiceTests: XCTestCase {
     }
     
     func testRollDie() {
+        print("Die d4:")
         // Test rolling 1 time with d4
         let die: Die = .d4
         
         var sum = 0
         var minValue = 0
         var maxValue = 0
-        for _ in 0..<sampleSize {
+        for _ in 0 ..< sampleSize {
             let roll = die.roll()
-            XCTAssertTrue((1...4).contains(roll), "rolling a d4, got \(roll)")
+            XCTAssertTrue((1...4).contains(roll), "rolling d4, got \(roll)")
             sum += roll
             minValue = minValue == 0 ? roll : min(minValue, roll)
             maxValue = maxValue == 0 ? roll : max(maxValue, roll)
             
         }
         let mean = Double(sum)/Double(sampleSize)
-        print("  mean of d4 = \(mean) [expect 2.5]")
         XCTAssertTrue((2.0...3.0).contains(mean), "expected mean around 2.5, got \(mean)")
         
         XCTAssertEqual(minValue, 1, "min value")
         XCTAssertEqual(maxValue, 4, "max value")
         
         XCTAssertEqual(Die.d4.description, "d4", "d4 description")
+        
+        // Code coverage and manual inspection of test output:
+        print("  mean = \(mean) [expect 2.5]")
     }
     
     func testDiceModifier() {
@@ -74,29 +86,29 @@ class DiceTests: XCTestCase {
         XCTAssertEqual(diceModifier.sides, 7, "dice modifier sides")
         XCTAssertEqual(diceModifier.lastRoll, [7], "dice modifier lastRoll")
         XCTAssertEqual(diceModifier.description, "7", "dice modifier description")
-        XCTAssertEqual(diceModifier.result, "7", "dice modifier result")
+        XCTAssertEqual(diceModifier.lastRollDescription, "7", "dice modifier lastRollDescription")
     }
     
     func testSimpleDice() {
         // Test d12
         do {
+            print("SimpleDice d12:")
             let simpleDice = SimpleDice(.d12)
             XCTAssertEqual(simpleDice.lastRoll.count, 0, "last roll should initially be 0 count")
-            XCTAssertEqual(simpleDice.result, "", "result should initially be empty")
+            XCTAssertEqual(simpleDice.lastRollDescription, "", "last roll description should initially be empty")
             
             var sum = 0
             var minValue = 0
             var maxValue = 0
-            for _ in 0..<sampleSize {
+            for _ in 0 ..< sampleSize {
                 let roll = simpleDice.roll()
-                XCTAssertTrue((1...12).contains(roll), "rolling a d12, got \(roll)")
+                XCTAssertTrue((1...12).contains(roll), "rolling d12, got \(roll)")
                 sum += roll
                 minValue = minValue == 0 ? roll : min(minValue, roll)
                 maxValue = maxValue == 0 ? roll : max(maxValue, roll)
             }
             let mean = Double(sum)/Double(sampleSize)
-            print("  mean of d12 = \(mean) [expect 13.0]")
-            XCTAssertTrue((6.0...7.0).contains(mean), "expected mean around 11.0, got \(mean)")
+            XCTAssertTrue((6.0...7.0).contains(mean), "expected mean around 6.5, got \(mean)")
 
             // TODO: Because 2x produces a bell curve, the actual min/max may be harder to get in a sample
             XCTAssertLessThanOrEqual(minValue, 1, "min value")
@@ -107,26 +119,27 @@ class DiceTests: XCTestCase {
             XCTAssertEqual("\(simpleDice.description)", "d12", "SimpleDice description")
             
             // Code coverage and manual inspection of test output:
-            print("SimpleDice d12:\n  lastRoll = \(simpleDice.lastRoll)\n  result = \"\(simpleDice.result)\"")
+            print("  mean = \(mean) [expect 6.5]")
+            print("  lastRoll \"\(simpleDice.lastRollDescription)\" = \(simpleDice.lastRoll)")
         }
         
-        // test 2d8
+        // Test 2d8
         do {
+            print("SimpleDice 2d8:")
             let simpleDice = SimpleDice(.d8, times: 2)
             
             var sum = 0
             var minValue = 0
             var maxValue = 0
-            for _ in 0..<sampleSize {
+            for _ in 0 ..< sampleSize {
                 let roll = simpleDice.roll()
-                XCTAssertTrue((2...16).contains(roll), "rolling a d8, got \(roll)")
+                XCTAssertTrue((2...16).contains(roll), "rolling 2d8, got \(roll)")
                 sum += roll
                 minValue = minValue == 0 ? roll : min(minValue, roll)
                 maxValue = maxValue == 0 ? roll : max(maxValue, roll)
             }
             let mean = Double(sum)/Double(sampleSize)
-            print("  mean of d12 = \(mean) [expect 13.0]")
-            XCTAssertTrue((7.5...9.5).contains(mean), "expected mean around 11.0, got \(mean)")
+            XCTAssertTrue((7.5...9.5).contains(mean), "expected mean around 8.5, got \(mean)")
             
             // TODO: Because 2x produces a bell curve, the actual min/max may be harder to get in a sample
             XCTAssertEqual(minValue, 2, "min value")
@@ -137,31 +150,32 @@ class DiceTests: XCTestCase {
             XCTAssertEqual("\(simpleDice.description)", "2d8", "SimpleDice description")
             
             // Code coverage and manual inspection of test output:
-            print("SimpleDice d12:\n  lastRoll = \(simpleDice.lastRoll)\n  result = \"\(simpleDice.result)\"")
+            print("  mean = \(mean) [expect 8.5]")
+            print("  lastRoll \"\(simpleDice.lastRollDescription)\" = \(simpleDice.lastRoll)")
         }
     }
     
     func testDroppingDice() {
         // Test 4d6, dropping the lowest
         do {
+            print("SimpleDice 4d6-L:")
             let simpleDice = DroppingDice(.d6, times: 4, dropping: .lowest)
             XCTAssertEqual(simpleDice.lastRoll.count, 0, "last roll should initially be 0 count")
-            XCTAssertEqual(simpleDice.result, "", "result should initially be empty")
+            XCTAssertEqual(simpleDice.lastRollDescription, "", "last roll description should initially be empty")
             XCTAssertNil(simpleDice.droppedRoll, "droppedRoll() should initially be nil")
             XCTAssertNil(simpleDice.droppedIndex, "droppedIndex() should initially be nil")
 
             var sum = 0
             var minValue = 0
             var maxValue = 0
-            for _ in 0..<sampleSize {
+            for _ in 0 ..< sampleSize {
                 let roll = simpleDice.roll()
-                XCTAssertTrue((3...18).contains(roll), "rolling a d6 4 times dropping lowest, got \(roll)")
+                XCTAssertTrue((3...18).contains(roll), "rolling 4d6-L, got \(roll)")
                 sum += roll
                 minValue = minValue == 0 ? roll : min(minValue, roll)
                 maxValue = maxValue == 0 ? roll : max(maxValue, roll)
             }
             let mean = Double(sum)/Double(sampleSize)
-            print("  mean of 4d6-L = \(mean) [expect 12.25]")
             XCTAssertTrue((11.0...13.5).contains(mean), "expected mean around 12.25, got \(mean)")
             
             // TODO: Because 4x-L produces a sharp bell curve, the actual min/max may be harder to get in a sample
@@ -172,31 +186,33 @@ class DiceTests: XCTestCase {
             XCTAssertEqual(simpleDice.lastRoll.count, 3, "SimpleDice roll count")
             XCTAssertEqual("\(simpleDice.description)", "4d6-L", "SimpleDice description")
             
-            // Code coverage and manual inspection of test output:
-            print("SimpleDice 4d6-L:\n  lastRoll = \(simpleDice.dice.lastRoll)\n  result = \"\(simpleDice.result)\"")
             
             let lowest = simpleDice.dice.lastRoll.min()!
             let index = simpleDice.dice.lastRoll.index(of: lowest)
             XCTAssertEqual(lowest, simpleDice.droppedRoll, "dropped roll")
             XCTAssertEqual(index, simpleDice.droppedIndex, "dropped index")
+
+            // Code coverage and manual inspection of test output:
+            print("  mean = \(mean) [expect 12.25]")
+            print("  lastRoll \"\(simpleDice.lastRollDescription)\" = \(simpleDice.lastRoll)")
         }
         
-        // Test 2d4, dropping the highest
+        // Test 3d4, dropping the highest
         do {
+            print("SimpleDice 3d4-H:")
             let simpleDice = DroppingDice(.d4, times: 3, dropping: .highest)
             
             var sum = 0
             var minValue = 0
             var maxValue = 0
-            for _ in 0..<sampleSize {
+            for _ in 0 ..< sampleSize {
                 let roll = simpleDice.roll()
-                XCTAssertTrue((2...8).contains(roll), "rolling a d4 3 times dropping highest, got \(roll)")
+                XCTAssertTrue((2...8).contains(roll), "rolling 3d4-H, got \(roll)")
                 sum += roll
                 minValue = minValue == 0 ? roll : min(minValue, roll)
                 maxValue = maxValue == 0 ? roll : max(maxValue, roll)
             }
             let mean = Double(sum)/Double(sampleSize)
-            print("  mean of 3d4-H = \(mean) [expect 4]")
             XCTAssertTrue((3.7...4.3).contains(mean), "expected mean around 4, got \(mean)")
             
             XCTAssertEqual(minValue, 2, "min value")
@@ -206,7 +222,8 @@ class DiceTests: XCTestCase {
             XCTAssertEqual("\(simpleDice.description)", "3d4-H", "SimpleDice description")
             
             // Code coverage and manual inspection of test output:
-            print("SimpleDice d24-H:\n  lastRoll = \(simpleDice.dice.lastRoll)\n  result = \"\(simpleDice.result)\"")
+            print("  mean = \(mean) [expect 4]")
+            print("  lastRoll \"\(simpleDice.lastRollDescription)\" = \(simpleDice.lastRoll)")
 
             let highest = simpleDice.dice.lastRoll.max()!
             let index = simpleDice.dice.lastRoll.index(of: highest)
@@ -218,22 +235,23 @@ class DiceTests: XCTestCase {
     func testCompoundDice() {
         // Test 2d8+4
         do {
+            print("CompoundDice 2d8+4:")
+
             let compoundDice = CompoundDice(.d8, times: 2, modifier: 4)
-            XCTAssertEqual(compoundDice.lastRoll.count, 0, "lastRoll count should be 0")
-            XCTAssertEqual(compoundDice.result, "", "result should be empty")
+            XCTAssertEqual(compoundDice.lastRoll.count, 0, "last roll count should be 0")
+            XCTAssertEqual(compoundDice.lastRollDescription, "", "last roll description should be empty")
 
             var sum = 0
             var minValue = 0
             var maxValue = 0
-            for _ in 0..<sampleSize {
+            for _ in 0 ..< sampleSize {
                 let roll = compoundDice.roll()
-                XCTAssertTrue((6...20).contains(roll), "rolling a d8 2 times + 4, got \(roll)")
+                XCTAssertTrue((6...20).contains(roll), "rolling 2d8+4, got \(roll)")
                 sum += roll
                 minValue = minValue == 0 ? roll : min(minValue, roll)
                 maxValue = maxValue == 0 ? roll : max(maxValue, roll)
             }
             let mean = Double(sum)/Double(sampleSize)
-            print("  mean of 2d8+4 = \(mean) [expect 13.0]")
             XCTAssertTrue((12.0...14.0).contains(mean), "expected mean around 13.0, got \(mean)")
 
             XCTAssertEqual(minValue, 6, "min value")
@@ -243,23 +261,27 @@ class DiceTests: XCTestCase {
             XCTAssertEqual(compoundDice.lastRoll.count, 3, "last roll count")
 
             XCTAssertEqual("\(compoundDice.description)", "2d8+4", "CompoundDice description")
+            
+            // Code coverage and manual inspection of test output:
+            print("  mean = \(mean) [expect 13.0]")
+            print("  lastRoll \"\(compoundDice.lastRollDescription)\" = \(compoundDice.lastRoll)")
         }
     
         // Test 2d8+d4
         do {
+            print("CompoundDice 2d8+d4:")
             let compoundDice = CompoundDice(lhs: SimpleDice(.d8, times: 2), rhs: SimpleDice(.d4), mathOperator: "+")
             var sum = 0
             var minValue = 0
             var maxValue = 0
-            for _ in 0..<sampleSize {
+            for _ in 0 ..< sampleSize {
                 let roll = compoundDice.roll()
-                XCTAssertTrue((3...20).contains(roll), "rolling a d8 2 times + d4, got \(roll)")
+                XCTAssertTrue((3...20).contains(roll), "rolling 2d8+d4, got \(roll)")
                 sum += roll
                 minValue = minValue == 0 ? roll : min(minValue, roll)
                 maxValue = maxValue == 0 ? roll : max(maxValue, roll)
             }
             let mean = Double(sum)/Double(sampleSize)
-            print("  mean of 2d8+d4 = \(mean) [expect 11.5]")
             XCTAssertTrue((11.0...12.0).contains(mean), "expected mean around 11.5, got \(mean)")
             
             XCTAssertLessThanOrEqual(minValue, 4, "min value")
@@ -269,19 +291,22 @@ class DiceTests: XCTestCase {
             XCTAssertEqual("\(compoundDice.description)", "2d8+d4", "CompoundDice description")
             
             // Code coverage and manual inspection of test output:
-            print("CompoundDice 2d8+d4:\n  result = \"\(compoundDice.result)\"")
+            print("  mean = \(mean) [expect 11.5]")
+            print("  lastRoll \"\(compoundDice.lastRollDescription)\" = \(compoundDice.lastRoll)")
         }
     }
     
     func testDiceFormatString() {
         do {
             let formatString = "d12"
+            print("Format Dice \(formatString):")
+
             let formatDice = dice(from: formatString)
             XCTAssertNotNil(formatDice, "Dice from \(formatString) should be non-nil")
             var sum = 0
             var minValue = 0
             var maxValue = 0
-            for _ in 0..<sampleSize {
+            for _ in 0 ..< sampleSize {
                 let roll = formatDice?.roll() ?? 0
                 XCTAssertTrue((1...12).contains(roll), "rolling \(formatString), got \(roll)")
                 sum += roll
@@ -289,21 +314,27 @@ class DiceTests: XCTestCase {
                 maxValue = maxValue == 0 ? roll : max(maxValue, roll)
             }
             let mean = Double(sum)/Double(sampleSize)
-            print("  mean of \(formatString) = \(mean) [expect 6.5]")
             XCTAssertTrue((6.0...7.0).contains(mean), "expected mean around 6.5, got \(mean)")
             
             XCTAssertEqual(minValue, 1, "min value")
             XCTAssertEqual(maxValue, 12, "max value")
+            
+            // Code coverage and manual inspection of test output:
+            print("  mean = \(mean) [expect 6.5]")
+            let result = formatDice?.lastRollDescription ?? ""
+            print("  lastRoll \"\(result)\"")
         }
         
         do {
             let formatString = "2d10"
+            print("Format Dice \(formatString):")
+
             let formatDice = dice(from: formatString)
             XCTAssertNotNil(formatDice, "Dice from \(formatString) should be non-nil")
             var sum = 0
             var minValue = 0
             var maxValue = 0
-            for _ in 0..<sampleSize {
+            for _ in 0 ..< sampleSize {
                 let roll = formatDice?.roll() ?? 0
                 XCTAssertTrue((2...20).contains(roll), "rolling \(formatString), got \(roll)")
                 sum += roll
@@ -311,22 +342,28 @@ class DiceTests: XCTestCase {
                 maxValue = maxValue == 0 ? roll : max(maxValue, roll)
             }
             let mean = Double(sum)/Double(sampleSize)
-            print("  mean of \(formatString) = \(mean) [expect 11.0]")
             XCTAssertTrue((10.0...12.0).contains(mean), "expected mean around 11.0, got \(mean)")
             
             // TODO: Because 2d10 produces a bell curve, the actual min/max may be harder to get in a sample
             XCTAssertLessThanOrEqual(minValue, 3, "min value")
             XCTAssertGreaterThanOrEqual(maxValue, 19, "max value")
+            
+            // Code coverage and manual inspection of test output:
+            print("  mean = \(mean) [expect 11.0]")
+            let result = formatDice?.lastRollDescription ?? ""
+            print("  lastRoll \"\(result)\"")
         }
         
         do {
             let formatString = "1d20+4"
+            print("Format Dice \(formatString):")
+
             let formatDice = dice(from: formatString)
             XCTAssertNotNil(formatDice, "Dice from \(formatString) should be non-nil")
             var sum = 0
             var minValue = 0
             var maxValue = 0
-            for _ in 0..<sampleSize {
+            for _ in 0 ..< sampleSize {
                 let roll = formatDice?.roll() ?? 0
                 XCTAssertTrue((5...24).contains(roll), "rolling \(formatString), got \(roll)")
                 sum += roll
@@ -334,21 +371,27 @@ class DiceTests: XCTestCase {
                 maxValue = maxValue == 0 ? roll : max(maxValue, roll)
             }
             let mean = Double(sum)/Double(sampleSize)
-            print("  mean of \(formatString) = \(mean) [expect 14.5]")
             XCTAssertTrue((13.0...16.0).contains(mean), "expected mean around 14.5, got \(mean)")
             
             XCTAssertEqual(minValue, 5, "min value")
             XCTAssertEqual(maxValue, 24, "max value")
+            
+            // Code coverage and manual inspection of test output:
+            print("  mean = \(mean) [expect 14.5]")
+            let result = formatDice?.lastRollDescription ?? ""
+            print("  lastRoll \"\(result)\"")
         }
         
         do {
             let formatString = "d%"
+            print("Format Dice \(formatString):")
+
             let formatDice = dice(from: formatString)
             XCTAssertNotNil(formatDice, "Dice from \(formatString) should be non-nil")
             var sum = 0
             var minValue = 0
             var maxValue = 0
-            for _ in 0..<sampleSize {
+            for _ in 0 ..< sampleSize {
                 let roll = formatDice?.roll() ?? 0
                 XCTAssertTrue((1...100).contains(roll), "rolling \(formatString), got \(roll)")
                 sum += roll
@@ -356,22 +399,28 @@ class DiceTests: XCTestCase {
                 maxValue = maxValue == 0 ? roll : max(maxValue, roll)
             }
             let mean = Double(sum)/Double(sampleSize)
-            print("  mean of \(formatString) = \(mean) [expect 51.0]")
-            XCTAssertTrue((45.0...56.0).contains(mean), "expected mean around 51.0, got \(mean)")
+            XCTAssertTrue((45.0...56.0).contains(mean), "expected mean around 50.5, got \(mean)")
             
             /// With such a big range, we may not hit the absolute min/max for the specified sample size.
             XCTAssertLessThanOrEqual(minValue, 2, "min value")
             XCTAssertGreaterThanOrEqual(maxValue, 99, "max value")
+            
+            // Code coverage and manual inspection of test output:
+            print("  mean = \(mean) [expect 50.5]")
+            let result = formatDice?.lastRollDescription ?? ""
+            print("  lastRoll \"\(result)\"")
         }
         
         do {
             let formatString = "2d4x10"
+            print("Format Dice \(formatString):")
+
             let formatDice = dice(from: formatString)
             XCTAssertNotNil(formatDice, "Dice from \(formatString) should be non-nil")
             var sum = 0
             var minValue = 0
             var maxValue = 0
-            for _ in 0..<sampleSize {
+            for _ in 0 ..< sampleSize {
                 let roll = formatDice?.roll() ?? 0
                 XCTAssertTrue((20...80).contains(roll), "rolling \(formatString), got \(roll)")
                 sum += roll
@@ -379,21 +428,27 @@ class DiceTests: XCTestCase {
                 maxValue = maxValue == 0 ? roll : max(maxValue, roll)
             }
             let mean = Double(sum)/Double(sampleSize)
-            print("  mean of \(formatString) = \(mean) [expect 50.0]")
-            XCTAssertTrue((46.0...56.0).contains(mean), "expected mean around 51.0, got \(mean)")
+            XCTAssertTrue((46.0...56.0).contains(mean), "expected mean around 50.0, got \(mean)")
             
             XCTAssertEqual(minValue, 20, "min value")
             XCTAssertEqual(maxValue, 80, "max value")
+            
+            // Code coverage and manual inspection of test output:
+            print("  mean = \(mean) [expect 50.0]")
+            let result = formatDice?.lastRollDescription ?? ""
+            print("  lastRoll \"\(result)\"")
         }
 
         do {
             let formatString = "4d6-L"
+            print("Format Dice \(formatString):")
+
             let formatDice = dice(from: formatString)
             XCTAssertNotNil(formatDice, "Dice from \(formatString) should be non-nil")
             var sum = 0
             var minValue = 0
             var maxValue = 0
-            for _ in 0..<sampleSize {
+            for _ in 0 ..< sampleSize {
                 let roll = formatDice?.roll() ?? 0
                 XCTAssertTrue((3...18).contains(roll), "rolling \(formatString), got \(roll)")
                 sum += roll
@@ -402,43 +457,49 @@ class DiceTests: XCTestCase {
             }
 
             let mean = Double(sum)/Double(sampleSize)
-            print("  mean of \(formatString) = \(mean) [expect 12.25]")
             XCTAssertTrue((11.0...13.5).contains(mean), "expected mean around 12.25, got \(mean)")
             
             // TODO: Because 4x-L produces a sharp bell curve, the actual min/max may be harder to get in a sample
             XCTAssertLessThanOrEqual(minValue, 5, "min value")
             XCTAssertGreaterThanOrEqual(maxValue, 16, "max value")
             
-            XCTAssertEqual(formatDice?.sides, 6, "SimpleDice sides")
-            if formatDice != nil {
-                XCTAssertEqual("\(formatDice!.description)", "4d6-L", "SimpleDice description")
+            XCTAssertEqual(formatDice?.sides, 6, "Dice sides")
+            if let formatDice = formatDice {
+                XCTAssertEqual("\(formatDice.description)", "4d6-L", "SimpleDice description")
             }
             
             // Code coverage and manual inspection of test output:
-            print("SimpleDice \(formatString):\n  result = \"\(formatDice?.result)\"")
+            print("  mean = \(mean) [expect 12.25]")
+            let result = formatDice?.lastRollDescription ?? ""
+            print("  lastRoll \"\(result)\"")
         }
         
         do {
             let formatString = "1+3"
             let formatDice = dice(from: formatString)
-            XCTAssertEqual(formatDice?.description, "1+3", "format string")
+            XCTAssertNotNil(formatDice, "Dice from \(formatString) should not be nil")
             
-            XCTAssertEqual(formatDice?.result, "1 + 3", "format string")
+            if let formatDice = formatDice {
+                XCTAssertEqual(formatDice.description, "1+3", "format string")
+                XCTAssertEqual(formatDice.lastRollDescription, "1 + 3", "format string")
+            }
         }
     }
     
 
-    // TODO: complex dice formats, such as those shown below, are not yet supported.
+    // TODO: some complex dice formats, such as those commented out below, are not yet supported.
     // dice() does not yet compose math expressions that can be evaluated from left to right.
     func testComplexDiceFormatString() {
         do {
             let formatString = "2d4+3d12-4"
+            print("Complex Format Dice \(formatString):")
+            
             let formatDice = dice(from: formatString)
             XCTAssertNotNil(formatDice, "Dice from \(formatString) should be non-nil")
             var sum = 0
             var minValue = 0
             var maxValue = 0
-            for _ in 0..<sampleSize {
+            for _ in 0 ..< sampleSize {
                 let roll = formatDice?.roll() ?? 0
                 XCTAssertTrue((1...40).contains(roll), "rolling \(formatString), got \(roll)")
                 sum += roll
@@ -447,35 +508,38 @@ class DiceTests: XCTestCase {
             }
             
             let mean = Double(sum)/Double(sampleSize)
-            print("  mean of \(formatString) = \(mean) [expect 20.5]")
             XCTAssertTrue((19.0...22.0).contains(mean), "expected mean around 20.5, got \(mean)")
             
             // TODO: Because this produces a sharp bell curve, the actual min/max may be harder to get in a sample
             XCTAssertLessThanOrEqual(minValue, 7, "min value")
             XCTAssertGreaterThanOrEqual(maxValue, 34, "max value")
             
-            XCTAssertEqual(formatDice?.sides, 4, "SimpleDice sides")
+            XCTAssertEqual(formatDice?.sides, 4, "Dice sides")
             if formatDice != nil {
                 XCTAssertEqual("\(formatDice!.description)", "2d4+3d12-4", "SimpleDice description")
             }
             
             // Code coverage and manual inspection of test output:
-            let result = formatDice?.result ?? ""
-            print("SimpleDice \(formatString):\n  result = \"\(result)\"")
+            print("  mean = \(mean) [expect 20.5]")
+            let result = formatDice?.lastRollDescription ?? ""
+            print("  lastRoll \"\(result)\"")
         }
  
-        // TODO: the parser can't yet handle regular expressions.
+        // TODO: the dice parser can't yet handle regular expressions such as this one.
+        /*
         do {
             let formatString = "2d4+d12-2+5"
+            print("Complex Format Dice \(formatString):")
+
             let formatDice = dice(from: formatString)
             XCTAssertNotNil(formatDice, "Dice from \(formatString) should be non-nil")
-            /* TODO: this format produces a wrong answer
+            
             var sum = 0
             var minValue = 0
             var maxValue = 0
             var lastRoll = 0
             
-            for _ in 0..<sampleSize {
+            for _ in 0 ..< sampleSize {
                 let roll = formatDice?.roll() ?? 0
                 XCTAssertTrue((6...23).contains(roll), "rolling \(formatString), got \(roll)")
                 sum += roll
@@ -486,23 +550,23 @@ class DiceTests: XCTestCase {
             }
             
             let mean = Double(sum)/Double(sampleSize)
-            print("  mean of \(formatString) = \(mean) [expect 20.5]")
-            XCTAssertTrue((13.0...16.0).contains(mean), "expected mean around 20.5, got \(mean)")
+            XCTAssertTrue((13.0...16.0).contains(mean), "expected mean around 14.5, got \(mean)")
             
             // TODO: Because this produces a bell curve, the actual min/max may be harder to get in a sample
             XCTAssertLessThanOrEqual(minValue, 7, "min value")
             XCTAssertGreaterThanOrEqual(maxValue, 22, "max value")
-            */
-            XCTAssertEqual(formatDice?.sides, 4, "SimpleDice sides")
+            
+            XCTAssertEqual(formatDice?.sides, 4, "Dice sides")
             if formatDice != nil {
                 XCTAssertEqual("\(formatDice!.description)", "2d4+d12-2+5", "SimpleDice description")
             }
             
-            /*
-            let result = formatDice?.result ?? ""
-            print("SimpleDice \(formatString):\n  result \"\(result)\" = \(lastRoll)")
-             */
+            // Code coverage and manual inspection of test output:
+            print("  mean = \(mean) [expect 14.5]")
+            let result = formatDice?.lastRollDescription ?? ""
+            print("  lastRoll \"\(result)\" = \(lastRoll)")
         }
+         */
 
     }
     

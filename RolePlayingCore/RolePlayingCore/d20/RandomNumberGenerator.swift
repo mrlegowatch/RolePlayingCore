@@ -3,7 +3,7 @@
 //  RolePlayingCore
 //
 //  Created by Brian Arnold on 11/12/16.
-//  Copyright © 2016 Brian Arnold. All rights reserved.
+//  Copyright © 2016-2017 Brian Arnold. All rights reserved.
 //
 
 #if os(Linux)
@@ -21,7 +21,7 @@ public protocol RandomNumberGenerator {
 /// and random() on Linux.
 public struct DefaultRandomNumberGenerator: RandomNumberGenerator {
     
-    /// Creates and iniitalizes this random number generator.
+    /// Creates and initializes this random number generator.
     public init() {
         #if os(Linux)
             let timeInterval = time(nil)
@@ -29,7 +29,7 @@ public struct DefaultRandomNumberGenerator: RandomNumberGenerator {
         #endif
     }
     
-    /// Returns a random number between 0..<upperBound.
+    /// Returns a random number between 0 ..< upperBound.
     public func random(_ upperBound: Int) -> Int {
         #if os(Linux)
             return Glibc.random() % upperBound

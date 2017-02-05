@@ -3,8 +3,9 @@
 //  RolePlayingCore
 //
 //  Created by Brian Arnold on 11/23/16.
-//  Copyright © 2016 Brian Arnold. All rights reserved.
+//  Copyright © 2016-2017 Brian Arnold. All rights reserved.
 //
+
 
 // TODO: This avoids using a full parser or regexp for now; it is only ~100 lines, and
 // it supports ~95% of use cases for specifying compound dice rolls of most things,
@@ -79,7 +80,7 @@ private func modifier(from string: String) -> Dice? {
     } else {
         // Try a math operator.
         let (modifier, mathOperator, endIndex) = string.parseDiceModifier()
-        if modifier != nil, let leftNumber = Int(string.substring(with: string.startIndex..<endIndex)) {
+        if modifier != nil, let leftNumber = Int(string.substring(with: string.startIndex ..< endIndex)) {
             dice = CompoundDice(lhs: DiceModifier(leftNumber), rhs: modifier!, mathOperator: mathOperator)
         }
     }
@@ -111,7 +112,7 @@ public func dice(from string: String) -> Dice? {
         }
         
         // Interpret the dice number after the "d" and before the math operator, if supplied.
-        let diceRange = dRange.upperBound..<endIndex
+        let diceRange = dRange.upperBound ..< endIndex
         guard let sides = string.parseDiceSides(in: diceRange) else { return nil }
         guard let die = Die(rawValue: sides) else { return nil }
         if operand == nil {

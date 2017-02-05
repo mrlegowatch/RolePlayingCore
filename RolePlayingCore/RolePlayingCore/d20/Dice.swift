@@ -3,11 +3,11 @@
 //  RolePlayingCore
 //
 //  Created by Brian Arnold on 11/12/16.
-//  Copyright © 2016 Brian Arnold. All rights reserved.
+//  Copyright © 2016-2017 Brian Arnold. All rights reserved.
 //
 
 
-/// The interface for specifying dice of different sides and combinations.
+/// A representation of one or more dice of different sides and combinations.
 /// Implementations must conform to the CustomStringConvertible protocol.
 public protocol Dice: CustomStringConvertible {
     
@@ -22,8 +22,8 @@ public protocol Dice: CustomStringConvertible {
     var lastRoll: [Int] { get }
     
     /// Returns a string representing the intermediate results of the dice roll
-    /// (e.g., a "2d6" might return "(4+1)". Returns empty if no roll has been made.
-    var result: String { get }
+    /// (e.g., a "2d6" might return "(4+1)". Returns an empty string if no roll has been made.
+    var lastRollDescription: String { get }
         
 }
 
@@ -54,7 +54,7 @@ public enum Die: Int, CustomStringConvertible {
     public func roll(_ times: Int) -> [Int] {
         var rolls = [Int](repeating: 0, count: times) // preallocating is much faster than appending
         
-        for index in 0..<times {
+        for index in 0 ..< times {
             rolls[index] = roll()
         }
         return rolls
@@ -80,20 +80,20 @@ public struct DiceModifier: Dice {
     
     public var description: String { return "\(modifier)" }
     
-    public var result: String { return "\(modifier)" }
+    public var lastRollDescription: String { return "\(modifier)" }
 
 }
 
-/// A simple dice has a number of sides, and an optional number of times to roll.
+/// A simple dice has a single die, and an optional number of times to roll.
 /// Tracks the last roll (array of Ints) each time roll() is called.
 public class SimpleDice: Dice {
 
     public let die: Die
     public let times: Int
-    public var lastRoll: [Int] = []
+    public private(set) var lastRoll: [Int] = []
 
     /// Creates a SimpleDice for the specified die. Optionally specify times to roll, 
-    /// and whether to drop a high or low result.
+    /// and whether to drop a high or low result. Defaults ot rolling one time.
     public init(_ die: Die, times: Int = 1) {
         self.die = die
         self.times = times
@@ -116,7 +116,7 @@ public class SimpleDice: Dice {
     }
     
     /// Returns the last roll as a sequence of added numbers in parenthesis.
-    public var result: String {
+    public var lastRollDescription: String {
         guard self.lastRoll.count > 0 else { return "" }
         var resultString: String
         
@@ -137,7 +137,7 @@ public class SimpleDice: Dice {
     
 }
 
-/// A dropping dice is an extension of Dice that drops the highest or lowest roll.
+/// A dropping dice is an extension of SimpleDice that drops the highest or lowest roll.
 /// This is done through composition, instead of subclassing.
 public struct DroppingDice: Dice {
     
@@ -193,21 +193,20 @@ public struct DroppingDice: Dice {
         return self.lastRoll.reduce(0, +)
     }
     
-    
     /// Returns a description of the dice, with "-L" or "-H" appended.
     public var description: String {
         return "\(dice)\(dropping.rawValue)"
     }
     
     /// Returns the last roll as a sequence of added numbers in parenthesis. Includes dropped rolls.
-    public var result: String {
+    public var lastRollDescription: String {
         guard dice.lastRoll.count > 0 else { return "" }
-        return "\(dice.result) - \(droppedRoll)"
+        return "\(dice.lastRollDescription) - \(droppedRoll!)"
     }
     
 }
 
-// TODO: there is an issue with the operator map, it can't be expanded without 
+// TODO: there is an issue with the math operators map, it can't be expanded without
 // generating a compiler error (expression too complex).
 
 /// Function signature for a math operator or function.
@@ -266,9 +265,9 @@ public struct CompoundDice: Dice {
     public var description: String { return "\(lhs)\(mathOperator)\(rhs)" }
     
     /// Returns a intermediate results of the left and right hand sides with the math operator.
-    public var result: String {
+    public var lastRollDescription: String {
         guard lhs.lastRoll.count > 0 && rhs.lastRoll.count > 0 else { return "" }
-        return "\(lhs.result) \(mathOperator) \(rhs.result)"
+        return "\(lhs.lastRollDescription) \(mathOperator) \(rhs.lastRollDescription)"
     }
     
 }
