@@ -1,0 +1,139 @@
+//
+//  UnitCurrencyTests.swift
+//  RolePlayingCore
+//
+//  Created by Brian Arnold on 2/5/17.
+//  Copyright © 2017 Brian Arnold. All rights reserved.
+//
+
+import XCTest
+
+import RolePlayingCore
+
+class UnitCurrencyTests: XCTestCase {
+    
+    override class func setUp() {
+        super.setUp()
+        
+        // Only load once.
+        try! UnitCurrency.load("DefaultCurrencies", in: Bundle(for: UnitCurrencyTests.self))
+    }
+    
+    func testUnitCurrency() {
+        XCTAssertEqual(UnitCurrency.baseUnit(), UnitCurrency.find("gp"), "base unit should be goldPieces")
+        
+        let goldPieces = Measurement(value: 25, unit: UnitCurrency.find("gp")!)
+        let silverPieces = Measurement(value: 12, unit: UnitCurrency.find("sp")!)
+        let copperPieces = Measurement(value: 1, unit: UnitCurrency.find("cp")!)
+        let electrumPieces = Measurement(value: 2, unit: UnitCurrency.find("ep")!)
+        let platinumPieces = Measurement(value: 2, unit: UnitCurrency.find("pp")!)
+        
+        let totalPieces = goldPieces + silverPieces - copperPieces + electrumPieces - platinumPieces
+        
+        // Should be 25 + 1.2 - 0.01 + 1 - 20
+        XCTAssertEqualWithAccuracy(totalPieces.value, 7.19, accuracy: 0.0001, "adding coins")
+        
+        let totalPiecesInCopper = totalPieces.converted(to: UnitCurrency.find("cp")!)
+        XCTAssertEqualWithAccuracy(totalPiecesInCopper.value, 719, accuracy: 0.01, "adding coins")
+        
+    }
+    
+    func testPrintingValues() {
+        let goldPieces = Measurement(value: 13.7, unit: UnitCurrency.baseUnit())
+        
+        let formatter = MeasurementFormatter()
+        
+        // Test default
+        let gp = formatter.string(from: goldPieces)
+        XCTAssertEqual(gp, "13.7 gp", "gold pieces")
+        
+        // Test provided unit
+        formatter.unitOptions = [.providedUnit]
+        let gpDefault = formatter.string(from: goldPieces)
+        XCTAssertEqual(gpDefault, "13.7 gp", "gold pieces")
+        
+        let silverPieces = goldPieces.converted(to: UnitCurrency.find("sp")!)
+        let sp = formatter.string(from: silverPieces)
+        XCTAssertEqual(sp, "137 sp", "silver pieces")
+        
+        let platinumPieces = goldPieces.converted(to: UnitCurrency.find("pp")!)
+        let ppProvided = formatter.string(from: platinumPieces)
+        XCTAssertEqual(ppProvided, "1.37 pp", "platinum pieces")
+        
+        // Test natural scale
+        formatter.unitOptions = [.naturalScale]
+        let ppNatural = formatter.string(from: platinumPieces)
+        XCTAssertEqual(ppNatural, "13.7 gp", "gold pieces")
+        
+        formatter.unitOptions = [.providedUnit]
+        
+        // Test short
+        formatter.unitStyle = .short
+        let gpShort = formatter.string(from: goldPieces)
+        XCTAssertEqual(gpShort, "13.7gp", "gold pieces")
+        
+        // Test long
+        formatter.unitStyle = .long
+        let gpLong = formatter.string(from: goldPieces)
+        XCTAssertEqual(gpLong, "13.7 gold pieces", "gold pieces")
+        
+        let gpSingularLong = formatter.string(from: Measurement(value: 1.0, unit: UnitCurrency.baseUnit()))
+        XCTAssertEqual(gpSingularLong, "1 gold piece", "gold piece")
+    }
+    
+    func testCoinage() {
+        do {
+            let gp = currency(from: 2.5)
+            XCTAssertNotNil(gp, "coinage as Double should not be nil")
+            XCTAssertEqual(gp?.value, 2.5, "coinage as Double should be 2.5")
+        }
+        
+        do {
+            let cp = currency(from: "3.2 cp")
+            XCTAssertNotNil(cp, "coinage as cp should not be nil")
+            if let cp = cp {
+                XCTAssertEqualWithAccuracy(cp.value, 3.2, accuracy: 0.0001, "coinage as string cp should be 3.2")
+                XCTAssertEqual(cp.unit, UnitCurrency.find("cp"), "coinage as string cp should be copper pieces")
+                XCTAssertNotEqual(cp.unit, UnitCurrency.find("pp"), "coinage as string cp should not be platinum pieces")
+            }
+        }
+        
+        do {
+            let gp = currency(from: "hello")
+            XCTAssertNil(gp, "coinage as string with hello should be nil")
+        }
+        
+        do {
+            let gp = currency(from: nil)
+            XCTAssertNil(gp, "coinage with string as nil should be nil")
+        }
+    }
+    
+    func testMissingCurrenciesFile() {
+        do {
+            try UnitCurrency.load("Blarg", in: Bundle(for: UnitCurrencyTests.self))
+            XCTFail("load should have thrown an error")
+        }
+        catch let error {
+            XCTAssertTrue(error is ServiceError, "should be a service error")
+            let description = "\(error)"
+            XCTAssertTrue(description.contains("Runtime error"), "should be a runtime error")
+        }
+    }
+    
+    func testDuplicateCurrencies() {
+        // Try loading the default currencies file a second time. It should throw an error
+        // when it notices the first currency is already loaded.
+        do {
+            try UnitCurrency.load("DefaultCurrencies", in: Bundle(for: UnitCurrencyTests.self))
+            XCTFail("load should have thrown an error")
+        }
+        catch let error {
+            XCTAssertTrue(error is ServiceError, "should be a service error")
+            let description = "\(error)"
+            XCTAssertTrue(description.contains("Runtime error"), "should be a runtime error")
+            XCTAssertTrue(description.contains("gp"), "should have complained about gp already being loaded")
+        }
+    }
+
+}
