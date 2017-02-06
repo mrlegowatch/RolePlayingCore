@@ -1,3 +1,9 @@
 language: objective-c
 osx_image: xcode8
 xcode_sdk: iphonesimulator10.0
+env:
+global:
+- FRAMEWORK_NAME=RolePlayingCore
+script:
+- set -o pipefail
+- travis_retry xcodebuild -project RolePlayingCore.xcproj -scheme "RolePlayingCore" -destination "platform=iOS Simulator,name=iPhone 7" build-for-testing test | xcpretty
