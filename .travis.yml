@@ -6,4 +6,4 @@ global:
 - FRAMEWORK_NAME=RolePlayingCore
 script:
 - set -o pipefail
-- travis_retry xcodebuild -workspace RolePlayingCore.xcworkspace -scheme "RolePlayingCore" -destination "platform=iOS Simulator,name=iPhone 7" build-for-testing test | xcpretty
+- travis_retry xcodebuild -workspace RolePlayingCore.xcworkspace -scheme "RolePlayingCore" -target "RolePlayingCoreTests" -destination "platform=iOS Simulator,name=iPhone 7" build-for-testing test | xcpretty
