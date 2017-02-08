@@ -2,4 +2,4 @@ language: objective-c
 osx_image: xcode8.2
 script:
 - set -o pipefail
-- travis_retry xcodebuild -workspace RolePlayingCore.xcworkspace -scheme "RolePlayingCore" -destination "platform=iOS Simulator,name=iPad Retina" build-for-testing test
+- travis_retry xcodebuild -workspace RolePlayingCore.xcworkspace -scheme "RolePlayingCore" -destination "platform=iOS Simulator,name=iPad Retina" build-for-testing test | xcpretty
