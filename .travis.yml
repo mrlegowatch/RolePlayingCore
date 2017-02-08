@@ -1,9 +1,9 @@
 language: objective-c
-osx_image: xcode8.1
-xcode_sdk: iphonesimulator10.1
+osx_image: xcode8.2
+xcode_sdk: iphonesimulator10.2
 env:
 global:
 - FRAMEWORK_NAME=RolePlayingCore
 script:
 - set -o pipefail
-- travis_retry xcodebuild -workspace RolePlayingCore.xcworkspace -scheme "RolePlayingCore" -destination "platform=iOS Simulator,name=iPhone 7" build-for-testing test
+- travis_retry xcodebuild -workspace RolePlayingCore.xcworkspace -scheme "RolePlayingCore" -destination "platform=iOS Simulator,OS=10.2,name=iPhone 7" build-for-testing test
