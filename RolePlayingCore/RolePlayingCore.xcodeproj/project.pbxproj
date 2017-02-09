@@ -23,6 +23,8 @@
 		B6FA6CBD1E47B803004D91B1 /* WeightParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6FA6CBC1E47B803004D91B1 /* WeightParser.swift */; };
 		B6FA6CBF1E47C2F9004D91B1 /* UnitHeightTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6FA6CBE1E47C2F9004D91B1 /* UnitHeightTests.swift */; };
 		B6FA6CC11E47C306004D91B1 /* UnitWeightTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6FA6CC01E47C306004D91B1 /* UnitWeightTests.swift */; };
+		B6FA6CC51E4A96D1004D91B1 /* Ability.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6FA6CC41E4A96D1004D91B1 /* Ability.swift */; };
+		B6FA6CC91E4BF5F9004D91B1 /* AbilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6FA6CC81E4BF5F9004D91B1 /* AbilityTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,6 +57,8 @@
 		B6FA6CBC1E47B803004D91B1 /* WeightParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WeightParser.swift; sourceTree = "<group>"; };
 		B6FA6CBE1E47C2F9004D91B1 /* UnitHeightTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnitHeightTests.swift; sourceTree = "<group>"; };
 		B6FA6CC01E47C306004D91B1 /* UnitWeightTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnitWeightTests.swift; sourceTree = "<group>"; };
+		B6FA6CC41E4A96D1004D91B1 /* Ability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Ability.swift; sourceTree = "<group>"; };
+		B6FA6CC81E4BF5F9004D91B1 /* AbilityTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AbilityTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -100,6 +104,7 @@
 				B6FA6CAD1E47AC8D004D91B1 /* Common */,
 				B6FA6CAE1E47AC8D004D91B1 /* Currency */,
 				B62056081E19DD5D002494AB /* d20 */,
+				B6FA6CC31E4A96C2004D91B1 /* Player */,
 				B62055F11E19DD23002494AB /* RolePlayingCore.h */,
 				B62055F21E19DD23002494AB /* Info.plist */,
 			);
@@ -114,6 +119,7 @@
 				B6FA6CBE1E47C2F9004D91B1 /* UnitHeightTests.swift */,
 				B6FA6CC01E47C306004D91B1 /* UnitWeightTests.swift */,
 				B62056091E19DDC0002494AB /* DiceTests.swift */,
+				B6FA6CC81E4BF5F9004D91B1 /* AbilityTests.swift */,
 				B6FA6CB81E47B4B1004D91B1 /* ServiceErrorTests.swift */,
 				B62055FE1E19DD23002494AB /* Info.plist */,
 			);
@@ -147,6 +153,14 @@
 				B6FA6CB11E47ACB3004D91B1 /* DefaultCurrencies.json */,
 			);
 			path = Currency;
+			sourceTree = "<group>";
+		};
+		B6FA6CC31E4A96C2004D91B1 /* Player */ = {
+			isa = PBXGroup;
+			children = (
+				B6FA6CC41E4A96D1004D91B1 /* Ability.swift */,
+			);
+			path = Player;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -268,6 +282,7 @@
 				B620560F1E19DDD0002494AB /* DiceParser.swift in Sources */,
 				B6FA6CBB1E47B7F6004D91B1 /* HeightParser.swift in Sources */,
 				B6FA6CBD1E47B803004D91B1 /* WeightParser.swift in Sources */,
+				B6FA6CC51E4A96D1004D91B1 /* Ability.swift in Sources */,
 				B62056101E19DDD0002494AB /* RandomNumberGenerator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -277,6 +292,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B6FA6CB91E47B4B1004D91B1 /* ServiceErrorTests.swift in Sources */,
+				B6FA6CC91E4BF5F9004D91B1 /* AbilityTests.swift in Sources */,
 				B6FA6CB61E47B080004D91B1 /* UnitCurrencyTests.swift in Sources */,
 				B620560A1E19DDC0002494AB /* DiceTests.swift in Sources */,
 				B6FA6CBF1E47C2F9004D91B1 /* UnitHeightTests.swift in Sources */,
