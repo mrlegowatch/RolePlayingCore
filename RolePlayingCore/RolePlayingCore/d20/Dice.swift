@@ -93,7 +93,7 @@ public class SimpleDice: Dice {
     public private(set) var lastRoll: [Int] = []
 
     /// Creates a SimpleDice for the specified die. Optionally specify times to roll, 
-    /// and whether to drop a high or low result. Defaults ot rolling one time.
+    /// and whether to drop a high or low result. Defaults to rolling one time.
     public init(_ die: Die, times: Int = 1) {
         self.die = die
         self.times = times
