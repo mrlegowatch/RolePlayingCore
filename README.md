@@ -24,9 +24,9 @@ In addition to fleshing out the Player grouping with types for classes, races, e
 * **Races**: Open Gaming Content races in JSON format
 * **Classes**: Open Gaming Content classes in JSON format
 
-## What is currently implemented types with unit tests
+## What is currently implemented
 
-The following types have an initial implementation with unit tests:
+The following types have an initial implementation with unit tests and full code coverage:
 
 * **UnitCurrency**: A subclass of Foundation.Dimension that can convert between different types of currency (e.g., gp, cp, pp). A DefaultCurrencies.json file is provided to specify Open Gaming Content currency.
 * **Dice**: Includes a Dice protocol, a Die type, and several implementations of the Dice protocol for simple dice rolls, modifiers, dropping and composition of dice rolls.
