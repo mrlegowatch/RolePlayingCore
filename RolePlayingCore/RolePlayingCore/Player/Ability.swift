@@ -145,22 +145,22 @@ public func+(lhs: Ability.Scores, rhs: Ability.Scores) -> Ability.Scores {
 
 extension Ability {
     
-    /// Physical strength, e.g., body, might, brawn.
+    /// Physical power, e.g., body, might, brawn.
     public static let strength = Ability("Strength")
     
     /// Agility, e.g., reflexes, quickness.
     public static let dexterity = Ability("Dexterity")
     
-    /// Sturdiness, e.g., stamina, endurance, vitality.
+    /// Endurance, e.g., stamina, sturdiness, vitality.
     public static let constitution = Ability("Constitution")
     
-    /// Problem-solving ability, e.g., intellect, mind, knowledge.
+    /// Reasoning and memory, e.g., intellect, mind, knowledge.
     public static let intelligence = Ability("Intelligence")
     
-    /// Common sense and/or spirituality, e.g., spirit, wits, psyche, sense.
+    /// Perception and insight, e.g., spirit, wits, psyche, sense.
     public static let wisdom = Ability("Wisdom")
     
-    /// Social skills, e.g., presence, charm. Sometimes also physical appearance.
+    /// Personality, e.g., social skills, presence, charm. Sometimes also physical appearance.
     public static let charisma = Ability("Charisma")
     
     /// An array of the default abilities.
