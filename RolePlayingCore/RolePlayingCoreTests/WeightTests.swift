@@ -14,6 +14,13 @@ class UnitWeightTests: XCTestCase {
     
     func testWeights() {
         do {
+            let trait = 70
+            let howHeavy = weight(from: trait)
+            XCTAssertNotNil(howHeavy, "weight should be non-nil")
+            XCTAssertEqual(howHeavy?.value, 70, "weight should be 3.0")
+        }
+
+        do {
             let trait = 3.0
             let howHeavy = weight(from: trait)
             XCTAssertNotNil(howHeavy, "weight should be non-nil")
