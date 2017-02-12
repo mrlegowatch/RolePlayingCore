@@ -13,7 +13,14 @@ import RolePlayingCore
 class UnitHeightTests: XCTestCase {
     
     func testHeights() {
-        
+
+        do {
+            let trait = 5
+            let howTall = height(from: trait)
+            XCTAssertNotNil(howTall, "height should be non-nil")
+            XCTAssertEqual(howTall?.value, 5.0, "height should be 3.0")
+        }
+
         do {
             let trait = 3.0
             let howTall = height(from: trait)

@@ -14,15 +14,23 @@
 		B620560E1E19DDD0002494AB /* Dice.swift in Sources */ = {isa = PBXBuildFile; fileRef = B620560B1E19DDD0002494AB /* Dice.swift */; };
 		B620560F1E19DDD0002494AB /* DiceParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = B620560C1E19DDD0002494AB /* DiceParser.swift */; };
 		B62056101E19DDD0002494AB /* RandomNumberGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B620560D1E19DDD0002494AB /* RandomNumberGenerator.swift */; };
+		B6F070361E4F991D00F66918 /* AlignmentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F070351E4F991D00F66918 /* AlignmentTests.swift */; };
+		B6F070381E4FBD6500F66918 /* RacialTraits.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F070371E4FBD6500F66918 /* RacialTraits.swift */; };
+		B6F0703A1E4FC03700F66918 /* Money.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F070391E4FC03700F66918 /* Money.swift */; };
+		B6F0703C1E4FC18500F66918 /* RacialTraitsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F0703B1E4FC18500F66918 /* RacialTraitsTests.swift */; };
+		B6F0703E1E4FD2A400F66918 /* Trait.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F0703D1E4FD2A400F66918 /* Trait.swift */; };
 		B6FA6CB01E47ACA1004D91B1 /* UnitCurrency.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6FA6CAF1E47ACA1004D91B1 /* UnitCurrency.swift */; };
 		B6FA6CB41E47ACCC004D91B1 /* ServiceError.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6FA6CB31E47ACCC004D91B1 /* ServiceError.swift */; };
-		B6FA6CB61E47B080004D91B1 /* UnitCurrencyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6FA6CB51E47B080004D91B1 /* UnitCurrencyTests.swift */; };
+		B6FA6CB61E47B080004D91B1 /* CurrencyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6FA6CB51E47B080004D91B1 /* CurrencyTests.swift */; };
 		B6FA6CB71E47B0CB004D91B1 /* DefaultCurrencies.json in Resources */ = {isa = PBXBuildFile; fileRef = B6FA6CB11E47ACB3004D91B1 /* DefaultCurrencies.json */; };
 		B6FA6CB91E47B4B1004D91B1 /* ServiceErrorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6FA6CB81E47B4B1004D91B1 /* ServiceErrorTests.swift */; };
-		B6FA6CBB1E47B7F6004D91B1 /* HeightParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6FA6CBA1E47B7F6004D91B1 /* HeightParser.swift */; };
-		B6FA6CBD1E47B803004D91B1 /* WeightParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6FA6CBC1E47B803004D91B1 /* WeightParser.swift */; };
-		B6FA6CBF1E47C2F9004D91B1 /* UnitHeightTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6FA6CBE1E47C2F9004D91B1 /* UnitHeightTests.swift */; };
-		B6FA6CC11E47C306004D91B1 /* UnitWeightTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6FA6CC01E47C306004D91B1 /* UnitWeightTests.swift */; };
+		B6FA6CBB1E47B7F6004D91B1 /* Height.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6FA6CBA1E47B7F6004D91B1 /* Height.swift */; };
+		B6FA6CBD1E47B803004D91B1 /* Weight.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6FA6CBC1E47B803004D91B1 /* Weight.swift */; };
+		B6FA6CBF1E47C2F9004D91B1 /* HeightTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6FA6CBE1E47C2F9004D91B1 /* HeightTests.swift */; };
+		B6FA6CC11E47C306004D91B1 /* WeightTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6FA6CC01E47C306004D91B1 /* WeightTests.swift */; };
+		B6FA6CC51E4A96D1004D91B1 /* Ability.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6FA6CC41E4A96D1004D91B1 /* Ability.swift */; };
+		B6FA6CC91E4BF5F9004D91B1 /* AbilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6FA6CC81E4BF5F9004D91B1 /* AbilityTests.swift */; };
+		B6FA6CCB1E4E7AEA004D91B1 /* Alignment.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6FA6CCA1E4E7AEA004D91B1 /* Alignment.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -46,15 +54,23 @@
 		B620560B1E19DDD0002494AB /* Dice.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dice.swift; sourceTree = "<group>"; };
 		B620560C1E19DDD0002494AB /* DiceParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiceParser.swift; sourceTree = "<group>"; };
 		B620560D1E19DDD0002494AB /* RandomNumberGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RandomNumberGenerator.swift; sourceTree = "<group>"; };
+		B6F070351E4F991D00F66918 /* AlignmentTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlignmentTests.swift; sourceTree = "<group>"; };
+		B6F070371E4FBD6500F66918 /* RacialTraits.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RacialTraits.swift; sourceTree = "<group>"; };
+		B6F070391E4FC03700F66918 /* Money.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Money.swift; sourceTree = "<group>"; };
+		B6F0703B1E4FC18500F66918 /* RacialTraitsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RacialTraitsTests.swift; sourceTree = "<group>"; };
+		B6F0703D1E4FD2A400F66918 /* Trait.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Trait.swift; sourceTree = "<group>"; };
 		B6FA6CAF1E47ACA1004D91B1 /* UnitCurrency.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnitCurrency.swift; sourceTree = "<group>"; };
 		B6FA6CB11E47ACB3004D91B1 /* DefaultCurrencies.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = DefaultCurrencies.json; sourceTree = "<group>"; };
 		B6FA6CB31E47ACCC004D91B1 /* ServiceError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceError.swift; sourceTree = "<group>"; };
-		B6FA6CB51E47B080004D91B1 /* UnitCurrencyTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnitCurrencyTests.swift; sourceTree = "<group>"; };
+		B6FA6CB51E47B080004D91B1 /* CurrencyTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrencyTests.swift; sourceTree = "<group>"; };
 		B6FA6CB81E47B4B1004D91B1 /* ServiceErrorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceErrorTests.swift; sourceTree = "<group>"; };
-		B6FA6CBA1E47B7F6004D91B1 /* HeightParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HeightParser.swift; sourceTree = "<group>"; };
-		B6FA6CBC1E47B803004D91B1 /* WeightParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WeightParser.swift; sourceTree = "<group>"; };
-		B6FA6CBE1E47C2F9004D91B1 /* UnitHeightTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnitHeightTests.swift; sourceTree = "<group>"; };
-		B6FA6CC01E47C306004D91B1 /* UnitWeightTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnitWeightTests.swift; sourceTree = "<group>"; };
+		B6FA6CBA1E47B7F6004D91B1 /* Height.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Height.swift; sourceTree = "<group>"; };
+		B6FA6CBC1E47B803004D91B1 /* Weight.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Weight.swift; sourceTree = "<group>"; };
+		B6FA6CBE1E47C2F9004D91B1 /* HeightTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HeightTests.swift; sourceTree = "<group>"; };
+		B6FA6CC01E47C306004D91B1 /* WeightTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WeightTests.swift; sourceTree = "<group>"; };
+		B6FA6CC41E4A96D1004D91B1 /* Ability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Ability.swift; sourceTree = "<group>"; };
+		B6FA6CC81E4BF5F9004D91B1 /* AbilityTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AbilityTests.swift; sourceTree = "<group>"; };
+		B6FA6CCA1E4E7AEA004D91B1 /* Alignment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Alignment.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -100,6 +116,7 @@
 				B6FA6CAD1E47AC8D004D91B1 /* Common */,
 				B6FA6CAE1E47AC8D004D91B1 /* Currency */,
 				B62056081E19DD5D002494AB /* d20 */,
+				B6FA6CC31E4A96C2004D91B1 /* Player */,
 				B62055F11E19DD23002494AB /* RolePlayingCore.h */,
 				B62055F21E19DD23002494AB /* Info.plist */,
 			);
@@ -110,10 +127,13 @@
 			isa = PBXGroup;
 			children = (
 				B62055FC1E19DD23002494AB /* RolePlayingCoreTests.swift */,
-				B6FA6CB51E47B080004D91B1 /* UnitCurrencyTests.swift */,
-				B6FA6CBE1E47C2F9004D91B1 /* UnitHeightTests.swift */,
-				B6FA6CC01E47C306004D91B1 /* UnitWeightTests.swift */,
+				B6FA6CC81E4BF5F9004D91B1 /* AbilityTests.swift */,
+				B6F070351E4F991D00F66918 /* AlignmentTests.swift */,
+				B6FA6CB51E47B080004D91B1 /* CurrencyTests.swift */,
 				B62056091E19DDC0002494AB /* DiceTests.swift */,
+				B6FA6CBE1E47C2F9004D91B1 /* HeightTests.swift */,
+				B6FA6CC01E47C306004D91B1 /* WeightTests.swift */,
+				B6F0703B1E4FC18500F66918 /* RacialTraitsTests.swift */,
 				B6FA6CB81E47B4B1004D91B1 /* ServiceErrorTests.swift */,
 				B62055FE1E19DD23002494AB /* Info.plist */,
 			);
@@ -134,8 +154,8 @@
 			isa = PBXGroup;
 			children = (
 				B6FA6CB31E47ACCC004D91B1 /* ServiceError.swift */,
-				B6FA6CBA1E47B7F6004D91B1 /* HeightParser.swift */,
-				B6FA6CBC1E47B803004D91B1 /* WeightParser.swift */,
+				B6FA6CBA1E47B7F6004D91B1 /* Height.swift */,
+				B6FA6CBC1E47B803004D91B1 /* Weight.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -144,9 +164,21 @@
 			isa = PBXGroup;
 			children = (
 				B6FA6CAF1E47ACA1004D91B1 /* UnitCurrency.swift */,
+				B6F070391E4FC03700F66918 /* Money.swift */,
 				B6FA6CB11E47ACB3004D91B1 /* DefaultCurrencies.json */,
 			);
 			path = Currency;
+			sourceTree = "<group>";
+		};
+		B6FA6CC31E4A96C2004D91B1 /* Player */ = {
+			isa = PBXGroup;
+			children = (
+				B6FA6CC41E4A96D1004D91B1 /* Ability.swift */,
+				B6FA6CCA1E4E7AEA004D91B1 /* Alignment.swift */,
+				B6F0703D1E4FD2A400F66918 /* Trait.swift */,
+				B6F070371E4FBD6500F66918 /* RacialTraits.swift */,
+			);
+			path = Player;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -263,11 +295,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				B6FA6CB41E47ACCC004D91B1 /* ServiceError.swift in Sources */,
+				B6F0703A1E4FC03700F66918 /* Money.swift in Sources */,
+				B6FA6CCB1E4E7AEA004D91B1 /* Alignment.swift in Sources */,
 				B6FA6CB01E47ACA1004D91B1 /* UnitCurrency.swift in Sources */,
 				B620560E1E19DDD0002494AB /* Dice.swift in Sources */,
 				B620560F1E19DDD0002494AB /* DiceParser.swift in Sources */,
-				B6FA6CBB1E47B7F6004D91B1 /* HeightParser.swift in Sources */,
-				B6FA6CBD1E47B803004D91B1 /* WeightParser.swift in Sources */,
+				B6FA6CBB1E47B7F6004D91B1 /* Height.swift in Sources */,
+				B6F070381E4FBD6500F66918 /* RacialTraits.swift in Sources */,
+				B6FA6CBD1E47B803004D91B1 /* Weight.swift in Sources */,
+				B6FA6CC51E4A96D1004D91B1 /* Ability.swift in Sources */,
+				B6F0703E1E4FD2A400F66918 /* Trait.swift in Sources */,
 				B62056101E19DDD0002494AB /* RandomNumberGenerator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -276,12 +313,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B6F0703C1E4FC18500F66918 /* RacialTraitsTests.swift in Sources */,
 				B6FA6CB91E47B4B1004D91B1 /* ServiceErrorTests.swift in Sources */,
-				B6FA6CB61E47B080004D91B1 /* UnitCurrencyTests.swift in Sources */,
+				B6F070361E4F991D00F66918 /* AlignmentTests.swift in Sources */,
+				B6FA6CC91E4BF5F9004D91B1 /* AbilityTests.swift in Sources */,
+				B6FA6CB61E47B080004D91B1 /* CurrencyTests.swift in Sources */,
 				B620560A1E19DDC0002494AB /* DiceTests.swift in Sources */,
-				B6FA6CBF1E47C2F9004D91B1 /* UnitHeightTests.swift in Sources */,
+				B6FA6CBF1E47C2F9004D91B1 /* HeightTests.swift in Sources */,
 				B62055FD1E19DD23002494AB /* RolePlayingCoreTests.swift in Sources */,
-				B6FA6CC11E47C306004D91B1 /* UnitWeightTests.swift in Sources */,
+				B6FA6CC11E47C306004D91B1 /* WeightTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

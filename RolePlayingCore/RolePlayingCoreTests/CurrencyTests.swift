@@ -22,11 +22,11 @@ class UnitCurrencyTests: XCTestCase {
     func testUnitCurrency() {
         XCTAssertEqual(UnitCurrency.baseUnit(), UnitCurrency.find("gp"), "base unit should be goldPieces")
         
-        let goldPieces = Measurement(value: 25, unit: UnitCurrency.find("gp")!)
-        let silverPieces = Measurement(value: 12, unit: UnitCurrency.find("sp")!)
-        let copperPieces = Measurement(value: 1, unit: UnitCurrency.find("cp")!)
-        let electrumPieces = Measurement(value: 2, unit: UnitCurrency.find("ep")!)
-        let platinumPieces = Measurement(value: 2, unit: UnitCurrency.find("pp")!)
+        let goldPieces = Money(value: 25, unit: UnitCurrency.find("gp")!)
+        let silverPieces = Money(value: 12, unit: UnitCurrency.find("sp")!)
+        let copperPieces = Money(value: 1, unit: UnitCurrency.find("cp")!)
+        let electrumPieces = Money(value: 2, unit: UnitCurrency.find("ep")!)
+        let platinumPieces = Money(value: 2, unit: UnitCurrency.find("pp")!)
         
         let totalPieces = goldPieces + silverPieces - copperPieces + electrumPieces - platinumPieces
         
@@ -39,7 +39,7 @@ class UnitCurrencyTests: XCTestCase {
     }
     
     func testPrintingValues() {
-        let goldPieces = Measurement(value: 13.7, unit: UnitCurrency.baseUnit())
+        let goldPieces = Money(value: 13.7, unit: .baseUnit())
         
         let formatter = MeasurementFormatter()
         
@@ -77,19 +77,19 @@ class UnitCurrencyTests: XCTestCase {
         let gpLong = formatter.string(from: goldPieces)
         XCTAssertEqual(gpLong, "13.7 gold pieces", "gold pieces")
         
-        let gpSingularLong = formatter.string(from: Measurement(value: 1.0, unit: UnitCurrency.baseUnit()))
+        let gpSingularLong = formatter.string(from: Money(value: 1.0, unit: .baseUnit()))
         XCTAssertEqual(gpSingularLong, "1 gold piece", "gold piece")
     }
     
-    func testCoinage() {
+    func testMoney() {
         do {
-            let gp = currency(from: 2.5)
+            let gp = money(from: 2.5)
             XCTAssertNotNil(gp, "coinage as Double should not be nil")
             XCTAssertEqual(gp?.value, 2.5, "coinage as Double should be 2.5")
         }
         
         do {
-            let cp = currency(from: "3.2 cp")
+            let cp = money(from: "3.2 cp")
             XCTAssertNotNil(cp, "coinage as cp should not be nil")
             if let cp = cp {
                 XCTAssertEqualWithAccuracy(cp.value, 3.2, accuracy: 0.0001, "coinage as string cp should be 3.2")
@@ -99,12 +99,12 @@ class UnitCurrencyTests: XCTestCase {
         }
         
         do {
-            let gp = currency(from: "hello")
+            let gp = money(from: "hello")
             XCTAssertNil(gp, "coinage as string with hello should be nil")
         }
         
         do {
-            let gp = currency(from: nil)
+            let gp = money(from: nil)
             XCTAssertNil(gp, "coinage with string as nil should be nil")
         }
     }
