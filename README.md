@@ -29,10 +29,13 @@ In addition to fleshing out the Player grouping with types for classes, races, e
 The following types have an initial implementation with unit tests and full code coverage:
 
 * **UnitCurrency**: A subclass of Foundation.Dimension that can convert between different types of currency (e.g., gp, cp, pp). A DefaultCurrencies.json file is provided to specify Open Game Content currency.
+* **Money**: A Foundation.Measurement for UnitCurrency.
 * **Dice**: Includes a Dice protocol, a Die type, and several implementations of the Dice protocol for simple dice rolls, modifiers, dropping and composition of dice rolls.
 * **DiceParser**: Free functions and extensions for converting from string representations of dice rolls into Dice types.
 * **RandomNumberGenerator**: An open class for use by the Die type. Can be modified as required.
 * **Ability**: An Ability type and nested Scores type for managing ability scores. Default Open Game Content ability types are provided.
-* **HeightParser** and **WeightParser**: Free functions for parsing strings representing height and weight into Foundation.Measurement of types Foundation.UnitLength and Foundation.UnitMass.
+* **Alignment**: Enumerations for Ethics and Morals, with a Kind and associated Double values.
+* **RacialTraits**: Properties describing a race, that can be created from dictionary traits, and a parent race (for defining subraces).
+* **Height** and **Weight**: Typealiases and free functions for parsing strings representing height and weight into Foundation.Measurement of types Foundation.UnitLength and Foundation.UnitMass.
 
 Since this is still in the very early stages, I welcome feedback regarding organization and the current implementation.
