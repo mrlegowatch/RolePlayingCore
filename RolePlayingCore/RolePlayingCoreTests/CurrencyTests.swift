@@ -10,6 +10,7 @@ import XCTest
 
 import RolePlayingCore
 
+
 class UnitCurrencyTests: XCTestCase {
     
     override class func setUp() {
@@ -133,6 +134,34 @@ class UnitCurrencyTests: XCTestCase {
             let description = "\(error)"
             XCTAssertTrue(description.contains("Runtime error"), "should be a runtime error")
             XCTAssertTrue(description.contains("gp"), "should have complained about gp already being loaded")
+        }
+    }
+    
+    func testMissingCurrencyTraits() {
+        // Test missing symbol
+        do {
+            let traits = ["name": "Foo"]
+            let currency = UnitCurrency.makeCurrency(from: traits)
+            XCTAssertNil(currency, "missing symbol")
+        }
+        
+        // Test symbol with missing coefficient
+        do {
+            let traits = ["symbol": "Foo"]
+            let currency = UnitCurrency.makeCurrency(from: traits)
+            XCTAssertNil(currency, "missing coefficient")
+        }
+        
+        // Test list of items with missing required traits
+        do {
+            let traits: [String: Any] = ["currency": [["name": "Foo"], ["name": "Bar"]]]
+            do {
+                try UnitCurrency.load(from: traits)
+                XCTFail("should have thrown an error")
+            }
+            catch let error {
+                XCTAssertTrue(error is ServiceError, "thrown ServiceError")
+            }
         }
     }
 
