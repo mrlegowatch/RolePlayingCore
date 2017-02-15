@@ -35,6 +35,7 @@ The following types have an initial implementation with unit tests and full code
 * **RandomNumberGenerator**: An open class for use by the Die type. Can be modified as required.
 * **Ability**: An Ability type and nested Scores type for managing ability scores. Default Open Game Content ability types are provided.
 * **Alignment**: Enumerations for Ethics and Morals, with a Kind and associated Double values.
+* **ClassTraits**: Properties describing a class, that can be created from dictionary traits.
 * **RacialTraits**: Properties describing a race, that can be created from dictionary traits, and a parent race (for defining subraces).
 * **Height** and **Weight**: Typealiases and free functions for parsing strings representing height and weight into Foundation.Measurement of types Foundation.UnitLength and Foundation.UnitMass.
 
