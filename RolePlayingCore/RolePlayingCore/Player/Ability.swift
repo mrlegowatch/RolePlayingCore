@@ -83,15 +83,6 @@ extension Ability {
             self.rawValue = values
         }
         
-        /// For each named dictionary trait, sets the corresponding score.
-        public init(from traits: [String: Int]) {
-            rawValue = Dictionary<Ability, Int>(minimumCapacity: traits.count)
-            for (key, value) in traits {
-                let ability = Ability(key)
-                rawValue[ability] = value
-            }
-        }
-        
         /// Accesses a score by its corresponding ability.
         ///
         /// Returns nil if the ability isn't present in the scores.
@@ -139,6 +130,30 @@ public func+(lhs: Ability.Scores, rhs: Ability.Scores) -> Ability.Scores {
         result[key]? += value
     }
     return result
+}
+
+extension Ability.Scores: TraitCoder {
+    
+    /// Creates a set of scores from dictionary traits.
+    /// Returns nil if the traits is not of type [String: Int].
+    public init?(from traits: Any?) {
+        guard let traits = traits as? [String: Int] else { return nil }
+        rawValue = Dictionary<Ability, Int>(minimumCapacity: traits.count)
+        for (key, value) in traits {
+            let ability = Ability(key)
+            rawValue[ability] = value
+        }
+    }
+    
+    /// Returns the set of scores as a dictionary of type [String: Int]
+    public func encodeTraits() -> Any? {
+        var traits = [String: Int](minimumCapacity: rawValue.count)
+        for (key, value) in rawValue {
+            traits[key.name] = value
+        }
+        return traits
+    }
+
 }
 
 // MARK: Default abilities

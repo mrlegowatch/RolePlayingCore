@@ -14,11 +14,13 @@
 		B620560E1E19DDD0002494AB /* Dice.swift in Sources */ = {isa = PBXBuildFile; fileRef = B620560B1E19DDD0002494AB /* Dice.swift */; };
 		B620560F1E19DDD0002494AB /* DiceParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = B620560C1E19DDD0002494AB /* DiceParser.swift */; };
 		B62056101E19DDD0002494AB /* RandomNumberGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B620560D1E19DDD0002494AB /* RandomNumberGenerator.swift */; };
+		B6CF538E1E51D30900CADD9F /* Trait.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6CF538D1E51D30900CADD9F /* Trait.swift */; };
+		B6CF53901E51DA1300CADD9F /* ClassTraits.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6CF538F1E51DA1300CADD9F /* ClassTraits.swift */; };
+		B6CF53921E51DEDD00CADD9F /* ClassTraitsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6CF53911E51DEDD00CADD9F /* ClassTraitsTests.swift */; };
 		B6F070361E4F991D00F66918 /* AlignmentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F070351E4F991D00F66918 /* AlignmentTests.swift */; };
 		B6F070381E4FBD6500F66918 /* RacialTraits.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F070371E4FBD6500F66918 /* RacialTraits.swift */; };
 		B6F0703A1E4FC03700F66918 /* Money.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F070391E4FC03700F66918 /* Money.swift */; };
 		B6F0703C1E4FC18500F66918 /* RacialTraitsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F0703B1E4FC18500F66918 /* RacialTraitsTests.swift */; };
-		B6F0703E1E4FD2A400F66918 /* Trait.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F0703D1E4FD2A400F66918 /* Trait.swift */; };
 		B6FA6CB01E47ACA1004D91B1 /* UnitCurrency.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6FA6CAF1E47ACA1004D91B1 /* UnitCurrency.swift */; };
 		B6FA6CB41E47ACCC004D91B1 /* ServiceError.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6FA6CB31E47ACCC004D91B1 /* ServiceError.swift */; };
 		B6FA6CB61E47B080004D91B1 /* CurrencyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6FA6CB51E47B080004D91B1 /* CurrencyTests.swift */; };
@@ -54,11 +56,13 @@
 		B620560B1E19DDD0002494AB /* Dice.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dice.swift; sourceTree = "<group>"; };
 		B620560C1E19DDD0002494AB /* DiceParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiceParser.swift; sourceTree = "<group>"; };
 		B620560D1E19DDD0002494AB /* RandomNumberGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RandomNumberGenerator.swift; sourceTree = "<group>"; };
+		B6CF538D1E51D30900CADD9F /* Trait.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Trait.swift; sourceTree = "<group>"; };
+		B6CF538F1E51DA1300CADD9F /* ClassTraits.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClassTraits.swift; sourceTree = "<group>"; };
+		B6CF53911E51DEDD00CADD9F /* ClassTraitsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClassTraitsTests.swift; sourceTree = "<group>"; };
 		B6F070351E4F991D00F66918 /* AlignmentTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlignmentTests.swift; sourceTree = "<group>"; };
 		B6F070371E4FBD6500F66918 /* RacialTraits.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RacialTraits.swift; sourceTree = "<group>"; };
 		B6F070391E4FC03700F66918 /* Money.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Money.swift; sourceTree = "<group>"; };
 		B6F0703B1E4FC18500F66918 /* RacialTraitsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RacialTraitsTests.swift; sourceTree = "<group>"; };
-		B6F0703D1E4FD2A400F66918 /* Trait.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Trait.swift; sourceTree = "<group>"; };
 		B6FA6CAF1E47ACA1004D91B1 /* UnitCurrency.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnitCurrency.swift; sourceTree = "<group>"; };
 		B6FA6CB11E47ACB3004D91B1 /* DefaultCurrencies.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = DefaultCurrencies.json; sourceTree = "<group>"; };
 		B6FA6CB31E47ACCC004D91B1 /* ServiceError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceError.swift; sourceTree = "<group>"; };
@@ -133,6 +137,7 @@
 				B62056091E19DDC0002494AB /* DiceTests.swift */,
 				B6FA6CBE1E47C2F9004D91B1 /* HeightTests.swift */,
 				B6FA6CC01E47C306004D91B1 /* WeightTests.swift */,
+				B6CF53911E51DEDD00CADD9F /* ClassTraitsTests.swift */,
 				B6F0703B1E4FC18500F66918 /* RacialTraitsTests.swift */,
 				B6FA6CB81E47B4B1004D91B1 /* ServiceErrorTests.swift */,
 				B62055FE1E19DD23002494AB /* Info.plist */,
@@ -154,6 +159,7 @@
 			isa = PBXGroup;
 			children = (
 				B6FA6CB31E47ACCC004D91B1 /* ServiceError.swift */,
+				B6CF538D1E51D30900CADD9F /* Trait.swift */,
 				B6FA6CBA1E47B7F6004D91B1 /* Height.swift */,
 				B6FA6CBC1E47B803004D91B1 /* Weight.swift */,
 			);
@@ -175,7 +181,7 @@
 			children = (
 				B6FA6CC41E4A96D1004D91B1 /* Ability.swift */,
 				B6FA6CCA1E4E7AEA004D91B1 /* Alignment.swift */,
-				B6F0703D1E4FD2A400F66918 /* Trait.swift */,
+				B6CF538F1E51DA1300CADD9F /* ClassTraits.swift */,
 				B6F070371E4FBD6500F66918 /* RacialTraits.swift */,
 			);
 			path = Player;
@@ -297,14 +303,15 @@
 				B6FA6CB41E47ACCC004D91B1 /* ServiceError.swift in Sources */,
 				B6F0703A1E4FC03700F66918 /* Money.swift in Sources */,
 				B6FA6CCB1E4E7AEA004D91B1 /* Alignment.swift in Sources */,
+				B6CF538E1E51D30900CADD9F /* Trait.swift in Sources */,
 				B6FA6CB01E47ACA1004D91B1 /* UnitCurrency.swift in Sources */,
+				B6CF53901E51DA1300CADD9F /* ClassTraits.swift in Sources */,
 				B620560E1E19DDD0002494AB /* Dice.swift in Sources */,
 				B620560F1E19DDD0002494AB /* DiceParser.swift in Sources */,
 				B6FA6CBB1E47B7F6004D91B1 /* Height.swift in Sources */,
 				B6F070381E4FBD6500F66918 /* RacialTraits.swift in Sources */,
 				B6FA6CBD1E47B803004D91B1 /* Weight.swift in Sources */,
 				B6FA6CC51E4A96D1004D91B1 /* Ability.swift in Sources */,
-				B6F0703E1E4FD2A400F66918 /* Trait.swift in Sources */,
 				B62056101E19DDD0002494AB /* RandomNumberGenerator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -314,6 +321,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B6F0703C1E4FC18500F66918 /* RacialTraitsTests.swift in Sources */,
+				B6CF53921E51DEDD00CADD9F /* ClassTraitsTests.swift in Sources */,
 				B6FA6CB91E47B4B1004D91B1 /* ServiceErrorTests.swift in Sources */,
 				B6F070361E4F991D00F66918 /* AlignmentTests.swift in Sources */,
 				B6FA6CC91E4BF5F9004D91B1 /* AbilityTests.swift in Sources */,

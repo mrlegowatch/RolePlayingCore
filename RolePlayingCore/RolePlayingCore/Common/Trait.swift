@@ -20,4 +20,20 @@ public struct Trait {
     
     public static let hitPoints = "hit points"
 
+    public static let hitDice = "hit dice"
+    
+    static internal func logMissing(_ name: String) {
+        print("Missing required trait: \"\(name)\"")
+    }
+
+}
+
+/// A protocol for creating an instance from dictionary traits,
+/// and encoding properties as dictionary traits.
+public protocol TraitCoder {
+    
+    init?(from traits: Any?)
+    
+    func encodeTraits() -> Any?
+    
 }

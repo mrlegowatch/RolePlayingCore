@@ -113,24 +113,32 @@ class AbilityTests: XCTestCase {
         do {
             let traits = ["Strength": 12, "Intelligence": 8]
             let abilityScores = Ability.Scores(from: traits)
+            XCTAssertNotNil(abilityScores, "ability scores should be non-nil")
             
             let strength = Ability("Strength")
             let intelligence = Ability("Intelligence")
             
-            XCTAssertEqual(abilityScores[strength], 12, "ability scores dictionary strength")
-            XCTAssertEqual(abilityScores[intelligence], 8, "ability scores dictionary intelligence")
+            XCTAssertEqual(abilityScores?[strength], 12, "ability scores dictionary strength")
+            XCTAssertEqual(abilityScores?[intelligence], 8, "ability scores dictionary intelligence")
+            
+            let encoded = abilityScores?.encodeTraits() as? [String: Int]
+            XCTAssertNotNil(encoded, "round-trip traits should be [String: Int]")
+            if encoded != nil {
+                XCTAssertEqual(encoded!, traits, "round-trip for traits")
+            }
         }
         
         // Test with [String: NSNumber] as from NSDictionary or plist
         do {
             let traits: NSDictionary = ["Wisdom": NSNumber(value: 8), "Charisma": NSNumber(value: 13)]
-            let abilityScores = Ability.Scores(from: traits as! [String: Int])
-            
+            let abilityScores = Ability.Scores(from: traits as? [String: Int])
+            XCTAssertNotNil(abilityScores, "ability scores should be non-nil")
+
             let wisdom = Ability("Wisdom")
             let charisma = Ability("Charisma")
             
-            XCTAssertEqual(abilityScores[wisdom], 8, "ability scores dictionary wisdom")
-            XCTAssertEqual(abilityScores[charisma], 13, "ability scores dictionary charisma")
+            XCTAssertEqual(abilityScores?[wisdom], 8, "ability scores dictionary wisdom")
+            XCTAssertEqual(abilityScores?[charisma], 13, "ability scores dictionary charisma")
         }
     }
     
@@ -219,4 +227,5 @@ class AbilityTests: XCTestCase {
             }
         }
     }
+    
 }

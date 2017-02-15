@@ -1,9 +1,9 @@
 //
 //  RacialTraits.swift
-//  DungeonCore
+//  RolePlayingCore
 //
 //  Created by Brian Arnold on 11/12/16.
-//  Copyright © 2016 Brian Arnold. All rights reserved.
+//  Copyright © 2016-2017 Brian Arnold. All rights reserved.
 //
 
 import Foundation
@@ -87,32 +87,41 @@ public struct RacialTraits {
     public var subraces = [RacialTraits]()
     
     // TODO: weapons, armor, skills, etc.
-    
-    static internal func logMissingTrait(_ name: String) {
-        print("Missing required trait: \"\(name)\"")
-    }
-    
+
     /// Creates race traits from dictionary traits.
+    ///
+    /// - parameter traits: a dictionary of traits with the following keys and values:
+    ///   - "name": required string
+    ///   - "plural": required string
+    ///   - "minimum age": required integer
+    ///   - "lifespan": required integer
+    ///   - "base height": required height string or number
+    ///   - "height modifier": required dice string
+    ///   - "baseWeight": required weight string or number
+    ///   - "weight modifier": optional dice string
+    ///   - "speed": required integer
+    ///   - "aliases": optional alternative names
+    ///   - "ability score increase": optional array of ability string names
+    ///   - "alignment": optional string alignment name
+    ///   - "darkvision": optional integer
+    ///   - "hit points": optional hit point bonus integer
+    ///
+    /// - returns: `RacialTraits` instance, or nil if there are any missing required traits.
     public init?(from traits: [String: Any]) {
         // Required traits
-        guard let name = traits[Trait.name] as? String else { RacialTraits.logMissingTrait(Trait.name); return nil }
-        guard let plural = traits[Trait.plural] as? String else { RacialTraits.logMissingTrait(Trait.plural); return nil }
-        guard let minimumAge = traits[Trait.minimumAge] as? Int else { RacialTraits.logMissingTrait(Trait.minimumAge); return nil }
-        guard let lifespan = traits[Trait.lifespan] as? Int else { RacialTraits.logMissingTrait(Trait.lifespan); return nil }
-        guard let baseHeight = height(from: traits[Trait.baseHeight]) else { RacialTraits.logMissingTrait(Trait.baseHeight); return nil }
-        guard let heightString = traits[Trait.heightModifier] as? String, let heightModifier = dice(from: heightString) else { RacialTraits.logMissingTrait(Trait.heightModifier); return nil }
-        guard let baseWeight = weight(from: traits[Trait.baseWeight]) else { RacialTraits.logMissingTrait(Trait.baseWeight); return nil }
-        guard let speed = traits[Trait.speed] as? Int else { RacialTraits.logMissingTrait(Trait.speed); return nil }
+        guard let name = traits[Trait.name] as? String else { Trait.logMissing(Trait.name); return nil }
+        guard let plural = traits[Trait.plural] as? String else { Trait.logMissing(Trait.plural); return nil }
+        guard let minimumAge = traits[Trait.minimumAge] as? Int else { Trait.logMissing(Trait.minimumAge); return nil }
+        guard let lifespan = traits[Trait.lifespan] as? Int else { Trait.logMissing(Trait.lifespan); return nil }
+        guard let baseHeight = height(from: traits[Trait.baseHeight]) else { Trait.logMissing(Trait.baseHeight); return nil }
+        guard let heightString = traits[Trait.heightModifier] as? String, let heightModifier = dice(from: heightString) else { Trait.logMissing(Trait.heightModifier); return nil }
+        guard let baseWeight = weight(from: traits[Trait.baseWeight]) else { Trait.logMissing(Trait.baseWeight); return nil }
+        guard let speed = traits[Trait.speed] as? Int else { Trait.logMissing(Trait.speed); return nil }
         
         // Optional traits
         let aliases = traits[Trait.aliases] as? [String]
         
-        let abilityScoreIncrease: Ability.Scores
-        if let scores = traits[Trait.abilityScores] as? [String: Int] {
-            abilityScoreIncrease = Ability.Scores(from: scores)
-        } else {
-            abilityScoreIncrease = Ability.Scores()
-        }
+        let abilityScoreIncrease = Ability.Scores(from: traits[Trait.abilityScores]) ?? Ability.Scores()
         
         let alignment: Alignment?
         if let alignmentTrait = traits[Trait.alignment] as? String {
@@ -194,8 +203,8 @@ public struct RacialTraits {
             self.speed = speed
         }
         
-        if let scores = traits[Trait.abilityScores] as? [String: Int] {
-            self.abilityScoreIncrease = self.abilityScoreIncrease + Ability.Scores(from: scores)
+        if let scores = Ability.Scores(from: traits[Trait.abilityScores]) {
+            self.abilityScoreIncrease = self.abilityScoreIncrease + scores
         }
         
         if let alignmentTrait = traits[Trait.alignment] as? String {
