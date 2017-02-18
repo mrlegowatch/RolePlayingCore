@@ -17,6 +17,19 @@
 		B6CF538E1E51D30900CADD9F /* Trait.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6CF538D1E51D30900CADD9F /* Trait.swift */; };
 		B6CF53901E51DA1300CADD9F /* ClassTraits.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6CF538F1E51DA1300CADD9F /* ClassTraits.swift */; };
 		B6CF53921E51DEDD00CADD9F /* ClassTraitsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6CF53911E51DEDD00CADD9F /* ClassTraitsTests.swift */; };
+		B6CF53CE1E54DF4500CADD9F /* JSONFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6CF53CD1E54DF4500CADD9F /* JSONFile.swift */; };
+		B6CF53D01E54E2E200CADD9F /* Classes.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6CF53CF1E54E2E200CADD9F /* Classes.swift */; };
+		B6CF53D21E54E2EF00CADD9F /* Races.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6CF53D11E54E2EF00CADD9F /* Races.swift */; };
+		B6CF53D41E55147B00CADD9F /* DefaultRaces.json in Resources */ = {isa = PBXBuildFile; fileRef = B6CF53D31E55147B00CADD9F /* DefaultRaces.json */; };
+		B6CF53D71E5519F300CADD9F /* UncommonRaces.json in Resources */ = {isa = PBXBuildFile; fileRef = B6CF53D51E55175C00CADD9F /* UncommonRaces.json */; };
+		B6CF53D91E56442800CADD9F /* RacesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6CF53D81E56442800CADD9F /* RacesTests.swift */; };
+		B6CF53DB1E56443A00CADD9F /* ClassesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6CF53DA1E56443A00CADD9F /* ClassesTests.swift */; };
+		B6CF53E01E5662AC00CADD9F /* DefaultClasses.json in Resources */ = {isa = PBXBuildFile; fileRef = B6CF53DC1E56609500CADD9F /* DefaultClasses.json */; };
+		B6CF53E11E5662B000CADD9F /* UncommonClasses.json in Resources */ = {isa = PBXBuildFile; fileRef = B6CF53DE1E5660AE00CADD9F /* UncommonClasses.json */; };
+		B6CF53E51E57429D00CADD9F /* JSONFileTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6CF53E41E57429D00CADD9F /* JSONFileTests.swift */; };
+		B6CF53E71E5742C700CADD9F /* JSONFile.json in Resources */ = {isa = PBXBuildFile; fileRef = B6CF53E61E5742C700CADD9F /* JSONFile.json */; };
+		B6CF53E91E57460F00CADD9F /* InvalidJSONFile.json in Resources */ = {isa = PBXBuildFile; fileRef = B6CF53E81E57460F00CADD9F /* InvalidJSONFile.json */; };
+		B6CF53EB1E574ED400CADD9F /* HalfBakedJSONFile.json in Resources */ = {isa = PBXBuildFile; fileRef = B6CF53EA1E574ED400CADD9F /* HalfBakedJSONFile.json */; };
 		B6F070361E4F991D00F66918 /* AlignmentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F070351E4F991D00F66918 /* AlignmentTests.swift */; };
 		B6F070381E4FBD6500F66918 /* RacialTraits.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F070371E4FBD6500F66918 /* RacialTraits.swift */; };
 		B6F0703A1E4FC03700F66918 /* Money.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F070391E4FC03700F66918 /* Money.swift */; };
@@ -59,6 +72,19 @@
 		B6CF538D1E51D30900CADD9F /* Trait.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Trait.swift; sourceTree = "<group>"; };
 		B6CF538F1E51DA1300CADD9F /* ClassTraits.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClassTraits.swift; sourceTree = "<group>"; };
 		B6CF53911E51DEDD00CADD9F /* ClassTraitsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClassTraitsTests.swift; sourceTree = "<group>"; };
+		B6CF53CD1E54DF4500CADD9F /* JSONFile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONFile.swift; sourceTree = "<group>"; };
+		B6CF53CF1E54E2E200CADD9F /* Classes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Classes.swift; sourceTree = "<group>"; };
+		B6CF53D11E54E2EF00CADD9F /* Races.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Races.swift; sourceTree = "<group>"; };
+		B6CF53D31E55147B00CADD9F /* DefaultRaces.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = DefaultRaces.json; sourceTree = "<group>"; };
+		B6CF53D51E55175C00CADD9F /* UncommonRaces.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = UncommonRaces.json; sourceTree = "<group>"; };
+		B6CF53D81E56442800CADD9F /* RacesTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RacesTests.swift; sourceTree = "<group>"; };
+		B6CF53DA1E56443A00CADD9F /* ClassesTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClassesTests.swift; sourceTree = "<group>"; };
+		B6CF53DC1E56609500CADD9F /* DefaultClasses.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = DefaultClasses.json; sourceTree = "<group>"; };
+		B6CF53DE1E5660AE00CADD9F /* UncommonClasses.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = UncommonClasses.json; sourceTree = "<group>"; };
+		B6CF53E41E57429D00CADD9F /* JSONFileTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONFileTests.swift; sourceTree = "<group>"; };
+		B6CF53E61E5742C700CADD9F /* JSONFile.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = JSONFile.json; sourceTree = "<group>"; };
+		B6CF53E81E57460F00CADD9F /* InvalidJSONFile.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = InvalidJSONFile.json; sourceTree = "<group>"; };
+		B6CF53EA1E574ED400CADD9F /* HalfBakedJSONFile.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = HalfBakedJSONFile.json; sourceTree = "<group>"; };
 		B6F070351E4F991D00F66918 /* AlignmentTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlignmentTests.swift; sourceTree = "<group>"; };
 		B6F070371E4FBD6500F66918 /* RacialTraits.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RacialTraits.swift; sourceTree = "<group>"; };
 		B6F070391E4FC03700F66918 /* Money.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Money.swift; sourceTree = "<group>"; };
@@ -138,7 +164,13 @@
 				B6FA6CBE1E47C2F9004D91B1 /* HeightTests.swift */,
 				B6FA6CC01E47C306004D91B1 /* WeightTests.swift */,
 				B6CF53911E51DEDD00CADD9F /* ClassTraitsTests.swift */,
+				B6CF53DA1E56443A00CADD9F /* ClassesTests.swift */,
 				B6F0703B1E4FC18500F66918 /* RacialTraitsTests.swift */,
+				B6CF53D81E56442800CADD9F /* RacesTests.swift */,
+				B6CF53E61E5742C700CADD9F /* JSONFile.json */,
+				B6CF53E81E57460F00CADD9F /* InvalidJSONFile.json */,
+				B6CF53EA1E574ED400CADD9F /* HalfBakedJSONFile.json */,
+				B6CF53E41E57429D00CADD9F /* JSONFileTests.swift */,
 				B6FA6CB81E47B4B1004D91B1 /* ServiceErrorTests.swift */,
 				B62055FE1E19DD23002494AB /* Info.plist */,
 			);
@@ -162,6 +194,7 @@
 				B6CF538D1E51D30900CADD9F /* Trait.swift */,
 				B6FA6CBA1E47B7F6004D91B1 /* Height.swift */,
 				B6FA6CBC1E47B803004D91B1 /* Weight.swift */,
+				B6CF53CD1E54DF4500CADD9F /* JSONFile.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -182,7 +215,13 @@
 				B6FA6CC41E4A96D1004D91B1 /* Ability.swift */,
 				B6FA6CCA1E4E7AEA004D91B1 /* Alignment.swift */,
 				B6CF538F1E51DA1300CADD9F /* ClassTraits.swift */,
+				B6CF53CF1E54E2E200CADD9F /* Classes.swift */,
 				B6F070371E4FBD6500F66918 /* RacialTraits.swift */,
+				B6CF53D11E54E2EF00CADD9F /* Races.swift */,
+				B6CF53DC1E56609500CADD9F /* DefaultClasses.json */,
+				B6CF53DE1E5660AE00CADD9F /* UncommonClasses.json */,
+				B6CF53D31E55147B00CADD9F /* DefaultRaces.json */,
+				B6CF53D51E55175C00CADD9F /* UncommonRaces.json */,
 			);
 			path = Player;
 			sourceTree = "<group>";
@@ -289,7 +328,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B6CF53E91E57460F00CADD9F /* InvalidJSONFile.json in Resources */,
+				B6CF53D71E5519F300CADD9F /* UncommonRaces.json in Resources */,
+				B6CF53D41E55147B00CADD9F /* DefaultRaces.json in Resources */,
+				B6CF53E01E5662AC00CADD9F /* DefaultClasses.json in Resources */,
 				B6FA6CB71E47B0CB004D91B1 /* DefaultCurrencies.json in Resources */,
+				B6CF53EB1E574ED400CADD9F /* HalfBakedJSONFile.json in Resources */,
+				B6CF53E11E5662B000CADD9F /* UncommonClasses.json in Resources */,
+				B6CF53E71E5742C700CADD9F /* JSONFile.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -303,10 +349,13 @@
 				B6FA6CB41E47ACCC004D91B1 /* ServiceError.swift in Sources */,
 				B6F0703A1E4FC03700F66918 /* Money.swift in Sources */,
 				B6FA6CCB1E4E7AEA004D91B1 /* Alignment.swift in Sources */,
+				B6CF53CE1E54DF4500CADD9F /* JSONFile.swift in Sources */,
+				B6CF53D21E54E2EF00CADD9F /* Races.swift in Sources */,
 				B6CF538E1E51D30900CADD9F /* Trait.swift in Sources */,
 				B6FA6CB01E47ACA1004D91B1 /* UnitCurrency.swift in Sources */,
 				B6CF53901E51DA1300CADD9F /* ClassTraits.swift in Sources */,
 				B620560E1E19DDD0002494AB /* Dice.swift in Sources */,
+				B6CF53D01E54E2E200CADD9F /* Classes.swift in Sources */,
 				B620560F1E19DDD0002494AB /* DiceParser.swift in Sources */,
 				B6FA6CBB1E47B7F6004D91B1 /* Height.swift in Sources */,
 				B6F070381E4FBD6500F66918 /* RacialTraits.swift in Sources */,
@@ -320,7 +369,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B6CF53E51E57429D00CADD9F /* JSONFileTests.swift in Sources */,
+				B6CF53D91E56442800CADD9F /* RacesTests.swift in Sources */,
 				B6F0703C1E4FC18500F66918 /* RacialTraitsTests.swift in Sources */,
+				B6CF53DB1E56443A00CADD9F /* ClassesTests.swift in Sources */,
 				B6CF53921E51DEDD00CADD9F /* ClassTraitsTests.swift in Sources */,
 				B6FA6CB91E47B4B1004D91B1 /* ServiceErrorTests.swift in Sources */,
 				B6F070361E4F991D00F66918 /* AlignmentTests.swift in Sources */,

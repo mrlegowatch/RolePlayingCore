@@ -155,13 +155,14 @@ public struct Alignment {
     /// description string, otherwise nil is returned.
     public init?(from string: String) {
         let words = string.components(separatedBy: " ")
-        guard words.count == 1 || words.count == 2 else { return nil }
         if words.count == 1 && words[0] == "Neutral" {
             self.init(.neutral, .neutral)
-        } else {
+        } else if words.count == 2 {
             guard let ethics = Ethics(rawValue: words[0]), let morals = Morals(rawValue: words[1]) else { return nil }
             self.init(ethics, morals)
-       }
+        } else {
+            return nil
+        }
     }
     
     /// Creates an alignment from dictionary traits. The dictionary must contain "ethics" and "morals"

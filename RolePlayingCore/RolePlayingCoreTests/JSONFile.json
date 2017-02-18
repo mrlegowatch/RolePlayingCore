@@ -1,0 +1,8 @@
+{
+    "boolValue": true,
+    "dictionaryValue": {
+        "stringValue": "foo",
+        "doubleValue": 2.1,
+        "arrayValue": [2, 3]
+    }
+}
