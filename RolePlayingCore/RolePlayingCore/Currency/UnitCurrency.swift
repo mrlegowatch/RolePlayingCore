@@ -104,18 +104,13 @@ public class UnitCurrency : Dimension {
 
     /// The default currencies JSON file name.
     public static let defaultCurrenciesFile = "DefaultCurrencies"
-    
-    // TODO: generalize load for any JSON file, and add a save function. Leverage TraitCoder.
-    
+     
     /// Loads the specified currency file in JSON format from the specified bundle. 
     /// Defaults to a file named "DefaultCurrencies" in the main bundle.
     ///
     /// See `load(from:)` for details on the JSON dictionary format.
     public static func load(_ currenciesFile: String = defaultCurrenciesFile, in bundle: Bundle = .main) throws {
-        guard let url = bundle.url(forResource: currenciesFile, withExtension: "json") else { throw RuntimeError("Could not load \(currenciesFile).json from \(bundle.bundleURL)") }
-        let jsonData = try Data(contentsOf: url, options: [.mappedIfSafe])
-        let jsonObject = try JSONSerialization.jsonObject(with: jsonData, options: []) as! [String: Any]
-        
+        let jsonObject = try bundle.loadJSON(currenciesFile)
         try load(from: jsonObject)
     }
     

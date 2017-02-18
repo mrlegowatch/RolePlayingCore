@@ -11,7 +11,7 @@ The current organizational groupings include:
 * **Common**: common utilities such as height and weight, and a runtime error enum
 * **Currency**: currency types, conversion and parsing
 * **d20**: dice types and parsing
-* **Player**: the character, player and related types
+* **Player**: the character, player, races, classes and related types
 
 ### Coming Soon...
 
@@ -21,8 +21,6 @@ In addition to fleshing out the Player grouping with types for classes, races, e
 * **Map**: Map, Geometry, Room, Door, Segment, Hallway, ...
 * **Dungeon**: Document wrapper for Map instances
 * **Equipment**: Open Game Content equipment in JSON format
-* **Races**: Open Game Content races in JSON format
-* **Classes**: Open Game Content classes in JSON format
 
 ## What is currently implemented
 
@@ -36,7 +34,9 @@ The following types have an initial implementation with unit tests and full code
 * **Ability**: An Ability type and nested Scores type for managing ability scores. Default Open Game Content ability types are provided.
 * **Alignment**: Enumerations for Ethics and Morals, with a Kind and associated Double values.
 * **ClassTraits**: Properties describing a class, that can be created from dictionary traits.
+* **Classes**: A factory for managing ClassTraits.
 * **RacialTraits**: Properties describing a race, that can be created from dictionary traits, and a parent race (for defining subraces).
+* **Races**: A factory for managing RacialTraits.
 * **Height** and **Weight**: Typealiases and free functions for parsing strings representing height and weight into Foundation.Measurement of types Foundation.UnitLength and Foundation.UnitMass.
 
 Since this is still in the very early stages, I welcome feedback regarding organization and the current implementation.

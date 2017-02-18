@@ -30,7 +30,7 @@ extension Trait {
     
 }
 
-public struct RacialTraits {
+public class RacialTraits {
     
     public var name: String
     
@@ -83,6 +83,8 @@ public struct RacialTraits {
     public var speed: Int
     
     public var hitPointsBonus: Int
+    
+    public weak var parent: RacialTraits?
     
     public var subraces = [RacialTraits]()
     
@@ -162,10 +164,29 @@ public struct RacialTraits {
         self.hitPointsBonus = hitPointsBonus
     }
     
+    internal init(copyFrom parent: RacialTraits) {
+        self.name = parent.name
+        self.plural = parent.plural
+        self.aliases = parent.aliases
+        self.minimumAge = parent.minimumAge
+        self.lifespan = parent.lifespan
+        self.baseHeight = parent.baseHeight
+        self.baseWeight = parent.baseWeight
+        self.heightModifier = parent.heightModifier
+        self.weightModifier = parent.weightModifier
+        self.speed = parent.speed
+        self.abilityScoreIncrease = parent.abilityScoreIncrease
+        self.alignment = parent.alignment
+        self.darkVision = parent.darkVision
+        self.hitPointsBonus = parent.hitPointsBonus
+        
+        self.parent = parent
+    }
+    
     /// Creates a sub-race from a parent race and overridden traits.
-    public init(from traits: [String: Any], parent: RacialTraits) {
+    public convenience init(from traits: [String: Any], parent: RacialTraits) {
         // Initialize from parent traits
-        self = parent
+        self.init(copyFrom: parent)
         
         // Override traits specified by the subrace
         if let name = traits[Trait.name] as? String {
