@@ -1,0 +1,15 @@
+{
+    "players": [
+                {
+                "name": "Frodo",
+                "gender": "male",
+                "class": "Software Engineer",
+                "race": "High Elf",
+                "height": "3'9\"",
+                "weight": 120,
+                "ability scores": {"Dexterity": 13},
+                "money": 130,
+                "hit points": 10
+                }
+                ]
+}

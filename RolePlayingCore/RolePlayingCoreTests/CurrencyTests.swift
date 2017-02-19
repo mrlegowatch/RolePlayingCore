@@ -16,7 +16,7 @@ class UnitCurrencyTests: XCTestCase {
     override class func setUp() {
         super.setUp()
         
-        // Only load once.
+        // Only load once. TODO: this has a side effect on other unit tests: currencies are already loaded.
         try! UnitCurrency.load("DefaultCurrencies", in: Bundle(for: UnitCurrencyTests.self))
     }
     
@@ -84,13 +84,13 @@ class UnitCurrencyTests: XCTestCase {
     
     func testMoney() {
         do {
-            let gp = money(from: 2.5)
+            let gp = Money(from: 2.5)
             XCTAssertNotNil(gp, "coinage as Double should not be nil")
             XCTAssertEqual(gp?.value, 2.5, "coinage as Double should be 2.5")
         }
         
         do {
-            let cp = money(from: "3.2 cp")
+            let cp = Money(from: "3.2 cp")
             XCTAssertNotNil(cp, "coinage as cp should not be nil")
             if let cp = cp {
                 XCTAssertEqualWithAccuracy(cp.value, 3.2, accuracy: 0.0001, "coinage as string cp should be 3.2")
@@ -100,12 +100,12 @@ class UnitCurrencyTests: XCTestCase {
         }
         
         do {
-            let gp = money(from: "hello")
+            let gp = Money(from: "hello")
             XCTAssertNil(gp, "coinage as string with hello should be nil")
         }
         
         do {
-            let gp = money(from: nil)
+            let gp = Money(from: nil)
             XCTAssertNil(gp, "coinage with string as nil should be nil")
         }
     }
@@ -123,17 +123,15 @@ class UnitCurrencyTests: XCTestCase {
     }
     
     func testDuplicateCurrencies() {
-        // Try loading the default currencies file a second time. It should throw an error
-        // when it notices the first currency is already loaded.
+        // Try loading the default currencies file a second time. 
+        // It should ignore the duplicate currencies.
         do {
+            XCTAssertEqual(UnitCurrency.allCurrencies.count, 5, "currencies count")
             try UnitCurrency.load("DefaultCurrencies", in: Bundle(for: UnitCurrencyTests.self))
-            XCTFail("load should have thrown an error")
+            XCTAssertEqual(UnitCurrency.allCurrencies.count, 5, "currencies count")
         }
         catch let error {
-            XCTAssertTrue(error is ServiceError, "should be a service error")
-            let description = "\(error)"
-            XCTAssertTrue(description.contains("Runtime error"), "should be a runtime error")
-            XCTAssertTrue(description.contains("gp"), "should have complained about gp already being loaded")
+            XCTFail("duplicate currency should not throw error: \(error)")
         }
     }
     
