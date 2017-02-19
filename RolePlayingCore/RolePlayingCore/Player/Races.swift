@@ -8,6 +8,15 @@
 
 import Foundation
 
+extension Trait {
+    
+    public static let race = "race"
+    
+    public static let races = "races"
+    
+    public static let subraces = "subraces"
+    
+}
 
 public class Races {
     
@@ -17,7 +26,7 @@ public class Races {
     /// Accesses racial traits with subraces filtered out.
     public var races: [RacialTraits] {
         // Filter out races that have subraces
-        return allRacialTraits.filter { print("\($0.name) isParent = \($0.subraces.isEmpty)"); return $0.subraces.isEmpty }
+        return allRacialTraits.filter { $0.subraces.isEmpty }
     }
     
     internal static let defaultRacesFile = "DefaultRaces"
@@ -29,13 +38,13 @@ public class Races {
     
     /// Creates races from the specified races file.
     public init(_ racesFile: String, in bundle: Bundle) throws {
-        try load(racesFile: racesFile, in: bundle)
+        try load(racesFile, in: bundle)
     }
     
     internal func add(_ race: [String: Any]) {
         if let racialTraits = RacialTraits(from: race) {
             self.allRacialTraits.append(racialTraits)
-            if let subraces = race["subraces"] as? [[String: Any]] {
+            if let subraces = race[Trait.subraces] as? [[String: Any]] {
                 add(subraces, parent: racialTraits)
             }
         }
@@ -50,13 +59,19 @@ public class Races {
     }
     
     /// Adds races from the specified races file.
-    public func load(racesFile: String, in bundle: Bundle = .main) throws {
+    public func load(_ racesFile: String, in bundle: Bundle = .main) throws {
         let jsonObject = try bundle.loadJSON(racesFile)
         
-        let races = jsonObject["races"] as! [[String: Any]]
+        let races = jsonObject[Trait.races] as! [[String: Any]]
         for race in races {
             add(race)
         }
     }
     
+    public func find(_ raceName: String?) -> RacialTraits? {
+        guard raceName != nil else { return nil }
+        
+        return races.first(where: { $0.name == raceName })
+    }
+
 }

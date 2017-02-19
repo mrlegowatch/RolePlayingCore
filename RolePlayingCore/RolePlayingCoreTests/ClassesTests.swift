@@ -19,6 +19,11 @@ class ClassesTests: XCTestCase {
         XCTAssertEqual(classes.classes.count, 4, "classes count failed")
         
         XCTAssertEqual(classes.experiencePoints?.count, 20, "array of experience points failed")
+        
+        // Test finding a class by name
+        XCTAssertNotNil(classes.find("Fighter"), "Fighter should be non-nil")
+        XCTAssertNil(classes.find("Foo"), "Foo should be nil")
+        XCTAssertNil(classes.find(nil), "nil class name should find nil")
     }
     
     func testUncommonClasses() {

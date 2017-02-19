@@ -11,7 +11,7 @@ The current organizational groupings include:
 * **Common**: common utilities such as height and weight, and a runtime error enum
 * **Currency**: currency types, conversion and parsing
 * **d20**: dice types and parsing
-* **Player**: the character, player, races, classes and related types
+* **Player**: the player, races, classes and related types
 
 ### Coming Soon...
 
@@ -20,23 +20,23 @@ In addition to fleshing out the Player grouping with types for classes, races, e
 * **Items**: Item, Container, Ammunition, Armor, Equipment, Weapon, ...
 * **Map**: Map, Geometry, Room, Door, Segment, Hallway, ...
 * **Dungeon**: Document wrapper for Map instances
-* **Equipment**: Open Game Content equipment in JSON format
 
 ## What is currently implemented
 
 The following types have an initial implementation with unit tests and full code coverage:
 
-* **UnitCurrency**: A subclass of Foundation.Dimension that can convert between different types of currency (e.g., gp, cp, pp). A DefaultCurrencies.json file is provided to specify Open Game Content currency.
-* **Money**: A Foundation.Measurement for UnitCurrency.
-* **Dice**: Includes a Dice protocol, a Die type, and several implementations of the Dice protocol for simple dice rolls, modifiers, dropping and composition of dice rolls.
-* **DiceParser**: Free functions and extensions for converting from string representations of dice rolls into Dice types.
-* **RandomNumberGenerator**: An open class for use by the Die type. Can be modified as required.
-* **Ability**: An Ability type and nested Scores type for managing ability scores. Default Open Game Content ability types are provided.
+* **Player**: The base player class.
+* **Ability**: An Ability type and nested Scores type for managing ability scores. Default ability types are provided.
 * **Alignment**: Enumerations for Ethics and Morals, with a Kind and associated Double values.
 * **ClassTraits**: Properties describing a class, that can be created from dictionary traits.
 * **Classes**: A factory for managing ClassTraits.
 * **RacialTraits**: Properties describing a race, that can be created from dictionary traits, and a parent race (for defining subraces).
 * **Races**: A factory for managing RacialTraits.
+* **UnitCurrency**: A subclass of Foundation.Dimension that can convert between different types of currency (e.g., gp, cp, pp). A DefaultCurrencies.json file is provided.
+* **Money**: A Foundation.Measurement for UnitCurrency.
+* **Dice**: Includes a Dice protocol, a Die type, and several implementations of the Dice protocol for simple dice rolls, modifiers, dropping and composition of dice rolls.
+* **DiceParser**: Free functions and extensions for converting from string representations of dice rolls into Dice types.
+* **RandomNumberGenerator**: An open class for use by the Die type. Can be modified as required.
 * **Height** and **Weight**: Typealiases and free functions for parsing strings representing height and weight into Foundation.Measurement of types Foundation.UnitLength and Foundation.UnitMass.
 
 Since this is still in the very early stages, I welcome feedback regarding organization and the current implementation.

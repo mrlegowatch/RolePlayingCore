@@ -20,6 +20,7 @@ public extension Trait {
     
 }
 
+// TODO: Support TraitCoder protocol
 public struct ClassTraits {
     
     public var name: String
@@ -46,7 +47,9 @@ public struct ClassTraits {
     
     public var startingWealth: Dice
     
-    public init?(from traits: [String: Any]) {
+    public init?(from traits: Any?) {
+        guard let traits = traits as? [String: Any] else { return nil }
+
         // Required traits
         guard let name = traits[Trait.name] as? String else { Trait.logMissing(Trait.name); return nil }
         guard let plural = traits[Trait.plural] as? String else { Trait.logMissing(Trait.plural); return nil }

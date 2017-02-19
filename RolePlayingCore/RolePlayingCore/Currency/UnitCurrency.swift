@@ -90,8 +90,8 @@ public class UnitCurrency : Dimension {
         for dictionary in currencies {
             guard let currency = UnitCurrency.makeCurrency(from: dictionary) else { throw RuntimeError("Currency missing required symbol and/or coefficient") }
             
-            // Throw a runtime error if this currency already exists.
-            guard UnitCurrency.allCurrencies.index(of: currency) == nil else { throw RuntimeError("Currency \"\(currency.symbol)\" already loaded") }
+            // Only add the currency if it doesn't already exist.
+            guard UnitCurrency.allCurrencies.index(of: currency) == nil else { continue }
             
             UnitCurrency.allCurrencies.append(currency)
             

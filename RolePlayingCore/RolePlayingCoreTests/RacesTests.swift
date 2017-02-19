@@ -17,6 +17,12 @@ class RacesTests: XCTestCase {
         
         XCTAssertEqual(races.allRacialTraits.count, 11, "all racial traits")
         XCTAssertEqual(races.races.count, 8, "all races")
+        
+        // Test finding a race by name
+        XCTAssertNotNil(races.find("Human"), "Fighter should be non-nil")
+        XCTAssertNil(races.find("Foo"), "Foo should be nil")
+        XCTAssertNil(races.find(nil), "nil race name should find nil")
+
     }
     
     func testUncommonRaces() {

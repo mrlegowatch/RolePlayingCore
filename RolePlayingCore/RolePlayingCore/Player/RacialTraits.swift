@@ -30,6 +30,7 @@ extension Trait {
     
 }
 
+// TODO: Support TraitCoder protocol
 public class RacialTraits {
     
     public var name: String
@@ -76,15 +77,13 @@ public class RacialTraits {
     
     public var baseWeight: Weight
     
-    public var weightModifier: Dice?
+    public var weightModifier: Dice
     
     public var darkVision: Int
     
     public var speed: Int
     
     public var hitPointsBonus: Int
-    
-    public weak var parent: RacialTraits?
     
     public var subraces = [RacialTraits]()
     
@@ -109,15 +108,17 @@ public class RacialTraits {
     ///   - "hit points": optional hit point bonus integer
     ///
     /// - returns: `RacialTraits` instance, or nil if there are any missing required traits.
-    public init?(from traits: [String: Any]) {
+    public required init?(from traits: Any?) {
+        guard let traits = traits as? [String: Any] else { return nil }
+
         // Required traits
         guard let name = traits[Trait.name] as? String else { Trait.logMissing(Trait.name); return nil }
         guard let plural = traits[Trait.plural] as? String else { Trait.logMissing(Trait.plural); return nil }
         guard let minimumAge = traits[Trait.minimumAge] as? Int else { Trait.logMissing(Trait.minimumAge); return nil }
         guard let lifespan = traits[Trait.lifespan] as? Int else { Trait.logMissing(Trait.lifespan); return nil }
-        guard let baseHeight = height(from: traits[Trait.baseHeight]) else { Trait.logMissing(Trait.baseHeight); return nil }
+        guard let baseHeight = Height(from: traits[Trait.baseHeight]) else { Trait.logMissing(Trait.baseHeight); return nil }
         guard let heightString = traits[Trait.heightModifier] as? String, let heightModifier = dice(from: heightString) else { Trait.logMissing(Trait.heightModifier); return nil }
-        guard let baseWeight = weight(from: traits[Trait.baseWeight]) else { Trait.logMissing(Trait.baseWeight); return nil }
+        guard let baseWeight = Weight(from: traits[Trait.baseWeight]) else { Trait.logMissing(Trait.baseWeight); return nil }
         guard let speed = traits[Trait.speed] as? Int else { Trait.logMissing(Trait.speed); return nil }
         
         // Optional traits
@@ -132,11 +133,11 @@ public class RacialTraits {
             alignment = nil
         }
         
-        let weightModifier: Dice?
+        let weightModifier: Dice
         if let weightModifierString = traits[Trait.weightModifier] as? String {
-            weightModifier = dice(from: weightModifierString)
+            weightModifier = dice(from: weightModifierString)!
         } else {
-            weightModifier = nil
+            weightModifier = DiceModifier(0)
         }
         
         let darkVision = traits[Trait.darkVision] as? Int ?? 0
@@ -179,8 +180,6 @@ public class RacialTraits {
         self.alignment = parent.alignment
         self.darkVision = parent.darkVision
         self.hitPointsBonus = parent.hitPointsBonus
-        
-        self.parent = parent
     }
     
     /// Creates a sub-race from a parent race and overridden traits.
@@ -206,18 +205,19 @@ public class RacialTraits {
             self.lifespan = lifespan
         }
         
-        if let baseHeight = height(from: traits[Trait.baseHeight]) {
+        if let baseHeight = Height(from: traits[Trait.baseHeight]) {
             self.baseHeight = baseHeight
         }
-        if let baseWeight = weight(from: traits[Trait.baseWeight]) {
+        if let baseWeight = Weight(from: traits[Trait.baseWeight]) {
             self.baseWeight = baseWeight
         }
         
-        if let heightModifier = traits[Trait.heightModifier] as? String {
-            self.heightModifier = dice(from: heightModifier)!
+        if let heightModifierString = traits[Trait.heightModifier] as? String, let heightModifier = dice(from: heightModifierString) {
+            self.heightModifier = heightModifier
         }
-        if let weightModifier = traits[Trait.weightModifier] as? String {
-            self.weightModifier = dice(from: weightModifier)
+        
+        if let weightModifierString = traits[Trait.weightModifier] as? String, let weightModifier = dice(from: weightModifierString) {
+            self.weightModifier = weightModifier
         }
         
         if let speed = traits[Trait.speed] as? Int {

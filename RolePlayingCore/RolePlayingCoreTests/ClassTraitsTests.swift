@@ -64,6 +64,10 @@ class ClassTraitsTests: XCTestCase {
     }
 
     func testMissingTraits() {
+        do {
+            let classTraits = ClassTraits(from: nil)
+            XCTAssertNil(classTraits)
+        }
         // Test that each missing trait results in nil
         do {
             let traits: [String: Any] = [:]

@@ -192,4 +192,5 @@ extension Ability.Scores {
             rawValue[ability] = 0
         }
     }
+
 }

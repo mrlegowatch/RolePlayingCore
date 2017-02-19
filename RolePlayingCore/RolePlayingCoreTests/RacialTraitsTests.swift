@@ -98,8 +98,8 @@ class RacialTraitsTests: XCTestCase {
             
             XCTAssertEqual(racialTraits?.baseWeight.value ?? 0, 110.0, "base height")
             
-            let weightModifier = racialTraits?.weightModifier
-            XCTAssertNil(weightModifier, "weight modifier")
+            let weightModifier = racialTraits?.weightModifier as? DiceModifier
+            XCTAssertEqual(weightModifier?.modifier, 0, "weight modifier")
             
             XCTAssertEqual(racialTraits?.speed, 30, "speed")
             
@@ -138,6 +138,11 @@ class RacialTraitsTests: XCTestCase {
     }
     
     func testMissingTraits() {
+        do {
+            let racialTraits = RacialTraits(from: nil)
+            XCTAssertNil(racialTraits)
+        }
+
         // Test that each missing trait results in nil
         do {
             let traits: [String: Any] = [:]
