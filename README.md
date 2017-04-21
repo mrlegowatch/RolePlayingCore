@@ -10,7 +10,7 @@ The current organizational groupings include:
 
 * **Common**: common utilities such as height and weight, and a runtime error enum
 * **Currency**: currency types, conversion and parsing
-* **d20**: dice types and parsing
+* **Dice**: dice types and parsing
 * **Player**: the player, races, classes and related types
 
 ### Coming Soon...
