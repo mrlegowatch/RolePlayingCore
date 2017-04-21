@@ -51,7 +51,12 @@ public struct DroppingDice: Dice {
     /// Creates a SimpleDice for the specified die, times to roll,
     /// and whether to drop the high or low result.
     public init(_ die: Die, times: Int, dropping: Dropping) {
-        self.dice = SimpleDice(die, times: times)
+        self.init(SimpleDice(die, times: times), dropping: dropping)
+    }
+    
+    /// Wraps a SimpleDice with whether to drop the high or low result.
+    public init(_ dice: SimpleDice, dropping: Dropping) {
+        self.dice = dice
         self.dropping = dropping
     }
     
@@ -71,7 +76,7 @@ public struct DroppingDice: Dice {
     /// Returns the last roll as a sequence of added numbers in parenthesis. Includes dropped rolls.
     public var lastRollDescription: String {
         guard dice.lastRoll.count > 0 else { return "" }
-        return "\(dice.lastRollDescription) - \(droppedRoll!)"
+        return "(\(dice.lastRollDescription) - \(droppedRoll!))"
     }
     
 }

@@ -41,6 +41,6 @@ public enum Die: Int, CustomStringConvertible {
     }
     
     /// Returns the number of die sides with "d" prepended.
-    public var description: String { return "d\(rawValue)" }
+    public var description: String { return rawValue == 100 ? "d%" : "d\(rawValue)" }
     
 }
