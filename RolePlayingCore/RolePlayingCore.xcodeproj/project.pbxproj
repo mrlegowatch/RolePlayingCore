@@ -14,6 +14,11 @@
 		B620560E1E19DDD0002494AB /* Dice.swift in Sources */ = {isa = PBXBuildFile; fileRef = B620560B1E19DDD0002494AB /* Dice.swift */; };
 		B620560F1E19DDD0002494AB /* DiceParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = B620560C1E19DDD0002494AB /* DiceParser.swift */; };
 		B62056101E19DDD0002494AB /* RandomNumberGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B620560D1E19DDD0002494AB /* RandomNumberGenerator.swift */; };
+		B681B7161EAAC8E2001DE78B /* SimpleDice.swift in Sources */ = {isa = PBXBuildFile; fileRef = B681B7151EAAC8E2001DE78B /* SimpleDice.swift */; };
+		B681B7181EAAC8EE001DE78B /* DiceModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = B681B7171EAAC8EE001DE78B /* DiceModifier.swift */; };
+		B681B71A1EAAC8FB001DE78B /* CompoundDice.swift in Sources */ = {isa = PBXBuildFile; fileRef = B681B7191EAAC8FB001DE78B /* CompoundDice.swift */; };
+		B681B71C1EAAC904001DE78B /* DroppingDice.swift in Sources */ = {isa = PBXBuildFile; fileRef = B681B71B1EAAC904001DE78B /* DroppingDice.swift */; };
+		B681B71E1EAACA9B001DE78B /* Die.swift in Sources */ = {isa = PBXBuildFile; fileRef = B681B71D1EAACA9B001DE78B /* Die.swift */; };
 		B69F84691E58B8F700A4D2B0 /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69F84681E58B8F700A4D2B0 /* Player.swift */; };
 		B69F846B1E58D33900A4D2B0 /* PlayerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69F846A1E58D33900A4D2B0 /* PlayerTests.swift */; };
 		B69F846D1E58D66900A4D2B0 /* Players.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69F846C1E58D66900A4D2B0 /* Players.swift */; };
@@ -76,6 +81,11 @@
 		B620560B1E19DDD0002494AB /* Dice.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dice.swift; sourceTree = "<group>"; };
 		B620560C1E19DDD0002494AB /* DiceParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiceParser.swift; sourceTree = "<group>"; };
 		B620560D1E19DDD0002494AB /* RandomNumberGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RandomNumberGenerator.swift; sourceTree = "<group>"; };
+		B681B7151EAAC8E2001DE78B /* SimpleDice.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleDice.swift; sourceTree = "<group>"; };
+		B681B7171EAAC8EE001DE78B /* DiceModifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiceModifier.swift; sourceTree = "<group>"; };
+		B681B7191EAAC8FB001DE78B /* CompoundDice.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CompoundDice.swift; sourceTree = "<group>"; };
+		B681B71B1EAAC904001DE78B /* DroppingDice.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DroppingDice.swift; sourceTree = "<group>"; };
+		B681B71D1EAACA9B001DE78B /* Die.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Die.swift; sourceTree = "<group>"; };
 		B69F84681E58B8F700A4D2B0 /* Player.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
 		B69F846A1E58D33900A4D2B0 /* PlayerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerTests.swift; sourceTree = "<group>"; };
 		B69F846C1E58D66900A4D2B0 /* Players.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Players.swift; sourceTree = "<group>"; };
@@ -159,7 +169,7 @@
 			children = (
 				B6FA6CAD1E47AC8D004D91B1 /* Common */,
 				B6FA6CAE1E47AC8D004D91B1 /* Currency */,
-				B62056081E19DD5D002494AB /* d20 */,
+				B62056081E19DD5D002494AB /* Dice */,
 				B6FA6CC31E4A96C2004D91B1 /* Player */,
 				B62055F11E19DD23002494AB /* RolePlayingCore.h */,
 				B62055F21E19DD23002494AB /* Info.plist */,
@@ -196,14 +206,19 @@
 			path = RolePlayingCoreTests;
 			sourceTree = "<group>";
 		};
-		B62056081E19DD5D002494AB /* d20 */ = {
+		B62056081E19DD5D002494AB /* Dice */ = {
 			isa = PBXGroup;
 			children = (
+				B681B71D1EAACA9B001DE78B /* Die.swift */,
 				B620560B1E19DDD0002494AB /* Dice.swift */,
+				B681B7151EAAC8E2001DE78B /* SimpleDice.swift */,
+				B681B7171EAAC8EE001DE78B /* DiceModifier.swift */,
+				B681B7191EAAC8FB001DE78B /* CompoundDice.swift */,
+				B681B71B1EAAC904001DE78B /* DroppingDice.swift */,
 				B620560C1E19DDD0002494AB /* DiceParser.swift */,
 				B620560D1E19DDD0002494AB /* RandomNumberGenerator.swift */,
 			);
-			path = d20;
+			path = Dice;
 			sourceTree = "<group>";
 		};
 		B6FA6CAD1E47AC8D004D91B1 /* Common */ = {
@@ -371,6 +386,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				B69F846D1E58D66900A4D2B0 /* Players.swift in Sources */,
+				B681B71C1EAAC904001DE78B /* DroppingDice.swift in Sources */,
+				B681B7161EAAC8E2001DE78B /* SimpleDice.swift in Sources */,
 				B6FA6CB41E47ACCC004D91B1 /* ServiceError.swift in Sources */,
 				B6F0703A1E4FC03700F66918 /* Money.swift in Sources */,
 				B6FA6CCB1E4E7AEA004D91B1 /* Alignment.swift in Sources */,
@@ -379,13 +396,16 @@
 				B6CF538E1E51D30900CADD9F /* Trait.swift in Sources */,
 				B6FA6CB01E47ACA1004D91B1 /* UnitCurrency.swift in Sources */,
 				B6CF53901E51DA1300CADD9F /* ClassTraits.swift in Sources */,
+				B681B71E1EAACA9B001DE78B /* Die.swift in Sources */,
 				B620560E1E19DDD0002494AB /* Dice.swift in Sources */,
 				B6CF53D01E54E2E200CADD9F /* Classes.swift in Sources */,
 				B620560F1E19DDD0002494AB /* DiceParser.swift in Sources */,
 				B6FA6CBB1E47B7F6004D91B1 /* Height.swift in Sources */,
 				B6F070381E4FBD6500F66918 /* RacialTraits.swift in Sources */,
+				B681B71A1EAAC8FB001DE78B /* CompoundDice.swift in Sources */,
 				B6FA6CBD1E47B803004D91B1 /* Weight.swift in Sources */,
 				B6FA6CC51E4A96D1004D91B1 /* Ability.swift in Sources */,
+				B681B7181EAAC8EE001DE78B /* DiceModifier.swift in Sources */,
 				B69F84691E58B8F700A4D2B0 /* Player.swift in Sources */,
 				B62056101E19DDD0002494AB /* RandomNumberGenerator.swift in Sources */,
 			);

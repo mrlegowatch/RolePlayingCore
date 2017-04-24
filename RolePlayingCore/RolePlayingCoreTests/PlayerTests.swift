@@ -110,8 +110,8 @@ class PlayerTests: XCTestCase {
             XCTAssertEqual(player?.gender, Player.Gender.male, "gender")
             XCTAssertNil(player?.alignment, "alignment")
         
-            XCTAssertEqual(player?.height.value, 3.75, "height \(player?.height.value)")
-            XCTAssertEqual(player?.weight.value, 120, "weight \(player?.weight.value)")
+            XCTAssertEqual(player?.height.value, 3.75, "height")
+            XCTAssertEqual(player?.weight.value, 120, "weight")
             
             XCTAssertEqual(player?.maximumHitPoints, 10, "maximum hit points")
             XCTAssertEqual(player?.maximumHitPoints, player?.currentHitPoints, "current hit points")
@@ -119,7 +119,7 @@ class PlayerTests: XCTestCase {
             XCTAssertEqual(player?.experiencePoints, 0, "experience points")
             XCTAssertEqual(player?.level, 1, "level")
             
-            XCTAssertEqual(player?.money.value, 130, "money \(player?.money.value)")
+            XCTAssertEqual(player?.money.value, 130, "money")
         }
         
         // Test construction with optional traits
