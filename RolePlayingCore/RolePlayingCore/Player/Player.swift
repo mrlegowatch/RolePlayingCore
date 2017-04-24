@@ -36,7 +36,7 @@ public extension Ability.Scores {
     
     // Sets the ability scores to random values using 4d6-L
     public mutating func roll() {
-        let dice = DroppingDice(.d6, times: 4, dropping: .lowest)
+        let dice = DroppingDice(.d6, times: 4, drop: .lowest)
         for ability in abilities {
             rawValue[ability] = dice.roll()
         }
