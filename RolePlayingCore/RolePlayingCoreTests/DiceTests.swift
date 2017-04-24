@@ -159,7 +159,7 @@ class DiceTests: XCTestCase {
         // Test 4d6, dropping the lowest
         do {
             print("SimpleDice 4d6-L:")
-            let simpleDice = DroppingDice(.d6, times: 4, dropping: .lowest)
+            let simpleDice = DroppingDice(.d6, times: 4, drop: .lowest)
             XCTAssertEqual(simpleDice.lastRoll.count, 0, "last roll should initially be 0 count")
             XCTAssertEqual(simpleDice.lastRollDescription, "", "last roll description should initially be empty")
             XCTAssertNil(simpleDice.droppedRoll, "droppedRoll() should initially be nil")
@@ -200,7 +200,7 @@ class DiceTests: XCTestCase {
         // Test 3d4, dropping the highest
         do {
             print("SimpleDice 3d4-H:")
-            let simpleDice = DroppingDice(.d4, times: 3, dropping: .highest)
+            let simpleDice = DroppingDice(.d4, times: 3, drop: .highest)
             
             var sum = 0
             var minValue = 0
@@ -297,6 +297,7 @@ class DiceTests: XCTestCase {
     }
     
     func testDiceFormatString() {
+        // Test dice
         do {
             let formatString = "d12"
             print("Format Dice \(formatString):")
@@ -325,6 +326,7 @@ class DiceTests: XCTestCase {
             print("  lastRoll \"\(result)\"")
         }
         
+        // Test times
         do {
             let formatString = "2d10"
             print("Format Dice \(formatString):")
@@ -353,7 +355,38 @@ class DiceTests: XCTestCase {
             let result = formatDice?.lastRollDescription ?? ""
             print("  lastRoll \"\(result)\"")
         }
-        
+
+        // Test times with capital "D"
+        do {
+            let formatString = "2D10"
+            print("Format Dice \(formatString):")
+            
+            let formatDice = dice(from: formatString)
+            XCTAssertNotNil(formatDice, "Dice from \(formatString) should be non-nil")
+            var sum = 0
+            var minValue = 0
+            var maxValue = 0
+            for _ in 0 ..< sampleSize {
+                let roll = formatDice?.roll() ?? 0
+                XCTAssertTrue((2...20).contains(roll), "rolling \(formatString), got \(roll)")
+                sum += roll
+                minValue = minValue == 0 ? roll : min(minValue, roll)
+                maxValue = maxValue == 0 ? roll : max(maxValue, roll)
+            }
+            let mean = Double(sum)/Double(sampleSize)
+            XCTAssertTrue((10.0...12.0).contains(mean), "expected mean around 11.0, got \(mean)")
+            
+            // TODO: Because 2d10 produces a bell curve, the actual min/max may be harder to get in a sample
+            XCTAssertLessThanOrEqual(minValue, 3, "min value")
+            XCTAssertGreaterThanOrEqual(maxValue, 19, "max value")
+            
+            // Code coverage and manual inspection of test output:
+            print("  mean = \(mean) [expect 11.0]")
+            let result = formatDice?.lastRollDescription ?? ""
+            print("  lastRoll \"\(result)\"")
+        }
+
+        // Test add modifier
         do {
             let formatString = "1d20+4"
             print("Format Dice \(formatString):")
@@ -382,6 +415,7 @@ class DiceTests: XCTestCase {
             print("  lastRoll \"\(result)\"")
         }
         
+        // Test percent
         do {
             let formatString = "d%"
             print("Format Dice \(formatString):")
@@ -405,12 +439,18 @@ class DiceTests: XCTestCase {
             XCTAssertLessThanOrEqual(minValue, 2, "min value")
             XCTAssertGreaterThanOrEqual(maxValue, 99, "max value")
             
+            // Check that the description has the %
+            if formatDice != nil {
+                XCTAssertEqual("\(formatDice!.description)", "d%", "% description")
+            }
+
             // Code coverage and manual inspection of test output:
             print("  mean = \(mean) [expect 50.5]")
             let result = formatDice?.lastRollDescription ?? ""
             print("  lastRoll \"\(result)\"")
         }
         
+        // Test multiply
         do {
             let formatString = "2d4x10"
             print("Format Dice \(formatString):")
@@ -439,6 +479,65 @@ class DiceTests: XCTestCase {
             print("  lastRoll \"\(result)\"")
         }
 
+        // Test multiply with '*'
+        do {
+            let formatString = "2d4*10"
+            print("Format Dice \(formatString):")
+            
+            let formatDice = dice(from: formatString)
+            XCTAssertNotNil(formatDice, "Dice from \(formatString) should be non-nil")
+            var sum = 0
+            var minValue = 0
+            var maxValue = 0
+            for _ in 0 ..< sampleSize {
+                let roll = formatDice?.roll() ?? 0
+                XCTAssertTrue((20...80).contains(roll), "rolling \(formatString), got \(roll)")
+                sum += roll
+                minValue = minValue == 0 ? roll : min(minValue, roll)
+                maxValue = maxValue == 0 ? roll : max(maxValue, roll)
+            }
+            let mean = Double(sum)/Double(sampleSize)
+            XCTAssertTrue((46.0...56.0).contains(mean), "expected mean around 50.0, got \(mean)")
+            
+            XCTAssertEqual(minValue, 20, "min value")
+            XCTAssertEqual(maxValue, 80, "max value")
+            
+            // Code coverage and manual inspection of test output:
+            print("  mean = \(mean) [expect 50.0]")
+            let result = formatDice?.lastRollDescription ?? ""
+            print("  lastRoll \"\(result)\"")
+        }
+
+        // Test divide
+        do {
+            let formatString = "d100/10"
+            print("Format Dice \(formatString):")
+            
+            let formatDice = dice(from: formatString)
+            XCTAssertNotNil(formatDice, "Dice from \(formatString) should be non-nil")
+            var sum = 0
+            var minValue = 0
+            var maxValue = 0
+            for _ in 0 ..< sampleSize {
+                let roll = formatDice?.roll() ?? 0
+                XCTAssertTrue((0...10).contains(roll), "rolling \(formatString), got \(roll)")
+                sum += roll
+                minValue = minValue == 0 ? roll : min(minValue, roll)
+                maxValue = maxValue == 0 ? roll : max(maxValue, roll)
+            }
+            let mean = Double(sum)/Double(sampleSize)
+            XCTAssertTrue((4.0...5.0).contains(mean), "expected mean around 4.5, got \(mean)")
+            
+            XCTAssertGreaterThanOrEqual(minValue, 0, "min value")
+            XCTAssertLessThanOrEqual(maxValue, 10, "max value")
+            
+            // Code coverage and manual inspection of test output:
+            print("  mean = \(mean) [expect 4.5]")
+            let result = formatDice?.lastRollDescription ?? ""
+            print("  lastRoll \"\(result)\"")
+        }
+        
+        // Test dropping "L"
         do {
             let formatString = "4d6-L"
             print("Format Dice \(formatString):")
@@ -473,22 +572,8 @@ class DiceTests: XCTestCase {
             let result = formatDice?.lastRollDescription ?? ""
             print("  lastRoll \"\(result)\"")
         }
-        
-        do {
-            let formatString = "1+3"
-            let formatDice = dice(from: formatString)
-            XCTAssertNotNil(formatDice, "Dice from \(formatString) should not be nil")
-            
-            if let formatDice = formatDice {
-                XCTAssertEqual(formatDice.description, "1+3", "format string")
-                XCTAssertEqual(formatDice.lastRollDescription, "1 + 3", "format string")
-            }
-        }
     }
     
-
-    // TODO: some complex dice formats, such as those commented out below, are not yet supported.
-    // dice() does not yet compose math expressions that can be evaluated from left to right.
     func testComplexDiceFormatString() {
         do {
             let formatString = "2d4+3d12-4"
@@ -525,8 +610,7 @@ class DiceTests: XCTestCase {
             print("  lastRoll \"\(result)\"")
         }
  
-        // TODO: the dice parser can't yet handle regular expressions such as this one.
-        /*
+        // Test with subtraction second to last, to ensure operator precedence
         do {
             let formatString = "2d4+d12-2+5"
             print("Complex Format Dice \(formatString):")
@@ -566,10 +650,62 @@ class DiceTests: XCTestCase {
             let result = formatDice?.lastRollDescription ?? ""
             print("  lastRoll \"\(result)\" = \(lastRoll)")
         }
-         */
-
+        
+        // Repeat with extra roll, dropping, spaces and returns
+        do {
+            let formatString = "3d4- L + d12 -\n2 + 5"
+            print("Complex Format Dice \(formatString):")
+            
+            let formatDice = dice(from: formatString)
+            XCTAssertNotNil(formatDice, "Dice from \(formatString) should be non-nil")
+            
+            var sum = 0
+            var minValue = 0
+            var maxValue = 0
+            var lastRoll = 0
+            
+            for _ in 0 ..< sampleSize {
+                let roll = formatDice?.roll() ?? 0
+                XCTAssertTrue((6...23).contains(roll), "rolling \(formatString), got \(roll)")
+                sum += roll
+                minValue = minValue == 0 ? roll : min(minValue, roll)
+                maxValue = maxValue == 0 ? roll : max(maxValue, roll)
+                
+                lastRoll = roll
+            }
+            
+            let mean = Double(sum)/Double(sampleSize)
+            XCTAssertTrue((13.0...16.0).contains(mean), "expected mean around 14.5, got \(mean)")
+            
+            // TODO: Because this produces a bell curve, the actual min/max may be harder to get in a sample
+            XCTAssertLessThanOrEqual(minValue, 7, "min value")
+            XCTAssertGreaterThanOrEqual(maxValue, 22, "max value")
+            
+            XCTAssertEqual(formatDice?.sides, 4, "Dice sides")
+            if formatDice != nil {
+                XCTAssertEqual("\(formatDice!.description)", "3d4-L+d12-2+5", "SimpleDice description")
+            }
+            
+            // Code coverage and manual inspection of test output:
+            print("  mean = \(mean) [expect 14.5]")
+            let result = formatDice?.lastRollDescription ?? ""
+            print("  lastRoll \"\(result)\" = \(lastRoll)")
+        }
+        
+        // Test two constant modifiers
+        do {
+            let formatString = "1+3"
+            let formatDice = dice(from: formatString)
+            XCTAssertNotNil(formatDice, "Dice from \(formatString) should not be nil")
+            
+            if let formatDice = formatDice {
+                XCTAssertEqual(formatDice.description, "1+3", "format string")
+                XCTAssertEqual(formatDice.lastRollDescription, "1 + 3", "format string")
+            }
+        }
     }
     
+
     func testDiceFormatStringNegative() {
         // Negative tests
         do {
@@ -587,7 +723,64 @@ class DiceTests: XCTestCase {
         do {
             let badFormatString = "2+elephants"
             let roll = dice(from: badFormatString)
-            XCTAssertNil(roll, "'\(badFormatString)' unsupported dice number")
+            XCTAssertNil(roll, "'\(badFormatString)' unsupported character tokens")
         }
+        
+        // catch missing dice sides
+        do {
+            let badFormatString = "3d"
+            let roll = dice(from: badFormatString)
+            XCTAssertNil(roll, "'\(badFormatString)' missing dice sides")
+        }
+        
+        // catch isDropping false code path at end of string, and missing expression
+        do {
+            let badFormatString = "2-"
+            let roll = dice(from: badFormatString)
+            XCTAssertNil(roll, "'\(badFormatString)' missing expression")
+        }
+        
+        // catch dropping missing minus
+        do {
+            let badFormatString = "2d4H"
+            let roll = dice(from: badFormatString)
+            XCTAssertNil(roll, "'\(badFormatString)' dropping missing minus")
+        }
+        
+        // catch dropping missing SimpleDice
+        do {
+            let badFormatString = "2-H"
+            let roll = dice(from: badFormatString)
+            XCTAssertNil(roll, "'\(badFormatString)' dropping missing SimpleDice")
+        }
+
+        // catch consecutive numbers
+        do {
+            let badFormatString = "3 4"
+            let roll = dice(from: badFormatString)
+            XCTAssertNil(roll, "'\(badFormatString)' consecutive numbers")
+        }
+
+        // catch consecutive math operators
+        do {
+            let badFormatString = "3++4"
+            let roll = dice(from: badFormatString)
+            XCTAssertNil(roll, "'\(badFormatString)' consecutive math operators")
+        }
+        
+        // Catch consecutive dice expressions (both valid dice)
+        do {
+            let badFormatString = "d4d4"
+            let roll = dice(from: badFormatString)
+            XCTAssertNil(roll, "'\(badFormatString)' consecutive dice expressions")
+        }
+        
+        // Catch consecutive dice 'd' characters
+        do {
+            let badFormatString = "dd4"
+            let roll = dice(from: badFormatString)
+            XCTAssertNil(roll, "'\(badFormatString)' consecutive dice expressions")
+        }
+
     }
 }

@@ -9,18 +9,6 @@
 import Foundation
 
 
-// TODO: there is an issue with the math operators map, it can't be expanded without
-// generating a compiler error (expression too complex).
-
-/// Function signature for a math operator or function.
-public typealias MathOperator = (Int, Int) -> Int
-
-/// Mapping of strings to function signatures.
-internal let mathOperators: [String: MathOperator] = ["+": (+), "-": (-), "x": (*)]
-
-/// The character set of math operators.
-internal let mathOperatorCharacters = CharacterSet(charactersIn: mathOperators.keys.reduce("", +))
-
 /// General-purpose composition of dice rolls.
 /// The two primary use cases for this type are:
 /// - combining two rolls, e.g., "2d4+d6",
@@ -35,9 +23,9 @@ public struct CompoundDice: Dice {
     /// All parameters except die are optional; times defaults to 1, modifier defaults to 0,
     /// and math operator defaults to "+".
     public init(_ die: Die, times: Int = 1, modifier: Int = 0, mathOperator: String = "+") {
-        self.lhs = SimpleDice(die, times: times)
-        self.rhs = DiceModifier(modifier)
-        self.mathOperator = mathOperator
+        let dice = SimpleDice(die, times: times)
+        let modifier = DiceModifier(modifier)
+        self.init(lhs: dice, rhs: modifier, mathOperator: mathOperator)
     }
     
     /// Creates a dice from two dice instances with a math operator.
@@ -46,13 +34,19 @@ public struct CompoundDice: Dice {
         self.rhs = rhs
         self.mathOperator = mathOperator
     }
+
+    /// Function signature for a math operator or function.
+    internal typealias MathOperator = (Int, Int) -> Int
     
+    /// Mapping of strings to function signatures.
+    internal static let mathOperators: [String: MathOperator] = ["+": (+), "-": (-), "x": (*), "*": (*), "/": (/)]
+
     /// Rolls the specified number of times, optionally adding or multiplying a modifier,
     /// and returning the result.
     public func roll() -> Int {
         let lhsResult = lhs.roll()
         let rhsResult = rhs.roll()
-        return mathOperators[mathOperator]!(lhsResult, rhsResult)
+        return CompoundDice.mathOperators[mathOperator]!(lhsResult, rhsResult)
     }
     
     /// Returns the number of sides of the left hand dice.

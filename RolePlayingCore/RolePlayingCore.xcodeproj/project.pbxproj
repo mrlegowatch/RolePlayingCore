@@ -211,12 +211,12 @@
 			children = (
 				B681B71D1EAACA9B001DE78B /* Die.swift */,
 				B620560B1E19DDD0002494AB /* Dice.swift */,
-				B620560C1E19DDD0002494AB /* DiceParser.swift */,
-				B620560D1E19DDD0002494AB /* RandomNumberGenerator.swift */,
 				B681B7151EAAC8E2001DE78B /* SimpleDice.swift */,
 				B681B7171EAAC8EE001DE78B /* DiceModifier.swift */,
 				B681B7191EAAC8FB001DE78B /* CompoundDice.swift */,
 				B681B71B1EAAC904001DE78B /* DroppingDice.swift */,
+				B620560C1E19DDD0002494AB /* DiceParser.swift */,
+				B620560D1E19DDD0002494AB /* RandomNumberGenerator.swift */,
 			);
 			path = Dice;
 			sourceTree = "<group>";
