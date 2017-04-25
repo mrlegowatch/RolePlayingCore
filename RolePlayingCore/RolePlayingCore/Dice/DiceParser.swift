@@ -193,15 +193,12 @@ private struct DiceParserState {
     /// If there is no current parsed dice, the current parse state is returned. 
     /// If there is no math operator or no rhs, lhs is returned.
     mutating func combine(_ lhsDice: Dice?) -> Dice? {
-        // Make sure we have an initial expression for the left hand side.
-        var returnDice = lhsDice ?? flush()
+        guard let lhsDice = lhsDice else { return flush() }
+        guard let mathOperator = lastMathOperator, let rhsDice = flush() else { return lhsDice }
         
         // If we have a left hand side, a math operator and a right hand side, combine them.
-        if let lhsDice = returnDice, let mathOperator = lastMathOperator, let rhsDice = flush() {
-            // Combine lhs with the last modifier or dice
-            returnDice = CompoundDice(lhs: lhsDice, rhs: rhsDice, mathOperator: mathOperator)
-            lastMathOperator = nil
-        }
+        let returnDice = CompoundDice(lhs: lhsDice, rhs: rhsDice, mathOperator: mathOperator)
+        lastMathOperator = nil
         
         return returnDice
     }
