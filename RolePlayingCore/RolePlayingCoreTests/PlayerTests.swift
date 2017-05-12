@@ -19,7 +19,7 @@ class PlayerTests: XCTestCase {
     
     override func setUp() {
         // TODO: Need to initialize UnitCurrency before creating Money instances in Player class.
-        try! UnitCurrency.load("DefaultCurrencies", in: Bundle(for: PlayerTests.self))
+        try! UnitCurrency.load("TestCurrencies", in: Bundle(for: PlayerTests.self))
 
         self.fighterTraits = [
             "name": "Fighter",
@@ -92,12 +92,12 @@ class PlayerTests: XCTestCase {
         do {
             let playerTraits: [String: Any] = [
                 "name": "Bilbo",
-                "gender": "male",
+                "gender": "Male",
                 "height": "3'9\"",
                 "weight": 120,
                 "ability scores": ["Dexterity": 13],
                 "money": 130,
-                "hit points": 10]
+                "maximum hit points": 10]
             
             let player = Player(from: playerTraits)
             player?.racialTraits = human
@@ -131,7 +131,7 @@ class PlayerTests: XCTestCase {
                 "weight": 120,
                 "ability scores": ["Strength": 12],
                 "money": 130,
-                "hit points": 10,
+                "maximum hit points": 10,
                 "experience points": 2300,
                 "level": 2]
             
@@ -150,6 +150,43 @@ class PlayerTests: XCTestCase {
             XCTAssertEqual(player?.canLevelUp, false, "level up")
             player?.levelUp()
             XCTAssertEqual(player?.level, 3, "level")
+        }
+    }
+    
+    func testPlayerRoundTrip() {
+        let playerTraits: [String: Any] = [
+            "name": "Bilbo",
+            "gender": "Male",
+            "alignment": "Neutral Good",
+            "height": "3'9\"",
+            "weight": 120,
+            "ability scores": ["Dexterity": 13],
+            "money": 130,
+            "maximum hit points": 20,
+            "current hit points": 9,
+            "level": 2]
+        
+        let player = Player(from: playerTraits)
+        
+        let encoded = player?.encodeTraits() as? [String: Any]
+        XCTAssertNotNil(encoded, "player traits round trip")
+        
+        if let encoded = encoded {
+            XCTAssertEqual(encoded["name"] as? String, "Bilbo", "player traits round trip name")
+            XCTAssertEqual(encoded["gender"] as? String, "Male", "player traits round trip gender")
+            XCTAssertEqual(encoded["alignment"] as? String, "Neutral Good", "player traits round trip alignment")
+            XCTAssertEqual(encoded["height"] as? Double, 3.75, "player traits round trip height")
+            XCTAssertEqual(encoded["weight"] as? Double, 120, "player traits round trip weight")
+            
+            let abilities = encoded["ability scores"] as? [String: Int]
+            XCTAssertNotNil(abilities)
+            print("\(abilities)")
+            XCTAssertEqual(abilities?["Dexterity"], 13, "player traits round trip ability scores")
+            
+            XCTAssertEqual(encoded["money"] as? Double, 130, "player traits round trip money")
+            XCTAssertEqual(encoded["maximum hit points"] as? Int, 20, "player traits round trip maximum hit points")
+            XCTAssertEqual(encoded["current hit points"] as? Int, 9, "player traits round trip current hit points")
+            XCTAssertEqual(encoded["level"] as? Int, 2, "player traits round trip level")
         }
     }
     

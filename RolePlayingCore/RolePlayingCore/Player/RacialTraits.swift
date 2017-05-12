@@ -28,6 +28,8 @@ extension Trait {
 
     public static let darkVision = "darkvision"
     
+    public static let hitPointBonus = "hit point bonus"
+    
 }
 
 // TODO: Support TraitCoder protocol
@@ -83,7 +85,7 @@ public class RacialTraits {
     
     public var speed: Int
     
-    public var hitPointsBonus: Int
+    public var hitPointBonus: Int
     
     public var subraces = [RacialTraits]()
     
@@ -105,7 +107,7 @@ public class RacialTraits {
     ///   - "ability score increase": optional array of ability string names
     ///   - "alignment": optional string alignment name
     ///   - "darkvision": optional integer
-    ///   - "hit points": optional hit point bonus integer
+    ///   - "hit point bonus": optional hit point bonus integer
     ///
     /// - returns: `RacialTraits` instance, or nil if there are any missing required traits.
     public required init?(from traits: Any?) {
@@ -142,7 +144,7 @@ public class RacialTraits {
         
         let darkVision = traits[Trait.darkVision] as? Int ?? 0
         
-        let hitPointsBonus = traits[Trait.hitPoints] as? Int ?? 0
+        let hitPointsBonus = traits[Trait.hitPointBonus] as? Int ?? 0
         
         // TODO: weapons, armor, skills, etc.
         
@@ -162,7 +164,7 @@ public class RacialTraits {
         self.abilityScoreIncrease = abilityScoreIncrease
         self.alignment = alignment
         self.darkVision = darkVision
-        self.hitPointsBonus = hitPointsBonus
+        self.hitPointBonus = hitPointsBonus
     }
     
     internal init(copyFrom parent: RacialTraits) {
@@ -179,7 +181,7 @@ public class RacialTraits {
         self.abilityScoreIncrease = parent.abilityScoreIncrease
         self.alignment = parent.alignment
         self.darkVision = parent.darkVision
-        self.hitPointsBonus = parent.hitPointsBonus
+        self.hitPointBonus = parent.hitPointBonus
     }
     
     /// Creates a sub-race from a parent race and overridden traits.
@@ -236,8 +238,8 @@ public class RacialTraits {
             self.darkVision = darkVision
         }
         
-        if let hitPointsBonus = traits[Trait.hitPoints] as? Int {
-            self.hitPointsBonus = hitPointsBonus
+        if let hitPointsBonus = traits[Trait.hitPointBonus] as? Int {
+            self.hitPointBonus = hitPointsBonus
         }
     }
     

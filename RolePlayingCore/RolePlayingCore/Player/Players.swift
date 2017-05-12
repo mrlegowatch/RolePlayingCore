@@ -51,5 +51,21 @@ public class Players {
             self.players.append(player)
         }
     }
+
+    public var count: Int { return players.count }
+    
+    public subscript(index: Int) -> Player? {
+        get {
+            return players[index]
+        }
+    }
+    
+    public func insert(_ player: Player, at index: Int) {
+        players.insert(player, at: index)
+    }
+    
+    public func remove(at index: Int) {
+        players.remove(at: index)
+    }
     
 }

@@ -29,15 +29,12 @@ public class Races {
         return allRacialTraits.filter { $0.subraces.isEmpty }
     }
     
-    internal static let defaultRacesFile = "DefaultRaces"
-
-    /// Creates default races.
-    public convenience init(in bundle: Bundle = .main) {
-        try! self.init(Races.defaultRacesFile, in: bundle)
+    /// Creates an empty races list.
+    public init() {
     }
     
     /// Creates races from the specified races file.
-    public init(_ racesFile: String, in bundle: Bundle) throws {
+    public init(_ racesFile: String, in bundle: Bundle = .main) throws {
         try load(racesFile, in: bundle)
     }
     
@@ -74,4 +71,11 @@ public class Races {
         return races.first(where: { $0.name == raceName })
     }
 
+    public var count: Int { return races.count }
+    
+    public subscript(index: Int) -> RacialTraits? {
+        get {
+            return races[index]
+        }
+    }
 }

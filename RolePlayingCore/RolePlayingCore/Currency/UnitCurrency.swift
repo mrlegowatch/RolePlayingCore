@@ -10,6 +10,8 @@ import Foundation
 
 extension Trait {
     
+    static let currencies = "currencies"
+    
     static let currency = "currency"
     
     static let `default` = "default"
@@ -102,14 +104,11 @@ public class UnitCurrency : Dimension {
         }
     }
 
-    /// The default currencies JSON file name.
-    public static let defaultCurrenciesFile = "DefaultCurrencies"
-     
     /// Loads the specified currency file in JSON format from the specified bundle. 
     /// Defaults to a file named "DefaultCurrencies" in the main bundle.
     ///
     /// See `load(from:)` for details on the JSON dictionary format.
-    public static func load(_ currenciesFile: String = defaultCurrenciesFile, in bundle: Bundle = .main) throws {
+    public static func load(_ currenciesFile: String, in bundle: Bundle = .main) throws {
         let jsonObject = try bundle.loadJSON(currenciesFile)
         try load(from: jsonObject)
     }

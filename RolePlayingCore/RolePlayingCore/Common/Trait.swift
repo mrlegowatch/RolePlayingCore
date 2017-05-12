@@ -18,8 +18,6 @@ public struct Trait {
     
     public static let alignment = "alignment"
     
-    public static let hitPoints = "hit points"
-
     public static let hitDice = "hit dice"
     
     static internal func logMissing(_ name: String) {

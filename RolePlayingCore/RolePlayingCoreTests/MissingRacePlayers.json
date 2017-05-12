@@ -3,8 +3,7 @@
                 {
                 "name": "Frodo",
                 "gender": "male",
-                "class": "Software Engineer",
-                "race": "High Elf",
+                "class": "Fighter",
                 "height": "3'9\"",
                 "weight": 120,
                 "ability scores": {"Dexterity": 13},

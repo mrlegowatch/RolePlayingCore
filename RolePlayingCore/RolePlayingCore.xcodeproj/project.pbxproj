@@ -14,6 +14,18 @@
 		B620560E1E19DDD0002494AB /* Dice.swift in Sources */ = {isa = PBXBuildFile; fileRef = B620560B1E19DDD0002494AB /* Dice.swift */; };
 		B620560F1E19DDD0002494AB /* DiceParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = B620560C1E19DDD0002494AB /* DiceParser.swift */; };
 		B62056101E19DDD0002494AB /* RandomNumberGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B620560D1E19DDD0002494AB /* RandomNumberGenerator.swift */; };
+		B66AF8FC1EAE87A800C15F8E /* TestClasses.json in Resources */ = {isa = PBXBuildFile; fileRef = B66AF8F41EAE87A800C15F8E /* TestClasses.json */; };
+		B66AF8FD1EAE87A800C15F8E /* TestConfiguration.json in Resources */ = {isa = PBXBuildFile; fileRef = B66AF8F51EAE87A800C15F8E /* TestConfiguration.json */; };
+		B66AF8FE1EAE87A800C15F8E /* TestCurrencies.json in Resources */ = {isa = PBXBuildFile; fileRef = B66AF8F61EAE87A800C15F8E /* TestCurrencies.json */; };
+		B66AF8FF1EAE87A800C15F8E /* TestMoreClasses.json in Resources */ = {isa = PBXBuildFile; fileRef = B66AF8F71EAE87A800C15F8E /* TestMoreClasses.json */; };
+		B66AF9001EAE87A800C15F8E /* TestMoreRaces.json in Resources */ = {isa = PBXBuildFile; fileRef = B66AF8F81EAE87A800C15F8E /* TestMoreRaces.json */; };
+		B66AF9011EAE87A800C15F8E /* TestNames.json in Resources */ = {isa = PBXBuildFile; fileRef = B66AF8F91EAE87A800C15F8E /* TestNames.json */; };
+		B66AF9021EAE87A800C15F8E /* TestPlayers.json in Resources */ = {isa = PBXBuildFile; fileRef = B66AF8FA1EAE87A800C15F8E /* TestPlayers.json */; };
+		B66AF9031EAE87A800C15F8E /* TestRaces.json in Resources */ = {isa = PBXBuildFile; fileRef = B66AF8FB1EAE87A800C15F8E /* TestRaces.json */; };
+		B66AF9051EAE88C300C15F8E /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = B66AF9041EAE88C300C15F8E /* Configuration.swift */; };
+		B66AF9071EAE88FF00C15F8E /* ConfigurationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B66AF9061EAE88FF00C15F8E /* ConfigurationTests.swift */; };
+		B66AF9091EAE8B8100C15F8E /* MissingClassPlayers.json in Resources */ = {isa = PBXBuildFile; fileRef = B66AF9081EAE8B8000C15F8E /* MissingClassPlayers.json */; };
+		B66AF90B1EAE8BF100C15F8E /* MissingRacePlayers.json in Resources */ = {isa = PBXBuildFile; fileRef = B66AF90A1EAE8BF100C15F8E /* MissingRacePlayers.json */; };
 		B681B7161EAAC8E2001DE78B /* SimpleDice.swift in Sources */ = {isa = PBXBuildFile; fileRef = B681B7151EAAC8E2001DE78B /* SimpleDice.swift */; };
 		B681B7181EAAC8EE001DE78B /* DiceModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = B681B7171EAAC8EE001DE78B /* DiceModifier.swift */; };
 		B681B71A1EAAC8FB001DE78B /* CompoundDice.swift in Sources */ = {isa = PBXBuildFile; fileRef = B681B7191EAAC8FB001DE78B /* CompoundDice.swift */; };
@@ -32,12 +44,8 @@
 		B6CF53CE1E54DF4500CADD9F /* JSONFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6CF53CD1E54DF4500CADD9F /* JSONFile.swift */; };
 		B6CF53D01E54E2E200CADD9F /* Classes.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6CF53CF1E54E2E200CADD9F /* Classes.swift */; };
 		B6CF53D21E54E2EF00CADD9F /* Races.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6CF53D11E54E2EF00CADD9F /* Races.swift */; };
-		B6CF53D41E55147B00CADD9F /* DefaultRaces.json in Resources */ = {isa = PBXBuildFile; fileRef = B6CF53D31E55147B00CADD9F /* DefaultRaces.json */; };
-		B6CF53D71E5519F300CADD9F /* UncommonRaces.json in Resources */ = {isa = PBXBuildFile; fileRef = B6CF53D51E55175C00CADD9F /* UncommonRaces.json */; };
 		B6CF53D91E56442800CADD9F /* RacesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6CF53D81E56442800CADD9F /* RacesTests.swift */; };
 		B6CF53DB1E56443A00CADD9F /* ClassesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6CF53DA1E56443A00CADD9F /* ClassesTests.swift */; };
-		B6CF53E01E5662AC00CADD9F /* DefaultClasses.json in Resources */ = {isa = PBXBuildFile; fileRef = B6CF53DC1E56609500CADD9F /* DefaultClasses.json */; };
-		B6CF53E11E5662B000CADD9F /* UncommonClasses.json in Resources */ = {isa = PBXBuildFile; fileRef = B6CF53DE1E5660AE00CADD9F /* UncommonClasses.json */; };
 		B6CF53E51E57429D00CADD9F /* JSONFileTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6CF53E41E57429D00CADD9F /* JSONFileTests.swift */; };
 		B6CF53E71E5742C700CADD9F /* JSONFile.json in Resources */ = {isa = PBXBuildFile; fileRef = B6CF53E61E5742C700CADD9F /* JSONFile.json */; };
 		B6CF53E91E57460F00CADD9F /* InvalidJSONFile.json in Resources */ = {isa = PBXBuildFile; fileRef = B6CF53E81E57460F00CADD9F /* InvalidJSONFile.json */; };
@@ -49,7 +57,6 @@
 		B6FA6CB01E47ACA1004D91B1 /* UnitCurrency.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6FA6CAF1E47ACA1004D91B1 /* UnitCurrency.swift */; };
 		B6FA6CB41E47ACCC004D91B1 /* ServiceError.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6FA6CB31E47ACCC004D91B1 /* ServiceError.swift */; };
 		B6FA6CB61E47B080004D91B1 /* CurrencyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6FA6CB51E47B080004D91B1 /* CurrencyTests.swift */; };
-		B6FA6CB71E47B0CB004D91B1 /* DefaultCurrencies.json in Resources */ = {isa = PBXBuildFile; fileRef = B6FA6CB11E47ACB3004D91B1 /* DefaultCurrencies.json */; };
 		B6FA6CB91E47B4B1004D91B1 /* ServiceErrorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6FA6CB81E47B4B1004D91B1 /* ServiceErrorTests.swift */; };
 		B6FA6CBB1E47B7F6004D91B1 /* Height.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6FA6CBA1E47B7F6004D91B1 /* Height.swift */; };
 		B6FA6CBD1E47B803004D91B1 /* Weight.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6FA6CBC1E47B803004D91B1 /* Weight.swift */; };
@@ -81,6 +88,18 @@
 		B620560B1E19DDD0002494AB /* Dice.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dice.swift; sourceTree = "<group>"; };
 		B620560C1E19DDD0002494AB /* DiceParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiceParser.swift; sourceTree = "<group>"; };
 		B620560D1E19DDD0002494AB /* RandomNumberGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RandomNumberGenerator.swift; sourceTree = "<group>"; };
+		B66AF8F41EAE87A800C15F8E /* TestClasses.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TestClasses.json; sourceTree = "<group>"; };
+		B66AF8F51EAE87A800C15F8E /* TestConfiguration.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TestConfiguration.json; sourceTree = "<group>"; };
+		B66AF8F61EAE87A800C15F8E /* TestCurrencies.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TestCurrencies.json; sourceTree = "<group>"; };
+		B66AF8F71EAE87A800C15F8E /* TestMoreClasses.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TestMoreClasses.json; sourceTree = "<group>"; };
+		B66AF8F81EAE87A800C15F8E /* TestMoreRaces.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TestMoreRaces.json; sourceTree = "<group>"; };
+		B66AF8F91EAE87A800C15F8E /* TestNames.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TestNames.json; sourceTree = "<group>"; };
+		B66AF8FA1EAE87A800C15F8E /* TestPlayers.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TestPlayers.json; sourceTree = "<group>"; };
+		B66AF8FB1EAE87A800C15F8E /* TestRaces.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TestRaces.json; sourceTree = "<group>"; };
+		B66AF9041EAE88C300C15F8E /* Configuration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Configuration.swift; sourceTree = "<group>"; };
+		B66AF9061EAE88FF00C15F8E /* ConfigurationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfigurationTests.swift; sourceTree = "<group>"; };
+		B66AF9081EAE8B8000C15F8E /* MissingClassPlayers.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = MissingClassPlayers.json; sourceTree = "<group>"; };
+		B66AF90A1EAE8BF100C15F8E /* MissingRacePlayers.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = MissingRacePlayers.json; sourceTree = "<group>"; };
 		B681B7151EAAC8E2001DE78B /* SimpleDice.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleDice.swift; sourceTree = "<group>"; };
 		B681B7171EAAC8EE001DE78B /* DiceModifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiceModifier.swift; sourceTree = "<group>"; };
 		B681B7191EAAC8FB001DE78B /* CompoundDice.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CompoundDice.swift; sourceTree = "<group>"; };
@@ -99,12 +118,8 @@
 		B6CF53CD1E54DF4500CADD9F /* JSONFile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONFile.swift; sourceTree = "<group>"; };
 		B6CF53CF1E54E2E200CADD9F /* Classes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Classes.swift; sourceTree = "<group>"; };
 		B6CF53D11E54E2EF00CADD9F /* Races.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Races.swift; sourceTree = "<group>"; };
-		B6CF53D31E55147B00CADD9F /* DefaultRaces.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = DefaultRaces.json; sourceTree = "<group>"; };
-		B6CF53D51E55175C00CADD9F /* UncommonRaces.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = UncommonRaces.json; sourceTree = "<group>"; };
 		B6CF53D81E56442800CADD9F /* RacesTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RacesTests.swift; sourceTree = "<group>"; };
 		B6CF53DA1E56443A00CADD9F /* ClassesTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClassesTests.swift; sourceTree = "<group>"; };
-		B6CF53DC1E56609500CADD9F /* DefaultClasses.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = DefaultClasses.json; sourceTree = "<group>"; };
-		B6CF53DE1E5660AE00CADD9F /* UncommonClasses.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = UncommonClasses.json; sourceTree = "<group>"; };
 		B6CF53E41E57429D00CADD9F /* JSONFileTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONFileTests.swift; sourceTree = "<group>"; };
 		B6CF53E61E5742C700CADD9F /* JSONFile.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = JSONFile.json; sourceTree = "<group>"; };
 		B6CF53E81E57460F00CADD9F /* InvalidJSONFile.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = InvalidJSONFile.json; sourceTree = "<group>"; };
@@ -114,7 +129,6 @@
 		B6F070391E4FC03700F66918 /* Money.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Money.swift; sourceTree = "<group>"; };
 		B6F0703B1E4FC18500F66918 /* RacialTraitsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RacialTraitsTests.swift; sourceTree = "<group>"; };
 		B6FA6CAF1E47ACA1004D91B1 /* UnitCurrency.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnitCurrency.swift; sourceTree = "<group>"; };
-		B6FA6CB11E47ACB3004D91B1 /* DefaultCurrencies.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = DefaultCurrencies.json; sourceTree = "<group>"; };
 		B6FA6CB31E47ACCC004D91B1 /* ServiceError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceError.swift; sourceTree = "<group>"; };
 		B6FA6CB51E47B080004D91B1 /* CurrencyTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrencyTests.swift; sourceTree = "<group>"; };
 		B6FA6CB81E47B4B1004D91B1 /* ServiceErrorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceErrorTests.swift; sourceTree = "<group>"; };
@@ -188,6 +202,8 @@
 				B69F84701E59165000A4D2B0 /* TestPlayers.json */,
 				B69F84721E591DE400A4D2B0 /* InvalidClassPlayers.json */,
 				B69F84741E591E9800A4D2B0 /* InvalidRacePlayers.json */,
+				B66AF9081EAE8B8000C15F8E /* MissingClassPlayers.json */,
+				B66AF90A1EAE8BF100C15F8E /* MissingRacePlayers.json */,
 				B6FA6CB51E47B080004D91B1 /* CurrencyTests.swift */,
 				B62056091E19DDC0002494AB /* DiceTests.swift */,
 				B6FA6CBE1E47C2F9004D91B1 /* HeightTests.swift */,
@@ -196,11 +212,20 @@
 				B6CF53DA1E56443A00CADD9F /* ClassesTests.swift */,
 				B6F0703B1E4FC18500F66918 /* RacialTraitsTests.swift */,
 				B6CF53D81E56442800CADD9F /* RacesTests.swift */,
+				B66AF9061EAE88FF00C15F8E /* ConfigurationTests.swift */,
 				B6CF53E41E57429D00CADD9F /* JSONFileTests.swift */,
 				B6CF53E61E5742C700CADD9F /* JSONFile.json */,
 				B6CF53E81E57460F00CADD9F /* InvalidJSONFile.json */,
 				B6CF53EA1E574ED400CADD9F /* HalfBakedJSONFile.json */,
 				B6FA6CB81E47B4B1004D91B1 /* ServiceErrorTests.swift */,
+				B66AF8F41EAE87A800C15F8E /* TestClasses.json */,
+				B66AF8F51EAE87A800C15F8E /* TestConfiguration.json */,
+				B66AF8F61EAE87A800C15F8E /* TestCurrencies.json */,
+				B66AF8F71EAE87A800C15F8E /* TestMoreClasses.json */,
+				B66AF8F81EAE87A800C15F8E /* TestMoreRaces.json */,
+				B66AF8F91EAE87A800C15F8E /* TestNames.json */,
+				B66AF8FA1EAE87A800C15F8E /* TestPlayers.json */,
+				B66AF8FB1EAE87A800C15F8E /* TestRaces.json */,
 				B62055FE1E19DD23002494AB /* Info.plist */,
 			);
 			path = RolePlayingCoreTests;
@@ -224,6 +249,7 @@
 		B6FA6CAD1E47AC8D004D91B1 /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				B66AF9041EAE88C300C15F8E /* Configuration.swift */,
 				B6FA6CB31E47ACCC004D91B1 /* ServiceError.swift */,
 				B6CF538D1E51D30900CADD9F /* Trait.swift */,
 				B6FA6CBA1E47B7F6004D91B1 /* Height.swift */,
@@ -238,7 +264,6 @@
 			children = (
 				B6FA6CAF1E47ACA1004D91B1 /* UnitCurrency.swift */,
 				B6F070391E4FC03700F66918 /* Money.swift */,
-				B6FA6CB11E47ACB3004D91B1 /* DefaultCurrencies.json */,
 			);
 			path = Currency;
 			sourceTree = "<group>";
@@ -254,10 +279,6 @@
 				B69F846C1E58D66900A4D2B0 /* Players.swift */,
 				B6F070371E4FBD6500F66918 /* RacialTraits.swift */,
 				B6CF53D11E54E2EF00CADD9F /* Races.swift */,
-				B6CF53DC1E56609500CADD9F /* DefaultClasses.json */,
-				B6CF53DE1E5660AE00CADD9F /* UncommonClasses.json */,
-				B6CF53D31E55147B00CADD9F /* DefaultRaces.json */,
-				B6CF53D51E55175C00CADD9F /* UncommonRaces.json */,
 			);
 			path = Player;
 			sourceTree = "<group>";
@@ -365,15 +386,20 @@
 			buildActionMask = 2147483647;
 			files = (
 				B6CF53E91E57460F00CADD9F /* InvalidJSONFile.json in Resources */,
-				B6CF53D71E5519F300CADD9F /* UncommonRaces.json in Resources */,
+				B66AF9021EAE87A800C15F8E /* TestPlayers.json in Resources */,
+				B66AF8FE1EAE87A800C15F8E /* TestCurrencies.json in Resources */,
 				B69F84711E59165000A4D2B0 /* TestPlayers.json in Resources */,
-				B6CF53D41E55147B00CADD9F /* DefaultRaces.json in Resources */,
+				B66AF90B1EAE8BF100C15F8E /* MissingRacePlayers.json in Resources */,
 				B69F84751E591E9800A4D2B0 /* InvalidRacePlayers.json in Resources */,
+				B66AF9011EAE87A800C15F8E /* TestNames.json in Resources */,
+				B66AF8FD1EAE87A800C15F8E /* TestConfiguration.json in Resources */,
+				B66AF9091EAE8B8100C15F8E /* MissingClassPlayers.json in Resources */,
 				B69F84731E591DE400A4D2B0 /* InvalidClassPlayers.json in Resources */,
-				B6CF53E01E5662AC00CADD9F /* DefaultClasses.json in Resources */,
-				B6FA6CB71E47B0CB004D91B1 /* DefaultCurrencies.json in Resources */,
+				B66AF8FF1EAE87A800C15F8E /* TestMoreClasses.json in Resources */,
+				B66AF9031EAE87A800C15F8E /* TestRaces.json in Resources */,
+				B66AF9001EAE87A800C15F8E /* TestMoreRaces.json in Resources */,
 				B6CF53EB1E574ED400CADD9F /* HalfBakedJSONFile.json in Resources */,
-				B6CF53E11E5662B000CADD9F /* UncommonClasses.json in Resources */,
+				B66AF8FC1EAE87A800C15F8E /* TestClasses.json in Resources */,
 				B6CF53E71E5742C700CADD9F /* JSONFile.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -391,6 +417,7 @@
 				B6FA6CB41E47ACCC004D91B1 /* ServiceError.swift in Sources */,
 				B6F0703A1E4FC03700F66918 /* Money.swift in Sources */,
 				B6FA6CCB1E4E7AEA004D91B1 /* Alignment.swift in Sources */,
+				B66AF9051EAE88C300C15F8E /* Configuration.swift in Sources */,
 				B6CF53CE1E54DF4500CADD9F /* JSONFile.swift in Sources */,
 				B6CF53D21E54E2EF00CADD9F /* Races.swift in Sources */,
 				B6CF538E1E51D30900CADD9F /* Trait.swift in Sources */,
@@ -429,6 +456,7 @@
 				B6FA6CBF1E47C2F9004D91B1 /* HeightTests.swift in Sources */,
 				B62055FD1E19DD23002494AB /* RolePlayingCoreTests.swift in Sources */,
 				B6FA6CC11E47C306004D91B1 /* WeightTests.swift in Sources */,
+				B66AF9071EAE88FF00C15F8E /* ConfigurationTests.swift in Sources */,
 				B69F846B1E58D33900A4D2B0 /* PlayerTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

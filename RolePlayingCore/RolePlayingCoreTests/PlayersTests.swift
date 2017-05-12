@@ -19,11 +19,11 @@ class PlayersTests: XCTestCase {
         let bundle = Bundle(for: PlayersTests.self)
         
         // TODO: Need to initialize UnitCurrency before creating Money instances in Player class.
-        try! UnitCurrency.load("DefaultCurrencies", in: bundle)
+        try! UnitCurrency.load("TestCurrencies", in: bundle)
 
         // TODO: if these fail, it will kill the unit test run.
-        classes = try! Classes("DefaultClasses", in: bundle)
-        races = try! Races("DefaultRaces", in: bundle)
+        classes = try! Classes("TestClasses", in: bundle)
+        races = try! Races("TestRaces", in: bundle)
     }
     
     func testPlayers() {
@@ -37,6 +37,15 @@ class PlayersTests: XCTestCase {
             XCTFail("players.load failed, error \(error)")
         }
         XCTAssertEqual(players.players.count, 2, "players count")
+        XCTAssertEqual(players.count, 2, "players count")
+
+        let removedPlayer = players[0]!
+        players.remove(at: 0)
+        XCTAssertEqual(players.count, 1, "players count")
+        
+        players.insert(removedPlayer, at: 1)
+        XCTAssertEqual(players.count, 2, "players count")
+        XCTAssertTrue(players[1]! === removedPlayer, "players count")
     }
     
     func testMissingTraits() {
@@ -60,5 +69,26 @@ class PlayersTests: XCTestCase {
             print("players.load correctly threw an error \(error)")
         }
         XCTAssertEqual(players.players.count, 0, "players count")
+        
+        do {
+            try players.load("MissingClassPlayers", in: bundle)
+            XCTFail("players.load should have failed")
+        }
+        catch let error {
+            print("players.load correctly threw an error \(error)")
+        }
+        XCTAssertEqual(players.players.count, 0, "players count")
+
+        do {
+            try players.load("MissingRacePlayers", in: bundle)
+            XCTFail("players.load should have failed")
+        }
+        catch let error {
+            print("players.load correctly threw an error \(error)")
+        }
+        XCTAssertEqual(players.players.count, 0, "players count")
+
     }
+    
+    
 }
