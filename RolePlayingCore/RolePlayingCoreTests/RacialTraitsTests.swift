@@ -278,7 +278,7 @@ class RacialTraitsTests: XCTestCase {
                 XCTAssertEqual(subracialTraits.size, RacialTraits.Size.small, "size")
                 XCTAssertNil(subracialTraits.alignment, "alignment")
 
-                XCTAssertEqual(subracialTraits.hitPointsBonus, 0, "hit points bonus")
+                XCTAssertEqual(subracialTraits.hitPointBonus, 0, "hit point bonus")
 
             }
             
@@ -290,7 +290,7 @@ class RacialTraitsTests: XCTestCase {
                     "ability scores": ["Strength": 2, "Dexterity": 1, "Constitution": 3, "Intelligence": 2, "Wisdom": 1, "Charisma": 1],
                     "alignment": "Neutral",
                     "darkvision": 20,
-                    "hit points": 2
+                    "hit point bonus": 2
                 ]
                 let subracialTraits = RacialTraits(from: subTraits, parent: racialTraits)
                 
@@ -329,7 +329,7 @@ class RacialTraitsTests: XCTestCase {
                 let foundAlignment = subracialTraits.alignment?.kind ?? Alignment(.lawful, .good).kind
                 XCTAssertEqual(foundAlignment, Alignment(.neutral, .neutral).kind, "alignment kind")
 
-                XCTAssertEqual(subracialTraits.hitPointsBonus, 2, "hit points bonus")
+                XCTAssertEqual(subracialTraits.hitPointBonus, 2, "hit point bonus")
             }
         }
     }

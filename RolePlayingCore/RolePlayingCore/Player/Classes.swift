@@ -24,20 +24,17 @@ public class Classes {
     public var classes: [ClassTraits] { return classTraits }
     
     public var experiencePoints: [Int]?
-    
-    internal static let defaultClassesFile = "DefaultClasses"
 
-    /// Creates default races.
-    public convenience init(in bundle: Bundle = .main) {
-        try! self.init(Classes.defaultClassesFile, in: bundle)
+    /// Creates an empty classes list
+    public init() {
     }
     
-    /// Creates races from the specified races file.
-    public init(_ classesFile: String, in bundle: Bundle) throws  {
+    /// Creates classes from the specified classes file.
+    public init(_ classesFile: String, in bundle: Bundle = .main) throws  {
         try load(classesFile, in: bundle)
     }
     
-    /// Adds races from the specified races file.
+    /// Adds classes from the specified classes file.
     public func load(_ classesFile: String, in bundle: Bundle = .main) throws {
         let jsonObject = try bundle.loadJSON(classesFile)
 
@@ -62,5 +59,13 @@ public class Classes {
     
     public func find(_ className: String?) -> ClassTraits? {
         return classes.first(where: { $0.name == className })
+    }
+    
+    public var count: Int { return classes.count }
+    
+    public subscript(index: Int) -> ClassTraits? {
+        get {
+            return classes[index]
+        }
     }
 }

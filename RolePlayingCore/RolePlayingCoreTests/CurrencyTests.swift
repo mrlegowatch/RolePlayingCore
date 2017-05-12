@@ -17,7 +17,7 @@ class UnitCurrencyTests: XCTestCase {
         super.setUp()
         
         // Only load once. TODO: this has a side effect on other unit tests: currencies are already loaded.
-        try! UnitCurrency.load("DefaultCurrencies", in: Bundle(for: UnitCurrencyTests.self))
+        try! UnitCurrency.load("TestCurrencies", in: Bundle(for: UnitCurrencyTests.self))
     }
     
     func testUnitCurrency() {
@@ -127,7 +127,7 @@ class UnitCurrencyTests: XCTestCase {
         // It should ignore the duplicate currencies.
         do {
             XCTAssertEqual(UnitCurrency.allCurrencies.count, 5, "currencies count")
-            try UnitCurrency.load("DefaultCurrencies", in: Bundle(for: UnitCurrencyTests.self))
+            try UnitCurrency.load("TestCurrencies", in: Bundle(for: UnitCurrencyTests.self))
             XCTAssertEqual(UnitCurrency.allCurrencies.count, 5, "currencies count")
         }
         catch let error {

@@ -16,6 +16,10 @@ public extension Trait {
     
     public static let weight = "weight"
     
+    public static let maximumHitPoints = "maximum hit points"
+    
+    public static let currentHitPoints = "current hit points"
+    
     public static let money = "money"
     
     public static let level = "level"
@@ -46,7 +50,7 @@ public extension Ability.Scores {
 
 // TODO: Is this a base class for Character? What about NPC? Monster? Should we have a protocol?
 // TODO: Support TraitCoder protocol
-public class Player {
+public class Player: TraitCoder {
     
     public var name: String
     
@@ -63,8 +67,8 @@ public class Player {
     public var className: String { return classTraits.name }
     
     public enum Gender: String {
-        case female = "female"
-        case male = "male"
+        case female = "Female"
+        case male = "Male"
     }
     
     /// Androgynous or hermaphroditic are represented as nil.
@@ -103,7 +107,6 @@ public class Player {
     
     public var level: Int
     
-    
     // Equipment and money
     
     public var money: Money
@@ -123,7 +126,6 @@ public class Player {
         self.racialTraits = racialTraits
         self.classTraits = classTraits
         
-
         self.gender = gender
         self.alignment = alignment
         
@@ -159,8 +161,8 @@ public class Player {
 
         guard let money = Money(from: traits[Trait.money]) else { Trait.logMissing(Trait.money); return nil }
         
-        guard let maximumHitPoints = traits[Trait.hitPoints] as? Int else { Trait.logMissing(Trait.hitPoints); return nil }
-        
+        guard let maximumHitPoints = traits[Trait.maximumHitPoints] as? Int else { Trait.logMissing(Trait.maximumHitPoints); return nil }
+           
         // Optional traits
         let gender: Gender?
         if let genderString = traits[Trait.gender] as? String {
@@ -176,6 +178,8 @@ public class Player {
             alignment = nil
         }
         
+        let currentHitPoints = traits[Trait.currentHitPoints] as? Int ?? maximumHitPoints
+
         let experiencePoints = traits[Trait.experiencePoints] as? Int ?? 0
         let level = traits[Trait.level] as? Int ?? 1
         
@@ -188,13 +192,30 @@ public class Player {
         self.baseAbilities = baseAbilities
         self.money = money
         self.maximumHitPoints = maximumHitPoints
-        self.currentHitPoints = maximumHitPoints
+        self.currentHitPoints = currentHitPoints
         self.experiencePoints = experiencePoints
         self.level = level
     }
     
+    public func encodeTraits() -> Any? {
+        var traits = [String: Any]()
+        traits[Trait.name] = name
+        traits[Trait.gender] = gender?.rawValue
+        traits[Trait.alignment] = alignment?.description
+        traits[Trait.height] = height.value
+        traits[Trait.weight] = weight.value
+        traits[Trait.abilityScores] = baseAbilities.encodeTraits()
+        traits[Trait.money] = money.value
+        traits[Trait.maximumHitPoints] = maximumHitPoints
+        traits[Trait.currentHitPoints] = currentHitPoints
+        traits[Trait.experiencePoints] = experiencePoints
+        traits[Trait.level] = level
+        
+        return traits
+    }
+
     class func rollHitPoints(classTraits: ClassTraits, racialTraits: RacialTraits) -> Int {
-        return max(classTraits.hitDice.sides / 2 + 1, classTraits.hitDice.roll()) + racialTraits.hitPointsBonus
+        return max(classTraits.hitDice.sides / 2 + 1, classTraits.hitDice.roll()) + racialTraits.hitPointBonus
     }
     
     func rollHitPoints() -> Int {

@@ -22,7 +22,7 @@
                            "name": "Hill Dwarf",
                            "plural": "Hill Dwarves",
                            "ability scores": { "Wisdom": 2 },
-                           "hit points": 1,
+                           "hit point bonus": 1,
                            "base height": "3'5\"",
                            "base weight": 115,
                            },
@@ -57,7 +57,7 @@
                            "weapons": ["longsword", "shortsword", "shortbow", "longbow"],
                            "extra languages": 1,
                            "spells": ["wizard cantrip"],
-                           "hit points": 1
+                           "hit point bonus": 1
                            },
                            {
                            "name": "Wood Elf",

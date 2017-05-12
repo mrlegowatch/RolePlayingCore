@@ -2,18 +2,18 @@
     "players": [
                 {
                 "name": "Frodo",
-                "gender": "male",
+                "gender": "Male",
                 "class": "Cleric",
                 "race": "High Elf",
                 "height": "3'9\"",
                 "weight": 120,
                 "ability scores": {"Dexterity": 13},
                 "money": 130,
-                "hit points": 10
+                "maximum hit points": 10
                 },
                 {
                 "name": "Bilbo",
-                "gender": "female",
+                "gender": "Female",
                 "class": "Fighter",
                 "race": "Human",
                 "alignment": "Lawful Evil",
@@ -21,7 +21,7 @@
                 "weight": 120,
                 "ability scores": {"Strength": 12},
                 "money": 130,
-                "hit points": 10,
+                "maximum hit points": 10,
                 "experience points": 2300,
                 "level": 2
                 }

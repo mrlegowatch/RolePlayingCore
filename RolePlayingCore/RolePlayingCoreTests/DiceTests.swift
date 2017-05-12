@@ -704,8 +704,7 @@ class DiceTests: XCTestCase {
             }
         }
     }
-    
-
+	
     func testDiceFormatStringNegative() {
         // Negative tests
         do {
