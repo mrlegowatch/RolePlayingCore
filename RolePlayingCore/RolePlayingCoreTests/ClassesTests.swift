@@ -12,18 +12,19 @@ import RolePlayingCore
 
 class ClassesTests: XCTestCase {
     
+    let bundle = Bundle(for: ClassesTests.self)
+    let decoder = JSONDecoder()
+    
     func testDefaultClasses() {
-        let classes = Classes()
+        var classes: Classes! = nil
         do {
-            try classes.load("TestClasses", in: Bundle(for: ClassesTests.self))
+            let jsonData = try bundle.loadJSON("TestClasses")
+            classes = try decoder.decode(Classes.self, from: jsonData)
         }
         catch {
             XCTFail("Classes threw an error: \(error)")
         }
         
-        XCTAssertNotNil(classes, "Classes file failed to load")
-
-        XCTAssertEqual(classes.classTraits.count, 4, "classTraits count failed")
         XCTAssertEqual(classes.classes.count, 4, "classes count failed")
         XCTAssertEqual(classes.count, 4, "classes count failed")
         XCTAssertNotNil(classes[0], "class by index failed")
@@ -37,18 +38,16 @@ class ClassesTests: XCTestCase {
     }
     
     func testUncommonClasses() {
-        var classes: Classes? = nil
+        var classes: Classes! = nil
         do {
-            classes = try Classes("TestMoreClasses", in: Bundle(for: ClassesTests.self))
+            let jsonData = try bundle.loadJSON("TestMoreClasses")
+            classes = try decoder.decode(Classes.self, from: jsonData)
         }
         catch let error {
             XCTFail("Classes threw an error: \(error)")
         }
         
-        XCTAssertNotNil(classes, "Classes file failed to load")
-        
-        XCTAssertEqual(classes?.classTraits.count, 8, "classTraits count failed")
-        XCTAssertEqual(classes?.classes.count, 8, "classes count failed")
+        XCTAssertEqual(classes.classes.count, 8, "classes count failed")
     }
     
 }

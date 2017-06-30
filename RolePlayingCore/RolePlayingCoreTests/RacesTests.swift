@@ -12,20 +12,24 @@ import RolePlayingCore
 
 class RacesTests: XCTestCase {
     
+    let bundle = Bundle(for: RacesTests.self)
+    let decoder = JSONDecoder()
+    
     func testRaces() {
-        let races = Races()
+        var races: Races! = nil
         do {
-            try races.load("TestRaces", in: Bundle(for: RacesTests.self))
+            let jsonData = try bundle.loadJSON("TestRaces")
+            races = try decoder.decode(Races.self, from: jsonData)
         }
         catch let error {
             XCTFail("Races threw an error: \(error)")
         }
         
         XCTAssertNotNil(races, "Races file failed to load")
-
-        XCTAssertEqual(races.allRacialTraits.count, 11, "all racial traits")
-        XCTAssertEqual(races.races.count, 8, "all races")
-        XCTAssertEqual(races.count, 8, "all races")
+        
+        // TODO: support sub-races
+        XCTAssertEqual(races.leafRaces.count, 8, "all races")
+        XCTAssertEqual(races.count, 11, "all races")
         XCTAssertNotNil(races[0], "race by index")
         
         // Test finding a race by name
@@ -37,9 +41,10 @@ class RacesTests: XCTestCase {
     
     func testUncommonRaces() {
         // Test throwing constructor
-        var races: Races? = nil
+        var races: Races! = nil
         do {
-            races = try Races("TestMoreRaces", in: Bundle(for: RacesTests.self))
+            let jsonData = try bundle.loadJSON("TestMoreRaces")
+            races = try decoder.decode(Races.self, from: jsonData)
         }
         catch let error {
             XCTFail("Races threw an error: \(error)")
@@ -48,7 +53,6 @@ class RacesTests: XCTestCase {
         XCTAssertNotNil(races, "Races file failed to load")
         
         // There should be 5 races plus 2 subraces
-        XCTAssertEqual(races?.allRacialTraits.count, 7, "all racial traits")
-        XCTAssertEqual(races?.races.count, 6, "all races")
+        XCTAssertEqual(races.races.count, 7, "all races")
     }
 }

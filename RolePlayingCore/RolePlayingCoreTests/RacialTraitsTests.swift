@@ -12,23 +12,35 @@ import RolePlayingCore
 
 class RacialTraitsTests: XCTestCase {
     
+    let decoder = JSONDecoder()
+    
     func testRacialTraits() {
         // Test typical traits
         do {
-            let traits: [String : Any] = [
-                "name": "Human",
-                "plural": "Humans",
-                "ability scores": ["Strength": 1, "Dexterity": 1, "Constitution": 1, "Intelligence": 1, "Wisdom": 1, "Charisma": 1],
-                "minimum age": 18,
-                "lifespan": 90,
-                "base height": "4'8\"",
-                "height modifier": "2d10",
-                "base weight": 110,
-                "weight modifier": "2d4",
-                "speed": 30,
-                "languages": ["Common"],
-                "extra languages": 1]
-            let racialTraits = RacialTraits(from: traits)
+            let traits = """
+                {
+                    "name": "Human",
+                    "plural": "Humans",
+                    "ability scores": {"Strength": 1, "Dexterity": 1, "Constitution": 1, "Intelligence": 1, "Wisdom": 1, "Charisma": 1},
+                    "minimum age": 18,
+                    "lifespan": 90,
+                    "base height": "4'8\\"",
+                    "height modifier": "2d10",
+                    "base weight": 110,
+                    "weight modifier": "2d4",
+                    "speed": 30,
+                    "languages": ["Common"],
+                    "extra languages": 1
+                }
+                """.data(using: .utf8)!
+            var racialTraits: RacialTraits? = nil
+            do {
+                racialTraits = try decoder.decode(RacialTraits.self, from: traits)
+            }
+            catch let error {
+                XCTFail("Failed to decode racial traits, error: \(error)")
+            }
+            
             XCTAssertNotNil(racialTraits)
             XCTAssertEqual(racialTraits?.name, "Human", "name")
             XCTAssertEqual(racialTraits?.plural, "Humans", "plural")
@@ -56,8 +68,6 @@ class RacialTraitsTests: XCTestCase {
             XCTAssertEqual(weightModifier?.times, 2, "weight modifier")
 
             XCTAssertEqual(racialTraits?.speed, 30, "speed")
-            // TODO: XCTAssertEqual(racialTraits?.languages.count, 1, "languages")
-            // TODO: XCTAssertEqual(racialTraits?.extraLanguages, 1, "extra languages")
             
             XCTAssertEqual(racialTraits?.aliases.count, 0, "aliases")
             
@@ -67,16 +77,25 @@ class RacialTraitsTests: XCTestCase {
 
         // Test minimum traits
         do {
-            let traits: [String : Any] = [
-                "name": "Giant Human",
-                "plural": "Giant Humans",
-                "minimum age": 18,
-                "lifespan": 90,
-                "base height": "7'8\"",
-                "height modifier": "2d10",
-                "base weight": 110,
-                "speed": 30]
-            let racialTraits = RacialTraits(from: traits)
+            let traits = """
+                {
+                    "name": "Giant Human",
+                    "plural": "Giant Humans",
+                    "minimum age": 18,
+                    "lifespan": 90,
+                    "base height": "7'8\\"",
+                    "height modifier": "2d10",
+                    "base weight": 110,
+                    "speed": 30
+                }
+                """.data(using: .utf8)!
+            var racialTraits: RacialTraits? = nil
+            do {
+                racialTraits = try decoder.decode(RacialTraits.self, from: traits)
+            }
+            catch let error {
+                XCTFail("Failed to decode racial traits, error: \(error)")
+            }
             XCTAssertNotNil(racialTraits)
             XCTAssertEqual(racialTraits?.name, "Giant Human", "name")
             XCTAssertEqual(racialTraits?.plural, "Giant Humans", "plural")
@@ -111,20 +130,28 @@ class RacialTraitsTests: XCTestCase {
         
         // Test optional traits
         do {
-            let traits: [String : Any] = [
-                "name": "Small Human",
-                "plural": "Small Humans",
-                "minimum age": 18,
-                "lifespan": 90,
-                "base height": "2'8\"",
-                "height modifier": "2d10",
-                "base weight": 110,
-                "speed": 30,
-                "alignment": "Lawful Neutral",
-                "aliases": ["Big Human"]
-                ]
+            let traits = """
+                {
+                    "name": "Small Human",
+                    "plural": "Small Humans",
+                    "minimum age": 18,
+                    "lifespan": 90,
+                    "base height": "2'8\\"",
+                    "height modifier": "2d10",
+                    "base weight": 110,
+                    "speed": 30,
+                    "alignment": "Lawful Neutral",
+                    "aliases": ["Big Human"]
+                }
+                """.data(using: .utf8)!
             
-            let racialTraits = RacialTraits(from: traits)
+            var racialTraits: RacialTraits? = nil
+            do {
+                racialTraits = try decoder.decode(RacialTraits.self, from: traits)
+            }
+            catch let error {
+                XCTFail("Failed to decode racial traits, error: \(error)")
+            }
             XCTAssertNotNil(racialTraits)
             
             XCTAssertEqual(racialTraits?.size, RacialTraits.Size.small, "size")
@@ -138,116 +165,63 @@ class RacialTraitsTests: XCTestCase {
     }
     
     func testMissingTraits() {
-        do {
-            let racialTraits = RacialTraits(from: nil)
-            XCTAssertNil(racialTraits)
-        }
 
         // Test that each missing trait results in nil
         do {
-            let traits: [String: Any] = [:]
-            let racialTraits = RacialTraits(from: traits)
+            let traits = "{}".data(using: .utf8)!
+            let racialTraits = try? decoder.decode(RacialTraits.self, from: traits)
             XCTAssertNil(racialTraits)
         }
         
         do {
-            let traits: [String : Any] = [
-                "name": "Giant Human"]
-            let racialTraits = RacialTraits(from: traits)
+            let traits = """
+                { "name": "Giant Human" }
+                """.data(using: .utf8)!
+            let racialTraits = try? decoder.decode(RacialTraits.self, from: traits)
             XCTAssertNil(racialTraits)
         }
         
         
         do {
-            let traits: [String : Any] = [
-                "name": "Giant Human",
-                "plural": "Giant Humans"]
-            let racialTraits = RacialTraits(from: traits)
-            XCTAssertNil(racialTraits)
-        }
-        
-        do {
-            let traits: [String : Any] = [
-                "name": "Giant Human",
-                "plural": "Giant Humans",
-                "minimum age": 18]
-            let racialTraits = RacialTraits(from: traits)
-            XCTAssertNil(racialTraits)
-        }
-        
-        do {
-            let traits: [String : Any] = [
-                "name": "Giant Human",
-                "plural": "Giant Humans",
-                "minimum age": 18,
-                "lifespan": 90]
-            let racialTraits = RacialTraits(from: traits)
-            XCTAssertNil(racialTraits)
-        }
-        
-        do {
-            let traits: [String : Any] = [
-                "name": "Giant Human",
-                "plural": "Giant Humans",
-                "minimum age": 18,
-                "lifespan": 90,
-                "base height": "7'8\""]
-            let racialTraits = RacialTraits(from: traits)
-            XCTAssertNil(racialTraits)
-        }
-        
-        do {
-            let traits: [String : Any] = [
-                "name": "Giant Human",
-                "plural": "Giant Humans",
-                "minimum age": 18,
-                "lifespan": 90,
-                "base height": "7'8\"",
-                "height modifier": "2d10"]
-            let racialTraits = RacialTraits(from: traits)
-            XCTAssertNil(racialTraits)
-        }
-        
-        do {
-            let traits: [String : Any] = [
-                "name": "Giant Human",
-                "plural": "Giant Humans",
-                "minimum age": 18,
-                "lifespan": 90,
-                "base height": "7'8\"",
-                "height modifier": "2d10",
-                "base weight": 110]
-            let racialTraits = RacialTraits(from: traits)
+            let traits = """
+                {
+                    "plural": "Giant Humans"
+                }
+                """.data(using: .utf8)!
+            let racialTraits = try? decoder.decode(RacialTraits.self, from: traits)
             XCTAssertNil(racialTraits)
         }
     }
-
+    
     func testSubraceTraits() {
-        let traits: [String : Any] = [
-            "name": "Human",
-            "plural": "Humans",
-            "minimum age": 18,
-            "lifespan": 90,
-            "base height": "4'8\"",
-            "height modifier": "2d10",
-            "base weight": 110,
-            "speed": 30]
-        if let racialTraits = RacialTraits(from: traits) {
-            // Test half overrides
-            do {
-                let subTraits: [String: Any] = [
-                    "name": "Subhuman",
-                    "plural": "Subhumans",
-                    "minimum age": 15,
-                    "lifespan": 60,
-                    "base height": "2'8\"",
-                    "height modifier": "2d6",
-                    "base weight": 45,
-                    "speed": 10
+        do {
+            let traits = """
+            {
+                "name": "Human",
+                "plural": "Humans",
+                "minimum age": 18,
+                "lifespan": 90,
+                "base height": "4'8\\"",
+                "height modifier": "2d10",
+                "base weight": 110,
+                "speed": 30,
+                "subraces": [
+                    {
+                        "name": "Subhuman",
+                        "plural": "Subhumans",
+                        "minimum age": 15,
+                        "lifespan": 60,
+                        "base height": "2'8\\"",
+                        "height modifier": "2d6",
+                        "base weight": 45,
+                        "speed": 10
+                    }
                 ]
-                let subracialTraits = RacialTraits(from: subTraits, parent: racialTraits)
+            }
+            """.data(using: .utf8)!
+            let racialTraits = try decoder.decode(RacialTraits.self, from: traits)
+            if let subracialTraits = racialTraits.subraces.first {
                 
-                XCTAssertNotNil(subracialTraits)
                 XCTAssertEqual(subracialTraits.name, "Subhuman", "name")
                 XCTAssertEqual(subracialTraits.plural, "Subhumans", "plural")
                 XCTAssertEqual(subracialTraits.abilityScoreIncrease.count, 6, "ability score increase")
@@ -270,8 +244,6 @@ class RacialTraitsTests: XCTestCase {
                 XCTAssertNil(weightModifier, "weight modifier")
                 
                 XCTAssertEqual(subracialTraits.speed, 10, "speed")
-                // TODO: XCTAssertEqual(subracialTraits?.languages.count, 1, "languages")
-                // TODO: XCTAssertEqual(subracialTraits?.extraLanguages, 1, "extra languages")
                 
                 XCTAssertEqual(subracialTraits.aliases.count, 0, "aliases")
                 
@@ -280,23 +252,47 @@ class RacialTraitsTests: XCTestCase {
 
                 XCTAssertEqual(subracialTraits.hitPointBonus, 0, "hit point bonus")
 
+            } else {
+                XCTFail("decode failed for traits with subtrace traits")
             }
-            
-            // Test the other half overrides
-            do {
-                let subTraits: [String: Any] = [
-                    "aliases": ["Folks"],
-                    "weight modifier": "d8",
-                    "ability scores": ["Strength": 2, "Dexterity": 1, "Constitution": 3, "Intelligence": 2, "Wisdom": 1, "Charisma": 1],
-                    "alignment": "Neutral",
-                    "darkvision": 20,
-                    "hit point bonus": 2
+        }
+        catch let error {
+            XCTFail("decode failed, error: \(error)")
+        }
+    
+        // Test the other half overrides
+        do {
+            let traits = """
+            {
+                "name": "Human",
+                "plural": "Humans",
+                "minimum age": 18,
+                "lifespan": 90,
+                "base height": "4'8\\"",
+                "height modifier": "2d10",
+                "base weight": 110,
+                "speed": 30,
+                "subraces": [
+                    {
+                        "name": "Folk",
+                        "plural": "Folks",
+                        "aliases": ["Plainfolk"],
+                        "weight modifier": "d8",
+                        "ability scores": {"Strength": 2, "Dexterity": 1, "Constitution": 3, "Intelligence": 2, "Wisdom": 1, "Charisma": 1},
+                        "alignment": "Neutral",
+                        "darkvision": 20,
+                        "hit point bonus": 2
+                    }
                 ]
-                let subracialTraits = RacialTraits(from: subTraits, parent: racialTraits)
-                
+            }
+            """.data(using: .utf8)!
+            
+            let racialTraits = try decoder.decode(RacialTraits.self, from: traits)
+            if let subracialTraits = racialTraits.subraces.first {
+            
                 XCTAssertNotNil(subracialTraits)
-                XCTAssertEqual(subracialTraits.name, "Human", "name")
-                XCTAssertEqual(subracialTraits.plural, "Humans", "plural")
+                XCTAssertEqual(subracialTraits.name, "Folk", "name")
+                XCTAssertEqual(subracialTraits.plural, "Folks", "plural")
                 XCTAssertEqual(subracialTraits.abilityScoreIncrease.count, 6, "ability score increase")
                 for score in subracialTraits.abilityScoreIncrease.values {
                     XCTAssertNotEqual(score, 0, "ability score increase")
@@ -319,8 +315,6 @@ class RacialTraitsTests: XCTestCase {
                 XCTAssertEqual(weightModifier?.times, 1, "weight modifier")
                 
                 XCTAssertEqual(subracialTraits.speed, 30, "speed")
-                // TODO: XCTAssertEqual(subracialTraits?.languages.count, 1, "languages")
-                // TODO: XCTAssertEqual(subracialTraits?.extraLanguages, 1, "extra languages")
                 
                 XCTAssertEqual(subracialTraits.aliases.count, 1, "aliases")
                 
@@ -330,7 +324,13 @@ class RacialTraitsTests: XCTestCase {
                 XCTAssertEqual(foundAlignment, Alignment(.neutral, .neutral).kind, "alignment kind")
 
                 XCTAssertEqual(subracialTraits.hitPointBonus, 2, "hit point bonus")
+            } else {
+                XCTFail("decode failed for traits with subtrace traits")
             }
         }
+        catch let error {
+            XCTFail("decode failed with error: \(error)")
+        }
     }
+ 
 }

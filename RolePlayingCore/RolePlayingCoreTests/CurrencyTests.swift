@@ -13,28 +13,34 @@ import RolePlayingCore
 
 class UnitCurrencyTests: XCTestCase {
     
+    static var currencies: Currencies!
+    
     override class func setUp() {
         super.setUp()
         
         // Only load once. TODO: this has a side effect on other unit tests: currencies are already loaded.
-        try! UnitCurrency.load("TestCurrencies", in: Bundle(for: UnitCurrencyTests.self))
+        let bundle = Bundle(for: UnitCurrencyTests.self)
+        let decoder = JSONDecoder()
+        let data = try! bundle.loadJSON("TestCurrencies")
+        
+        currencies = try! decoder.decode(Currencies.self, from: data)
     }
     
     func testUnitCurrency() {
-        XCTAssertEqual(UnitCurrency.baseUnit(), UnitCurrency.find("gp"), "base unit should be goldPieces")
+        XCTAssertEqual(UnitCurrency.baseUnit(), Currencies.find("gp"), "base unit should be goldPieces")
         
-        let goldPieces = Money(value: 25, unit: UnitCurrency.find("gp")!)
-        let silverPieces = Money(value: 12, unit: UnitCurrency.find("sp")!)
-        let copperPieces = Money(value: 1, unit: UnitCurrency.find("cp")!)
-        let electrumPieces = Money(value: 2, unit: UnitCurrency.find("ep")!)
-        let platinumPieces = Money(value: 2, unit: UnitCurrency.find("pp")!)
+        let goldPieces = Money(value: 25, unit: Currencies.find("gp")!)
+        let silverPieces = Money(value: 12, unit: Currencies.find("sp")!)
+        let copperPieces = Money(value: 1, unit: Currencies.find("cp")!)
+        let electrumPieces = Money(value: 2, unit: Currencies.find("ep")!)
+        let platinumPieces = Money(value: 2, unit: Currencies.find("pp")!)
         
         let totalPieces = goldPieces + silverPieces - copperPieces + electrumPieces - platinumPieces
         
         // Should be 25 + 1.2 - 0.01 + 1 - 20
         XCTAssertEqualWithAccuracy(totalPieces.value, 7.19, accuracy: 0.0001, "adding coins")
         
-        let totalPiecesInCopper = totalPieces.converted(to: UnitCurrency.find("cp")!)
+        let totalPiecesInCopper = totalPieces.converted(to: Currencies.find("cp")!)
         XCTAssertEqualWithAccuracy(totalPiecesInCopper.value, 719, accuracy: 0.01, "adding coins")
         
     }
@@ -53,11 +59,11 @@ class UnitCurrencyTests: XCTestCase {
         let gpDefault = formatter.string(from: goldPieces)
         XCTAssertEqual(gpDefault, "13.7 gp", "gold pieces")
         
-        let silverPieces = goldPieces.converted(to: UnitCurrency.find("sp")!)
+        let silverPieces = goldPieces.converted(to: Currencies.find("sp")!)
         let sp = formatter.string(from: silverPieces)
         XCTAssertEqual(sp, "137 sp", "silver pieces")
         
-        let platinumPieces = goldPieces.converted(to: UnitCurrency.find("pp")!)
+        let platinumPieces = goldPieces.converted(to: Currencies.find("pp")!)
         let ppProvided = formatter.string(from: platinumPieces)
         XCTAssertEqual(ppProvided, "1.37 pp", "platinum pieces")
         
@@ -84,35 +90,30 @@ class UnitCurrencyTests: XCTestCase {
     
     func testMoney() {
         do {
-            let gp = Money(from: 2.5)
-            XCTAssertNotNil(gp, "coinage as Double should not be nil")
-            XCTAssertEqual(gp?.value, 2.5, "coinage as Double should be 2.5")
+            let gp = Money(value: 2.5, unit: .baseUnit())
+            XCTAssertEqual(gp.value, 2.5, "coinage as Double should be 2.5")
         }
         
         do {
-            let cp = Money(from: "3.2 cp")
+            let cp = "3.2 cp".parseMoney
             XCTAssertNotNil(cp, "coinage as cp should not be nil")
             if let cp = cp {
                 XCTAssertEqualWithAccuracy(cp.value, 3.2, accuracy: 0.0001, "coinage as string cp should be 3.2")
-                XCTAssertEqual(cp.unit, UnitCurrency.find("cp"), "coinage as string cp should be copper pieces")
-                XCTAssertNotEqual(cp.unit, UnitCurrency.find("pp"), "coinage as string cp should not be platinum pieces")
+                XCTAssertEqual(cp.unit, Currencies.find("cp"), "coinage as string cp should be copper pieces")
+                XCTAssertNotEqual(cp.unit, Currencies.find("pp"), "coinage as string cp should not be platinum pieces")
             }
         }
         
         do {
-            let gp = Money(from: "hello")
+            let gp = "hello".parseMoney
             XCTAssertNil(gp, "coinage as string with hello should be nil")
-        }
-        
-        do {
-            let gp = Money(from: nil)
-            XCTAssertNil(gp, "coinage with string as nil should be nil")
         }
     }
     
     func testMissingCurrenciesFile() {
         do {
-            try UnitCurrency.load("Blarg", in: Bundle(for: UnitCurrencyTests.self))
+            let bundle = Bundle(for: UnitCurrencyTests.self)
+            _ = try bundle.loadJSON("Blarg")
             XCTFail("load should have thrown an error")
         }
         catch let error {
@@ -126,9 +127,15 @@ class UnitCurrencyTests: XCTestCase {
         // Try loading the default currencies file a second time. 
         // It should ignore the duplicate currencies.
         do {
-            XCTAssertEqual(UnitCurrency.allCurrencies.count, 5, "currencies count")
-            try UnitCurrency.load("TestCurrencies", in: Bundle(for: UnitCurrencyTests.self))
-            XCTAssertEqual(UnitCurrency.allCurrencies.count, 5, "currencies count")
+            XCTAssertEqual(Currencies.allCurrencies.count, 5, "currencies count")
+            
+            let bundle = Bundle(for: UnitCurrencyTests.self)
+            let decoder = JSONDecoder()
+            let data = try bundle.loadJSON("TestCurrencies")
+            
+            _ = try decoder.decode(Currencies.self, from: data)
+            
+            XCTAssertEqual(Currencies.allCurrencies.count, 5, "currencies count")
         }
         catch let error {
             XCTFail("duplicate currency should not throw error: \(error)")
@@ -136,29 +143,44 @@ class UnitCurrencyTests: XCTestCase {
     }
     
     func testMissingCurrencyTraits() {
+        let decoder = JSONDecoder()
+        
         // Test missing symbol
         do {
-            let traits = ["name": "Foo"]
-            let currency = UnitCurrency.makeCurrency(from: traits)
+            let traits = """
+            {
+                "currencies": [{"name": "Foo"}]
+            }
+            """.data(using: .utf8)!
+            let currency = try? decoder.decode(Currencies.self, from: traits)
             XCTAssertNil(currency, "missing symbol")
         }
         
         // Test symbol with missing coefficient
         do {
-            let traits = ["symbol": "Foo"]
-            let currency = UnitCurrency.makeCurrency(from: traits)
+            let traits = """
+            {
+                "currencies": [{"symbol": "Foo"}]
+            }
+            """.data(using: .utf8)!
+            
+            let currency = try? decoder.decode(Currencies.self, from: traits)
             XCTAssertNil(currency, "missing coefficient")
         }
         
         // Test list of items with missing required traits
         do {
-            let traits: [String: Any] = ["currency": [["name": "Foo"], ["name": "Bar"]]]
+            let traits = """
+            {
+                 "currencies": [{"name": "Foo"}, {"name": "Bar"}]
+            }
+            """.data(using: .utf8)!
             do {
-                try UnitCurrency.load(from: traits)
+                _ = try decoder.decode(Currencies.self, from: traits)
                 XCTFail("should have thrown an error")
             }
             catch let error {
-                XCTAssertTrue(error is ServiceError, "thrown ServiceError")
+                print("Successfully caught error decoding missing required traits for Currencies. Error: \(error)")
             }
         }
     }

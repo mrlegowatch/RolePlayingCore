@@ -11,39 +11,75 @@ import Foundation
 /// Weight is a measurement of mass.
 public typealias Weight = Measurement<UnitMass>
 
-public extension Measurement where UnitType: UnitMass {
-
-    /// Creates an instance from a dictionary trait value as a number or string with 
-    /// weight suffixes (e.g., lb, kg).
-    ///
-    /// A number without a suffix is treated as pounds. Returns nil if the trait is nil or
-    /// if a suffix or number is not present.
-    init?(from trait: Any?) {
-        guard let trait = trait else { return nil }
-        
+extension String {
+    
+    /// Parses "lb" or "kg" into a measurement of mass.
+    public var parseWeight: Weight? {
         var value: Double?
         var unit: UnitMass = .pounds
         
-        if let number = trait as? Int {
-            value = Double(number)
-        } else if let number = trait as? Double {
-            value = number
-        } else if let string = trait as? String {
-            let weightMap: [String: UnitMass] = [
-                "lb": .pounds,
-                "kg": .kilograms]
-            
-            for (key, weightUnit) in weightMap {
-                if let range = string.range(of: key) {
-                    value = Double(string.substring(to: range.lowerBound).trimmingCharacters(in: .whitespaces))!
-                    unit = weightUnit
-                    break
-                }
+        let weightMap: [String: UnitMass] = [
+            "lb": .pounds,
+            "kg": .kilograms]
+        
+        for (key, weightUnit) in weightMap {
+            if let range = self.range(of: key) {
+                value = Double(self.substring(to: range.lowerBound).trimmingCharacters(in: .whitespaces))!
+                unit = weightUnit
+                break
             }
         }
+        // Try converting string to number.
+        if value == nil {
+            value = Double(self)
+        }
         
+        // Bail if the value could not be parsed.
         guard value != nil else { return nil }
-        self.init(value: value!, unit: unit as! UnitType)
+        
+        return Weight(value: value!, unit: unit)
+    }
+    
+}
+
+public extension KeyedDecodingContainer  {
+    
+    /// Decodes either a number or a string into a Weight.
+    ///
+    /// - throws `DecodingError.dataCorrupted` if the weight could not be decoded.
+    func decode(_ type: Weight.Type, forKey key: K) throws -> Weight {
+        let weight: Weight?
+        
+        if let double = try? self.decode(Double.self, forKey: key) {
+            weight = Weight(value: double, unit: .pounds)
+        } else {
+            weight = try self.decode(String.self, forKey: key).parseWeight
+        }
+        
+        // Throw if we were unsuccessful parsing.
+        guard weight != nil else {
+            let context = DecodingError.Context(codingPath: self.codingPath, debugDescription: "Missing string or number for Weight value")
+            throw DecodingError.dataCorrupted(context)
+        }
+        
+        return weight!
+    }
+    
+    /// Decodes either a number or a string into a Height, if present.
+    ///
+    /// - throws `DecodingError.dataCorrupted` if the height could not be decoded.
+    func decodeIfPresent(_ type: Weight.Type, forKey key: K) throws -> Weight? {
+        let weight: Weight?
+        
+        if let double = try? self.decode(Double.self, forKey: key) {
+            weight = Weight(value: double, unit: .pounds)
+        } else if let string = try self.decodeIfPresent(String.self, forKey: key) {
+            weight = string.parseWeight
+        } else {
+            weight = nil
+        }
+        
+        return weight
     }
     
 }

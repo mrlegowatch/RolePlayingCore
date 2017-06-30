@@ -10,34 +10,44 @@ import XCTest
 
 import RolePlayingCore
 
+struct JSONFileData: Codable {
+    let boolValue: Bool
+    
+    struct DictionaryValue: Codable {
+        let stringValue: String
+        let doubleValue: Double
+        let arrayValue: [Int]
+    }
+    let dictionaryValue: DictionaryValue
+}
+
 class JSONFileTests: XCTestCase {
+    
+    let decoder = JSONDecoder()
     
     func testJSON() {
         // This test file has all of the basic elements of a JSON file
         let bundle = Bundle(for: JSONFileTests.self)
         do {
-            let jsonObject = try bundle.loadJSON("JSONFile")
+            let jsonData = try bundle.loadJSON("JSONFile")
+            let jsonObject = try decoder.decode(JSONFileData.self, from: jsonData)
             
             // Test for contents of JSON file
             
-            let bool = jsonObject["boolValue"] as? Bool
+            let bool = jsonObject.boolValue
             XCTAssertNotNil(bool, "bool should be non-nil")
             XCTAssertEqual(bool, true, "bool should be true")
             
-            let dictionary = jsonObject["dictionaryValue"] as? [String: Any]
-            XCTAssertNotNil(dictionary, "dictionary should be non-nil")
+            let dictionary = jsonObject.dictionaryValue
             
-            let string = dictionary?["stringValue"] as? String
-            XCTAssertNotNil(string, "string should be non-nil")
+            let string = dictionary.stringValue
             XCTAssertEqual(string, "foo", "string should be \"foo\"")
             
-            let double = dictionary?["doubleValue"] as? Double
-            XCTAssertNotNil(double, "double should be non-nil")
+            let double = dictionary.doubleValue
             XCTAssertEqual(double, 2.1, "double should be 2.1")
             
-            let array = dictionary?["arrayValue"] as? [Int]
-            XCTAssertNotNil(array, "array should be non-nil")
-            XCTAssertEqual(array ?? [], [2, 3], "array should be [2, 3]")
+            let array = dictionary.arrayValue
+            XCTAssertEqual(array, [2, 3], "array should be [2, 3]")
         }
         catch let error {
             XCTFail("loadJSON should not throw an error: \(error)")
@@ -60,7 +70,8 @@ class JSONFileTests: XCTestCase {
         // This test file contains errors in formatting.
         let bundle = Bundle(for: JSONFileTests.self)
         do {
-            let jsonObject = try bundle.loadJSON("InvalidJSONFile")
+            let jsonData = try bundle.loadJSON("InvalidJSONFile")
+            let jsonObject = try decoder.decode([String:Any].self, from: jsonData)
             XCTAssertNil(jsonObject, "should not get here")
         }
         catch let error {
@@ -73,7 +84,8 @@ class JSONFileTests: XCTestCase {
         // This test file lacks a dictionary at the root.
         let bundle = Bundle(for: JSONFileTests.self)
         do {
-            let jsonObject = try bundle.loadJSON("HalfBakedJSONFile")
+            let jsonData = try bundle.loadJSON("HalfBakedJSONFile")
+            let jsonObject = try decoder.decode([String:Any].self, from: jsonData)
             XCTAssertNil(jsonObject, "should not get here")
         }
         catch let error {

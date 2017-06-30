@@ -14,7 +14,8 @@ import Foundation
 // A smaller implementation might leverage NSRegularExpression, but I'm still learning how to use that.
 
 /// Types of errors handled by this parser.
-internal enum DiceParseError: Error {
+internal enum DiceParseError: Error, CustomDebugStringConvertible {
+    case invalidCharacter(String)
     case invalidDieSides(Int)
     case missingMinus
     case missingSimpleDice
@@ -23,6 +24,10 @@ internal enum DiceParseError: Error {
     case consecutiveNumbers
     case consecutiveMathOperators
     case consecutiveDiceExpressions
+    
+    var debugDescription: String {
+        return "Error parsing dice: \(self)"
+    }
 }
 
 /// Types of tokens supported by this parser.
@@ -79,7 +84,7 @@ private struct NumberBuffer {
 
 /// Converts a dice-formatted string into a sequence of tokens.
 /// If an unknown character is encountered, an empty array is returned.
-internal func tokenize(_ string: String) -> [Token] {
+internal func tokenize(_ string: String) throws -> [Token] {
     var tokens = [Token]()
     var numberBuffer = NumberBuffer()
     
@@ -101,12 +106,7 @@ internal func tokenize(_ string: String) -> [Token] {
             if let token = Token(from: scalar) {
                 tokens.append(token)
             } else {
-                // If an unknown character is encountered, stop tokenizing 
-                // and return an empty array.
-                print("Dice tokenize error, unknown character: \(scalar)")
-                numberBuffer.reset()
-                tokens = []
-                break
+                throw DiceParseError.invalidCharacter(String(scalar))
             }
         }
     }
@@ -214,50 +214,102 @@ private struct DiceParserState {
 }
 
 /// Converts an array of tokens into Dice.
-internal func parse(_ tokens: [Token]) -> Dice? {
+internal func parse(_ tokens: [Token]) throws -> Dice? {
     var parsedDice: Dice? = nil
     
     var state = DiceParserState()
-    do {
-        for (index, token) in tokens.enumerated() {
-            switch token {
-            case .number(let value):
-                try state.parse(number: value)
-            case .die:
-                try state.parseDie()
-            case .drop(let drop):
-                try state.parse(drop: drop)
-            case .mathOperator(let math):
-                if !isDropping(tokens, after: index) {
-                    parsedDice = state.combine(parsedDice)
-                }
-                try state.parse(math: math)
+    for (index, token) in tokens.enumerated() {
+        switch token {
+        case .number(let value):
+            try state.parse(number: value)
+        case .die:
+            try state.parseDie()
+        case .drop(let drop):
+            try state.parse(drop: drop)
+        case .mathOperator(let math):
+            if !isDropping(tokens, after: index) {
+                parsedDice = state.combine(parsedDice)
             }
+            try state.parse(math: math)
         }
-        
-        parsedDice = state.combine(parsedDice)
-
-        try state.finishParsing()
     }
-    catch let error {
-        print("Dice parse error: \(error)")
-        parsedDice = nil
-    }
+    parsedDice = state.combine(parsedDice)
+    try state.finishParsing()
     
     return parsedDice
 }
 
-/// Creates a Dice instance from a string formatted as:
-/// > `[<times>]d<sides>[<mathOperator><modifier>|-<dropping>]*`
-/// - Supported dice sides are 4, 6, 8, 10, 12, 20 and %.
-/// - times, modifier and dropping (-L for lowest, -H for highest) are optional.
-///
-/// - parameter from: A string, for example: "d8", "2d12+2", "4d6-L", "1", "2d4+3d12-4".
-/// - returns: Dice representing the parsed string. Returns `nil` if the string 
-///   could not be interpreted; for example, if there are extraneous
-///   characters, or an unsupported dice such as d7 is specified.
-public func dice(from string: String) -> Dice? {
-    let tokens = tokenize(string)
-    let dice = parse(tokens)
-    return dice
+public extension String {
+    
+    /// Creates a Dice instance from a string formatted as:
+    /// > `[<times>]d<sides>[<mathOperator><modifier>|-<dropping>]*`
+    /// - Supported dice sides are 4, 6, 8, 10, 12, 20 and %.
+    /// - times, modifier and dropping (-L for lowest, -H for highest) are optional.
+    ///
+    /// - parameter from: A string, for example: "d8", "2d12+2", "4d6-L", "1", "2d4+3d12-4".
+    /// - returns: Dice representing the parsed string. Returns `nil` if the string
+    ///   could not be interpreted; for example, if there are extraneous
+    ///   characters, or an unsupported dice such as d7 is specified.
+    public var parseDice: Dice? {
+        var dice: Dice? = nil
+        
+        do {
+            let tokens = try tokenize(self)
+            dice = try parse(tokens)
+        }
+        catch let error {
+            print("Error parsing dice: \(error.localizedDescription)")
+        }
+        
+        return dice
+    }
+    
+}
+
+// TODO: this works around the fact that we can't explicitly make the Dice protocol Decodable.
+// We first decode to String or Int, then create a derived Dice type from those.
+//
+// Containers can still match to the type (note Dice.protocol in the function declarations).
+public extension KeyedDecodingContainer  {
+    
+    /// Decodes either an integer or a formatted string into a Dice.
+    /// See `String.parseDice` for supported string formats.
+    ///
+    /// - throws `DecodingError.dataCorrupted` if the dice is not present or could not be decoded.
+    public func decode(_ type: Dice.Protocol, forKey key: K) throws -> Dice {
+        let dice: Dice?
+        
+        if let number = try? self.decode(Int.self, forKey: key) {
+            dice = DiceModifier(number)
+        } else {
+            dice = try self.decode(String.self, forKey: key).parseDice
+        }
+        
+        // Throw if we were unsuccessful parsing.
+        guard dice != nil else {
+            let context = DecodingError.Context(codingPath: self.codingPath, debugDescription: "Missing string or number for Dice value")
+            throw DecodingError.dataCorrupted(context)
+        }
+        
+        return dice!
+    }
+    
+    /// Decodes either an integer or a formatted string into a Dice, if present.
+    /// See `String.parseDice` for supported string formats.
+    ///
+    /// - throws `DecodingError.dataCorrupted` if the dice could not be decoded.
+    public func decodeIfPresent(_ type: Dice.Protocol, forKey key: K) throws -> Dice? {
+        let dice: Dice?
+        
+        if let number = try? self.decode(Int.self, forKey: key) {
+            dice = DiceModifier(number)
+        } else if let string = try self.decodeIfPresent(String.self, forKey: key) {
+            dice = string.parseDice
+        } else {
+            dice = nil
+        }
+        
+        return dice
+    }
+    
 }

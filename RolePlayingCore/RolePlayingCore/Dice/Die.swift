@@ -8,7 +8,7 @@
 
 
 /// An enumeration of die sizes, from d4 to d%.
-public enum Die: Int, CustomStringConvertible {
+public enum Die: Int {
     case d4 = 4
     case d6 = 6
     case d8 = 8
@@ -39,6 +39,10 @@ public enum Die: Int, CustomStringConvertible {
         }
         return rolls
     }
+    
+}
+
+extension Die: CustomStringConvertible {
     
     /// Returns the number of die sides with "d" prepended.
     public var description: String { return rawValue == 100 ? "d%" : "d\(rawValue)" }
