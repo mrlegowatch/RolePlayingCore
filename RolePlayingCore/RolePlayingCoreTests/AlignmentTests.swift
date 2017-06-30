@@ -206,32 +206,52 @@ class AlignmentTests: XCTestCase {
     }
     
     func testAlignmentParsing() {
-        // Test initializing from string
+        let decoder = JSONDecoder()
+        
+        // Test initializing from valid string
         do {
-            let neutralGood = Alignment(from: "Neutral Good")
+            let neutralGood = "Neutral Good".parseAlignment
             XCTAssertNotNil(neutralGood, "alignment should be non-nil")
-            XCTAssertEqual(neutralGood?.kind.ethics, Ethics.neutral, "ethics enumeration")
-            XCTAssertEqual(neutralGood?.kind.morals, Morals.good, "morals enumeration")
+            XCTAssertEqual(neutralGood?.0, Ethics.neutral, "ethics enumeration")
+            XCTAssertEqual(neutralGood?.1, Morals.good, "morals enumeration")
             
-            let neutral = Alignment(from: "Neutral")
+            let neutral = "Neutral".parseAlignment
             XCTAssertNotNil(neutral, "alignment should be non-nil")
-            XCTAssertEqual(neutral?.kind.ethics, Ethics.neutral, "ethics enumeration")
-            XCTAssertEqual(neutral?.kind.morals, Morals.neutral, "morals enumeration")
+            XCTAssertEqual(neutral?.0, Ethics.neutral, "ethics enumeration")
+            XCTAssertEqual(neutral?.1, Morals.neutral, "morals enumeration")
+        }
+        
+        // Test initializing from partial valid string
+        do {
+            let chaotic = "Chaotic".parseAlignment
+            XCTAssertNotNil(chaotic, "alignment should be non-nil")
+            XCTAssertEqual(chaotic?.0, Ethics.chaotic, "ethics enumeration")
+            XCTAssertEqual(chaotic?.1, Morals.neutral, "morals enumeration")
+            
+            let good = "Good".parseAlignment
+            XCTAssertNotNil(good, "alignment should be non-nil")
+            XCTAssertEqual(good?.0, Ethics.neutral, "ethics enumeration")
+            XCTAssertEqual(good?.1, Morals.good, "morals enumeration")
         }
         
         // Test initializing from bad string
         do {
-            let tooManyWords = Alignment(from: "Neutral Neutral Neutral")
+            let tooManyWords = "Neutral Neutral Neutral".parseAlignment
             XCTAssertNil(tooManyWords, "too many words should be nil")
             
-            let mismatchedWords = Alignment(from: "Foo Bar")
+            let mismatchedWords = "Foo Bar".parseAlignment
             XCTAssertNil(mismatchedWords, "mismatched words should be nil")
         }
         
         // Test initializing from dictionary of doubles
         do {
-            let lawfulNeutralTraits = ["ethics": 1, "morals": 0.2]
-            let lawfulNeutral = Alignment(from: lawfulNeutralTraits)
+            let lawfulNeutralTraits = """
+                {
+                    "ethics": 1,
+                    "morals": 0.2
+                }
+                """.data(using: .utf8)!
+            let lawfulNeutral = try? decoder.decode(Alignment.self, from: lawfulNeutralTraits)
             XCTAssertNotNil(lawfulNeutral, "alignment should be non-nil")
             XCTAssertEqual(lawfulNeutral?.kind.ethics, Ethics.lawful, "ethics enumeration")
             XCTAssertEqual(lawfulNeutral?.kind.morals, Morals.neutral, "morals enumeration")
@@ -240,8 +260,13 @@ class AlignmentTests: XCTestCase {
         
         // Test initializing from dictionary of strings
         do {
-            let chaoticNeutralTraits = ["ethics": "Chaotic", "morals": "Neutral"]
-            let chaoticNeutral = Alignment(from: chaoticNeutralTraits)
+            let chaoticNeutralTraits = """
+                {
+                    "ethics": "Chaotic",
+                    "morals": "Neutral"
+                }
+                """.data(using: .utf8)!
+            let chaoticNeutral = try? decoder.decode(Alignment.self, from: chaoticNeutralTraits)
             XCTAssertNotNil(chaoticNeutral, "alignment should be non-nil")
             XCTAssertEqual(chaoticNeutral?.kind.ethics, Ethics.chaotic, "ethics enumeration")
             XCTAssertEqual(chaoticNeutral?.kind.morals, Morals.neutral, "morals enumeration")
@@ -249,21 +274,37 @@ class AlignmentTests: XCTestCase {
         
         // Test initializing from bad dictionary keys
         do {
-            let badTraitKeys = ["Howdy": "Lawful", "Doody": "Evil"]
-            let badTrait = Alignment(from: badTraitKeys)
+            let badTraitKeys = """
+                {
+                    "Howdy": "Lawful",
+                    "Doody": "Evil"
+                }
+                """.data(using: .utf8)!
+            let badTrait = try? decoder.decode(Alignment.self, from: badTraitKeys)
             XCTAssertNil(badTrait, "bad trait keys should be nil")
         }
         
         // Test initializing from bad dictionary values
         do {
-            let notStringTraits = ["ethics": ["Chaotic"], "morals": ["Neutral"]]
-            let notString = Alignment(from: notStringTraits)
+            let notStringTraits = """
+                {
+                    "ethics": ["Chaotic"],
+                    "morals": ["Neutral"]
+                }
+                """.data(using: .utf8)!
+            let notString = try? decoder.decode(Alignment.self, from: notStringTraits)
             XCTAssertNil(notString, "non-string traits should be nil")
 
-            let notValidTraits = ["ethics": "Choatic", "morals": "Eliv"]
-            let notValid = Alignment(from: notValidTraits)
+            let notValidTraits = """
+                {
+                    "ethics": "Choatic",
+                    "morals": "Eliv"
+                }
+                """.data(using: .utf8)!
+            let notValid = try? decoder.decode(Alignment.self, from: notValidTraits)
             XCTAssertNil(notValid, "non-valid traits should be nil")
         }
+        
     }
     
 }

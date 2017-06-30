@@ -301,8 +301,9 @@ class DiceTests: XCTestCase {
         do {
             let formatString = "d12"
             print("Format Dice \(formatString):")
-
-            let formatDice = dice(from: formatString)
+            
+            // TODO: can't decode a Dice from a JSONDecoder; needs a Decoder.
+            let formatDice = formatString.parseDice
             XCTAssertNotNil(formatDice, "Dice from \(formatString) should be non-nil")
             var sum = 0
             var minValue = 0
@@ -331,7 +332,7 @@ class DiceTests: XCTestCase {
             let formatString = "2d10"
             print("Format Dice \(formatString):")
 
-            let formatDice = dice(from: formatString)
+            let formatDice = formatString.parseDice
             XCTAssertNotNil(formatDice, "Dice from \(formatString) should be non-nil")
             var sum = 0
             var minValue = 0
@@ -361,7 +362,7 @@ class DiceTests: XCTestCase {
             let formatString = "2D10"
             print("Format Dice \(formatString):")
             
-            let formatDice = dice(from: formatString)
+            let formatDice = formatString.parseDice
             XCTAssertNotNil(formatDice, "Dice from \(formatString) should be non-nil")
             var sum = 0
             var minValue = 0
@@ -391,7 +392,7 @@ class DiceTests: XCTestCase {
             let formatString = "1d20+4"
             print("Format Dice \(formatString):")
 
-            let formatDice = dice(from: formatString)
+            let formatDice = formatString.parseDice
             XCTAssertNotNil(formatDice, "Dice from \(formatString) should be non-nil")
             var sum = 0
             var minValue = 0
@@ -420,7 +421,7 @@ class DiceTests: XCTestCase {
             let formatString = "d%"
             print("Format Dice \(formatString):")
 
-            let formatDice = dice(from: formatString)
+            let formatDice = formatString.parseDice
             XCTAssertNotNil(formatDice, "Dice from \(formatString) should be non-nil")
             var sum = 0
             var minValue = 0
@@ -455,7 +456,7 @@ class DiceTests: XCTestCase {
             let formatString = "2d4x10"
             print("Format Dice \(formatString):")
 
-            let formatDice = dice(from: formatString)
+            let formatDice = formatString.parseDice
             XCTAssertNotNil(formatDice, "Dice from \(formatString) should be non-nil")
             var sum = 0
             var minValue = 0
@@ -484,7 +485,7 @@ class DiceTests: XCTestCase {
             let formatString = "2d4*10"
             print("Format Dice \(formatString):")
             
-            let formatDice = dice(from: formatString)
+            let formatDice = formatString.parseDice
             XCTAssertNotNil(formatDice, "Dice from \(formatString) should be non-nil")
             var sum = 0
             var minValue = 0
@@ -513,7 +514,7 @@ class DiceTests: XCTestCase {
             let formatString = "d100/10"
             print("Format Dice \(formatString):")
             
-            let formatDice = dice(from: formatString)
+            let formatDice = formatString.parseDice
             XCTAssertNotNil(formatDice, "Dice from \(formatString) should be non-nil")
             var sum = 0
             var minValue = 0
@@ -542,7 +543,7 @@ class DiceTests: XCTestCase {
             let formatString = "4d6-L"
             print("Format Dice \(formatString):")
 
-            let formatDice = dice(from: formatString)
+            let formatDice = formatString.parseDice
             XCTAssertNotNil(formatDice, "Dice from \(formatString) should be non-nil")
             var sum = 0
             var minValue = 0
@@ -579,7 +580,7 @@ class DiceTests: XCTestCase {
             let formatString = "2d4+3d12-4"
             print("Complex Format Dice \(formatString):")
             
-            let formatDice = dice(from: formatString)
+            let formatDice = formatString.parseDice
             XCTAssertNotNil(formatDice, "Dice from \(formatString) should be non-nil")
             var sum = 0
             var minValue = 0
@@ -615,7 +616,7 @@ class DiceTests: XCTestCase {
             let formatString = "2d4+d12-2+5"
             print("Complex Format Dice \(formatString):")
 
-            let formatDice = dice(from: formatString)
+            let formatDice = formatString.parseDice
             XCTAssertNotNil(formatDice, "Dice from \(formatString) should be non-nil")
             
             var sum = 0
@@ -656,7 +657,7 @@ class DiceTests: XCTestCase {
             let formatString = "3d4- L + d12 -\n2 + 5"
             print("Complex Format Dice \(formatString):")
             
-            let formatDice = dice(from: formatString)
+            let formatDice = formatString.parseDice
             XCTAssertNotNil(formatDice, "Dice from \(formatString) should be non-nil")
             
             var sum = 0
@@ -695,7 +696,7 @@ class DiceTests: XCTestCase {
         // Test two constant modifiers
         do {
             let formatString = "1+3"
-            let formatDice = dice(from: formatString)
+            let formatDice = formatString.parseDice
             XCTAssertNotNil(formatDice, "Dice from \(formatString) should not be nil")
             
             if let formatDice = formatDice {
@@ -709,77 +710,79 @@ class DiceTests: XCTestCase {
         // Negative tests
         do {
             let badFormatString = "d7"
-            let roll = dice(from: badFormatString)
+            let roll = badFormatString.parseDice
             XCTAssertNil(roll, "'\(badFormatString)' unsupported dice number")
         }
 
         do {
             let badFormatString = "dhello"
-            let roll = dice(from: badFormatString)
+            let roll = badFormatString.parseDice
             XCTAssertNil(roll, "'\(badFormatString)' unsupported dice number")
         }
         
         do {
             let badFormatString = "2+elephants"
-            let roll = dice(from: badFormatString)
+            let roll = badFormatString.parseDice
             XCTAssertNil(roll, "'\(badFormatString)' unsupported character tokens")
         }
         
         // catch missing dice sides
         do {
             let badFormatString = "3d"
-            let roll = dice(from: badFormatString)
+            let roll = badFormatString.parseDice
             XCTAssertNil(roll, "'\(badFormatString)' missing dice sides")
         }
         
         // catch isDropping false code path at end of string, and missing expression
         do {
             let badFormatString = "2-"
-            let roll = dice(from: badFormatString)
+            let roll = badFormatString.parseDice
             XCTAssertNil(roll, "'\(badFormatString)' missing expression")
         }
         
         // catch dropping missing minus
         do {
             let badFormatString = "2d4H"
-            let roll = dice(from: badFormatString)
+            let roll = badFormatString.parseDice
             XCTAssertNil(roll, "'\(badFormatString)' dropping missing minus")
         }
         
         // catch dropping missing SimpleDice
         do {
             let badFormatString = "2-H"
-            let roll = dice(from: badFormatString)
+            let roll = badFormatString.parseDice
             XCTAssertNil(roll, "'\(badFormatString)' dropping missing SimpleDice")
         }
 
         // catch consecutive numbers
         do {
             let badFormatString = "3 4"
-            let roll = dice(from: badFormatString)
+            let roll = badFormatString.parseDice
             XCTAssertNil(roll, "'\(badFormatString)' consecutive numbers")
         }
 
         // catch consecutive math operators
         do {
             let badFormatString = "3++4"
-            let roll = dice(from: badFormatString)
+            let roll = badFormatString.parseDice
             XCTAssertNil(roll, "'\(badFormatString)' consecutive math operators")
         }
         
         // Catch consecutive dice expressions (both valid dice)
         do {
             let badFormatString = "d4d4"
-            let roll = dice(from: badFormatString)
+            let roll = badFormatString.parseDice
             XCTAssertNil(roll, "'\(badFormatString)' consecutive dice expressions")
         }
         
         // Catch consecutive dice 'd' characters
         do {
             let badFormatString = "dd4"
-            let roll = dice(from: badFormatString)
+            let roll = badFormatString.parseDice
             XCTAssertNil(roll, "'\(badFormatString)' consecutive dice expressions")
         }
 
     }
+    
+    // TODO: implement support for added DiceParser encoding/decoding functionality.
 }

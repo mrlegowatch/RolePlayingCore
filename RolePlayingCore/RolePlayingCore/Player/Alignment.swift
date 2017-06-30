@@ -6,7 +6,7 @@
 //  Copyright © 2016-2017 Brian Arnold. All rights reserved.
 //
 
-/// A measure of order, obedience, following rules vs. disorder, disobedience.
+/// A measure of order, obedience, and following rules vs. disorder, and disobedience.
 public enum Ethics: String {
     
     case lawful = "Lawful"
@@ -28,7 +28,7 @@ public enum Ethics: String {
     public var value: Double {
         return self == .lawful ? 1.0 : self == .chaotic ? -1.0 : 0.0
     }
-
+    
 }
 
 extension Ethics: CustomStringConvertible {
@@ -74,22 +74,40 @@ extension Morals: CustomStringConvertible {
     
 }
 
-extension Trait {
+extension String {
     
-    static let ethics = "ethics"
-    
-    static let morals = "morals"
+    /// Parses a string for alignment (ethics and morals) substrings.
+    /// Interprets true "Neutral", and ethics or morals with a neutral counterpart.
+    public var parseAlignment: (Ethics, Morals)? {
+        let words = self.components(separatedBy: " ")
+        switch words.count {
+        case 1:
+            let word = words[0]
+            if let ethics = Ethics(rawValue: word) {
+                return (ethics, .neutral)
+            } else if let morals = Morals(rawValue: word) {
+                return (.neutral, morals)
+            } else {
+                return nil
+            }
+        case 2:
+            guard let ethics = Ethics(rawValue: words[0]),
+                let morals = Morals(rawValue: words[1]) else { return nil }
+            return (ethics, morals)
+        default:
+            return nil
+        }
+    }
     
 }
 
 /// A combined measure of ethics and morals.
 public struct Alignment {
-
+    
     /// A combination of ethics and morals enumerations.
     public struct Kind {
         
         public let ethics: Ethics
-        
         public let morals: Morals
         
         /// Creates an alignment kind based on ethics and morals values ranging from -1 to 1.
@@ -105,7 +123,7 @@ public struct Alignment {
         }
         
     }
-
+    
     internal let valueRange = -1.0...1.0
     
     /// Accesses the ethics value in the range from -1 to 1.
@@ -129,11 +147,10 @@ public struct Alignment {
             moralsValue = newValue
         }
     }
-
-    internal var ethicsValue: Double = 0
     
+    internal var ethicsValue: Double = 0
     internal var moralsValue: Double = 0
-
+    
     /// Returns the alignment type that corresponds to the ethics and morals values.
     public var kind: Kind {
         return Kind(ethics: ethics, morals: morals)
@@ -144,39 +161,11 @@ public struct Alignment {
         self.ethics = ethics.value
         self.morals = morals.value
     }
-
+    
     /// Creates an alignment based on ethics and morals values in the range from -1 to 1.
     public init(ethics: Double, morals: Double) {
         self.ethics = ethics
         self.morals = morals
-    }
-
-    /// Creates an alignment from a string. The string must match an alignment type
-    /// description string, otherwise nil is returned.
-    public init?(from string: String) {
-        let words = string.components(separatedBy: " ")
-        if words.count == 1 && words[0] == "Neutral" {
-            self.init(.neutral, .neutral)
-        } else if words.count == 2 {
-            guard let ethics = Ethics(rawValue: words[0]), let morals = Morals(rawValue: words[1]) else { return nil }
-            self.init(ethics, morals)
-        } else {
-            return nil
-        }
-    }
-    
-    /// Creates an alignment from dictionary traits. The dictionary must contain "ethics" and "morals"
-    /// keys, and the values must be either Double or strings matching ethics and morals enumerations,
-    /// otherwise nil is returned.
-    public init?(from traits: [String: Any]) {
-        guard let ethicsTrait = traits[Trait.ethics], let moralsTrait = traits[Trait.morals] else { return nil }
-        if let ethics = ethicsTrait as? Double, let morals = moralsTrait as? Double {
-            self.init(ethics: ethics, morals: morals)
-        } else {
-            guard let ethicsString = ethicsTrait as? String, let moralsString = moralsTrait as? String else { return nil }
-            guard let ethics = Ethics(rawValue: ethicsString), let morals = Morals(rawValue: moralsString) else { return nil }
-            self.init(ethics, morals)
-        }
     }
     
 }
@@ -216,4 +205,47 @@ extension Alignment: Equatable {
         return lhs.kind == rhs.kind
     }
     
+}
+
+extension Ethics: Codable { }
+
+extension Morals: Codable { }
+
+extension Alignment: Codable {
+    
+    internal enum CodingKeys: String, CodingKey {
+        case ethics
+        case morals
+    }
+    
+    /// Creates an alignment
+    public init(from decoder: Decoder) throws {
+        // If the value can be decoded is a string, try to parse it for "<ethics> <morals>".
+        if let string = try? decoder.singleValueContainer().decode(String.self) {
+            guard let (ethics, morals) = string.parseAlignment else {
+                let context = DecodingError.Context(codingPath: decoder.codingPath, debugDescription: "Missing alignment string values")
+                throw DecodingError.dataCorrupted(context)
+            }
+            self.init(ethics, morals)
+        } else {
+            // The value must decode into either two doubles or two strings with the coding keys.
+            let values = try decoder.container(keyedBy: CodingKeys.self)
+            if let ethicsValue = try? values.decodeIfPresent(Double.self, forKey: .ethics),
+                let moralsValue = try? values.decodeIfPresent(Double.self, forKey: .morals),
+                ethicsValue != nil && moralsValue != nil {
+                self.init(ethics: ethicsValue!, morals: moralsValue!)
+            } else {
+                let ethics = try values.decode(Ethics.self, forKey: .ethics)
+                let morals = try values.decode(Morals.self, forKey: .morals)
+                self.init(ethics, morals)
+            }
+        }
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        // TODO: allow for encoding as either enums or doubles.
+        var container = encoder.singleValueContainer()
+        try container.encode("\(self)")
+    }
+
 }
