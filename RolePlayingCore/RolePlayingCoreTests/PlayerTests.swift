@@ -12,16 +12,21 @@ import RolePlayingCore
 
 class PlayerTests: XCTestCase {
     
-    var humanTraits: [String: Any]!
+    var humanTraits: Data!
     var human: RacialTraits!
-    var fighterTraits: [String: Any]!
+    var fighterTraits: Data!
     var fighter: ClassTraits!
     
     override func setUp() {
         // TODO: Need to initialize UnitCurrency before creating Money instances in Player class.
-        try! UnitCurrency.load("TestCurrencies", in: Bundle(for: PlayerTests.self))
-
-        self.fighterTraits = [
+        // Only load once. TODO: this has a side effect on other unit tests: currencies are already loaded.
+        let bundle = Bundle(for: PlayerTests.self)
+        let decoder = JSONDecoder()
+        let data = try! bundle.loadJSON("TestCurrencies")
+        _ = try! decoder.decode(Currencies.self, from: data)
+        
+        self.fighterTraits = """
+        {
             "name": "Fighter",
             "plural": "Fighters",
             "hit dice": "d10",
@@ -29,26 +34,33 @@ class PlayerTests: XCTestCase {
             "alternate primary ability": ["Dexterity"],
             "saving throws": ["Strength", "Constitution"],
             "starting wealth": "5d4x10",
-            "experience points": [0, 300, 900, 2700]]
-        self.fighter = ClassTraits(from: self.fighterTraits)
+            "experience points": [0, 300, 900, 2700]
+        }
+        """.data(using: .utf8)
+        self.fighter = try! decoder.decode(ClassTraits.self, from: self.fighterTraits)
         
-        self.humanTraits = [
+        self.humanTraits = """
+        {
             "name": "Human",
             "plural": "Humans",
-            "ability scores": ["Strength": 1, "Dexterity": 1, "Constitution": 1, "Intelligence": 1, "Wisdom": 1, "Charisma": 1],
+            "ability scores": {"Strength": 1, "Dexterity": 1, "Constitution": 1, "Intelligence": 1, "Wisdom": 1, "Charisma": 1},
             "minimum age": 18,
             "lifespan": 90,
-            "base height": "4'8\"",
+            "base height": "4'8\\"",
             "height modifier": "2d10",
             "base weight": 110,
             "weight modifier": "2d4",
             "speed": 30,
             "languages": ["Common"],
-            "extra languages": 1]
-        self.human = RacialTraits(from: self.humanTraits)
+            "extra languages": 1
+        }
+        """.data(using: .utf8)
+        self.human = try! decoder.decode(RacialTraits.self, from: self.humanTraits)
     }
     
     func testPlayer() {
+        let decoder = JSONDecoder()
+        
         // Test construction from types
         do {
             let player = Player("Frodo", racialTraits: human, classTraits: fighter, gender: .female, alignment: Alignment(.lawful, .neutral))
@@ -56,14 +68,10 @@ class PlayerTests: XCTestCase {
             XCTAssertEqual(player.className, "Fighter", "class name")
             XCTAssertEqual(player.raceName, "Human", "race name")
             
-            XCTAssertNil(player.description, "description")
+            XCTAssertEqual(player.descriptiveTraits.count, 0, "descriptiveTraits")
             
             XCTAssertEqual(player.gender, Player.Gender.female, "gender")
             XCTAssertEqual(player.alignment, Alignment(.lawful, .neutral), "alignment")
-            
-            for modifier in player.abilityModifiers.values {
-                XCTAssertEqual(modifier, 1, "ability modifier")
-            }
             
             // Abilities is scores plus race modifiers, so + 1
             for key in player.abilities.abilities {
@@ -72,14 +80,14 @@ class PlayerTests: XCTestCase {
             }
             
             // I do the maths
-            XCTAssertTrue((4.83333...6.33334).contains(player.height.value), "height \(player.height.value)")
+            XCTAssertTrue((4.66666...6.33334).contains(player.height.value), "height \(player.height.value)")
       
             // 110 + 2...8 * 2...20
             XCTAssertTrue((114...270).contains(player.weight.value), "weight \(player.weight.value)")
             
             XCTAssertTrue((1...10).contains(player.maximumHitPoints), "maximum hit points")
             XCTAssertEqual(player.maximumHitPoints, player.currentHitPoints, "current hit points")
-            XCTAssertEqual("\(player.hitDice)", "d10", "hit dice")
+            XCTAssertEqual("\(player.classTraits.hitDice)", "d10", "hit dice")
             XCTAssertEqual(player.experiencePoints, 0, "experience points")
             XCTAssertEqual(player.level, 1, "level")
             
@@ -90,16 +98,27 @@ class PlayerTests: XCTestCase {
         
         // Test construction from minimum required traits
         do {
-            let playerTraits: [String: Any] = [
+            let playerTraits = """
+            {
                 "name": "Bilbo",
+                "race": "Human",
+                "class": "Fighter",
                 "gender": "Male",
-                "height": "3'9\"",
+                "height": "3'9\\"",
                 "weight": 120,
-                "ability scores": ["Dexterity": 13],
+                "ability scores": {"Dexterity": 13},
                 "money": 130,
-                "maximum hit points": 10]
+                "maximum hit points": 10
+            }
+            """.data(using: .utf8)!
             
-            let player = Player(from: playerTraits)
+            var player: Player? = nil
+            do {
+                player = try decoder.decode(Player.self, from: playerTraits)
+            }
+            catch let error {
+                XCTFail("decode player failed, error: \(error)")
+            }
             player?.racialTraits = human
             player?.classTraits = fighter
             
@@ -124,18 +143,29 @@ class PlayerTests: XCTestCase {
         
         // Test construction with optional traits
         do {
-            let playerTraits: [String: Any] = [
+            let playerTraits = """
+            {
                 "name": "Bilbo",
+                "race": "Human",
+                "class": "Fighter",
                 "alignment": "Lawful Evil",
-                "height": "3'9\"",
+                "height": "3'9\\"",
                 "weight": 120,
-                "ability scores": ["Strength": 12],
+                "ability scores": {"Strength": 12},
                 "money": 130,
                 "maximum hit points": 10,
                 "experience points": 2300,
-                "level": 2]
+                "level": 2
+            }
+            """.data(using: .utf8)!
             
-            let player = Player(from: playerTraits)
+            var player: Player? = nil
+            do {
+                player = try decoder.decode(Player.self, from: playerTraits)
+            }
+            catch let error {
+                XCTFail("decode player failed, error: \(error)")
+            }
             player?.racialTraits = human
             player?.classTraits = fighter
             
@@ -154,36 +184,43 @@ class PlayerTests: XCTestCase {
     }
     
     func testPlayerRoundTrip() {
-        let playerTraits: [String: Any] = [
+        let playerTraits = """
+        {
             "name": "Bilbo",
+            "race": "Human",
+            "class": "Fighter",
             "gender": "Male",
             "alignment": "Neutral Good",
-            "height": "3'9\"",
+            "height": "3'9\\"",
             "weight": 120,
-            "ability scores": ["Dexterity": 13],
+            "ability scores": {"Dexterity": 13},
             "money": 130,
             "maximum hit points": 20,
             "current hit points": 9,
-            "level": 2]
+            "level": 2
+        }
+        """.data(using: .utf8)!
         
-        let player = Player(from: playerTraits)
-        
-        let encoded = player?.encodeTraits() as? [String: Any]
+        let decoder = JSONDecoder()
+        let player = try? decoder.decode(Player.self, from: playerTraits)
+        let encoder = JSONEncoder()
+        let encodedPlayer = try! encoder.encode(player)
+        let encoded = try? JSONSerialization.jsonObject(with: encodedPlayer, options: [])
         XCTAssertNotNil(encoded, "player traits round trip")
         
-        if let encoded = encoded {
+        if let encoded = encoded as? [String: Any] {
             XCTAssertEqual(encoded["name"] as? String, "Bilbo", "player traits round trip name")
             XCTAssertEqual(encoded["gender"] as? String, "Male", "player traits round trip gender")
             XCTAssertEqual(encoded["alignment"] as? String, "Neutral Good", "player traits round trip alignment")
-            XCTAssertEqual(encoded["height"] as? Double, 3.75, "player traits round trip height")
-            XCTAssertEqual(encoded["weight"] as? Double, 120, "player traits round trip weight")
+            XCTAssertEqual(encoded["height"] as? String, "3.75 ft", "player traits round trip height")
+            XCTAssertEqual(encoded["weight"] as? String, "120.0 lb", "player traits round trip weight")
             
             let abilities = encoded["ability scores"] as? [String: Int]
             XCTAssertNotNil(abilities)
-            print("\(abilities)")
+            print("\(String(describing: abilities))")
             XCTAssertEqual(abilities?["Dexterity"], 13, "player traits round trip ability scores")
             
-            XCTAssertEqual(encoded["money"] as? Double, 130, "player traits round trip money")
+            XCTAssertEqual(encoded["money"] as? String, "130.0 gp", "player traits round trip money")
             XCTAssertEqual(encoded["maximum hit points"] as? Int, 20, "player traits round trip maximum hit points")
             XCTAssertEqual(encoded["current hit points"] as? Int, 9, "player traits round trip current hit points")
             XCTAssertEqual(encoded["level"] as? Int, 2, "player traits round trip level")
@@ -191,62 +228,73 @@ class PlayerTests: XCTestCase {
     }
     
     func testMissingTraits() {
-        do {
-            let player = Player(from: nil)
-            XCTAssertNil(player)
-        }
+        let decoder = JSONDecoder()
         
         // Test that each missing trait results in nil
         do {
-            let traits: [String: Any] = [:]
-            let player = Player(from: traits)
+            let traits = "{:}".data(using: .utf8)!
+            let player = try? decoder.decode(Player.self, from: traits)
             XCTAssertNil(player)
         }
         
         do {
-            let traits: [String: Any] = [
-                "name": "Bilbo"]
-            
-            let player = Player(from: traits)
+            let traits = """
+            {
+                "name": "Bilbo"
+            }
+            """.data(using: .utf8)!
+            let player = try? decoder.decode(Player.self, from: traits)
             XCTAssertNil(player)
         }
         
         
         do {
-            let traits: [String: Any] = [
+            let traits = """
+            {
                 "name": "Bilbo",
-                "height": "3'9\""]
-            let player = Player(from: traits)
+                "height": "3'9\\""
+            }
+            """.data(using: .utf8)!
+            let player = try? decoder.decode(Player.self, from: traits)
             XCTAssertNil(player)
         }
         
         do {
-            let traits: [String: Any] = [
+            let traits = """
+            {
                 "name": "Bilbo",
-                "height": "3'9\"",
-                "weight": 120]
-            let player = Player(from: traits)
+                "height": "3'9\\"",
+                "weight": 120
+            }
+            """.data(using: .utf8)!
+            let player = try? decoder.decode(Player.self, from: traits)
             XCTAssertNil(player)
         }
         
         do {
-            let traits: [String: Any] = [
+            let traits = """
+            {
                 "name": "Bilbo",
-                "height": "3'9\"",
+                "height": "3'9\\"",
                 "weight": 120,
-                "ability scores": ["Dexterity": 13]]
-            let player = Player(from: traits)
+                "ability scores": {"Dexterity": 13}
+            }
+            """.data(using: .utf8)!
+            let player = try? decoder.decode(Player.self, from: traits)
             XCTAssertNil(player)
         }
         
         do {
-            let traits: [String: Any] = [
+            let traits = """
+            {
                 "name": "Bilbo",
-                "height": "3'9\"",
+                "height": "3'9\\"",
                 "weight": 120,
-                "ability scores": ["Dexterity": 13],
+                "ability scores": {"Dexterity": 13},
                 "money": 130]
-            let player = Player(from: traits)
+            }
+            """.data(using: .utf8)!
+            let player = try? decoder.decode(Player.self, from: traits)
             XCTAssertNil(player)
         }
     }

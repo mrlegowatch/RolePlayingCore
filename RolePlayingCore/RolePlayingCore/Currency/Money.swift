@@ -11,37 +11,76 @@ import Foundation
 /// A measurement of currency.
 public typealias Money = Measurement<UnitCurrency>
 
-public extension Measurement where UnitType: UnitCurrency {
-
-    /// Creates an instance from a dictionary trait. If it is a raw number, the Currency baseUnit() is used.
-    /// If it contains one of the known currency symbols as a suffix, those units are used.
-    /// Returns nil if not a number, or if none of the known currency symbols is found.
-    init?(from trait: Any?) {
-        guard let trait = trait else { return nil }
-        
+public extension String {
+    
+    /// Parses "lb" or "kg" into a measurement of mass.
+    var parseMoney: Money? {
         var value: Double?
-        var unit: UnitCurrency? = .baseUnit()
+        var unit: UnitCurrency = .baseUnit()
         
-        if let number = trait as? Int {
-            value = Double(number)
-        } else if let number = trait as? Double {
-            value = number
-        } else if let trait = trait as? String {
-            for currency in UnitCurrency.allCurrencies {
-                if let range = trait.range(of: currency.symbol), range.upperBound == trait.endIndex {
-                    value = Double(trait.substring(to: range.lowerBound).trimmingCharacters(in: .whitespaces))!
-                    unit = currency
-                    break
-                }
+        for currency in Currencies.allCurrencies {
+            if let range = self.range(of: currency.symbol), range.upperBound == self.endIndex {
+                value = Double(self.substring(to: range.lowerBound).trimmingCharacters(in: .whitespaces))!
+                unit = currency
+                break
             }
         }
-        // If could not parse as double or string with unit currency suffix, bail.
-        guard value != nil && unit != nil else { return nil }
         
-        self.init(value: value!, unit: unit as! UnitType)
+        // Try converting string to number.
+        if value == nil {
+            value = Double(self)
+        }
+        
+        // Bail if the value could not be parsed.
+        guard value != nil else { return nil }
+        
+        return Money(value: value!, unit: unit)
     }
-
+    
 }
+
+public extension KeyedDecodingContainer  {
+    
+    /// Decodes either a number or a string into Money.
+    ///
+    /// - throws `DecodingError.dataCorrupted` if the money could not be decoded.
+    func decode(_ type: Money.Type, forKey key: K) throws -> Money {
+        let money: Money?
+        
+        if let double = try? self.decode(Double.self, forKey: key) {
+            money = Money(value: double, unit: .baseUnit())
+        } else {
+            money = try self.decode(String.self, forKey: key).parseMoney
+        }
+        
+        // Throw if we were unsuccessful parsing.
+        guard money != nil else {
+            let context = DecodingError.Context(codingPath: self.codingPath, debugDescription: "Missing string or number for Money value")
+            throw DecodingError.dataCorrupted(context)
+        }
+        
+        return money!
+    }
+    
+    /// Decodes either a number or a string into Money, if present.
+    ///
+    /// - throws `DecodingError.dataCorrupted` if the money could not be decoded.
+    func decodeIfPresent(_ type: Money.Type, forKey key: K) throws -> Money? {
+        let money: Money?
+        
+        if let double = try? self.decode(Double.self, forKey: key) {
+            money = Money(value: double, unit: .baseUnit())
+        } else if let string = try self.decodeIfPresent(String.self, forKey: key) {
+            money = string.parseMoney
+        } else {
+            money = nil
+        }
+        
+        return money
+    }
+    
+}
+
 
 extension MeasurementFormatter {
     
@@ -50,7 +89,7 @@ extension MeasurementFormatter {
     public func string<UnitType: UnitCurrency>(from measurement: Measurement<UnitType>) -> String {
         let unitToUse = unitOptions == .naturalScale ? UnitCurrency.baseUnit() : measurement.unit
         let value = unitOptions == .naturalScale ? measurement.converted(to: UnitCurrency.baseUnit() as! UnitType).value : measurement.value
-        let unitsString = unitStyle == .short || unitStyle == .medium ? unitToUse.symbol : value == 1.0 ? unitToUse.longName : unitToUse.longNamePlural
+        let unitsString = unitStyle == .short || unitStyle == .medium ? unitToUse.symbol : value == 1.0 ? unitToUse.name : unitToUse.plural
         
         let valueString = numberFormatter.string(from: NSNumber(value: value))!
         let formatString = unitStyle == .short ? "%@%@" : "%@ %@"

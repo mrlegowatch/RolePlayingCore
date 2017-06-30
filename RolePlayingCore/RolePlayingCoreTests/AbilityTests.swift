@@ -66,14 +66,14 @@ class AbilityTests: XCTestCase {
             let reflexes = Ability("Reflexes")
             let stamina = Ability("Stamina")
         
-            let abilityScores = Ability.Scores(values: [brawn: 9, reflexes: 12, stamina: 15])
+            let abilityScores = AbilityScores([brawn: 9, reflexes: 12, stamina: 15])
             
             XCTAssertEqual(abilityScores.count, 3, "ability scores count")
             XCTAssertEqual(abilityScores[brawn], 9, "ability scores brawn")
             XCTAssertEqual(abilityScores[reflexes], 12, "ability scores reflexes")
             XCTAssertEqual(abilityScores[stamina], 15, "ability scores stamina")
             
-            let expectedModifiers = Ability.Scores(values: [brawn: -1, reflexes: 1, stamina: 2])
+            let expectedModifiers = AbilityScores([brawn: -1, reflexes: 1, stamina: 2])
             XCTAssertEqual(abilityScores.modifiers, expectedModifiers, "ability scores modifiers")
         }
 
@@ -83,7 +83,7 @@ class AbilityTests: XCTestCase {
             let reflexes = Ability("Reflexes")
             let stamina = Ability("Stamina")
             
-            var abilityScores = Ability.Scores(values: [brawn: 8, reflexes: 13, stamina: 17])
+            var abilityScores = AbilityScores([brawn: 8, reflexes: 13, stamina: 17])
             
             // Change 2 of the 3 scores
             abilityScores[reflexes] = 11
@@ -95,7 +95,7 @@ class AbilityTests: XCTestCase {
             XCTAssertEqual(abilityScores[stamina], 18, "ability scores reflexes")
             
             // Check that modifiers reflect mutated scores
-            let expectedModifiers = Ability.Scores(values: [brawn: -1, reflexes: 0, stamina: 4])
+            let expectedModifiers = AbilityScores([brawn: -1, reflexes: 0, stamina: 4])
             XCTAssertEqual(abilityScores.modifiers, expectedModifiers, "ability scores modifiers")
             
             // Verify that a score can't be nil'd out
@@ -109,10 +109,15 @@ class AbilityTests: XCTestCase {
     }
     
     func testAbilityScoresFromDictionary() {
+        
         // Test with implicit [String: Int] as from JSON
         do {
-            let traits = ["Strength": 12, "Intelligence": 8]
-            let abilityScores = Ability.Scores(from: traits)
+            let traits = """
+                {"Strength": 12, "Intelligence": 8}
+            """.data(using: .utf8)!
+            
+            let decoder = JSONDecoder()
+            let abilityScores = try? decoder.decode(AbilityScores.self, from: traits)
             XCTAssertNotNil(abilityScores, "ability scores should be non-nil")
             
             let strength = Ability("Strength")
@@ -120,25 +125,6 @@ class AbilityTests: XCTestCase {
             
             XCTAssertEqual(abilityScores?[strength], 12, "ability scores dictionary strength")
             XCTAssertEqual(abilityScores?[intelligence], 8, "ability scores dictionary intelligence")
-            
-            let encoded = abilityScores?.encodeTraits() as? [String: Int]
-            XCTAssertNotNil(encoded, "round-trip traits should be [String: Int]")
-            if encoded != nil {
-                XCTAssertEqual(encoded!, traits, "round-trip for traits")
-            }
-        }
-        
-        // Test with [String: NSNumber] as from NSDictionary or plist
-        do {
-            let traits: NSDictionary = ["Wisdom": NSNumber(value: 8), "Charisma": NSNumber(value: 13)]
-            let abilityScores = Ability.Scores(from: traits as? [String: Int])
-            XCTAssertNotNil(abilityScores, "ability scores should be non-nil")
-
-            let wisdom = Ability("Wisdom")
-            let charisma = Ability("Charisma")
-            
-            XCTAssertEqual(abilityScores?[wisdom], 8, "ability scores dictionary wisdom")
-            XCTAssertEqual(abilityScores?[charisma], 13, "ability scores dictionary charisma")
         }
     }
     
@@ -149,7 +135,7 @@ class AbilityTests: XCTestCase {
             let reflexes = Ability("Reflexes")
             let stamina = Ability("Stamina")
             
-            let abilityScores = Ability.Scores(values: [brawn: 8, reflexes: 13, stamina: 17])
+            let abilityScores = AbilityScores([brawn: 8, reflexes: 13, stamina: 17])
             let combinedScores = abilityScores + abilityScores.modifiers
             
             XCTAssertEqual(combinedScores[brawn], 7, "adding ability scores brawn")
@@ -163,8 +149,8 @@ class AbilityTests: XCTestCase {
             let reflexes = Ability("Reflexes")
             let stamina = Ability("Stamina")
             
-            let abilityScores = Ability.Scores(values: [brawn: 8, reflexes: 13, stamina: 17])
-            let oneScore = Ability.Scores(values: [reflexes: -3])
+            let abilityScores = AbilityScores([brawn: 8, reflexes: 13, stamina: 17])
+            let oneScore = AbilityScores([reflexes: -3])
             let combinedScores = abilityScores + oneScore
             
             XCTAssertEqual(combinedScores[brawn], 8, "adding ability scores brawn")
@@ -178,11 +164,11 @@ class AbilityTests: XCTestCase {
             let reflexes = Ability("Reflexes")
             let stamina = Ability("Stamina")
             
-            let abilityScores = Ability.Scores(values: [brawn: 8, reflexes: 13, stamina: 17])
+            let abilityScores = AbilityScores([brawn: 8, reflexes: 13, stamina: 17])
             
             let intelligence = Ability("Intelligence")
             let wisdom = Ability("Wisdom")
-            let unrelatedScores = Ability.Scores(values: [intelligence: 14, wisdom: 5])
+            let unrelatedScores = AbilityScores([intelligence: 14, wisdom: 5])
             let combinedScores = abilityScores + unrelatedScores
             
             XCTAssertEqual(combinedScores.count, 3, "adding ability scores count")
@@ -197,7 +183,7 @@ class AbilityTests: XCTestCase {
     func testDefaultAbilityScores() {
         // Test default ability scores
         do {
-            let abilityScores = Ability.Scores()
+            let abilityScores = AbilityScores()
             
             XCTAssertEqual(abilityScores.count, 6, "default ability scores count")
             
@@ -215,7 +201,7 @@ class AbilityTests: XCTestCase {
             let reflexes = Ability("Reflexes")
             let stamina = Ability("Stamina")
 
-            let abilityScores = Ability.Scores(defaults: [brawn, reflexes, stamina])
+            let abilityScores = AbilityScores(defaults: [brawn, reflexes, stamina])
             XCTAssertEqual(abilityScores.count, 3, "default ability scores count")
             
             // Test values via keys and values

@@ -8,65 +8,39 @@
 
 import Foundation
 
-public extension Trait {
-    
-    public static let gender = "gender"
-    
-    public static let height = "height"
-    
-    public static let weight = "weight"
-    
-    public static let maximumHitPoints = "maximum hit points"
-    
-    public static let currentHitPoints = "current hit points"
-    
-    public static let money = "money"
-    
-    public static let level = "level"
-    
-    // Personality traits
-    
-    public static let ideals = "ideals"
-    
-    public static let bonds = "bonds"
-    
-    public static let flaws = "flaws"
-    
-    public static let background = "background"
-    
-}
-
-public extension Ability.Scores {
+public extension AbilityScores {
     
     // Sets the ability scores to random values using 4d6-L
     public mutating func roll() {
         let dice = DroppingDice(.d6, times: 4, drop: .lowest)
         for ability in abilities {
-            rawValue[ability] = dice.roll()
+            scores[ability] = dice.roll()
         }
     }
 
 }
 
 // TODO: Is this a base class for Character? What about NPC? Monster? Should we have a protocol?
-// TODO: Support TraitCoder protocol
-public class Player: TraitCoder {
+public class Player: Codable {
     
     public var name: String
+    public var descriptiveTraits: [String: String] // ideals, bonds, flaws, background
     
-    public var descriptiveTraits = [String: Any]()
+    public private(set) var raceName: String
+    public private(set) var className: String
     
-    public var description: String? { return descriptiveTraits[Trait.description] as? String }
+    public var racialTraits: RacialTraits! {
+        didSet {
+            self.raceName = racialTraits.name
+        }
+    }
+    public var classTraits: ClassTraits! {
+        didSet {
+            self.className = classTraits.name
+        }
+    }
     
-    public var racialTraits: RacialTraits!
-    
-    public var raceName: String { return racialTraits.name }
-    
-    public var classTraits: ClassTraits!
-    
-    public var className: String { return classTraits.name }
-    
-    public enum Gender: String {
+    public enum Gender: String, Codable {
         case female = "Female"
         case male = "Male"
     }
@@ -78,7 +52,6 @@ public class Player: TraitCoder {
     public var alignment: Alignment?
 
     public var height: Height
-    
     public var weight: Weight
 
     // TODO: birthdate and age
@@ -87,45 +60,105 @@ public class Player: TraitCoder {
 
     /// Ability scores
     
-    public var baseAbilities: Ability.Scores
-    
-    public var abilityModifiers: Ability.Scores { return racialTraits.abilityScoreIncrease }
-    
-    public var abilities: Ability.Scores { return baseAbilities + abilityModifiers }
+    public var baseAbilities: AbilityScores
+    public var abilities: AbilityScores { return baseAbilities + racialTraits.abilityScoreIncrease }
     
     /// Hit points, hit dice, experience points, and level
     
     public var maximumHitPoints: Int
-    
     public var currentHitPoints: Int
-    
-    public var hitDice: Dice {
-        return classTraits.hitDice
-    }
-    
     public var experiencePoints: Int
-    
     public var level: Int
     
     // Equipment and money
     
     public var money: Money
-    
     public var armorClass: Int = 0 // TODO: compute armor class
-    
-    public var proficiencyBonus: Int {
-        return 2 + level / 4
-    }
+    public var proficiencyBonus: Int { return 2 + level / 4 }
     
     // TODO: equipment, weapons, armor, skills, etc.
+    
+    private enum CodingKeys: String, CodingKey {
+        case name
+        case raceName = "race"
+        case className = "class"
+        case descriptiveTraits = "descriptive traits"
+        case gender
+        case alignment
+        case height
+        case weight
+        case baseAbilities = "ability scores"
+        case maximumHitPoints = "maximum hit points"
+        case currentHitPoints = "current hit points"
+        case experiencePoints = "experience points"
+        case level
+        case money
+    }
+    
+    public required init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        
+        // Try decoding properties
+        let name = try values.decode(String.self, forKey: .name)
+        let raceName = try values.decode(String.self, forKey: .raceName)
+        let className = try values.decode(String.self, forKey: .className)
+        let descriptiveTraits = try values.decodeIfPresent([String:String].self, forKey: .descriptiveTraits)
+        let gender = try values.decodeIfPresent(Gender.self, forKey: .gender)
+        let alignment = try values.decodeIfPresent(Alignment.self, forKey: .alignment)
+        let height = try values.decode(Height.self, forKey: .height)
+        let weight = try values.decode(Weight.self, forKey: .weight)
+        let baseAbilities = try values.decode(AbilityScores.self, forKey: .baseAbilities)
+        let maximumHitPoints = try values.decode(Int.self, forKey: .maximumHitPoints)
+        let currentHitPoints = try values.decodeIfPresent(Int.self, forKey: .currentHitPoints)
+        let experiencePoints = try values.decodeIfPresent(Int.self, forKey: .experiencePoints)
+        let level = try values.decodeIfPresent(Int.self, forKey: .level)
+        let money = try values.decode(Money.self, forKey: .money)
+        
+        // Safely set properties
+        self.name = name
+        self.raceName = raceName
+        self.className = className
+        self.descriptiveTraits = descriptiveTraits ?? [:]
+        self.gender = gender
+        self.alignment = alignment
+        self.height = height
+        self.weight = weight
+        self.baseAbilities = baseAbilities
+        self.maximumHitPoints = maximumHitPoints
+        self.currentHitPoints = currentHitPoints ?? maximumHitPoints
+        self.experiencePoints = experiencePoints ?? 0
+        self.level = level ?? 1
+        self.money = money
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var values = encoder.container(keyedBy: CodingKeys.self)
+        
+        // Try decoding properties
+        try values.encode(name, forKey: .name)
+        try values.encode(raceName, forKey: .raceName)
+        try values.encode(className, forKey: .className)
+        try values.encodeIfPresent(descriptiveTraits, forKey: .descriptiveTraits)
+        try values.encodeIfPresent(gender, forKey: .gender)
+        try values.encodeIfPresent(alignment, forKey: .alignment)
+        try values.encode("\(height)", forKey: .height)
+        try values.encode("\(weight)", forKey: .weight)
+        try values.encode(baseAbilities, forKey: .baseAbilities)
+        try values.encode(maximumHitPoints, forKey: .maximumHitPoints)
+        try values.encodeIfPresent(currentHitPoints, forKey: .currentHitPoints)
+        try values.encodeIfPresent(experiencePoints, forKey: .experiencePoints)
+        try values.encodeIfPresent(level, forKey: .level)
+        try values.encode("\(money)", forKey: .money)
+    }
     
     // Creates a player character.
     public init(_ name: String, racialTraits: RacialTraits, classTraits: ClassTraits, gender: Gender? = nil, alignment: Alignment? = nil) {
         self.name = name
-        
+        self.descriptiveTraits = [:]
+        self.raceName = racialTraits.name
+        self.className = classTraits.name
         self.racialTraits = racialTraits
         self.classTraits = classTraits
-        
         self.gender = gender
         self.alignment = alignment
         
@@ -135,7 +168,7 @@ public class Player: TraitCoder {
         let extraWeight = extraHeight * racialTraits.weightModifier.roll()
         self.weight = racialTraits.baseWeight + Weight(value: Double(extraWeight), unit: .pounds)
         
-        self.baseAbilities = Ability.Scores()
+        self.baseAbilities = AbilityScores()
         self.baseAbilities.roll()
 
         self.maximumHitPoints = Player.rollHitPoints(classTraits: classTraits, racialTraits: racialTraits)
@@ -148,72 +181,22 @@ public class Player: TraitCoder {
         self.level = 1
     }
     
-    public required init?(from traits: Any?) {
-        guard let traits = traits as? [String: Any] else { return nil }
-
-        // Required traits
-        guard let name = traits[Trait.name] as? String else { return nil }
-        
-        guard let height = Height(from: traits[Trait.height]) else { Trait.logMissing(Trait.height); return nil }
-        guard let weight = Weight(from: traits[Trait.weight]) else { Trait.logMissing(Trait.weight); return nil }
-        
-        guard let baseAbilities = Ability.Scores(from: traits[Trait.abilityScores]) else { Trait.logMissing(Trait.abilityScores); return nil }
-
-        guard let money = Money(from: traits[Trait.money]) else { Trait.logMissing(Trait.money); return nil }
-        
-        guard let maximumHitPoints = traits[Trait.maximumHitPoints] as? Int else { Trait.logMissing(Trait.maximumHitPoints); return nil }
-           
-        // Optional traits
-        let gender: Gender?
-        if let genderString = traits[Trait.gender] as? String {
-            gender = Gender(rawValue: genderString)
-        } else {
-            gender = nil
+    // TODO: support KeyedArchiver?
+    func resolveClass(from classes: Classes) throws {
+        guard let classTraits = classes.find(self.className) else {
+            throw RuntimeError("Could not resolve class name \(self.className)")
         }
-        
-        let alignment: Alignment?
-        if let alignmentString = traits[Trait.alignment] as? String {
-            alignment = Alignment(from: alignmentString)
-        } else {
-            alignment = nil
-        }
-        
-        let currentHitPoints = traits[Trait.currentHitPoints] as? Int ?? maximumHitPoints
-
-        let experiencePoints = traits[Trait.experiencePoints] as? Int ?? 0
-        let level = traits[Trait.level] as? Int ?? 1
-        
-        // All is well, set the properties:
-        self.name = name
-        self.gender = gender
-        self.alignment = alignment
-        self.height = height
-        self.weight = weight
-        self.baseAbilities = baseAbilities
-        self.money = money
-        self.maximumHitPoints = maximumHitPoints
-        self.currentHitPoints = currentHitPoints
-        self.experiencePoints = experiencePoints
-        self.level = level
+        self.classTraits = classTraits
     }
     
-    public func encodeTraits() -> Any? {
-        var traits = [String: Any]()
-        traits[Trait.name] = name
-        traits[Trait.gender] = gender?.rawValue
-        traits[Trait.alignment] = alignment?.description
-        traits[Trait.height] = height.value
-        traits[Trait.weight] = weight.value
-        traits[Trait.abilityScores] = baseAbilities.encodeTraits()
-        traits[Trait.money] = money.value
-        traits[Trait.maximumHitPoints] = maximumHitPoints
-        traits[Trait.currentHitPoints] = currentHitPoints
-        traits[Trait.experiencePoints] = experiencePoints
-        traits[Trait.level] = level
-        
-        return traits
+    // TODO: support KeyedArchiver?
+    func resolveRace(from races: Races) throws {
+        guard let racialTraits = races.find(self.raceName) else {
+            throw RuntimeError("Could not resolve race name \(self.raceName)")
+        }
+        self.racialTraits = racialTraits
     }
-
+    
     class func rollHitPoints(classTraits: ClassTraits, racialTraits: RacialTraits) -> Int {
         return max(classTraits.hitDice.sides / 2 + 1, classTraits.hitDice.roll()) + racialTraits.hitPointBonus
     }
@@ -234,7 +217,7 @@ public class Player: TraitCoder {
         
         maximumHitPoints += rollHitPoints()
         
-        // TODO: add more level up
+        // TODO: add more for leveling up
     }
 
 }
