@@ -3,3 +3,5 @@ osx_image: xcode9
 script:
 - set -o pipefail
 - travis_retry xcodebuild -workspace RolePlayingCore.xcworkspace -scheme "RolePlayingCore" -destination "platform=iOS Simulator,name=iPhone 7" build-for-testing test | xcpretty
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
