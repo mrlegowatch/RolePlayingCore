@@ -1,4 +1,4 @@
-# RolePlayingCore  [![Build Status](https://travis-ci.org/mrlegowatch/RolePlayingCore.svg?branch=master)](https://travis-ci.org/mrlegowatch/RolePlayingCore) [![codecov.io](https://codecov.io/gh/codecov/example-swift/branch/master/graphs/badge.svg)](https://codecov.io/gh/codecov/example-swift/branch/master)
+# RolePlayingCore  [![Build Status](https://travis-ci.org/mrlegowatch/RolePlayingCore.svg?branch=master)](https://travis-ci.org/mrlegowatch/RolePlayingCore) [![codecov.io](https://codecov.io/gh/mrlegowatch/RolePlayingCore/branch/master/graphs/badge.svg)](https://codecov.io/gh/mrlegowatch/RolePlayingCore/branch/master)
 
 This framework provides reusable role playing game core logic in the Swift language. It is a work-in-progress. Capabilities will be provided incrementally over time.
 
