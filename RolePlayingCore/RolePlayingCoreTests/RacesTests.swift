@@ -15,6 +15,11 @@ class RacesTests: XCTestCase {
     let bundle = Bundle(for: RacesTests.self)
     let decoder = JSONDecoder()
     
+    func testDefaultInit() {
+        let races = Races()
+        XCTAssertEqual(races.races.count, 0, "default init")
+    }
+    
     func testRaces() {
         var races: Races! = nil
         do {

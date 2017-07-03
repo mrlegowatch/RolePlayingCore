@@ -2,7 +2,7 @@
     "players": [
                 {
                 "name": "Frodo",
-                "gender": "male",
+                "gender": "Male",
                 "class": "Fighter",
                 "height": "3'9\"",
                 "weight": 120,

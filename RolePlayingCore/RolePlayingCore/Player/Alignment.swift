@@ -242,10 +242,11 @@ extension Alignment: Codable {
         }
     }
     
+    /// Encodes alignment as a dictionary of doubles for ethics and morals.
+    /// To encode alignment as a parseable string instead, use encode("\(propertyName)").
     public func encode(to encoder: Encoder) throws {
-        // TODO: allow for encoding as either enums or doubles.
-        var container = encoder.singleValueContainer()
-        try container.encode("\(self)")
+        var values = encoder.container(keyedBy: CodingKeys.self)
+        try values.encode(ethicsValue, forKey: .ethics)
+        try values.encode(moralsValue, forKey: .morals)
     }
-
 }
