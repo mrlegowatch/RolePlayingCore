@@ -13,7 +13,7 @@ public typealias Money = Measurement<UnitCurrency>
 
 public extension String {
     
-    /// Parses "lb" or "kg" into a measurement of mass.
+    /// Parses numbers with currency symbols into money.
     var parseMoney: Money? {
         var value: Double?
         var unit: UnitCurrency = .baseUnit()
