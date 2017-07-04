@@ -65,9 +65,9 @@ public extension KeyedDecodingContainer  {
         return weight!
     }
     
-    /// Decodes either a number or a string into a Height, if present.
+    /// Decodes either a number or a string into a Weight, if present.
     ///
-    /// - throws `DecodingError.dataCorrupted` if the height could not be decoded.
+    /// - throws `DecodingError.dataCorrupted` if the weight could not be decoded.
     func decodeIfPresent(_ type: Weight.Type, forKey key: K) throws -> Weight? {
         let weight: Weight?
         
