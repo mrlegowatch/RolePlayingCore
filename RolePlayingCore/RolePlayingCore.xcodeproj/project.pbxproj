@@ -14,6 +14,7 @@
 		B620560E1E19DDD0002494AB /* Dice.swift in Sources */ = {isa = PBXBuildFile; fileRef = B620560B1E19DDD0002494AB /* Dice.swift */; };
 		B620560F1E19DDD0002494AB /* DiceParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = B620560C1E19DDD0002494AB /* DiceParser.swift */; };
 		B62056101E19DDD0002494AB /* RandomNumberGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B620560D1E19DDD0002494AB /* RandomNumberGenerator.swift */; };
+		B62D89C41F09A3870095D587 /* DiceParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B62D89C31F09A3870095D587 /* DiceParserTests.swift */; };
 		B66AF8FC1EAE87A800C15F8E /* TestClasses.json in Resources */ = {isa = PBXBuildFile; fileRef = B66AF8F41EAE87A800C15F8E /* TestClasses.json */; };
 		B66AF8FD1EAE87A800C15F8E /* TestConfiguration.json in Resources */ = {isa = PBXBuildFile; fileRef = B66AF8F51EAE87A800C15F8E /* TestConfiguration.json */; };
 		B66AF8FE1EAE87A800C15F8E /* TestCurrencies.json in Resources */ = {isa = PBXBuildFile; fileRef = B66AF8F61EAE87A800C15F8E /* TestCurrencies.json */; };
@@ -87,6 +88,7 @@
 		B620560B1E19DDD0002494AB /* Dice.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dice.swift; sourceTree = "<group>"; };
 		B620560C1E19DDD0002494AB /* DiceParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiceParser.swift; sourceTree = "<group>"; };
 		B620560D1E19DDD0002494AB /* RandomNumberGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RandomNumberGenerator.swift; sourceTree = "<group>"; };
+		B62D89C31F09A3870095D587 /* DiceParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiceParserTests.swift; sourceTree = "<group>"; };
 		B66AF8F41EAE87A800C15F8E /* TestClasses.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TestClasses.json; sourceTree = "<group>"; };
 		B66AF8F51EAE87A800C15F8E /* TestConfiguration.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TestConfiguration.json; sourceTree = "<group>"; };
 		B66AF8F61EAE87A800C15F8E /* TestCurrencies.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TestCurrencies.json; sourceTree = "<group>"; };
@@ -203,6 +205,7 @@
 				B66AF90A1EAE8BF100C15F8E /* MissingRacePlayers.json */,
 				B6FA6CB51E47B080004D91B1 /* CurrencyTests.swift */,
 				B62056091E19DDC0002494AB /* DiceTests.swift */,
+				B62D89C31F09A3870095D587 /* DiceParserTests.swift */,
 				B6FA6CBE1E47C2F9004D91B1 /* HeightTests.swift */,
 				B6FA6CC01E47C306004D91B1 /* WeightTests.swift */,
 				B6CF53911E51DEDD00CADD9F /* ClassTraitsTests.swift */,
@@ -443,6 +446,7 @@
 				B6CF53D91E56442800CADD9F /* RacesTests.swift in Sources */,
 				B6F0703C1E4FC18500F66918 /* RacialTraitsTests.swift in Sources */,
 				B69F846F1E59155A00A4D2B0 /* PlayersTests.swift in Sources */,
+				B62D89C41F09A3870095D587 /* DiceParserTests.swift in Sources */,
 				B6CF53DB1E56443A00CADD9F /* ClassesTests.swift in Sources */,
 				B6CF53921E51DEDD00CADD9F /* ClassTraitsTests.swift in Sources */,
 				B6FA6CB91E47B4B1004D91B1 /* ServiceErrorTests.swift in Sources */,
