@@ -205,9 +205,7 @@ class AlignmentTests: XCTestCase {
 }
     }
     
-    func testAlignmentParsing() {
-        let decoder = JSONDecoder()
-        
+    func testAlignmentParsing() {        
         // Test initializing from valid string
         do {
             let neutralGood = "Neutral Good".parseAlignment
@@ -241,7 +239,15 @@ class AlignmentTests: XCTestCase {
             
             let mismatchedWords = "Foo Bar".parseAlignment
             XCTAssertNil(mismatchedWords, "mismatched words should be nil")
+            
+            let wrongWord = "Cat".parseAlignment
+            XCTAssertNil(wrongWord, "wrong word should be nil")
         }
+        
+    }
+    
+    func testAlignmentDictionaryDecoding() {
+        let decoder = JSONDecoder()
         
         // Test initializing from dictionary of doubles
         do {
@@ -304,6 +310,97 @@ class AlignmentTests: XCTestCase {
             let notValid = try? decoder.decode(Alignment.self, from: notValidTraits)
             XCTAssertNil(notValid, "non-valid traits should be nil")
         }
+    }
+    
+    func testAlignmentStringDecoding() {
+        let decoder = JSONDecoder()
+        
+        struct AlignmentContainer: Decodable {
+            let alignment: Alignment
+        }
+        
+        // Test string values
+        do {
+            let stringTrait = """
+                {
+                    "alignment": "Chaotic Evil"
+                }
+                """.data(using: .utf8)!
+            do {
+                let decoded = try decoder.decode(AlignmentContainer.self, from: stringTrait)
+                XCTAssertEqual("\(decoded.alignment)", "Chaotic Evil", "decoded string should be round-trip")
+            }
+            catch let error {
+                XCTFail("Error decoding string trait: \(error)")
+            }
+            
+            let notValidTrait = """
+                {
+                    "alignment": "Hello"
+                }
+                """.data(using: .utf8)!
+            do {
+                let notValid = try decoder.decode(AlignmentContainer.self, from: notValidTrait)
+                XCTAssertNil(notValid, "non-valid traits should be nil")
+            }
+            catch let error {
+                print("Successfully failed decoding invalid string trait: \(error)")
+            }
+        }
+    }
+    
+    func testAlignmentEncoding() {
+        let encoder = JSONEncoder()
+        
+        // Test default encoding
+        do {
+            struct AlignmentContainer: Encodable {
+                let alignment: Alignment
+            }
+            let container = AlignmentContainer(alignment: Alignment(.chaotic, .good))
+            let encoded = try encoder.encode(container)
+            let deserialized = try JSONSerialization.jsonObject(with: encoded, options: [])
+            
+            if let dictionary = deserialized as? [String: Any] {
+                XCTAssertNotNil(dictionary["alignment"] as? [String: Double], "player traits round trip alignment")
+                if let alignment = dictionary["alignment"] as? [String: Double] {
+                    XCTAssertEqual(alignment["ethics"], -1, "player traits round trip alignment ethics")
+                    XCTAssertEqual(alignment["morals"], 1, "player traits round trip alignment ethics")
+                }
+            }
+        }
+        catch let error {
+            XCTFail("Encoding Alignment failed, error: \(error)")
+        }
+        
+        // Test stringified encoding
+        do {
+            struct AlignmentContainer: Encodable {
+                let alignment: Alignment
+                
+                enum CodingKeys: String, CodingKey {
+                    case alignment
+                }
+                
+                // Stringify alignment
+                func encode(to encoder: Encoder) throws {
+                    var container = encoder.container(keyedBy: CodingKeys.self)
+                    try container.encode("\(alignment)", forKey: .alignment)
+                }
+            }
+            
+            let container = AlignmentContainer(alignment: Alignment(.chaotic, .good))
+            let encoded = try! encoder.encode(container)
+            let deserialized = try? JSONSerialization.jsonObject(with: encoded, options: [])
+            XCTAssertNotNil(deserialized, "player traits round trip")
+            
+            if let dictionary = deserialized as? [String: String] {
+                if let alignment = dictionary["alignment"] {
+                    XCTAssertEqual(alignment, "Chaotic Good", "player traits round trip alignment ethics")
+                }
+            }
+        }
+        
         
     }
     

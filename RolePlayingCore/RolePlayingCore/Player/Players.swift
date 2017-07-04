@@ -8,6 +8,26 @@
 
 import Foundation
 
+extension Player {
+    
+    // TODO: support KeyedArchiver?
+    func resolveRace(from races: Races) throws {
+        guard let racialTraits = races.find(self.raceName) else {
+            throw RuntimeError("Could not resolve race name \(self.raceName)")
+        }
+        self.racialTraits = racialTraits
+    }
+   
+    // TODO: support KeyedArchiver?
+    func resolveClass(from classes: Classes) throws {
+        guard let classTraits = classes.find(self.className) else {
+            throw RuntimeError("Could not resolve class name \(self.className)")
+        }
+        self.classTraits = classTraits
+    }
+    
+}
+
 public class Players: Codable {
 
     public var players = [Player]()

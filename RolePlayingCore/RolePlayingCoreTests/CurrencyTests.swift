@@ -184,5 +184,148 @@ class UnitCurrencyTests: XCTestCase {
             }
         }
     }
-
+    
+    func testEncodingMoney() {
+        struct MoneyContainer: Encodable {
+            let money: Money
+            
+            enum CodingKeys: String, CodingKey {
+                case money
+            }
+            
+            func encode(to encoder: Encoder) throws {
+                var container = encoder.container(keyedBy: CodingKeys.self)
+                try container.encode("\(money)", forKey: .money)
+            }
+        }
+        
+        do {
+            let moneyContainer = MoneyContainer(money: Money(value: 48.93, unit: Currencies.find("sp")!))
+            let encoder = JSONEncoder()
+            do {
+                let encoded = try encoder.encode(moneyContainer)
+                let deserialized = try JSONSerialization.jsonObject(with: encoded, options: []) as? [String: String]
+                XCTAssertEqual(deserialized?["money"], "48.93 sp", "encoded money failed to deserialize as string")
+            }
+            catch let error {
+                XCTFail("encoded dice failed, error: \(error)")
+            }
+        }
+    }
+    
+    func testDecodingMoney() {
+        struct MoneyContainer: Decodable {
+            let money: Money
+            
+        }
+        let decoder = JSONDecoder()
+        
+        // Test parseable string
+        do {
+            let traits = """
+            {
+                "money": "72.17 ep"
+            }
+            """.data(using: .utf8)!
+            let moneyContainer = try decoder.decode(MoneyContainer.self, from: traits)
+            XCTAssertEqual("\(moneyContainer.money)", "72.17 ep", "Decoded money")
+        }
+        catch let error {
+            XCTFail("decoded dice failed, error: \(error)")
+        }
+        
+        // Test raw number
+        do {
+            let traits = """
+            {
+                "money": 85
+            }
+            """.data(using: .utf8)!
+            let moneyContainer = try decoder.decode(MoneyContainer.self, from: traits)
+            XCTAssertEqual("\(moneyContainer.money)", "85.0 gp", "Decoded money")
+        }
+        catch let error {
+            XCTFail("decoded dice failed, error: \(error)")
+        }
+        
+        // Test invalid value
+        do {
+            let traits = """
+            {
+                "money": "no money"
+            }
+            """.data(using: .utf8)!
+            _ = try decoder.decode(MoneyContainer.self, from: traits)
+            XCTFail("decoded dice should have failed")
+            
+        }
+        catch let error {
+            print("Successfully failed to decode invalid dice string, error: \(error)")
+        }
+    }
+    
+    func testDecodingMoneyIfPresent() {
+        struct MoneyContainer: Decodable {
+            let money: Money?
+            
+        }
+        let decoder = JSONDecoder()
+        
+        // Test parseable string
+        do {
+            let traits = """
+            {
+                "money": "72.17 ep"
+            }
+            """.data(using: .utf8)!
+            let moneyContainer = try decoder.decode(MoneyContainer.self, from: traits)
+            XCTAssertEqual("\(moneyContainer.money!)", "72.17 ep", "Decoded money")
+        }
+        catch let error {
+            XCTFail("decoded dice failed, error: \(error)")
+        }
+        
+        // Test raw number
+        do {
+            let traits = """
+            {
+                "money": 85
+            }
+            """.data(using: .utf8)!
+            let moneyContainer = try decoder.decode(MoneyContainer.self, from: traits)
+            XCTAssertEqual("\(moneyContainer.money!)", "85.0 gp", "Decoded money")
+        }
+        catch let error {
+            XCTFail("decoded dice failed, error: \(error)")
+        }
+        
+        // Test invalid value
+        do {
+            let traits = """
+            {
+                "money": "no money"
+            }
+            """.data(using: .utf8)!
+            let moneyContainer = try decoder.decode(MoneyContainer.self, from: traits)
+            XCTAssertNil(moneyContainer.money, "decoded dice should have failed")
+        }
+        catch let error {
+            XCTFail("Failed to decode optional invalid dice string as nil, error: \(error)")
+        }
+    }
+    
+    func testEncodeCurrencies() {
+        let encoder = JSONEncoder()
+        do {
+            let encoded = try encoder.encode(UnitCurrencyTests.currencies)
+            let deserialized = try JSONSerialization.jsonObject(with: encoded, options: []) as? [String: Any]
+            XCTAssertNotNil(deserialized)
+            let currencies = deserialized?["currencies"] as? [[String:Any]]
+            XCTAssertNotNil(currencies)
+            XCTAssertEqual(currencies?.count, 5, "5 currencies")
+        }
+        catch let error {
+            XCTFail("Failed to encode currencies, error: \(error)")
+        }
+    }
 }

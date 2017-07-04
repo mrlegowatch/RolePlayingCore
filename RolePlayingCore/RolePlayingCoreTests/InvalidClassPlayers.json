@@ -2,7 +2,7 @@
     "players": [
                 {
                 "name": "Frodo",
-                "gender": "male",
+                "gender": "Male",
                 "class": "Software Engineer",
                 "race": "High Elf",
                 "height": "3'9\"",

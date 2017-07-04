@@ -19,38 +19,14 @@ public struct RacialTraits {
     public var lifespan: Int!
     public var alignment: Alignment?
     public var baseHeight: Height!
-    public var heightModifier: Dice!
+    public var heightModifier: Dice
     public var baseWeight: Weight!
-    public var weightModifier: Dice!
+    public var weightModifier: Dice
     public var darkVision: Int!
     public var speed: Int!
     public var hitPointBonus: Int
     
-    // TODO: wire this up
     public var subraces: [RacialTraits] = []
-    
-}
-
-extension RacialTraits: Codable {
-    
-    private enum CodingKeys: String, CodingKey {
-        case name
-        case plural
-        case aliases
-        case descriptiveTraits = "descriptive traits"
-        case abilityScoreIncrease = "ability scores"
-        case minimumAge = "minimum age"
-        case lifespan
-        case alignment
-        case baseHeight = "base height"
-        case heightModifier = "height modifier"
-        case baseWeight = "base weight"
-        case weightModifier = "weight modifier"
-        case darkVision = "darkvision"
-        case speed
-        case hitPointBonus = "hit point bonus"
-        case subraces
-    }
     
     public enum Size {
         case small
@@ -72,6 +48,60 @@ extension RacialTraits: Codable {
         }
         
         return size
+    }
+    
+    public init(name: String,
+                plural: String,
+                aliases: [String] = [],
+                descriptiveTraits: [String: String] = [:],
+                abilityScoreIncrease: AbilityScores = AbilityScores(),
+                minimumAge: Int,
+                lifespan: Int,
+                alignment: Alignment? = nil,
+                baseHeight: Height,
+                heightModifier: Dice = DiceModifier(0),
+                baseWeight: Weight,
+                weightModifier: Dice = DiceModifier(0),
+                darkVision: Int,
+                speed: Int,
+                hitPointBonus: Int = 0) {
+        self.name = name
+        self.plural = plural
+        self.aliases = aliases
+        self.descriptiveTraits = descriptiveTraits
+        self.abilityScoreIncrease = abilityScoreIncrease
+        self.minimumAge = minimumAge
+        self.lifespan = lifespan
+        self.alignment = alignment
+        self.baseHeight = baseHeight
+        self.heightModifier = heightModifier
+        self.baseWeight = baseWeight
+        self.weightModifier = weightModifier
+        self.darkVision = darkVision
+        self.speed = speed
+        self.hitPointBonus = hitPointBonus
+    }
+}
+
+extension RacialTraits: Codable {
+    
+    private enum CodingKeys: String, CodingKey {
+        case name
+        case plural
+        case aliases
+        case descriptiveTraits = "descriptive traits"
+        case abilityScoreIncrease = "ability scores"
+        case minimumAge = "minimum age"
+        case lifespan
+        case alignment
+        case baseHeight = "base height"
+        case heightModifier = "height modifier"
+        case baseWeight = "base weight"
+        case weightModifier = "weight modifier"
+        case darkVision = "darkvision"
+        case speed
+        case hitPointBonus = "hit point bonus"
+        case subraces
     }
     
     public init(from decoder: Decoder) throws {
@@ -165,7 +195,6 @@ extension RacialTraits: Codable {
     public func encode(to encoder: Encoder) throws {
         var values = encoder.container(keyedBy: CodingKeys.self)
         
-        // Try decoding properties
         try values.encode(name, forKey: .name)
         try values.encode(plural, forKey: .plural)
         try values.encode(aliases, forKey: .aliases)
@@ -173,16 +202,76 @@ extension RacialTraits: Codable {
         try values.encode(abilityScoreIncrease, forKey: .abilityScoreIncrease)
         try values.encode(minimumAge, forKey: .minimumAge)
         try values.encode(lifespan, forKey: .lifespan)
-        try values.encodeIfPresent(alignment, forKey: .alignment)
-        try values.encode("\(baseHeight)", forKey: .baseHeight)
+        
+        // Encode alignment using its enum string values, since RacialTraits is a type.
+        if alignment != nil {
+            try values.encode("\(alignment!)", forKey: .alignment)
+        }
+        
+        try values.encode("\(baseHeight!)", forKey: .baseHeight)
         try values.encode("\(heightModifier)", forKey: .heightModifier)
-        try values.encode("\(baseWeight)", forKey: .baseWeight)
+        try values.encode("\(baseWeight!)", forKey: .baseWeight)
         try values.encode("\(weightModifier)", forKey: .weightModifier)
         try values.encode(darkVision, forKey: .darkVision)
         try values.encode(speed, forKey: .speed)
         try values.encode(hitPointBonus, forKey: .hitPointBonus)
         
-        // TODO: encode subraces
+        var subraceContainer = values.nestedUnkeyedContainer(forKey: .subraces)
+        for subrace in subraces {
+            try subrace.encode(to: &subraceContainer, parent: self)
+        }
+    }
+    
+    public func encode(to container: inout UnkeyedEncodingContainer, parent: RacialTraits) throws {
+        // Name, plural, aliases and descriptive traits are unique to each set of racial traits.
+        // The rest may be inherited from the parent.
+        var values = container.nestedContainer(keyedBy: CodingKeys.self)
+        
+        try values.encode(name, forKey: .name)
+        try values.encode(plural, forKey: .plural)
+        if self.aliases.count > 0 {
+            try values.encode(aliases, forKey: .aliases)
+        }
+        if self.descriptiveTraits.count > 0 {
+            try values.encode(descriptiveTraits, forKey: .descriptiveTraits)
+        }
+        
+        // Un-combine ability scores
+        if self.abilityScoreIncrease != parent.abilityScoreIncrease {
+            let delta = self.abilityScoreIncrease - parent.abilityScoreIncrease
+            try values.encode(delta, forKey: .abilityScoreIncrease)
+        }
+        
+        if self.minimumAge != parent.minimumAge {
+            try values.encode(self.minimumAge, forKey: .minimumAge)
+        }
+        if self.lifespan != parent.lifespan {
+            try values.encode(self.lifespan, forKey: .lifespan)
+        }
+        if self.alignment != nil && self.alignment != parent.alignment {
+            try values.encode("\(alignment!)", forKey: .alignment)
+        }
+        if self.baseHeight != parent.baseHeight {
+            try values.encode("\(self.baseHeight!)", forKey: .baseHeight)
+        }
+        if self.heightModifier.sides != parent.heightModifier.sides {
+            try values.encode("\(self.heightModifier)", forKey: .heightModifier)
+        }
+        if self.baseWeight != parent.baseWeight {
+            try values.encode("\(self.baseWeight!)", forKey: .baseWeight)
+        }
+        if self.weightModifier.sides != parent.weightModifier.sides {
+            try values.encode("\(self.weightModifier)", forKey: .weightModifier)
+        }
+        if self.darkVision != parent.darkVision {
+            try values.encode(self.darkVision, forKey: .darkVision)
+        }
+        if self.speed != parent.speed {
+            try values.encode(self.speed, forKey: .speed)
+        }
+        if self.hitPointBonus != parent.hitPointBonus {
+            try values.encode(self.hitPointBonus, forKey: .hitPointBonus)
+        }
     }
     
 }
