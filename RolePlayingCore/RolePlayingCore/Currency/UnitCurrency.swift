@@ -34,9 +34,10 @@ public class UnitCurrency : Dimension {
         super.init(symbol: symbol, converter: converter)
     }
     
+    // TODO: In order to provide the other init method, I was required to implement
+    // this one as well. However, I don't know how to reconcile NSCoder with Codable.
     public required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        // TODO: In order to provide the other init method, I was required to implement
-        // this one as well. However, I don't know how to reconcile NSCoder with Codable.
     }
+    
 }

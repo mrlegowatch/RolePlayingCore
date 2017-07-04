@@ -181,21 +181,7 @@ public class Player: Codable {
         self.level = 1
     }
     
-    // TODO: support KeyedArchiver?
-    func resolveClass(from classes: Classes) throws {
-        guard let classTraits = classes.find(self.className) else {
-            throw RuntimeError("Could not resolve class name \(self.className)")
-        }
-        self.classTraits = classTraits
-    }
-    
-    // TODO: support KeyedArchiver?
-    func resolveRace(from races: Races) throws {
-        guard let racialTraits = races.find(self.raceName) else {
-            throw RuntimeError("Could not resolve race name \(self.raceName)")
-        }
-        self.racialTraits = racialTraits
-    }
+    // MARK: Implementation
     
     class func rollHitPoints(classTraits: ClassTraits, racialTraits: RacialTraits) -> Int {
         return max(classTraits.hitDice.sides / 2 + 1, classTraits.hitDice.roll()) + racialTraits.hitPointBonus

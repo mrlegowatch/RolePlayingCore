@@ -56,8 +56,8 @@ class PlayersTests: XCTestCase {
     func testMissingTraits() {
         do {
             let playersData = try! bundle.loadJSON("InvalidClassPlayers")
-            _ = try decoder.decode(Players.self, from: playersData)
-            
+            let players = try decoder.decode(Players.self, from: playersData)
+            try players.resolve(classes: classes, races: races)
             XCTFail("players.load should have failed")
         }
         catch let error {

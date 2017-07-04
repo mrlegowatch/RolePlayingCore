@@ -69,4 +69,139 @@ class UnitHeightTests: XCTestCase {
         }
 
     }
+    
+    func testEncodingHeight() {
+        struct HeightContainer: Encodable {
+            let height: Height
+            
+            enum CodingKeys: String, CodingKey {
+                case height
+            }
+            
+            func encode(to encoder: Encoder) throws {
+                var container = encoder.container(keyedBy: CodingKeys.self)
+                try container.encode("\(height)", forKey: .height)
+            }
+        }
+        let heightContainer = HeightContainer(height: Height(value: 3.2, unit: .meters))
+        
+        // Do a round-trip through serialization, then deserialization to confirm that it became a string
+        do {
+            let encoder = JSONEncoder()
+            let encoded = try encoder.encode(heightContainer)
+            let deserialized = try JSONSerialization.jsonObject(with: encoded, options: .allowFragments)
+            print("deserialized = \n\(deserialized)")
+            let container = deserialized as? [String: Any]
+            let height = container?["height"] as? String
+            XCTAssertEqual(height, "3.2 m", "Encoded height did not become a string")
+        }
+        catch let error {
+            XCTFail("Encoding heights threw an error: \(error)")
+        }
+    }
+    
+    func testDecodingHeight() {
+        struct HeightContainer: Decodable {
+            let height: Height
+        }
+        
+        // Test decoding from string height
+        do {
+            let traits = """
+            {
+                "height": "4ft 3in"
+            }
+            """.data(using: .utf8)!
+            do {
+                let decoder = JSONDecoder()
+                let decoded = try decoder.decode(HeightContainer.self, from: traits)
+                
+                XCTAssertEqual(decoded.height.value, 4.25, "Decoded height should be 4 ft 3 in")
+            } catch let error {
+                XCTFail("Decoding heights threw an error: \(error)")
+            }
+        }
+        
+        
+        // Test decoding from double height
+        do {
+            let traits = """
+            {
+                "height": 6.5
+            }
+            """.data(using: .utf8)!
+            do {
+                let decoder = JSONDecoder()
+                let decoded = try decoder.decode(HeightContainer.self, from: traits)
+                
+                XCTAssertEqual(decoded.height.value, 6.5, "Decoded height should be 4 ft 3 in")
+            } catch let error {
+                XCTFail("Decoding height threw an error: \(error)")
+            }
+        }
+        
+        // Test failure to decode
+        // Test decoding from double height
+        do {
+            let traits = """
+            {
+                "height": "abcdefg"
+            }
+            """.data(using: .utf8)!
+            do {
+                let decoder = JSONDecoder()
+                _ = try decoder.decode(HeightContainer.self, from: traits)
+                XCTFail("Decoding height should have thrown an error")
+                
+            } catch let error {
+                print("Decoding invalid height successfully threw an error: \(error)")
+            }
+        }
+        
+    }
+    
+    func testDecodingHeightIfPresent() {
+        struct HeightContainer: Decodable {
+            let height: Height? // The ? will trigger decodeIfPresent in the decoder
+        }
+        
+        // Test decoding from string height
+        do {
+            let traits = """
+            {
+                "height": "4ft 3in"
+            }
+            """.data(using: .utf8)!
+            do {
+                let decoder = JSONDecoder()
+                let decoded = try decoder.decode(HeightContainer.self, from: traits)
+                
+                XCTAssertEqual(decoded.height?.value, 4.25, "Decoded height should be 4 ft 3 in")
+            } catch let error {
+                XCTFail("Decoding heights threw an error: \(error)")
+            }
+        }
+        
+        
+        // Test decoding from double height
+        do {
+            let traits = """
+            {
+                "height": 6.5
+            }
+            """.data(using: .utf8)!
+            do {
+                let decoder = JSONDecoder()
+                let decoded = try decoder.decode(HeightContainer.self, from: traits)
+                
+                XCTAssertEqual(decoded.height?.value, 6.5, "Decoded height should be 4 ft 3 in")
+            } catch let error {
+                XCTFail("Decoding height threw an error: \(error)")
+            }
+        }
+    }
+
 }
+
+
+

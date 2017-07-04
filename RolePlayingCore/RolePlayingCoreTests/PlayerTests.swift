@@ -112,33 +112,33 @@ class PlayerTests: XCTestCase {
             }
             """.data(using: .utf8)!
             
-            var player: Player? = nil
             do {
-                player = try decoder.decode(Player.self, from: playerTraits)
+                let player = try decoder.decode(Player.self, from: playerTraits)
+                player.racialTraits = human
+                player.classTraits = fighter
+                
+                XCTAssertEqual(player.name, "Bilbo", "player name")
+                XCTAssertEqual(player.className, "Fighter", "class name")
+                XCTAssertEqual(player.raceName, "Human", "race name")
+                
+                XCTAssertEqual(player.gender, Player.Gender.male, "gender")
+                XCTAssertNil(player.alignment, "alignment")
+                
+                XCTAssertEqual(player.height.value, 3.75, "height")
+                XCTAssertEqual(player.weight.value, 120, "weight")
+                
+                XCTAssertEqual(player.maximumHitPoints, 10, "maximum hit points")
+                XCTAssertEqual(player.maximumHitPoints, player.currentHitPoints, "current hit points")
+                
+                XCTAssertEqual(player.experiencePoints, 0, "experience points")
+                XCTAssertEqual(player.level, 1, "level")
+                
+                XCTAssertEqual(player.money.value, 130, "money")
+                
             }
             catch let error {
                 XCTFail("decode player failed, error: \(error)")
             }
-            player?.racialTraits = human
-            player?.classTraits = fighter
-            
-            XCTAssertEqual(player?.name, "Bilbo", "player name")
-            XCTAssertEqual(player?.className, "Fighter", "class name")
-            XCTAssertEqual(player?.raceName, "Human", "race name")
-            
-            XCTAssertEqual(player?.gender, Player.Gender.male, "gender")
-            XCTAssertNil(player?.alignment, "alignment")
-        
-            XCTAssertEqual(player?.height.value, 3.75, "height")
-            XCTAssertEqual(player?.weight.value, 120, "weight")
-            
-            XCTAssertEqual(player?.maximumHitPoints, 10, "maximum hit points")
-            XCTAssertEqual(player?.maximumHitPoints, player?.currentHitPoints, "current hit points")
-
-            XCTAssertEqual(player?.experiencePoints, 0, "experience points")
-            XCTAssertEqual(player?.level, 1, "level")
-            
-            XCTAssertEqual(player?.money.value, 130, "money")
         }
         
         // Test construction with optional traits
@@ -211,7 +211,11 @@ class PlayerTests: XCTestCase {
         if let encoded = encoded as? [String: Any] {
             XCTAssertEqual(encoded["name"] as? String, "Bilbo", "player traits round trip name")
             XCTAssertEqual(encoded["gender"] as? String, "Male", "player traits round trip gender")
-            XCTAssertEqual(encoded["alignment"] as? String, "Neutral Good", "player traits round trip alignment")
+            XCTAssertNotNil(encoded["alignment"] as? [String: Double], "player traits round trip alignment")
+            if let alignment = encoded["alignment"] as? [String: Double] {
+                XCTAssertEqual(alignment["ethics"], 0, "player traits round trip alignment ethics")
+                XCTAssertEqual(alignment["morals"], 1, "player traits round trip alignment ethics")
+            }
             XCTAssertEqual(encoded["height"] as? String, "3.75 ft", "player traits round trip height")
             XCTAssertEqual(encoded["weight"] as? String, "120.0 lb", "player traits round trip weight")
             
@@ -224,6 +228,8 @@ class PlayerTests: XCTestCase {
             XCTAssertEqual(encoded["maximum hit points"] as? Int, 20, "player traits round trip maximum hit points")
             XCTAssertEqual(encoded["current hit points"] as? Int, 9, "player traits round trip current hit points")
             XCTAssertEqual(encoded["level"] as? Int, 2, "player traits round trip level")
+        } else {
+            XCTFail("Failed to deserialize encoded Player into dictionary")
         }
     }
     

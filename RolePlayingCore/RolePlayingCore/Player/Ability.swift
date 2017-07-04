@@ -168,25 +168,48 @@ extension AbilityScores: Equatable {
     
 }
 
-/// Adds two sets of ability scores.
-///
-/// The rhs may contain a subset of attributes from lhs.
-/// Only abilities already present in lhs will be added from rhs; the rest will be ignored.
 extension AbilityScores {
     
+    /// Adds two sets of ability scores.
+    ///
+    /// The rhs may contain a subset of attributes from lhs.
+    /// Only abilities already present in lhs will be added from rhs; the rest will be ignored.
     public static func+(lhs: AbilityScores, rhs: AbilityScores) -> AbilityScores {
         var result = lhs
-        for (key, value) in rhs.scores {
-            result[key]? += value
-        }
+        result += rhs
         return result
     }
     
+    /// Adds a set of ability scores to self.
+    ///
+    /// Self may contain a subset of attributes from lhs.
+    /// Only abilities already present in self will be added from rhs; the rest will be ignored.
     public static func+=(lhs: inout AbilityScores, rhs: AbilityScores) {
         for (key, value) in rhs.scores {
             lhs[key]? += value
         }
     }
+    
+    /// Subtracts two sets of ability scores.
+    ///
+    /// The rhs may contain a subset of attributes from lhs.
+    /// Only abilities already present in lhs will be subtracted from rhs; the rest will be ignored.
+    public static func-(lhs: AbilityScores, rhs: AbilityScores) -> AbilityScores {
+        var result = lhs
+        result -= rhs
+        return result
+    }
+    
+    /// Subtracts a set of ability scores from self.
+    ///
+    /// Self may contain a subset of attributes from lhs.
+    /// Only abilities already present in self will be subtracted from rhs; the rest will be ignored.
+    public static func-=(lhs: inout AbilityScores, rhs: AbilityScores) {
+        for (key, value) in rhs.scores {
+            lhs[key]? -= value
+        }
+    }
+    
 }
 
 // MARK: Default abilities

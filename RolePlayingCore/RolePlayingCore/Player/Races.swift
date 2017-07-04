@@ -13,12 +13,17 @@ public class Races: Codable {
     /// Accesses all of the races and subraces that have been loaded.
     public var races = [RacialTraits]()
     
+    /// Creates a Races instance.
+    public init() { }
+    
+    /// Returns all of the leaf races (races that contain no subraces).
     public var leafRaces: [RacialTraits] {
         return races.filter { (racialTraits) -> Bool in
             racialTraits.subraces.count == 0
         }
     }
     
+    /// Returns the race matching the specified name, or nil if not present.
     public func find(_ raceName: String?) -> RacialTraits? {
         guard raceName != nil else { return nil }
         
@@ -37,10 +42,7 @@ public class Races: Codable {
         case races
     }
     
-    public init() { }
-    
-    /// TODO: Overridden to stitch together subraces embedded in races.
-    
+    /// Overridden to stitch together subraces embedded in races.
     public required init(from decoder: Decoder) throws {
         let root = try decoder.container(keyedBy: CodingKeys.self)
         var leaf = try root.nestedUnkeyedContainer(forKey: .races)

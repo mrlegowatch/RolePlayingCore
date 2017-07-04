@@ -193,7 +193,7 @@ class RacialTraitsTests: XCTestCase {
         }
     }
     
-    func testSubraceTraits() {
+    func testDecodingRacialTraits() {
         do {
             let traits = """
             {
@@ -259,7 +259,7 @@ class RacialTraitsTests: XCTestCase {
         catch let error {
             XCTFail("decode failed, error: \(error)")
         }
-    
+        
         // Test the other half overrides
         do {
             let traits = """
@@ -331,6 +331,98 @@ class RacialTraitsTests: XCTestCase {
         catch let error {
             XCTFail("decode failed with error: \(error)")
         }
+    }
+    
+    func testEncodingSubraceTraits() {
+        let racialTraits = RacialTraits(name: "Human", plural: "Humans", aliases: [], descriptiveTraits: [:], abilityScoreIncrease: AbilityScores(), minimumAge: 18, lifespan: 90, alignment: Alignment(.lawful, .neutral), baseHeight: "4ft 9 in".parseHeight!, heightModifier: DiceModifier(0), baseWeight: "178 lb".parseWeight!, weightModifier: DiceModifier(0), darkVision: 0, speed: 45, hitPointBonus: 0)
+        
+        let encoder = JSONEncoder()
+        
+        do {
+            var copyOfRacialTraits = racialTraits
+            var subracialTraits = RacialTraits(name: "Subhuman", plural: "Subhumans", minimumAge: 14, lifespan: 45, baseHeight: "3 ft".parseHeight!, baseWeight: "100 lb".parseWeight!, darkVision: 0, speed: 30)
+            subracialTraits.blendTraits(from: copyOfRacialTraits)
+            copyOfRacialTraits.subraces.append(subracialTraits)
+            
+            let encoded = try encoder.encode(copyOfRacialTraits)
+            let dictionary = try JSONSerialization.jsonObject(with: encoded, options: []) as! [String: Any]
+            
+            // Confirm racial traits
+            XCTAssertEqual(dictionary["name"] as? String, "Human", "encoding name")
+            XCTAssertEqual(dictionary["plural"] as? String, "Humans", "encoding name")
+            
+            XCTAssertEqual(dictionary["minimum age"] as? Int, 18, "encoding name")
+            XCTAssertEqual(dictionary["lifespan"] as? Int, 90, "encoding lifespan")
+            XCTAssertEqual(dictionary["alignment"] as? String, "Lawful Neutral", "encoding alignment")
+            XCTAssertEqual(dictionary["base height"]! as! String, "4.75 ft", "encoding base height")
+            XCTAssertEqual(dictionary["height modifier"] as? String, "0", "encoding height modifier")
+            XCTAssertEqual(dictionary["base weight"]! as! String, "178.0 lb", "encoding base weight")
+            XCTAssertEqual(dictionary["weight modifier"] as? String, "0", "encoding weight modifier")
+            
+            XCTAssertEqual(dictionary["darkvision"] as? Int, 0, "encoding name")
+            XCTAssertEqual(dictionary["speed"] as? Int, 45, "encoding name")
+            XCTAssertEqual(dictionary["hit point bonus"] as? Int, 0, "encoding base height")
+            
+            // Confirm subracial traits
+            if let subraces = dictionary["subraces"] as? [[String: Any]], let subrace = subraces.first {
+                XCTAssertEqual(subrace["name"] as? String, "Subhuman", "encoding name")
+                XCTAssertEqual(subrace["plural"] as? String, "Subhumans", "encoding name")
+                
+                XCTAssertEqual(subrace["minimum age"] as? Int, 14, "encoding name")
+                XCTAssertEqual(subrace["lifespan"] as? Int, 45, "encoding lifespan")
+                XCTAssertNil(subrace["alignment"], "encoding alignment")
+                XCTAssertEqual(subrace["base height"]! as! String, "3.0 ft", "encoding base height")
+                XCTAssertNil(subrace["height modifier"], "encoding height modifier")
+                XCTAssertEqual(subrace["base weight"]! as! String, "100.0 lb", "encoding base weight")
+                XCTAssertNil(subrace["weight modifier"], "encoding weight modifier")
+                
+                XCTAssertNil(subrace["darkvision"], "encoding darkvision")
+                XCTAssertEqual(subrace["speed"] as? Int, 30, "encoding speed")
+                XCTAssertNil(subrace["hit point bonus"], "encoding hit point bonus")
+                
+            } else {
+                XCTFail("subraces should be non-nil and contain at least one subrace")
+            }
+        }
+        catch let error {
+            XCTFail("decode failed with error: \(error)")
+        }
+        
+        do {
+            var copyOfRacialTraits = racialTraits
+            let subracialTraits = RacialTraits(name: "Subhuman", plural: "Subhumans", aliases: ["Minions"], descriptiveTraits: ["background": "Something"], abilityScoreIncrease: AbilityScores([Ability("Strength"): 2]), minimumAge: 14, lifespan: 45, alignment: Alignment(.neutral, .evil), baseHeight: "3 ft".parseHeight!, heightModifier: "d4".parseDice!, baseWeight: "100 lb".parseWeight!, weightModifier: "d6".parseDice!, darkVision: 10, speed: 45, hitPointBonus: 1)
+            copyOfRacialTraits.subraces.append(subracialTraits)
+            
+            let encoded = try encoder.encode(copyOfRacialTraits)
+            let dictionary = try JSONSerialization.jsonObject(with: encoded, options: []) as! [String: Any]
+            
+            // Confirm subracial traits
+            if let subraces = dictionary["subraces"] as? [[String: Any]], let subrace = subraces.first {
+                XCTAssertEqual(subrace["name"] as? String, "Subhuman", "encoding name")
+                XCTAssertEqual(subrace["plural"] as? String, "Subhumans", "encoding name")
+                
+                XCTAssertEqual(subrace["minimum age"] as? Int, 14, "encoding name")
+                XCTAssertEqual(subrace["lifespan"] as? Int, 45, "encoding lifespan")
+                XCTAssertEqual(subrace["alignment"] as? String, "Neutral Evil", "encoding alignment")
+                XCTAssertEqual(subrace["base height"]! as! String, "3.0 ft", "encoding base height")
+                XCTAssertEqual(subrace["height modifier"] as? String, "d4", "encoding height modifier")
+                XCTAssertEqual(subrace["base weight"]! as! String, "100.0 lb", "encoding base weight")
+                XCTAssertEqual(subrace["weight modifier"] as? String, "d6", "encoding weight modifier")
+                
+                XCTAssertEqual(subrace["darkvision"] as? Int, 10, "encoding darkvision")
+                XCTAssertNil(subrace["speed"], "encoding speed")
+                XCTAssertEqual(subrace["hit point bonus"] as? Int, 1, "encoding hit point bonus")
+                
+            } else {
+                XCTFail("subraces should be non-nil and contain at least one subrace")
+            }
+            
+            
+        }
+        catch let error {
+            XCTFail("decode failed with error: \(error)")
+        }
+        
     }
  
 }

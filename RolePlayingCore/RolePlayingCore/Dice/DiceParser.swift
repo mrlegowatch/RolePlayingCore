@@ -14,7 +14,7 @@ import Foundation
 // A smaller implementation might leverage NSRegularExpression, but I'm still learning how to use that.
 
 /// Types of errors handled by this parser.
-internal enum DiceParseError: Error, CustomDebugStringConvertible {
+internal enum DiceParseError: Error {
     case invalidCharacter(String)
     case invalidDieSides(Int)
     case missingMinus
@@ -24,10 +24,6 @@ internal enum DiceParseError: Error, CustomDebugStringConvertible {
     case consecutiveNumbers
     case consecutiveMathOperators
     case consecutiveDiceExpressions
-    
-    var debugDescription: String {
-        return "Error parsing dice: \(self)"
-    }
 }
 
 /// Types of tokens supported by this parser.
@@ -77,9 +73,6 @@ private struct NumberBuffer {
         return Int(buffer)
     }
     
-    mutating func reset() {
-        buffer = ""
-    }
 }
 
 /// Converts a dice-formatted string into a sequence of tokens.

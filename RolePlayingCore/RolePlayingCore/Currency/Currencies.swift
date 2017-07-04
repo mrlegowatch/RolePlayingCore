@@ -57,7 +57,6 @@ extension Currencies: Codable {
                     UnitCurrency.default = unitCurrency
                 }
             }
-            
         }
     }
     
