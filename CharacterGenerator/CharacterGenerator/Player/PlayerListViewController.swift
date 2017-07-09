@@ -1,30 +1,31 @@
 //
-//  MasterViewController.swift
+//  PlayerListViewController.swift
 //  CharacterGenerator
 //
-//  Created by Brian Arnold on 7/4/17.
+//  Created by Brian Arnold on 2/19/17.
 //  Copyright © 2017 Brian Arnold. All rights reserved.
 //
 
 import UIKit
 
-class MasterViewController: UITableViewController {
+import RolePlayingCore
 
-    var detailViewController: DetailViewController? = nil
-    var objects = [Any]()
-
-
+class PlayerListViewController: UITableViewController {
+    
+    var configuration: Configuration!
+    var characterGenerator: CharacterGenerator!
+    var players: Players! { return configuration.players }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
-        navigationItem.leftBarButtonItem = editButtonItem
+        
+        self.navigationItem.leftBarButtonItem = self.editButtonItem
 
         let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(insertNewObject(_:)))
         navigationItem.rightBarButtonItem = addButton
-        if let split = splitViewController {
-            let controllers = split.viewControllers
-            detailViewController = (controllers[controllers.count-1] as! UINavigationController).topViewController as? DetailViewController
-        }
+        
+        configuration = try! Configuration("Configuration")
+        characterGenerator = try! CharacterGenerator(configuration)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -39,7 +40,8 @@ class MasterViewController: UITableViewController {
 
     @objc
     func insertNewObject(_ sender: Any) {
-        objects.insert(NSDate(), at: 0)
+        let player = characterGenerator.makeCharacter()
+        players.insert(player, at: 0)
         let indexPath = IndexPath(row: 0, section: 0)
         tableView.insertRows(at: [indexPath], with: .automatic)
     }
@@ -49,9 +51,9 @@ class MasterViewController: UITableViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showDetail" {
             if let indexPath = tableView.indexPathForSelectedRow {
-                let object = objects[indexPath.row] as! NSDate
-                let controller = (segue.destination as! UINavigationController).topViewController as! DetailViewController
-                controller.detailItem = object
+                let player = players[indexPath.row]
+                let controller = (segue.destination as! UINavigationController).topViewController as! PlayerDetailViewController
+                controller.player = player
                 controller.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
                 controller.navigationItem.leftItemsSupplementBackButton = true
             }
@@ -65,14 +67,16 @@ class MasterViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return objects.count
+        return players.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
 
-        let object = objects[indexPath.row] as! NSDate
-        cell.textLabel!.text = object.description
+        let player = players[indexPath.row]!
+        cell.textLabel!.text = player.name
+        cell.detailTextLabel!.text = "Level \(player.level) \(player.raceName) \(player.className)"
+        cell.imageView!.image = UIImage(named: "GenericPlayer")
         return cell
     }
 
@@ -83,13 +87,12 @@ class MasterViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            objects.remove(at: indexPath.row)
+            players.remove(at: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .fade)
         } else if editingStyle == .insert {
             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view.
         }
     }
-
 
 }
 

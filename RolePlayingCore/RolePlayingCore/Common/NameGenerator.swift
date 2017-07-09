@@ -75,6 +75,7 @@ public struct NameGenerator {
         return possibleNextParts[whichNextPart]
     }
     
+    /// Returns a generated name.
     public func makeName() -> String {
         var loopCount = Int.max
         var name = ""

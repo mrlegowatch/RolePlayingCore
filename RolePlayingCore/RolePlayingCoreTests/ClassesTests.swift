@@ -16,25 +16,24 @@ class ClassesTests: XCTestCase {
     let decoder = JSONDecoder()
     
     func testDefaultClasses() {
-        var classes: Classes! = nil
         do {
             let jsonData = try bundle.loadJSON("TestClasses")
-            classes = try decoder.decode(Classes.self, from: jsonData)
+            let classes = try decoder.decode(Classes.self, from: jsonData)
+            XCTAssertEqual(classes.classes.count, 4, "classes count failed")
+            XCTAssertEqual(classes.count, 4, "classes count failed")
+            XCTAssertNotNil(classes[0], "class by index failed")
+            
+            XCTAssertEqual(classes.experiencePoints?.count, 20, "array of experience points failed")
+            
+            // Test finding a class by name
+            XCTAssertNotNil(classes.find("Fighter"), "Fighter should be non-nil")
+            XCTAssertNil(classes.find("Foo"), "Foo should be nil")
+            XCTAssertNil(classes.find(nil), "nil class name should find nil")
         }
         catch {
             XCTFail("Classes threw an error: \(error)")
         }
         
-        XCTAssertEqual(classes.classes.count, 4, "classes count failed")
-        XCTAssertEqual(classes.count, 4, "classes count failed")
-        XCTAssertNotNil(classes[0], "class by index failed")
-        
-        XCTAssertEqual(classes.experiencePoints?.count, 20, "array of experience points failed")
-        
-        // Test finding a class by name
-        XCTAssertNotNil(classes.find("Fighter"), "Fighter should be non-nil")
-        XCTAssertNil(classes.find("Foo"), "Foo should be nil")
-        XCTAssertNil(classes.find(nil), "nil class name should find nil")
     }
     
     func testUncommonClasses() {

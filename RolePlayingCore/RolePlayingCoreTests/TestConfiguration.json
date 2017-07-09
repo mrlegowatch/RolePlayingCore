@@ -1,5 +1,6 @@
 {
     "currencies": ["TestCurrencies"],
-    "classes": ["TestClasses"],
-    "races": ["TestRaces"]
+    "classes": ["TestClasses", "TestMoreClasses"],
+    "races": ["TestRaces", "TestMoreRaces"],
+    "players": ["TestPlayers"]
 }
