@@ -58,11 +58,6 @@ class PlayerTests: XCTestCase {
         self.human = try! decoder.decode(RacialTraits.self, from: self.humanTraits)
     }
     
-    func testGender() {
-        XCTAssertEqual("\(Player.Gender.male)", "Male", "Gender CustomStringConvertible should be uppercase")
-        XCTAssertEqual("\(Player.Gender.female)", "Female", "Gender CustomStringConvertible should be uppercase")
-    }
-    
     func testPlayer() {
         let decoder = JSONDecoder()
         
