@@ -8,17 +8,22 @@
 
 import Foundation
 
-import RolePlayingCore
-
-struct CharacterGenerator {
+/// Given a configuration of racial traits and class traits,
+/// provides a random character.
+public struct CharacterGenerator {
     
     let configuration: Configuration
     
     let names: RacialNames
     
-    init(_ configuration: Configuration) throws {
+    /// Creates a character generator instance with a reference to the current configuration.
+    public init(_ configuration: Configuration, from bundle: Bundle = .main) throws {
+        guard let racialNamesFile = configuration.configurationFiles.racialNames else {
+            throw RuntimeError("Missing racialNames file name in configuration file")
+        }
+        
         self.configuration = configuration
-        let data = try! Bundle.main.loadJSON("RacialNames")
+        let data = try bundle.loadJSON(racialNamesFile)
         let decoder = JSONDecoder()
         self.names = try decoder.decode(RacialNames.self, from: data)
     }
@@ -49,7 +54,7 @@ struct CharacterGenerator {
         return Alignment(ethics, morals)
     }
     
-    func makeCharacter() -> Player {
+    public func makeCharacter() -> Player {
         let randomRace = random(configuration.races.count)
         let randomClass = random(configuration.classes.count)
         let gender: Player.Gender = random(2) == 0 ? .male : .female

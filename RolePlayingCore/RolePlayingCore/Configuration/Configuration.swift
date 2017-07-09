@@ -17,12 +17,23 @@ public struct ConfigurationFiles: Decodable {
     let races: [String]
     let classes: [String]
     let players: [String]?
+    let racialNames: String?
+    
+    private enum CodingKeys: String, CodingKey {
+        case currencies
+        case races
+        case classes
+        case players
+        case racialNames = "racial names"
+    }
 }
 
 /// This is designed to configure a client from a framework or application bundle.
 public struct Configuration {
     
     let bundle: Bundle
+    
+    public var configurationFiles: ConfigurationFiles
     
     public var races = Races()
     public var classes = Classes()
@@ -32,7 +43,7 @@ public struct Configuration {
         self.bundle = bundle
         let data = try bundle.loadJSON(configurationFile)
         let decoder = JSONDecoder()
-        let configurationFiles = try decoder.decode(ConfigurationFiles.self, from: data)
+        self.configurationFiles = try decoder.decode(ConfigurationFiles.self, from: data)
         try self.load(configurationFiles)
     }
     

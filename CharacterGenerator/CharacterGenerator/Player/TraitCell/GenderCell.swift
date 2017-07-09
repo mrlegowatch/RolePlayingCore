@@ -1,5 +1,5 @@
 //
-//  MoneyCell.swift
+//  GenderCell.swift
 //  CharacterGenerator
 //
 //  Created by Brian Arnold on 7/9/17.
@@ -10,15 +10,16 @@ import UIKit
 
 import RolePlayingCore
 
-class MoneyCell: TraitCell {
+class GenderCell: TraitCell {
     
     @IBOutlet weak var textView: UILabel!
     @IBOutlet weak var labelView: UILabel!
     
     override func configure(_ characterSheet: CharacterSheet, at indexPath: IndexPath) {
-        let keyPath = characterSheet.keys[indexPath.section][indexPath.row] as! KeyPath<Player, Money>
-        // TODO: support better formatting for Money.
-        textView.text = "\(characterSheet.player[keyPath: keyPath])"
+        let keyPath = characterSheet.keys[indexPath.section][indexPath.row] as! KeyPath<Player, Player.Gender?>
+        let gender = characterSheet.player[keyPath: keyPath]
+        let genderString = gender != nil ? "\(gender!)" : "androgynous"
+        textView.text = genderString.localizedCapitalized
         labelView.text = NSLocalizedString(characterSheet.labelKeys[indexPath.section][indexPath.row], comment: "").localizedUppercase
     }
     

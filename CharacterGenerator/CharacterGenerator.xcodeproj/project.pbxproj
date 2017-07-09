@@ -27,11 +27,13 @@
 		B6A1AE491F0C4426008ADF08 /* Currencies.json in Resources */ = {isa = PBXBuildFile; fileRef = B6A1AE451F0C4383008ADF08 /* Currencies.json */; };
 		B6A1AE4A1F0C4429008ADF08 /* Races.json in Resources */ = {isa = PBXBuildFile; fileRef = B6A1AE461F0C4383008ADF08 /* Races.json */; };
 		B6A1AE4C1F0C5ABF008ADF08 /* RacialNames.json in Resources */ = {isa = PBXBuildFile; fileRef = B6A1AE4B1F0C5ABF008ADF08 /* RacialNames.json */; };
-		B6A1AE4E1F0D0B94008ADF08 /* CharacterGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A1AE4D1F0D0B94008ADF08 /* CharacterGenerator.swift */; };
 		B6A1AE501F0D6594008ADF08 /* CharacterSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A1AE4F1F0D6594008ADF08 /* CharacterSheet.swift */; };
 		B6A1AE541F0DAE79008ADF08 /* RolePlayingCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B6A1AE401F0C3706008ADF08 /* RolePlayingCore.framework */; };
 		B6A1AE551F0DAE97008ADF08 /* RolePlayingCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B6A1AE401F0C3706008ADF08 /* RolePlayingCore.framework */; };
 		B6A1AE571F0DB10F008ADF08 /* LabeledTextCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A1AE561F0DB10F008ADF08 /* LabeledTextCell.swift */; };
+		B6F4AA4E1F12D1D0000C72D2 /* HeightCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F4AA4D1F12D1D0000C72D2 /* HeightCell.swift */; };
+		B6F4AA501F12D1DD000C72D2 /* WeightCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F4AA4F1F12D1DD000C72D2 /* WeightCell.swift */; };
+		B6F4AA521F12D2E1000C72D2 /* GenderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F4AA511F12D2E1000C72D2 /* GenderCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -79,9 +81,11 @@
 		B6A1AE451F0C4383008ADF08 /* Currencies.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Currencies.json; sourceTree = "<group>"; };
 		B6A1AE461F0C4383008ADF08 /* Races.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Races.json; sourceTree = "<group>"; };
 		B6A1AE4B1F0C5ABF008ADF08 /* RacialNames.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = RacialNames.json; sourceTree = "<group>"; };
-		B6A1AE4D1F0D0B94008ADF08 /* CharacterGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterGenerator.swift; sourceTree = "<group>"; };
 		B6A1AE4F1F0D6594008ADF08 /* CharacterSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterSheet.swift; sourceTree = "<group>"; };
 		B6A1AE561F0DB10F008ADF08 /* LabeledTextCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabeledTextCell.swift; sourceTree = "<group>"; };
+		B6F4AA4D1F12D1D0000C72D2 /* HeightCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeightCell.swift; sourceTree = "<group>"; };
+		B6F4AA4F1F12D1DD000C72D2 /* WeightCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeightCell.swift; sourceTree = "<group>"; };
+		B6F4AA511F12D2E1000C72D2 /* GenderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenderCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -172,7 +176,6 @@
 				B6A1AE511F0D67AB008ADF08 /* TraitCell */,
 				B621A3A81F0C1C7400E55236 /* PlayerListViewController.swift */,
 				B621A3AA1F0C1C7400E55236 /* PlayerDetailViewController.swift */,
-				B6A1AE4D1F0D0B94008ADF08 /* CharacterGenerator.swift */,
 				B6A1AE4F1F0D6594008ADF08 /* CharacterSheet.swift */,
 			);
 			path = Player;
@@ -189,8 +192,8 @@
 		B6A1AE421F0C4383008ADF08 /* Configuration */ = {
 			isa = PBXGroup;
 			children = (
-				B6A1AE431F0C4383008ADF08 /* Classes.json */,
 				B6A1AE441F0C4383008ADF08 /* Configuration.json */,
+				B6A1AE431F0C4383008ADF08 /* Classes.json */,
 				B6A1AE451F0C4383008ADF08 /* Currencies.json */,
 				B6A1AE461F0C4383008ADF08 /* Races.json */,
 				B6A1AE4B1F0C5ABF008ADF08 /* RacialNames.json */,
@@ -208,6 +211,9 @@
 				B67450EB1F1252E80061FD6F /* AbilitiesCell.swift */,
 				B67450ED1F12674F0061FD6F /* DiceCell.swift */,
 				B67450EF1F126AF70061FD6F /* MoneyCell.swift */,
+				B6F4AA4D1F12D1D0000C72D2 /* HeightCell.swift */,
+				B6F4AA4F1F12D1DD000C72D2 /* WeightCell.swift */,
+				B6F4AA511F12D2E1000C72D2 /* GenderCell.swift */,
 			);
 			path = TraitCell;
 			sourceTree = "<group>";
@@ -355,11 +361,13 @@
 				B67450EE1F12674F0061FD6F /* DiceCell.swift in Sources */,
 				B6A1AE571F0DB10F008ADF08 /* LabeledTextCell.swift in Sources */,
 				B6A1AE501F0D6594008ADF08 /* CharacterSheet.swift in Sources */,
+				B6F4AA501F12D1DD000C72D2 /* WeightCell.swift in Sources */,
 				B67450E81F1238E80061FD6F /* AlignmentCell.swift in Sources */,
+				B6F4AA4E1F12D1D0000C72D2 /* HeightCell.swift in Sources */,
 				B621A3A71F0C1C7400E55236 /* AppDelegate.swift in Sources */,
 				B67450EA1F1238F50061FD6F /* LabeledNumberCell.swift in Sources */,
+				B6F4AA521F12D2E1000C72D2 /* GenderCell.swift in Sources */,
 				B67450EC1F1252E80061FD6F /* AbilitiesCell.swift in Sources */,
-				B6A1AE4E1F0D0B94008ADF08 /* CharacterGenerator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

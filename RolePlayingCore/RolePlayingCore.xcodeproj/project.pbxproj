@@ -60,6 +60,9 @@
 		B6F070381E4FBD6500F66918 /* RacialTraits.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F070371E4FBD6500F66918 /* RacialTraits.swift */; };
 		B6F0703A1E4FC03700F66918 /* Money.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F070391E4FC03700F66918 /* Money.swift */; };
 		B6F0703C1E4FC18500F66918 /* RacialTraitsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F0703B1E4FC18500F66918 /* RacialTraitsTests.swift */; };
+		B6F4AA481F12C9FA000C72D2 /* CharacterGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F4AA471F12C9FA000C72D2 /* CharacterGenerator.swift */; };
+		B6F4AA4A1F12CD2A000C72D2 /* CharacterGeneratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F4AA491F12CD2A000C72D2 /* CharacterGeneratorTests.swift */; };
+		B6F4AA4C1F12CE17000C72D2 /* TestCharacterGenerator.json in Resources */ = {isa = PBXBuildFile; fileRef = B6F4AA4B1F12CE17000C72D2 /* TestCharacterGenerator.json */; };
 		B6FA6CB01E47ACA1004D91B1 /* UnitCurrency.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6FA6CAF1E47ACA1004D91B1 /* UnitCurrency.swift */; };
 		B6FA6CB41E47ACCC004D91B1 /* ServiceError.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6FA6CB31E47ACCC004D91B1 /* ServiceError.swift */; };
 		B6FA6CB61E47B080004D91B1 /* CurrencyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6FA6CB51E47B080004D91B1 /* CurrencyTests.swift */; };
@@ -115,7 +118,7 @@
 		B681B7191EAAC8FB001DE78B /* CompoundDice.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CompoundDice.swift; sourceTree = "<group>"; };
 		B681B71B1EAAC904001DE78B /* DroppingDice.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DroppingDice.swift; sourceTree = "<group>"; };
 		B681B71D1EAACA9B001DE78B /* Die.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Die.swift; sourceTree = "<group>"; };
-		B698515D1F1171EC006A537A /* RacialNames.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RacialNames.swift; sourceTree = "<group>"; };
+		B698515D1F1171EC006A537A /* RacialNames.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RacialNames.swift; path = ../Common/RacialNames.swift; sourceTree = "<group>"; };
 		B69851611F11850A006A537A /* TestRacialNames.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = TestRacialNames.json; sourceTree = "<group>"; };
 		B69F84681E58B8F700A4D2B0 /* Player.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
 		B69F846A1E58D33900A4D2B0 /* PlayerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerTests.swift; sourceTree = "<group>"; };
@@ -140,6 +143,9 @@
 		B6F070371E4FBD6500F66918 /* RacialTraits.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RacialTraits.swift; sourceTree = "<group>"; };
 		B6F070391E4FC03700F66918 /* Money.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Money.swift; sourceTree = "<group>"; };
 		B6F0703B1E4FC18500F66918 /* RacialTraitsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RacialTraitsTests.swift; sourceTree = "<group>"; };
+		B6F4AA471F12C9FA000C72D2 /* CharacterGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CharacterGenerator.swift; sourceTree = "<group>"; };
+		B6F4AA491F12CD2A000C72D2 /* CharacterGeneratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterGeneratorTests.swift; sourceTree = "<group>"; };
+		B6F4AA4B1F12CE17000C72D2 /* TestCharacterGenerator.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = TestCharacterGenerator.json; sourceTree = "<group>"; };
 		B6FA6CAF1E47ACA1004D91B1 /* UnitCurrency.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnitCurrency.swift; sourceTree = "<group>"; };
 		B6FA6CB31E47ACCC004D91B1 /* ServiceError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceError.swift; sourceTree = "<group>"; };
 		B6FA6CB51E47B080004D91B1 /* CurrencyTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrencyTests.swift; sourceTree = "<group>"; };
@@ -193,6 +199,7 @@
 		B62055F01E19DD23002494AB /* RolePlayingCore */ = {
 			isa = PBXGroup;
 			children = (
+				B6F4AA461F12C9E5000C72D2 /* Configuration */,
 				B6FA6CAD1E47AC8D004D91B1 /* Common */,
 				B6FA6CAE1E47AC8D004D91B1 /* Currency */,
 				B62056081E19DD5D002494AB /* Dice */,
@@ -225,6 +232,7 @@
 				B6FA6CB81E47B4B1004D91B1 /* ServiceErrorTests.swift */,
 				B67450E31F118A8B0061FD6F /* RacialNamesTests.swift */,
 				B621A3971F0C052D00E55236 /* NameGeneratorTests.swift */,
+				B6F4AA491F12CD2A000C72D2 /* CharacterGeneratorTests.swift */,
 				B6CF53E61E5742C700CADD9F /* JSONFile.json */,
 				B6CF53E81E57460F00CADD9F /* InvalidJSONFile.json */,
 				B6CF53EA1E574ED400CADD9F /* HalfBakedJSONFile.json */,
@@ -235,6 +243,7 @@
 				B66AF8F41EAE87A800C15F8E /* TestClasses.json */,
 				B66AF8F71EAE87A800C15F8E /* TestMoreClasses.json */,
 				B66AF8F51EAE87A800C15F8E /* TestConfiguration.json */,
+				B6F4AA4B1F12CE17000C72D2 /* TestCharacterGenerator.json */,
 				B66AF8F61EAE87A800C15F8E /* TestCurrencies.json */,
 				B66AF8F91EAE87A800C15F8E /* TestNames.json */,
 				B69851611F11850A006A537A /* TestRacialNames.json */,
@@ -262,15 +271,22 @@
 			path = Dice;
 			sourceTree = "<group>";
 		};
-		B6FA6CAD1E47AC8D004D91B1 /* Common */ = {
+		B6F4AA461F12C9E5000C72D2 /* Configuration */ = {
 			isa = PBXGroup;
 			children = (
 				B66AF9041EAE88C300C15F8E /* Configuration.swift */,
+				B6F4AA471F12C9FA000C72D2 /* CharacterGenerator.swift */,
+			);
+			path = Configuration;
+			sourceTree = "<group>";
+		};
+		B6FA6CAD1E47AC8D004D91B1 /* Common */ = {
+			isa = PBXGroup;
+			children = (
 				B6FA6CB31E47ACCC004D91B1 /* ServiceError.swift */,
 				B6FA6CBA1E47B7F6004D91B1 /* Height.swift */,
 				B6FA6CBC1E47B803004D91B1 /* Weight.swift */,
 				B621A3961F0C020000E55236 /* NameGenerator.swift */,
-				B698515D1F1171EC006A537A /* RacialNames.swift */,
 				B6CF53CD1E54DF4500CADD9F /* JSONFile.swift */,
 			);
 			path = Common;
@@ -296,6 +312,7 @@
 				B69F84681E58B8F700A4D2B0 /* Player.swift */,
 				B69F846C1E58D66900A4D2B0 /* Players.swift */,
 				B6F070371E4FBD6500F66918 /* RacialTraits.swift */,
+				B698515D1F1171EC006A537A /* RacialNames.swift */,
 				B6CF53D11E54E2EF00CADD9F /* Races.swift */,
 			);
 			path = Player;
@@ -417,6 +434,7 @@
 				B69F84731E591DE400A4D2B0 /* InvalidClassPlayers.json in Resources */,
 				B66AF8FF1EAE87A800C15F8E /* TestMoreClasses.json in Resources */,
 				B66AF9031EAE87A800C15F8E /* TestRaces.json in Resources */,
+				B6F4AA4C1F12CE17000C72D2 /* TestCharacterGenerator.json in Resources */,
 				B66AF9001EAE87A800C15F8E /* TestMoreRaces.json in Resources */,
 				B6CF53EB1E574ED400CADD9F /* HalfBakedJSONFile.json in Resources */,
 				B66AF8FC1EAE87A800C15F8E /* TestClasses.json in Resources */,
@@ -434,6 +452,7 @@
 				B69F846D1E58D66900A4D2B0 /* Players.swift in Sources */,
 				B681B71C1EAAC904001DE78B /* DroppingDice.swift in Sources */,
 				B681B7161EAAC8E2001DE78B /* SimpleDice.swift in Sources */,
+				B6F4AA481F12C9FA000C72D2 /* CharacterGenerator.swift in Sources */,
 				B6FA6CB41E47ACCC004D91B1 /* ServiceError.swift in Sources */,
 				B6F0703A1E4FC03700F66918 /* Money.swift in Sources */,
 				B6FA6CCB1E4E7AEA004D91B1 /* Alignment.swift in Sources */,
@@ -467,6 +486,7 @@
 				B6CF53E51E57429D00CADD9F /* JSONFileTests.swift in Sources */,
 				B6CF53D91E56442800CADD9F /* RacesTests.swift in Sources */,
 				B6F0703C1E4FC18500F66918 /* RacialTraitsTests.swift in Sources */,
+				B6F4AA4A1F12CD2A000C72D2 /* CharacterGeneratorTests.swift in Sources */,
 				B69F846F1E59155A00A4D2B0 /* PlayersTests.swift in Sources */,
 				B62D89C41F09A3870095D587 /* DiceParserTests.swift in Sources */,
 				B6CF53DB1E56443A00CADD9F /* ClassesTests.swift in Sources */,

@@ -24,7 +24,8 @@ class CharacterSheet {
         [\Player.name, \Player.experiencePoints],
         [\Player.level, \Player.className, \Player.raceName, \Player.alignment],
         [\Player.abilities],
-        [\Player.armorClass, \Player.maximumHitPoints, \Player.hitDice, \Player.money]
+        [\Player.armorClass, \Player.maximumHitPoints, \Player.hitDice, \Player.money],
+        [\Player.gender, \Player.height, \Player.weight]
     ]
     
     // TODO: implement a better mechanism for mapping label keys to properties.
@@ -32,7 +33,8 @@ class CharacterSheet {
         ["Name", "Experience Points"],
         ["Level", "Class", "Race", "Alignment"],
         ["Abilities"],
-        ["Armor Class", "Hit Points", "Hit Dice", "Money"]
+        ["Armor Class", "Hit Points", "Hit Dice", "Money"],
+        ["Gender", "Height", "Weight"]
     ]
     
     // TODO: this can't live here. We need data transformers to keep the number of cell types down.
@@ -40,7 +42,8 @@ class CharacterSheet {
         ["labeledText", "labeledNumber"],
         ["labeledNumber", "labeledText", "labeledText", "alignment"],
         ["abilities"],
-        ["labeledNumber", "labeledNumber", "dice", "money"]
+        ["labeledNumber", "labeledNumber", "dice", "money"],
+        ["gender", "height", "weight"]
     ]
     
     var numberOfSections: Int { return keys.count }

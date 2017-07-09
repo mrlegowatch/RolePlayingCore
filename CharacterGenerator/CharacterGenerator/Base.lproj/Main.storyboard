@@ -78,7 +78,7 @@
                                 </connections>
                             </collectionViewCell>
                             <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="labeledNumber" id="his-Pl-2qs" customClass="LabeledNumberCell" customModule="CharacterGenerator" customModuleProvider="target">
-                                <rect key="frame" x="81.5" y="0.0" width="50" height="50"/>
+                                <rect key="frame" x="65" y="0.0" width="50" height="50"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                     <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
@@ -115,7 +115,7 @@
                                 </connections>
                             </collectionViewCell>
                             <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="alignment" id="pju-Kh-PNu" customClass="AlignmentCell" customModule="CharacterGenerator" customModuleProvider="target">
-                                <rect key="frame" x="162.5" y="0.0" width="50" height="50"/>
+                                <rect key="frame" x="130" y="0.0" width="50" height="50"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                     <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
@@ -152,7 +152,7 @@
                                 </connections>
                             </collectionViewCell>
                             <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="dice" id="36f-CU-il1" customClass="DiceCell" customModule="CharacterGenerator" customModuleProvider="target">
-                                <rect key="frame" x="244" y="0.0" width="50" height="50"/>
+                                <rect key="frame" x="195" y="0.0" width="50" height="50"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                     <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
@@ -189,7 +189,7 @@
                                 </connections>
                             </collectionViewCell>
                             <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="money" id="0Pf-jm-Xyz" customClass="MoneyCell" customModule="CharacterGenerator" customModuleProvider="target">
-                                <rect key="frame" x="325" y="0.0" width="50" height="50"/>
+                                <rect key="frame" x="260" y="0.0" width="50" height="50"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                     <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
@@ -225,8 +225,119 @@
                                     <outlet property="textView" destination="Z1F-Bx-ez0" id="wEN-tT-vRC"/>
                                 </connections>
                             </collectionViewCell>
+                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="height" id="Ic3-ex-qNA" userLabel="height" customClass="HeightCell" customModule="CharacterGenerator" customModuleProvider="target">
+                                <rect key="frame" x="325" y="0.0" width="50" height="50"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                    <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="6lO-C3-sfI">
+                                            <rect key="frame" x="8" y="8" width="34" height="34"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DwJ-pi-YjZ">
+                                                    <rect key="frame" x="0.0" y="0.0" width="34" height="19.5"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5Ay-qb-vEF">
+                                                    <rect key="frame" x="0.0" y="19.5" width="34" height="14.5"/>
+                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
+                                                    <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                        </stackView>
+                                    </subviews>
+                                </view>
+                                <constraints>
+                                    <constraint firstAttribute="bottomMargin" secondItem="6lO-C3-sfI" secondAttribute="bottom" id="A4o-Fg-4bL"/>
+                                    <constraint firstItem="6lO-C3-sfI" firstAttribute="leading" secondItem="Ic3-ex-qNA" secondAttribute="leadingMargin" id="Bf4-np-Bu7"/>
+                                    <constraint firstAttribute="trailingMargin" secondItem="6lO-C3-sfI" secondAttribute="trailing" id="QcV-Uu-TYS"/>
+                                    <constraint firstItem="6lO-C3-sfI" firstAttribute="top" secondItem="Ic3-ex-qNA" secondAttribute="topMargin" id="kEU-3R-zTG"/>
+                                </constraints>
+                                <connections>
+                                    <outlet property="labelView" destination="5Ay-qb-vEF" id="IJj-zN-khF"/>
+                                    <outlet property="textView" destination="DwJ-pi-YjZ" id="JHu-5c-I9f"/>
+                                </connections>
+                            </collectionViewCell>
+                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="weight" id="wW1-v8-6IY" userLabel="weight" customClass="WeightCell" customModule="CharacterGenerator" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="167.5" width="50" height="50"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                    <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="gi6-I8-U7g">
+                                            <rect key="frame" x="8" y="8" width="34" height="34"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="q43-ly-EVC">
+                                                    <rect key="frame" x="0.0" y="0.0" width="34" height="19.5"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tzV-iS-Ebh">
+                                                    <rect key="frame" x="0.0" y="19.5" width="34" height="14.5"/>
+                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
+                                                    <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                        </stackView>
+                                    </subviews>
+                                </view>
+                                <constraints>
+                                    <constraint firstAttribute="bottomMargin" secondItem="gi6-I8-U7g" secondAttribute="bottom" id="Ijr-rR-gOy"/>
+                                    <constraint firstItem="gi6-I8-U7g" firstAttribute="leading" secondItem="wW1-v8-6IY" secondAttribute="leadingMargin" id="Rlh-xV-k82"/>
+                                    <constraint firstAttribute="trailingMargin" secondItem="gi6-I8-U7g" secondAttribute="trailing" id="cz5-WA-cQV"/>
+                                    <constraint firstItem="gi6-I8-U7g" firstAttribute="top" secondItem="wW1-v8-6IY" secondAttribute="topMargin" id="hGG-1T-VzA"/>
+                                </constraints>
+                                <connections>
+                                    <outlet property="labelView" destination="tzV-iS-Ebh" id="pJG-so-UQp"/>
+                                    <outlet property="textView" destination="q43-ly-EVC" id="uyw-rV-0x3"/>
+                                </connections>
+                            </collectionViewCell>
+                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="gender" id="kA7-YZ-5u8" userLabel="gender" customClass="GenderCell" customModule="CharacterGenerator" customModuleProvider="target">
+                                <rect key="frame" x="60" y="167.5" width="50" height="50"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                    <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="3JY-cX-Q16">
+                                            <rect key="frame" x="8" y="8" width="34" height="34"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1N3-oD-KfM">
+                                                    <rect key="frame" x="0.0" y="0.0" width="34" height="19.5"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="P3t-eQ-KY2">
+                                                    <rect key="frame" x="0.0" y="19.5" width="34" height="14.5"/>
+                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
+                                                    <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                        </stackView>
+                                    </subviews>
+                                </view>
+                                <constraints>
+                                    <constraint firstItem="3JY-cX-Q16" firstAttribute="top" secondItem="kA7-YZ-5u8" secondAttribute="topMargin" id="Ads-8i-cjq"/>
+                                    <constraint firstAttribute="bottomMargin" secondItem="3JY-cX-Q16" secondAttribute="bottom" id="TBb-oZ-z4x"/>
+                                    <constraint firstItem="3JY-cX-Q16" firstAttribute="leading" secondItem="kA7-YZ-5u8" secondAttribute="leadingMargin" id="gLc-Zk-y4U"/>
+                                    <constraint firstAttribute="trailingMargin" secondItem="3JY-cX-Q16" secondAttribute="trailing" id="s7g-Bc-cnL"/>
+                                </constraints>
+                                <connections>
+                                    <outlet property="labelView" destination="P3t-eQ-KY2" id="2Wo-UP-sJt"/>
+                                    <outlet property="textView" destination="1N3-oD-KfM" id="npS-Pz-Q7Q"/>
+                                </connections>
+                            </collectionViewCell>
                             <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="abilities" id="ISu-us-4or" customClass="AbilitiesCell" customModule="CharacterGenerator" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="60" width="110" height="265"/>
+                                <rect key="frame" x="120" y="60" width="110" height="265"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                     <rect key="frame" x="0.0" y="0.0" width="110" height="265"/>

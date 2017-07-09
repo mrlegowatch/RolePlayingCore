@@ -1,5 +1,6 @@
 {
     "currencies": ["Currencies"],
     "classes": ["Classes"],
-    "races": ["Races"]
+    "races": ["Races"],
+    "racial names": "RacialNames"
 }
