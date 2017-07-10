@@ -2,5 +2,7 @@
     "currencies": ["TestCurrencies"],
     "classes": ["TestClasses", "TestMoreClasses"],
     "races": ["TestRaces", "TestMoreRaces"],
-    "players": ["TestPlayers"]
+    "players": ["TestPlayers"],
+    "racial names": "TestRacialNames"
 }
+

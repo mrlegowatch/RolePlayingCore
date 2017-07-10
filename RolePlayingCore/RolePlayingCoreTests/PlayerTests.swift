@@ -159,27 +159,29 @@ class PlayerTests: XCTestCase {
             }
             """.data(using: .utf8)!
             
-            var player: Player? = nil
             do {
-                player = try decoder.decode(Player.self, from: playerTraits)
+                let player = try decoder.decode(Player.self, from: playerTraits)
+                player.racialTraits = human
+                player.classTraits = fighter
+                
+                XCTAssertNil(player.gender, "gender")
+                XCTAssertEqual(player.alignment, Alignment(.lawful, .evil), "alignment")
+                
+                XCTAssertEqual(player.canLevelUp, true, "level up")
+                XCTAssertEqual("\(player.hitDice)", "2d10", "hit dice")
+                player.levelUp()
+                XCTAssertEqual(player.level, 3, "level")
+                XCTAssertTrue(player.maximumHitPoints > 15, "experience points")
+                
+                XCTAssertEqual(player.canLevelUp, false, "level up")
+                XCTAssertEqual("\(player.hitDice)", "3d10", "hit dice")
+                
+                player.levelUp()
+                XCTAssertEqual(player.level, 3, "level")
             }
             catch let error {
                 XCTFail("decode player failed, error: \(error)")
             }
-            player?.racialTraits = human
-            player?.classTraits = fighter
-            
-            XCTAssertNil(player?.gender, "gender")
-            XCTAssertEqual(player?.alignment, Alignment(.lawful, .evil), "alignment")
-            
-            XCTAssertEqual(player?.canLevelUp, true, "level up")
-            player?.levelUp()
-            XCTAssertEqual(player?.level, 3, "level")
-            XCTAssertTrue(player?.maximumHitPoints ?? 0 > 15, "experience points")
-            
-            XCTAssertEqual(player?.canLevelUp, false, "level up")
-            player?.levelUp()
-            XCTAssertEqual(player?.level, 3, "level")
         }
     }
     

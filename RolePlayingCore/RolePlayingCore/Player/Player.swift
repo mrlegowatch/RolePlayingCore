@@ -20,6 +20,14 @@ public extension AbilityScores {
 
 }
 
+public extension Dice {
+    
+    // Return a dice with a number of rolls corresponding to level.
+    func hitDice(level: Int) -> Dice {
+        return SimpleDice(Die(rawValue: self.sides)!, times: level)
+    }
+}
+
 // TODO: Is this a base class for Character? What about NPC? Monster? Should we have a protocol?
 public class Player: Codable {
     
@@ -69,6 +77,8 @@ public class Player: Codable {
     public var currentHitPoints: Int
     public var experiencePoints: Int
     public var level: Int
+    
+    public var hitDice: Dice { return classTraits.hitDice.hitDice(level: level) }
     
     // Equipment and money
     

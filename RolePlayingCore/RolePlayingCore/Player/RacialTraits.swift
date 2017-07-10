@@ -26,6 +26,7 @@ public struct RacialTraits {
     public var speed: Int!
     public var hitPointBonus: Int
     
+    public var parentName: String?
     public var subraces: [RacialTraits] = []
     
     public enum Size {
@@ -156,6 +157,7 @@ extension RacialTraits: Codable {
     public mutating func blendTraits(from parent: RacialTraits) {
         // Name, plural, aliases and descriptive traits are unique to each set of racial traits.
         // The rest may be inherited from the parent.
+        self.parentName = parent.name
         
         // Combine ability scores together
         self.abilityScoreIncrease += parent.abilityScoreIncrease

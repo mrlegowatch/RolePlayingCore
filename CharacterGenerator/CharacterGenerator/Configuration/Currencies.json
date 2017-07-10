@@ -1,0 +1,35 @@
+{
+    "currencies": [
+                 {
+                 "symbol": "cp",
+                 "coefficient": 0.01,
+                 "name": "copper piece",
+                 "plural": "copper pieces"
+                 },
+                 {
+                 "symbol": "sp",
+                 "coefficient": 0.1,
+                 "name": "silver piece",
+                 "plural": "silver pieces"
+                 },
+                 {
+                 "symbol": "ep",
+                 "coefficient": 0.5,
+                 "name": "electrum piece",
+                 "plural": "electrum pieces"
+                 },
+                 {
+                 "symbol": "gp",
+                 "default": true,
+                 "coefficient": 1.0,
+                 "name": "gold piece",
+                 "plural": "gold pieces"
+                 },
+                 {
+                 "symbol": "pp",
+                 "coefficient": 10,
+                 "name": "platinum piece",
+                 "plural": "platinum pieces"
+                 }
+                 ]
+}

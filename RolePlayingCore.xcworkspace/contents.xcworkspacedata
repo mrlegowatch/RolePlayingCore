@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:CharacterGenerator/CharacterGenerator.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:RolePlayingCore/RolePlayingCore.xcodeproj">
    </FileRef>
 </Workspace>
