@@ -182,7 +182,7 @@ class AlignmentTests: XCTestCase {
 
             
             alignment.morals += 0.8
-            XCTAssertEqualWithAccuracy(alignment.morals, -0.2, accuracy: 0.00001, "morals value")
+            XCTAssertEqual(alignment.morals, -0.2, accuracy: 0.00001, "morals value")
             XCTAssertEqual(alignment.kind.ethics, Ethics.neutral, "ethics enumeration")
             XCTAssertEqual(alignment.kind.morals, Morals.neutral, "morals enumeration")
 
@@ -193,13 +193,13 @@ class AlignmentTests: XCTestCase {
             XCTAssertEqual(alignment.kind.morals, Morals.neutral, "morals enumeration")
 
             alignment.morals += 0.8
-            XCTAssertEqualWithAccuracy(alignment.morals, 0.6, accuracy: 0.00001, "morals value")
+            XCTAssertEqual(alignment.morals, 0.6, accuracy: 0.00001, "morals value")
             XCTAssertEqual(alignment.kind.ethics, Ethics.neutral, "ethics enumeration")
             XCTAssertEqual(alignment.kind.morals, Morals.good, "morals enumeration")
 
             // Try to exceed 1.0 and confirm that morals value did not change
             alignment.morals += 0.8
-            XCTAssertEqualWithAccuracy(alignment.morals, 0.6, accuracy: 0.00001, "morals value")
+            XCTAssertEqual(alignment.morals, 0.6, accuracy: 0.00001, "morals value")
             XCTAssertEqual(alignment.kind.ethics, Ethics.neutral, "ethics enumeration")
             XCTAssertEqual(alignment.kind.morals, Morals.good, "morals enumeration")
 }

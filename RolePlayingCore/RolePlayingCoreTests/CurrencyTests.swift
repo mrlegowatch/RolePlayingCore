@@ -38,10 +38,10 @@ class UnitCurrencyTests: XCTestCase {
         let totalPieces = goldPieces + silverPieces - copperPieces + electrumPieces - platinumPieces
         
         // Should be 25 + 1.2 - 0.01 + 1 - 20
-        XCTAssertEqualWithAccuracy(totalPieces.value, 7.19, accuracy: 0.0001, "adding coins")
+        XCTAssertEqual(totalPieces.value, 7.19, accuracy: 0.0001, "adding coins")
         
         let totalPiecesInCopper = totalPieces.converted(to: Currencies.find("cp")!)
-        XCTAssertEqualWithAccuracy(totalPiecesInCopper.value, 719, accuracy: 0.01, "adding coins")
+        XCTAssertEqual(totalPiecesInCopper.value, 719, accuracy: 0.01, "adding coins")
         
     }
     
@@ -98,7 +98,7 @@ class UnitCurrencyTests: XCTestCase {
             let cp = "3.2 cp".parseMoney
             XCTAssertNotNil(cp, "coinage as cp should not be nil")
             if let cp = cp {
-                XCTAssertEqualWithAccuracy(cp.value, 3.2, accuracy: 0.0001, "coinage as string cp should be 3.2")
+                XCTAssertEqual(cp.value, 3.2, accuracy: 0.0001, "coinage as string cp should be 3.2")
                 XCTAssertEqual(cp.unit, Currencies.find("cp"), "coinage as string cp should be copper pieces")
                 XCTAssertNotEqual(cp.unit, Currencies.find("pp"), "coinage as string cp should not be platinum pieces")
             }

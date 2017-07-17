@@ -53,7 +53,7 @@ class RacialTraitsTests: XCTestCase {
             
             XCTAssertEqual(racialTraits?.minimumAge, 18, "minimum age")
             XCTAssertEqual(racialTraits?.lifespan, 90, "lifespan")
-            XCTAssertEqualWithAccuracy(racialTraits?.baseHeight.value ?? 0, 4.666666, accuracy: 0.000001, "base height")
+            XCTAssertEqual(racialTraits?.baseHeight.value ?? 0, 4.666666, accuracy: 0.000001, "base height")
             
             let heightModifier = racialTraits?.heightModifier as? SimpleDice
             XCTAssertNotNil(heightModifier, "height modifier")
@@ -108,7 +108,7 @@ class RacialTraitsTests: XCTestCase {
             
             XCTAssertEqual(racialTraits?.minimumAge, 18, "minimum age")
             XCTAssertEqual(racialTraits?.lifespan, 90, "lifespan")
-            XCTAssertEqualWithAccuracy(racialTraits?.baseHeight.value ?? 0, 7.666666, accuracy: 0.000001, "base height")
+            XCTAssertEqual(racialTraits?.baseHeight.value ?? 0, 7.666666, accuracy: 0.000001, "base height")
             
             let heightModifier = racialTraits?.heightModifier as? SimpleDice
             XCTAssertNotNil(heightModifier, "height modifier")
@@ -231,7 +231,7 @@ class RacialTraitsTests: XCTestCase {
                 
                 XCTAssertEqual(subracialTraits.minimumAge, 15, "minimum age")
                 XCTAssertEqual(subracialTraits.lifespan, 60, "lifespan")
-                XCTAssertEqualWithAccuracy(subracialTraits.baseHeight.value, 2.666666, accuracy: 0.000001, "base height")
+                XCTAssertEqual(subracialTraits.baseHeight.value, 2.666666, accuracy: 0.000001, "base height")
                 
                 let heightModifier = subracialTraits.heightModifier as? SimpleDice
                 XCTAssertNotNil(heightModifier, "height modifier")
@@ -300,7 +300,7 @@ class RacialTraitsTests: XCTestCase {
                 
                 XCTAssertEqual(subracialTraits.minimumAge, 18, "minimum age")
                 XCTAssertEqual(subracialTraits.lifespan, 90, "lifespan")
-                XCTAssertEqualWithAccuracy(subracialTraits.baseHeight.value, 4.666666, accuracy: 0.000001, "base height")
+                XCTAssertEqual(subracialTraits.baseHeight.value, 4.666666, accuracy: 0.000001, "base height")
                 
                 let heightModifier = subracialTraits.heightModifier as? SimpleDice
                 XCTAssertNotNil(heightModifier, "height modifier")
