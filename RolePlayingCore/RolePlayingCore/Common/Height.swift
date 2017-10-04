@@ -25,7 +25,7 @@ extension String {
         for key in feetList {
             feetEndRange = self.range(of: key)
             if let feetEndRange = feetEndRange {
-                value = Double(self.substring(to: feetEndRange.lowerBound).trimmingCharacters(in: .whitespaces))!
+                value = Double(self[..<feetEndRange.lowerBound].trimmingCharacters(in: .whitespaces))!
                 break
             }
         }
@@ -35,7 +35,7 @@ extension String {
         for key in inchesList {
             if let range = self.range(of: key) {
                 let inchesRange = Range(uncheckedBounds: (feetEndRange?.upperBound ?? self.startIndex, range.lowerBound))
-                let inches = Double(self.substring(with: inchesRange).trimmingCharacters(in: .whitespaces))!
+                let inches = Double(self[inchesRange].trimmingCharacters(in: .whitespaces))!
                 let inchesInFeet = Measurement<UnitLength>(value: inches, unit: .inches).converted(to: .feet).value
                 value = value != nil ? value! + inchesInFeet : inchesInFeet
                 break
@@ -50,7 +50,7 @@ extension String {
             
             for (key, metricUnit) in metricMap {
                 if let range = self.range(of: key) {
-                    value = Double(self.substring(to: range.lowerBound).trimmingCharacters(in: .whitespaces))!
+                    value = Double(self[..<range.lowerBound].trimmingCharacters(in: .whitespaces))!
                     unit = metricUnit
                     break
                 }

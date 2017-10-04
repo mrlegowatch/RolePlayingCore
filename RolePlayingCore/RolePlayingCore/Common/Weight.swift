@@ -24,7 +24,7 @@ extension String {
         
         for (key, weightUnit) in weightMap {
             if let range = self.range(of: key) {
-                value = Double(self.substring(to: range.lowerBound).trimmingCharacters(in: .whitespaces))!
+                value = Double(self[..<range.lowerBound].trimmingCharacters(in: .whitespaces))!
                 unit = weightUnit
                 break
             }

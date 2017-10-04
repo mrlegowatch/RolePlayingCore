@@ -14,14 +14,12 @@
 		B621A3B01F0C1C7400E55236 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B621A3AF1F0C1C7400E55236 /* Assets.xcassets */; };
 		B621A3B31F0C1C7400E55236 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B621A3B11F0C1C7400E55236 /* LaunchScreen.storyboard */; };
 		B621A3BE1F0C1C7500E55236 /* CharacterGeneratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B621A3BD1F0C1C7500E55236 /* CharacterGeneratorTests.swift */; };
-		B621A3C91F0C1C7500E55236 /* CharacterGeneratorUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B621A3C81F0C1C7500E55236 /* CharacterGeneratorUITests.swift */; };
 		B67450E61F12381C0061FD6F /* TraitCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B67450E51F12381C0061FD6F /* TraitCell.swift */; };
 		B67450E81F1238E80061FD6F /* AlignmentCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B67450E71F1238E80061FD6F /* AlignmentCell.swift */; };
 		B67450EA1F1238F50061FD6F /* LabeledNumberCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B67450E91F1238F50061FD6F /* LabeledNumberCell.swift */; };
 		B67450EC1F1252E80061FD6F /* AbilitiesCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B67450EB1F1252E80061FD6F /* AbilitiesCell.swift */; };
 		B67450EE1F12674F0061FD6F /* DiceCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B67450ED1F12674F0061FD6F /* DiceCell.swift */; };
 		B67450F01F126AF70061FD6F /* MoneyCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B67450EF1F126AF70061FD6F /* MoneyCell.swift */; };
-		B6A1AE411F0C3706008ADF08 /* RolePlayingCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B6A1AE401F0C3706008ADF08 /* RolePlayingCore.framework */; };
 		B6A1AE471F0C441E008ADF08 /* Classes.json in Resources */ = {isa = PBXBuildFile; fileRef = B6A1AE431F0C4383008ADF08 /* Classes.json */; };
 		B6A1AE481F0C4421008ADF08 /* Configuration.json in Resources */ = {isa = PBXBuildFile; fileRef = B6A1AE441F0C4383008ADF08 /* Configuration.json */; };
 		B6A1AE491F0C4426008ADF08 /* Currencies.json in Resources */ = {isa = PBXBuildFile; fileRef = B6A1AE451F0C4383008ADF08 /* Currencies.json */; };
@@ -29,8 +27,8 @@
 		B6A1AE4C1F0C5ABF008ADF08 /* RacialNames.json in Resources */ = {isa = PBXBuildFile; fileRef = B6A1AE4B1F0C5ABF008ADF08 /* RacialNames.json */; };
 		B6A1AE501F0D6594008ADF08 /* CharacterSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A1AE4F1F0D6594008ADF08 /* CharacterSheet.swift */; };
 		B6A1AE541F0DAE79008ADF08 /* RolePlayingCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B6A1AE401F0C3706008ADF08 /* RolePlayingCore.framework */; };
-		B6A1AE551F0DAE97008ADF08 /* RolePlayingCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B6A1AE401F0C3706008ADF08 /* RolePlayingCore.framework */; };
 		B6A1AE571F0DB10F008ADF08 /* LabeledTextCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A1AE561F0DB10F008ADF08 /* LabeledTextCell.swift */; };
+		B6C87F431F83CD3E007CB209 /* CharacterGeneratorUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C87F421F83CD3E007CB209 /* CharacterGeneratorUITests.swift */; };
 		B6F4AA4E1F12D1D0000C72D2 /* HeightCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F4AA4D1F12D1D0000C72D2 /* HeightCell.swift */; };
 		B6F4AA501F12D1DD000C72D2 /* WeightCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F4AA4F1F12D1DD000C72D2 /* WeightCell.swift */; };
 		B6F4AA521F12D2E1000C72D2 /* GenderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F4AA511F12D2E1000C72D2 /* GenderCell.swift */; };
@@ -44,7 +42,7 @@
 			remoteGlobalIDString = B621A3A21F0C1C7400E55236;
 			remoteInfo = CharacterGenerator;
 		};
-		B621A3C51F0C1C7500E55236 /* PBXContainerItemProxy */ = {
+		B6C87F451F83CD3E007CB209 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B621A39B1F0C1C7400E55236 /* Project object */;
 			proxyType = 1;
@@ -52,6 +50,19 @@
 			remoteInfo = CharacterGenerator;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		B6E7FEEF1F858CCC0029E2DA /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		B621A3A31F0C1C7400E55236 /* CharacterGenerator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CharacterGenerator.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -65,9 +76,6 @@
 		B621A3B91F0C1C7500E55236 /* CharacterGeneratorTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CharacterGeneratorTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B621A3BD1F0C1C7500E55236 /* CharacterGeneratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterGeneratorTests.swift; sourceTree = "<group>"; };
 		B621A3BF1F0C1C7500E55236 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		B621A3C41F0C1C7500E55236 /* CharacterGeneratorUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CharacterGeneratorUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		B621A3C81F0C1C7500E55236 /* CharacterGeneratorUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterGeneratorUITests.swift; sourceTree = "<group>"; };
-		B621A3CA1F0C1C7500E55236 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B621A3D61F0C1E3500E55236 /* GenericPlayer image license.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "GenericPlayer image license.txt"; sourceTree = "<group>"; };
 		B67450E51F12381C0061FD6F /* TraitCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TraitCell.swift; sourceTree = "<group>"; };
 		B67450E71F1238E80061FD6F /* AlignmentCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlignmentCell.swift; sourceTree = "<group>"; };
@@ -75,6 +83,7 @@
 		B67450EB1F1252E80061FD6F /* AbilitiesCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AbilitiesCell.swift; sourceTree = "<group>"; };
 		B67450ED1F12674F0061FD6F /* DiceCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiceCell.swift; sourceTree = "<group>"; };
 		B67450EF1F126AF70061FD6F /* MoneyCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoneyCell.swift; sourceTree = "<group>"; };
+		B68D117D1F83CBA2000E3ED3 /* RolePlayingCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RolePlayingCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B6A1AE401F0C3706008ADF08 /* RolePlayingCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RolePlayingCore.framework; path = "../../../../../Library/Developer/Xcode/DerivedData/RolePlayingCore-fcfiuaidasiafwafluanpqngytuv/Build/Products/Debug-iphonesimulator/RolePlayingCore.framework"; sourceTree = "<group>"; };
 		B6A1AE431F0C4383008ADF08 /* Classes.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Classes.json; sourceTree = "<group>"; };
 		B6A1AE441F0C4383008ADF08 /* Configuration.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Configuration.json; sourceTree = "<group>"; };
@@ -83,6 +92,9 @@
 		B6A1AE4B1F0C5ABF008ADF08 /* RacialNames.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = RacialNames.json; sourceTree = "<group>"; };
 		B6A1AE4F1F0D6594008ADF08 /* CharacterSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterSheet.swift; sourceTree = "<group>"; };
 		B6A1AE561F0DB10F008ADF08 /* LabeledTextCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabeledTextCell.swift; sourceTree = "<group>"; };
+		B6C87F401F83CD3E007CB209 /* CharacterGeneratorUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CharacterGeneratorUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B6C87F421F83CD3E007CB209 /* CharacterGeneratorUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterGeneratorUITests.swift; sourceTree = "<group>"; };
+		B6C87F441F83CD3E007CB209 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B6F4AA4D1F12D1D0000C72D2 /* HeightCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeightCell.swift; sourceTree = "<group>"; };
 		B6F4AA4F1F12D1DD000C72D2 /* WeightCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeightCell.swift; sourceTree = "<group>"; };
 		B6F4AA511F12D2E1000C72D2 /* GenderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenderCell.swift; sourceTree = "<group>"; };
@@ -93,7 +105,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B6A1AE411F0C3706008ADF08 /* RolePlayingCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -105,11 +116,10 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B621A3C11F0C1C7500E55236 /* Frameworks */ = {
+		B6C87F3D1F83CD3E007CB209 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B6A1AE551F0DAE97008ADF08 /* RolePlayingCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -121,7 +131,7 @@
 			children = (
 				B621A3A51F0C1C7400E55236 /* CharacterGenerator */,
 				B621A3BC1F0C1C7500E55236 /* CharacterGeneratorTests */,
-				B621A3C71F0C1C7500E55236 /* CharacterGeneratorUITests */,
+				B6C87F411F83CD3E007CB209 /* CharacterGeneratorUITests */,
 				B621A3A41F0C1C7400E55236 /* Products */,
 				B6A1AE3F1F0C3702008ADF08 /* Frameworks */,
 			);
@@ -132,7 +142,7 @@
 			children = (
 				B621A3A31F0C1C7400E55236 /* CharacterGenerator.app */,
 				B621A3B91F0C1C7500E55236 /* CharacterGeneratorTests.xctest */,
-				B621A3C41F0C1C7500E55236 /* CharacterGeneratorUITests.xctest */,
+				B6C87F401F83CD3E007CB209 /* CharacterGeneratorUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -161,15 +171,6 @@
 			path = CharacterGeneratorTests;
 			sourceTree = "<group>";
 		};
-		B621A3C71F0C1C7500E55236 /* CharacterGeneratorUITests */ = {
-			isa = PBXGroup;
-			children = (
-				B621A3C81F0C1C7500E55236 /* CharacterGeneratorUITests.swift */,
-				B621A3CA1F0C1C7500E55236 /* Info.plist */,
-			);
-			path = CharacterGeneratorUITests;
-			sourceTree = "<group>";
-		};
 		B621A3D71F0C1EE300E55236 /* Player */ = {
 			isa = PBXGroup;
 			children = (
@@ -184,6 +185,7 @@
 		B6A1AE3F1F0C3702008ADF08 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B68D117D1F83CBA2000E3ED3 /* RolePlayingCore.framework */,
 				B6A1AE401F0C3706008ADF08 /* RolePlayingCore.framework */,
 			);
 			name = Frameworks;
@@ -218,6 +220,15 @@
 			path = TraitCell;
 			sourceTree = "<group>";
 		};
+		B6C87F411F83CD3E007CB209 /* CharacterGeneratorUITests */ = {
+			isa = PBXGroup;
+			children = (
+				B6C87F421F83CD3E007CB209 /* CharacterGeneratorUITests.swift */,
+				B6C87F441F83CD3E007CB209 /* Info.plist */,
+			);
+			path = CharacterGeneratorUITests;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -228,6 +239,7 @@
 				B621A39F1F0C1C7400E55236 /* Sources */,
 				B621A3A01F0C1C7400E55236 /* Frameworks */,
 				B621A3A11F0C1C7400E55236 /* Resources */,
+				B6E7FEEF1F858CCC0029E2DA /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -256,22 +268,22 @@
 			productReference = B621A3B91F0C1C7500E55236 /* CharacterGeneratorTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		B621A3C31F0C1C7500E55236 /* CharacterGeneratorUITests */ = {
+		B6C87F3F1F83CD3E007CB209 /* CharacterGeneratorUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B621A3D31F0C1C7500E55236 /* Build configuration list for PBXNativeTarget "CharacterGeneratorUITests" */;
+			buildConfigurationList = B6C87F491F83CD3E007CB209 /* Build configuration list for PBXNativeTarget "CharacterGeneratorUITests" */;
 			buildPhases = (
-				B621A3C01F0C1C7500E55236 /* Sources */,
-				B621A3C11F0C1C7500E55236 /* Frameworks */,
-				B621A3C21F0C1C7500E55236 /* Resources */,
+				B6C87F3C1F83CD3E007CB209 /* Sources */,
+				B6C87F3D1F83CD3E007CB209 /* Frameworks */,
+				B6C87F3E1F83CD3E007CB209 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				B621A3C61F0C1C7500E55236 /* PBXTargetDependency */,
+				B6C87F461F83CD3E007CB209 /* PBXTargetDependency */,
 			);
 			name = CharacterGeneratorUITests;
 			productName = CharacterGeneratorUITests;
-			productReference = B621A3C41F0C1C7500E55236 /* CharacterGeneratorUITests.xctest */;
+			productReference = B6C87F401F83CD3E007CB209 /* CharacterGeneratorUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -291,8 +303,9 @@
 						CreatedOnToolsVersion = 9.0;
 						TestTargetID = B621A3A21F0C1C7400E55236;
 					};
-					B621A3C31F0C1C7500E55236 = {
+					B6C87F3F1F83CD3E007CB209 = {
 						CreatedOnToolsVersion = 9.0;
+						ProvisioningStyle = Automatic;
 						TestTargetID = B621A3A21F0C1C7400E55236;
 					};
 				};
@@ -312,7 +325,7 @@
 			targets = (
 				B621A3A21F0C1C7400E55236 /* CharacterGenerator */,
 				B621A3B81F0C1C7500E55236 /* CharacterGeneratorTests */,
-				B621A3C31F0C1C7500E55236 /* CharacterGeneratorUITests */,
+				B6C87F3F1F83CD3E007CB209 /* CharacterGeneratorUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -340,7 +353,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B621A3C21F0C1C7500E55236 /* Resources */ = {
+		B6C87F3E1F83CD3E007CB209 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -379,11 +392,11 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B621A3C01F0C1C7500E55236 /* Sources */ = {
+		B6C87F3C1F83CD3E007CB209 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B621A3C91F0C1C7500E55236 /* CharacterGeneratorUITests.swift in Sources */,
+				B6C87F431F83CD3E007CB209 /* CharacterGeneratorUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -395,10 +408,10 @@
 			target = B621A3A21F0C1C7400E55236 /* CharacterGenerator */;
 			targetProxy = B621A3BA1F0C1C7500E55236 /* PBXContainerItemProxy */;
 		};
-		B621A3C61F0C1C7500E55236 /* PBXTargetDependency */ = {
+		B6C87F461F83CD3E007CB209 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = B621A3A21F0C1C7400E55236 /* CharacterGenerator */;
-			targetProxy = B621A3C51F0C1C7500E55236 /* PBXContainerItemProxy */;
+			targetProxy = B6C87F451F83CD3E007CB209 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -585,10 +598,12 @@
 			};
 			name = Release;
 		};
-		B621A3D41F0C1C7500E55236 /* Debug */ = {
+		B6C87F471F83CD3E007CB209 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = J69E69SP27;
 				INFOPLIST_FILE = CharacterGeneratorUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -600,10 +615,12 @@
 			};
 			name = Debug;
 		};
-		B621A3D51F0C1C7500E55236 /* Release */ = {
+		B6C87F481F83CD3E007CB209 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = J69E69SP27;
 				INFOPLIST_FILE = CharacterGeneratorUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -645,11 +662,11 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B621A3D31F0C1C7500E55236 /* Build configuration list for PBXNativeTarget "CharacterGeneratorUITests" */ = {
+		B6C87F491F83CD3E007CB209 /* Build configuration list for PBXNativeTarget "CharacterGeneratorUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				B621A3D41F0C1C7500E55236 /* Debug */,
-				B621A3D51F0C1C7500E55236 /* Release */,
+				B6C87F471F83CD3E007CB209 /* Debug */,
+				B6C87F481F83CD3E007CB209 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
