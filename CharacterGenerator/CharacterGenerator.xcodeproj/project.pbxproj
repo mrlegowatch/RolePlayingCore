@@ -29,6 +29,8 @@
 		B6A1AE541F0DAE79008ADF08 /* RolePlayingCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B6A1AE401F0C3706008ADF08 /* RolePlayingCore.framework */; };
 		B6A1AE571F0DB10F008ADF08 /* LabeledTextCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A1AE561F0DB10F008ADF08 /* LabeledTextCell.swift */; };
 		B6C87F431F83CD3E007CB209 /* CharacterGeneratorUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C87F421F83CD3E007CB209 /* CharacterGeneratorUITests.swift */; };
+		B6E7FEF01F85907A0029E2DA /* RolePlayingCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B6A1AE401F0C3706008ADF08 /* RolePlayingCore.framework */; };
+		B6E7FEF11F85907A0029E2DA /* RolePlayingCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B6A1AE401F0C3706008ADF08 /* RolePlayingCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B6F4AA4E1F12D1D0000C72D2 /* HeightCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F4AA4D1F12D1D0000C72D2 /* HeightCell.swift */; };
 		B6F4AA501F12D1DD000C72D2 /* WeightCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F4AA4F1F12D1DD000C72D2 /* WeightCell.swift */; };
 		B6F4AA521F12D2E1000C72D2 /* GenderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F4AA511F12D2E1000C72D2 /* GenderCell.swift */; };
@@ -58,6 +60,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				B6E7FEF11F85907A0029E2DA /* RolePlayingCore.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -105,6 +108,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B6E7FEF01F85907A0029E2DA /* RolePlayingCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
