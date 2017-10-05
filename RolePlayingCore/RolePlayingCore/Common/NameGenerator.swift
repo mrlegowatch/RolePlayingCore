@@ -28,7 +28,7 @@ public struct NameGenerator {
             let seedCharacterCount = seed.count
             guard seedCharacterCount > starterLength else { continue }
             
-            starters.append(seed.substring(to: seed.index(seed.startIndex, offsetBy: starterLength)))
+            starters.append(String(seed[..<seed.index(seed.startIndex, offsetBy: starterLength)]))
             
             let keyRangeEnd = seedCharacterCount - starterLength + 1
             for keyRangeStart in 0..<keyRangeEnd {
@@ -36,13 +36,13 @@ public struct NameGenerator {
                 let keyStartIndex = seed.index(seed.startIndex, offsetBy: keyRangeStart)
                 let keyEndIndex = seed.index(keyStartIndex, offsetBy: starterLength)
                 let keyRange = keyStartIndex..<keyEndIndex
-                let key = seed.substring(with: keyRange)
+                let key = String(seed[keyRange])
                 
                 var value = endValue
                 let valueRangeStart = keyRangeStart + starterLength
                 if valueRangeStart < seedCharacterCount {
                     let valueRange = keyRange.upperBound..<seed.index(after: keyRange.upperBound)
-                    value = seed.substring(with: valueRange)
+                    value = String(seed[valueRange])
                 }
                 
                 if parts[key] == nil {
@@ -87,7 +87,7 @@ public struct NameGenerator {
             }
             loopCount += 1
             
-            let key = name.substring(from: name.index(name.endIndex, offsetBy: -starterLength))
+            let key = String(name[name.index(name.endIndex, offsetBy: -starterLength)...])
             let nextPart = randomPartAfter(key)
             if nextPart == endValue {
                 break

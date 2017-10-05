@@ -38,7 +38,7 @@ extension String {
     /// Returns up to the first three characters of this string uppercased.
     public var abbreviated: String {
         let index = self.index(self.startIndex, offsetBy: min(self.characters.count, 3))
-        return self.substring(to: index).uppercased()
+        return self[..<index].uppercased()
     }
     
 }

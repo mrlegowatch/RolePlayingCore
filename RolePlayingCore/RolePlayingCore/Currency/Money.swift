@@ -20,7 +20,7 @@ public extension String {
         
         for currency in Currencies.allCurrencies {
             if let range = self.range(of: currency.symbol), range.upperBound == self.endIndex {
-                value = Double(self.substring(to: range.lowerBound).trimmingCharacters(in: .whitespaces))!
+                value = Double(self[..<range.lowerBound].trimmingCharacters(in: .whitespaces))!
                 unit = currency
                 break
             }

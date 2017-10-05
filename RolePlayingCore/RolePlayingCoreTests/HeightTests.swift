@@ -38,7 +38,7 @@ class UnitHeightTests: XCTestCase {
             let howTall = "73in".parseHeight
             XCTAssertNotNil(howTall, "height should be non-nil")
             let howTallValue = howTall?.value ?? 0.0
-            XCTAssertEqualWithAccuracy(howTallValue, 6.0 + 1.0/12.0, accuracy: 0.0001, "height should be 6.08")
+            XCTAssertEqual(howTallValue, 6.0 + 1.0/12.0, accuracy: 0.0001, "height should be 6.08")
         }
 
         do {
