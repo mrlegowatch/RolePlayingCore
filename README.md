@@ -44,3 +44,11 @@ The following types have an initial implementation with unit tests and full code
 * **Height** and **Weight**: Typealiases and free functions for parsing strings representing height and weight into Foundation.Measurement of types Foundation.UnitLength and Foundation.UnitMass.
 
 Since this is still in the very early stages, I welcome feedback regarding organization and the current implementation.
+
+To learn about the Dice classes, read about their evolution on medium.com here, in three parts:
+* [So, I made a Dice class](https://medium.com/@mrlegowatch/so-i-made-a-dice-class-1-of-3-9b9bb5c1dc2)
+* [So, I tested Dice and added a parser](https://medium.com/@mrlegowatch/so-i-tested-dice-and-added-a-parser-2-of-3-80335e08ddf8)
+* [So, Dice is in GitHub now](https://medium.com/@mrlegowatch/so-dice-is-in-github-now-3-3-204fd6c40fc0)
+
+I also describe how Codable was applied to various classes in this repository, here:
+* [OMG, Codable is so frickin' awesome](https://medium.com/@mrlegowatch/omg-codable-is-so-frickin-awesome-bb9ff33139da)
