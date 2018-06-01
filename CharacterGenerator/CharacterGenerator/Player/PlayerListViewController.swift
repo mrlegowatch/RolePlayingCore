@@ -14,7 +14,9 @@ class PlayerListViewController: UITableViewController {
     
     var configuration: Configuration!
     var characterGenerator: CharacterGenerator!
-    var players: Players! { return configuration.players }
+    var players: Players! {
+        return configuration.players
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,13 +35,7 @@ class PlayerListViewController: UITableViewController {
         super.viewWillAppear(animated)
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-
-    @objc
-    func insertNewObject(_ sender: Any) {
+    @objc func insertNewObject(_ sender: Any) {
         let player = characterGenerator.makeCharacter()
         players.insert(player, at: 0)
         let indexPath = IndexPath(row: 0, section: 0)
@@ -81,7 +77,6 @@ class PlayerListViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
         return true
     }
 
@@ -90,7 +85,7 @@ class PlayerListViewController: UITableViewController {
             players.remove(at: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .fade)
         } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view.
+            // TODO: add support for inserting.
         }
     }
 

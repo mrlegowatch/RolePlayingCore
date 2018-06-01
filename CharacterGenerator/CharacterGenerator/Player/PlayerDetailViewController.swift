@@ -15,10 +15,8 @@ class PlayerDetailViewController: UICollectionViewController {
     var characterSheet: CharacterSheet!
     
     func configureView() {
-        // Update the user interface for the detail item.
-        if characterSheet != nil && collectionView != nil {
-            collectionView?.reloadData()
-        }
+        guard characterSheet != nil else { return }
+        collectionView?.reloadData()
     }
 
     override func viewDidLoad() {
@@ -35,8 +33,6 @@ class PlayerDetailViewController: UICollectionViewController {
     var player: Player? {
         didSet {
             characterSheet = CharacterSheet(player!)
-            
-            // Update the view.
             configureView()
         }
     }
@@ -61,4 +57,3 @@ class PlayerDetailViewController: UICollectionViewController {
     }
     
 }
-
