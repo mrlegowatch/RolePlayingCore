@@ -21,6 +21,10 @@ struct JSONFileData: Codable {
     let dictionaryValue: DictionaryValue
 }
 
+struct AnyFileData: Codable {
+    // No-op
+}
+
 class JSONFileTests: XCTestCase {
     
     let decoder = JSONDecoder()
@@ -71,7 +75,7 @@ class JSONFileTests: XCTestCase {
         let bundle = Bundle(for: JSONFileTests.self)
         do {
             let jsonData = try bundle.loadJSON("InvalidJSONFile")
-            let jsonObject = try decoder.decode([String:Any].self, from: jsonData)
+            let jsonObject = try decoder.decode(AnyFileData.self, from: jsonData)
             XCTAssertNil(jsonObject, "should not get here")
         }
         catch let error {
@@ -85,7 +89,7 @@ class JSONFileTests: XCTestCase {
         let bundle = Bundle(for: JSONFileTests.self)
         do {
             let jsonData = try bundle.loadJSON("HalfBakedJSONFile")
-            let jsonObject = try decoder.decode([String:Any].self, from: jsonData)
+            let jsonObject = try decoder.decode(AnyFileData.self, from: jsonData)
             XCTAssertNil(jsonObject, "should not get here")
         }
         catch let error {
