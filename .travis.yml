@@ -4,6 +4,6 @@ script:
 - set -o pipefail
 - travis_retry xcodebuild -workspace RolePlayingCore.xcworkspace -scheme "RolePlayingCore" -destination "platform=iOS Simulator,name=iPhone 8" analyze | xcpretty
 - travis_retry xcodebuild -workspace RolePlayingCore.xcworkspace -scheme "RolePlayingCore" -destination "platform=iOS Simulator,name=iPhone 8" -enableCodeCoverage YES build-for-testing test | xcpretty
-- travis_retry xcodebuild -workspace RolePlayingCore.xcworkspace -scheme "CharacterGenerator" -destination "platform=iOS Simulator,name=iPhone 8" -enableCodeCoverage YES build-for-testing test | xcpretty
+- travis_retry xcodebuild -workspace RolePlayingCore.xcworkspace -scheme "CharacterGenerator" -destination "platform=iOS Simulator,name=iPhone 8" -enableCodeCoverage NO build-for-testing test | xcpretty
 after_success:
   - bash <(curl -s https://codecov.io/bash) -J 'RolePlayingCore' -cF ios -X xcodeplist
