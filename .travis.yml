@@ -1,7 +1,9 @@
 language: swift
-osx_image: xcode9
+osx_image: xcode9.3
 script:
 - set -o pipefail
+- travis_retry xcodebuild -workspace RolePlayingCore.xcworkspace -scheme "RolePlayingCore" -destination "platform=iOS Simulator,name=iPhone 7" analyze | xcpretty
 - travis_retry xcodebuild -workspace RolePlayingCore.xcworkspace -scheme "RolePlayingCore" -destination "platform=iOS Simulator,name=iPhone 7" -enableCodeCoverage YES build-for-testing test | xcpretty
+- travis_retry xcodebuild -workspace RolePlayingCore.xcworkspace -scheme "CharacterGenerator" -destination "platform=iOS Simulator,name=iPhone 8" -enableCodeCoverage YES build-for-testing test | xcpretty
 after_success:
   - bash <(curl -s https://codecov.io/bash) -J 'RolePlayingCore' -cF ios -X xcodeplist
