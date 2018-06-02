@@ -21,16 +21,8 @@ class CharacterGeneratorTests: XCTestCase {
         super.tearDown()
     }
     
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+    func testCharacterGenerator() {
+        // TODO: there isn't much logic to test, since we use RolePlayingCore, which has its own tests.
     }
-    
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
-    }
-    
+
 }
