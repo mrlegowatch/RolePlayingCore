@@ -1,5 +1,3 @@
 coverage:
   ignore:
     - RolePlayingCore/RolePlayingCoreTests/*
-    - CharacterGenerator/CharacterGeneratorTests/*
-    - CharacterGenerator/CharacterGeneratorUITests/*
