@@ -79,9 +79,6 @@ public struct RacialNames: Codable {
     
     let names: [String: FamilyNames]
     
-    
-    static let randomNumberGenerator: RandomNumberGenerator = DefaultRandomNumberGenerator()
-    
     func resolveRacialNames(_ racialTraits: RacialTraits) -> FamilyNames {
         guard names[racialTraits.name] == nil, let parentName = racialTraits.parentName else { return names[racialTraits.name]! }
         
@@ -91,14 +88,13 @@ public struct RacialNames: Codable {
     func resolveAliasNames(_ familyNames: FamilyNames) -> FamilyNames {
         guard let aliases = familyNames.aliases else { return familyNames }
         
-        let index = RacialNames.randomNumberGenerator.random(aliases.count)
-        let randomName = aliases[index]
+        let randomName = aliases.randomElement()!
         return names[randomName]!
     }
     
     func resolveGender(_ gender: Player.Gender?) -> Player.Gender {
         guard gender == nil else { return gender! }
-        return RacialNames.randomNumberGenerator.random(2) == 0 ? .male : .female
+        return Player.Gender.allCases.randomElement()!
     }
     
     public func randomName(racialTraits: RacialTraits, gender: Player.Gender?) -> String {

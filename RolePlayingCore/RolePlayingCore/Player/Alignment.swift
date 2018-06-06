@@ -7,7 +7,7 @@
 //
 
 /// A measure of order, obedience, and following rules vs. disorder, and disobedience.
-public enum Ethics: String {
+public enum Ethics: String, CaseIterable {
     
     case lawful = "Lawful"
     case neutral = "Neutral"
@@ -41,7 +41,7 @@ extension Ethics: CustomStringConvertible {
 }
 
 /// A measure of goodness vs. evil.
-public enum Morals: String {
+public enum Morals: String, CaseIterable {
     
     case good = "Good"
     case neutral = "Neutral"
@@ -180,14 +180,7 @@ extension Alignment.Kind: CustomStringConvertible {
     
 }
 
-extension Alignment.Kind: Equatable {
-    
-    /// Compares ethics and morals enumerations and returns whether they are equal.
-    public static func==(lhs: Alignment.Kind, rhs: Alignment.Kind) -> Bool {
-        return lhs.ethics == rhs.ethics && lhs.morals == rhs.morals
-    }
-    
-}
+extension Alignment.Kind: Equatable { }
 
 extension Alignment: CustomStringConvertible {
     
@@ -198,14 +191,7 @@ extension Alignment: CustomStringConvertible {
     
 }
 
-extension Alignment: Equatable {
-    
-    /// Returns whether the alignment kinds match; exact ethics and morals values are not compared.
-    public static func==(lhs: Alignment, rhs: Alignment) -> Bool {
-        return lhs.kind == rhs.kind
-    }
-    
-}
+extension Alignment: Equatable { }
 
 extension Ethics: Codable { }
 

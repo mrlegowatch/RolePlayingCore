@@ -13,7 +13,6 @@
 		B620560A1E19DDC0002494AB /* DiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B62056091E19DDC0002494AB /* DiceTests.swift */; };
 		B620560E1E19DDD0002494AB /* Dice.swift in Sources */ = {isa = PBXBuildFile; fileRef = B620560B1E19DDD0002494AB /* Dice.swift */; };
 		B620560F1E19DDD0002494AB /* DiceParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = B620560C1E19DDD0002494AB /* DiceParser.swift */; };
-		B62056101E19DDD0002494AB /* RandomNumberGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B620560D1E19DDD0002494AB /* RandomNumberGenerator.swift */; };
 		B621A3981F0C052D00E55236 /* NameGeneratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B621A3971F0C052D00E55236 /* NameGeneratorTests.swift */; };
 		B621A3991F0C06A700E55236 /* NameGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B621A3961F0C020000E55236 /* NameGenerator.swift */; };
 		B62D89C41F09A3870095D587 /* DiceParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B62D89C31F09A3870095D587 /* DiceParserTests.swift */; };
@@ -96,7 +95,6 @@
 		B62056091E19DDC0002494AB /* DiceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiceTests.swift; sourceTree = "<group>"; };
 		B620560B1E19DDD0002494AB /* Dice.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dice.swift; sourceTree = "<group>"; };
 		B620560C1E19DDD0002494AB /* DiceParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiceParser.swift; sourceTree = "<group>"; };
-		B620560D1E19DDD0002494AB /* RandomNumberGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RandomNumberGenerator.swift; sourceTree = "<group>"; };
 		B621A3961F0C020000E55236 /* NameGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NameGenerator.swift; sourceTree = "<group>"; };
 		B621A3971F0C052D00E55236 /* NameGeneratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NameGeneratorTests.swift; sourceTree = "<group>"; };
 		B62D89C31F09A3870095D587 /* DiceParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiceParserTests.swift; sourceTree = "<group>"; };
@@ -266,7 +264,6 @@
 				B681B7191EAAC8FB001DE78B /* CompoundDice.swift */,
 				B681B71B1EAAC904001DE78B /* DroppingDice.swift */,
 				B620560C1E19DDD0002494AB /* DiceParser.swift */,
-				B620560D1E19DDD0002494AB /* RandomNumberGenerator.swift */,
 			);
 			path = Dice;
 			sourceTree = "<group>";
@@ -380,7 +377,7 @@
 				TargetAttributes = {
 					B62055ED1E19DD23002494AB = {
 						CreatedOnToolsVersion = 8.2.1;
-						LastSwiftMigration = 0900;
+						LastSwiftMigration = 1000;
 						ProvisioningStyle = Automatic;
 					};
 					B62055F61E19DD23002494AB = {
@@ -475,7 +472,6 @@
 				B6FA6CC51E4A96D1004D91B1 /* Ability.swift in Sources */,
 				B681B7181EAAC8EE001DE78B /* DiceModifier.swift in Sources */,
 				B69F84691E58B8F700A4D2B0 /* Player.swift in Sources */,
-				B62056101E19DDD0002494AB /* RandomNumberGenerator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -649,7 +645,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
 		};
@@ -669,7 +665,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.flatearthstudio.RolePlayingCore;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Release;
 		};

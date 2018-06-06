@@ -55,24 +55,14 @@ public struct NameGenerator {
         self.nameStarters = starters
         self.nameParts = parts
     }
-    
-    /// Set this at startup to use a different random number generator.
-    public static var randomNumberGenerator: RandomNumberGenerator = DefaultRandomNumberGenerator()
-    
-    /// Uses the random number generator to return an integer from 0..<upperBound.
-    private func random(_ upperBound: Int) -> Int {
-        return NameGenerator.randomNumberGenerator.random(upperBound)
-    }
-    
+
     private func randomFirstPart() -> String {
-        let whichStarter = random(nameStarters.count)
-        return nameStarters[whichStarter]
+        return nameStarters.randomElement()!
     }
     
     private func randomPartAfter(_ key: String) -> String {
         let possibleNextParts = nameParts[key]!
-        let whichNextPart = random(possibleNextParts.count)
-        return possibleNextParts[whichNextPart]
+        return possibleNextParts.randomElement()!
     }
     
     /// Returns a generated name.

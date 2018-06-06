@@ -17,21 +17,9 @@ public struct Ability {
     
 }
 
-extension Ability: Equatable {
-    
-    public static func==(lhs: Ability, rhs: Ability) -> Bool {
-        return lhs.name == rhs.name
-    }
-    
-}
+extension Ability: Equatable { }
 
-extension Ability: Hashable {
-    
-    public var hashValue: Int {
-        return name.hashValue
-    }
-    
-}
+extension Ability: Hashable { }
 
 extension String {
     
@@ -159,14 +147,7 @@ extension AbilityScores {
     
 }
 
-extension AbilityScores: Equatable {
-    
-    /// Returns whether the two scores match both abilities and values.
-    static public func==(rhs: AbilityScores, lhs: AbilityScores) -> Bool {
-        return rhs.scores == lhs.scores
-    }
-    
-}
+extension AbilityScores: Equatable { }
 
 extension AbilityScores {
     
