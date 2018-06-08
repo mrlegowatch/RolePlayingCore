@@ -11,7 +11,6 @@ import XCTest
 import RolePlayingCore
 
 /// Use a mock random number generator so we can hardcode expected generated names.
-/* TODO: wait until I figure out how to do this right.
 class MockRandomNumberGenerator: RandomNumberGenerator {
     
     var current: UInt64 = 0
@@ -22,7 +21,6 @@ class MockRandomNumberGenerator: RandomNumberGenerator {
     }
     
 }
-*/
 
 class NameGeneratorTests: XCTestCase {
     
@@ -30,16 +28,20 @@ class NameGeneratorTests: XCTestCase {
         let bundle = Bundle(for: NameGeneratorTests.self)
         let data = try! bundle.loadJSON("TestNames")
         let decoder = JSONDecoder()
-        let generator = try! decoder.decode(NameGenerator.self, from: data)
+        let nameGenerator = try! decoder.decode(NameGenerator.self, from: data)
+        var generator = MockRandomNumberGenerator()
         
-        //let expectedNames = ["Abadh", "Eunach", "Aillach", "Alsearbore", "Aod", "Aodel", "Edan", "Aodvoda", "Argcran", "Art", "Baedan", "Behman", "Borigricus", "Briccus", "Kerbeas", "Caoinn", "Keid", "Cardhan", "Cathailgne", "Cathach"]
+        let expectedNames = ["Shad", "Sin", "Singnan", "Sirewy", "Teilich", "Tighirgan", "Tirí", "Tatigre", "Toigothar", "Abhdach", "Adcomhadhan", "Aert", "Agus", "Aiel", "Ail", "Ain", "Ain", "Airbhirecan", "Ama", "Aodfingan"]
         var generatedNames = [String]()
-        for _ /* index */ in 0..<20 {
-            let name = generator.makeName()
+        for index in 0..<20 {
+            let name = nameGenerator.makeName(using: &generator)
             generatedNames.append(name)
-            //XCTAssertEqual(expectedNames[index], name, "expected generated name")
+            XCTAssertEqual(expectedNames[index], name, "expected generated name")
         }
         print("Generated names: \(generatedNames)")
+        
+        // For code coverage: call makeName with the default Random implementation.
+        let _ = nameGenerator.makeName()
     }
     
 }
