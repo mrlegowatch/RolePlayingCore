@@ -27,9 +27,9 @@
 		B6A1AE4C1F0C5ABF008ADF08 /* RacialNames.json in Resources */ = {isa = PBXBuildFile; fileRef = B6A1AE4B1F0C5ABF008ADF08 /* RacialNames.json */; };
 		B6A1AE501F0D6594008ADF08 /* CharacterSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A1AE4F1F0D6594008ADF08 /* CharacterSheet.swift */; };
 		B6A1AE571F0DB10F008ADF08 /* LabeledTextCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A1AE561F0DB10F008ADF08 /* LabeledTextCell.swift */; };
-		B6ADA2AA20C1D9D200012B7C /* RolePlayingCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B6ADA2A920C1D9D200012B7C /* RolePlayingCore.framework */; };
-		B6ADA2AB20C1D9D200012B7C /* RolePlayingCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B6ADA2A920C1D9D200012B7C /* RolePlayingCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B6C87F431F83CD3E007CB209 /* CharacterGeneratorUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C87F421F83CD3E007CB209 /* CharacterGeneratorUITests.swift */; };
+		B6D1DB5520DD4A8100B402AC /* RolePlayingCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B6D1DB5420DD4A8100B402AC /* RolePlayingCore.framework */; };
+		B6D1DB5620DD4A8100B402AC /* RolePlayingCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B6D1DB5420DD4A8100B402AC /* RolePlayingCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B6F4AA4E1F12D1D0000C72D2 /* HeightCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F4AA4D1F12D1D0000C72D2 /* HeightCell.swift */; };
 		B6F4AA501F12D1DD000C72D2 /* WeightCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F4AA4F1F12D1DD000C72D2 /* WeightCell.swift */; };
 		B6F4AA521F12D2E1000C72D2 /* GenderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F4AA511F12D2E1000C72D2 /* GenderCell.swift */; };
@@ -59,7 +59,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				B6ADA2AB20C1D9D200012B7C /* RolePlayingCore.framework in Embed Frameworks */,
+				B6D1DB5620DD4A8100B402AC /* RolePlayingCore.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -92,10 +92,10 @@
 		B6A1AE4B1F0C5ABF008ADF08 /* RacialNames.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = RacialNames.json; sourceTree = "<group>"; };
 		B6A1AE4F1F0D6594008ADF08 /* CharacterSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterSheet.swift; sourceTree = "<group>"; };
 		B6A1AE561F0DB10F008ADF08 /* LabeledTextCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabeledTextCell.swift; sourceTree = "<group>"; };
-		B6ADA2A920C1D9D200012B7C /* RolePlayingCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RolePlayingCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B6C87F401F83CD3E007CB209 /* CharacterGeneratorUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CharacterGeneratorUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B6C87F421F83CD3E007CB209 /* CharacterGeneratorUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterGeneratorUITests.swift; sourceTree = "<group>"; };
 		B6C87F441F83CD3E007CB209 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B6D1DB5420DD4A8100B402AC /* RolePlayingCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RolePlayingCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B6F4AA4D1F12D1D0000C72D2 /* HeightCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeightCell.swift; sourceTree = "<group>"; };
 		B6F4AA4F1F12D1DD000C72D2 /* WeightCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeightCell.swift; sourceTree = "<group>"; };
 		B6F4AA511F12D2E1000C72D2 /* GenderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenderCell.swift; sourceTree = "<group>"; };
@@ -106,7 +106,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B6ADA2AA20C1D9D200012B7C /* RolePlayingCore.framework in Frameworks */,
+				B6D1DB5520DD4A8100B402AC /* RolePlayingCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -134,7 +134,7 @@
 				B621A3BC1F0C1C7500E55236 /* CharacterGeneratorTests */,
 				B6C87F411F83CD3E007CB209 /* CharacterGeneratorUITests */,
 				B621A3A41F0C1C7400E55236 /* Products */,
-				B6ADA2A920C1D9D200012B7C /* RolePlayingCore.framework */,
+				B6D1DB5420DD4A8100B402AC /* RolePlayingCore.framework */,
 				B6A1AE3F1F0C3702008ADF08 /* Frameworks */,
 			);
 			sourceTree = "<group>";
