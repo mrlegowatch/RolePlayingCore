@@ -109,7 +109,8 @@ public struct RacialNames: Codable {
     }
     
     public func randomName(racialTraits: RacialTraits, gender: Player.Gender?) -> String {
-        return randomName(racialTraits: racialTraits, gender: gender, using: &Random.default)
+        var rng = SystemRandomNumberGenerator()
+        return randomName(racialTraits: racialTraits, gender: gender, using: &rng)
     }
     
     // TODO: family names, child names, nicknames

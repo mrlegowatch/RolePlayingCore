@@ -24,7 +24,8 @@ public enum Die: Int {
     
     /// Rolls once and returns a number between 1 and this dice type.
     public func roll() -> Int {
-        return roll(using: &Random.default)
+        var rng = SystemRandomNumberGenerator()
+        return roll(using: &rng)
     }
     
     /// Rolls the specified number of times and returns an array of numbers between 1 and this dice type.

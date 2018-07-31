@@ -90,7 +90,8 @@ public struct NameGenerator {
     
     /// Returns a generated name.
     public func makeName() -> String {
-        return makeName(using: &Random.default)
+        var rng = SystemRandomNumberGenerator()
+        return makeName(using: &rng)
     }
 }
 

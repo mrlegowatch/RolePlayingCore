@@ -52,6 +52,7 @@ public struct CharacterGenerator {
     }
     
     public func makeCharacter() -> Player {
-        return makeCharacter(using: &Random.default)
+        var rng = SystemRandomNumberGenerator()
+        return makeCharacter(using: &rng)
     }
 }
