@@ -10,7 +10,7 @@ import UIKit
 
 import RolePlayingCore
 
-class AbilitiesCell: TraitCell {
+class AbilitiesCell : UICollectionViewCell, TraitConfigurable {
     
     @IBOutlet var labels: [UILabel]!
     @IBOutlet var values: [UILabel]!
@@ -21,7 +21,7 @@ class AbilitiesCell: TraitCell {
     // Sort order for abilities
     let abilities = [Ability.strength, Ability.dexterity, Ability.constitution, Ability.intelligence, Ability.wisdom, Ability.charisma]
     
-    override func configure(_ characterSheet: CharacterSheet, at indexPath: IndexPath) {
+    func configure(_ characterSheet: CharacterSheet, at indexPath: IndexPath) {
         // TODO: we combine ability scores and ability score modifier
         let abilityScores = characterSheet.player.abilities
         let modifiers = abilityScores - characterSheet.player.baseAbilities

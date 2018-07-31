@@ -14,7 +14,7 @@
 		B621A3B01F0C1C7400E55236 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B621A3AF1F0C1C7400E55236 /* Assets.xcassets */; };
 		B621A3B31F0C1C7400E55236 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B621A3B11F0C1C7400E55236 /* LaunchScreen.storyboard */; };
 		B621A3BE1F0C1C7500E55236 /* CharacterGeneratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B621A3BD1F0C1C7500E55236 /* CharacterGeneratorTests.swift */; };
-		B67450E61F12381C0061FD6F /* TraitCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B67450E51F12381C0061FD6F /* TraitCell.swift */; };
+		B67450E61F12381C0061FD6F /* TraitConfigurable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B67450E51F12381C0061FD6F /* TraitConfigurable.swift */; };
 		B67450E81F1238E80061FD6F /* AlignmentCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B67450E71F1238E80061FD6F /* AlignmentCell.swift */; };
 		B67450EA1F1238F50061FD6F /* LabeledNumberCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B67450E91F1238F50061FD6F /* LabeledNumberCell.swift */; };
 		B67450EC1F1252E80061FD6F /* AbilitiesCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B67450EB1F1252E80061FD6F /* AbilitiesCell.swift */; };
@@ -79,7 +79,7 @@
 		B621A3BD1F0C1C7500E55236 /* CharacterGeneratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterGeneratorTests.swift; sourceTree = "<group>"; };
 		B621A3BF1F0C1C7500E55236 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B621A3D61F0C1E3500E55236 /* GenericPlayer image license.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "GenericPlayer image license.txt"; sourceTree = "<group>"; };
-		B67450E51F12381C0061FD6F /* TraitCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TraitCell.swift; sourceTree = "<group>"; };
+		B67450E51F12381C0061FD6F /* TraitConfigurable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TraitConfigurable.swift; sourceTree = "<group>"; };
 		B67450E71F1238E80061FD6F /* AlignmentCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlignmentCell.swift; sourceTree = "<group>"; };
 		B67450E91F1238F50061FD6F /* LabeledNumberCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabeledNumberCell.swift; sourceTree = "<group>"; };
 		B67450EB1F1252E80061FD6F /* AbilitiesCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AbilitiesCell.swift; sourceTree = "<group>"; };
@@ -206,7 +206,7 @@
 		B6A1AE511F0D67AB008ADF08 /* TraitCell */ = {
 			isa = PBXGroup;
 			children = (
-				B67450E51F12381C0061FD6F /* TraitCell.swift */,
+				B67450E51F12381C0061FD6F /* TraitConfigurable.swift */,
 				B6A1AE561F0DB10F008ADF08 /* LabeledTextCell.swift */,
 				B67450E71F1238E80061FD6F /* AlignmentCell.swift */,
 				B67450E91F1238F50061FD6F /* LabeledNumberCell.swift */,
@@ -371,7 +371,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B621A3AB1F0C1C7400E55236 /* PlayerDetailViewController.swift in Sources */,
-				B67450E61F12381C0061FD6F /* TraitCell.swift in Sources */,
+				B67450E61F12381C0061FD6F /* TraitConfigurable.swift in Sources */,
 				B67450F01F126AF70061FD6F /* MoneyCell.swift in Sources */,
 				B621A3A91F0C1C7400E55236 /* PlayerListViewController.swift in Sources */,
 				B67450EE1F12674F0061FD6F /* DiceCell.swift in Sources */,

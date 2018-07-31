@@ -10,12 +10,12 @@ import UIKit
 
 import RolePlayingCore
 
-class LabeledTextCell: TraitCell {
+class LabeledTextCell : UICollectionViewCell, TraitConfigurable {
     
     @IBOutlet weak var textView: UILabel!
     @IBOutlet weak var labelView: UILabel!
     
-    override func configure(_ characterSheet: CharacterSheet, at indexPath: IndexPath) {
+    func configure(_ characterSheet: CharacterSheet, at indexPath: IndexPath) {
         // TODO: can't use a PartialKeyPath for some reason, need to cast to KeyPath with String
         let keyPath = characterSheet.keys[indexPath.section][indexPath.row] as! KeyPath<Player, String>
         textView.text = characterSheet.player[keyPath: keyPath]
