@@ -17,17 +17,15 @@ public enum Die: Int {
     case d20 = 20
     case d100 = 100 // AKA "d%"
     
-    /// Set this at startup to use a different random number generator.
-    public static var randomNumberGenerator: RandomNumberGenerator = DefaultRandomNumberGenerator()
-    
-    /// Uses the random number generator to return an integer from 1...upperBound.
-    private func random(_ upperBound: Int) -> Int {
-        return Die.randomNumberGenerator.random(upperBound) + 1
+    /// Rolls once and returns a number between 1 and this dice type.
+    public func roll<G: RandomNumberGenerator>(using generator: inout G) -> Int {
+        return Int.random(in: 1...self.rawValue, using: &generator)
     }
     
     /// Rolls once and returns a number between 1 and this dice type.
     public func roll() -> Int {
-        return random(self.rawValue)
+        var rng = SystemRandomNumberGenerator()
+        return roll(using: &rng)
     }
     
     /// Rolls the specified number of times and returns an array of numbers between 1 and this dice type.

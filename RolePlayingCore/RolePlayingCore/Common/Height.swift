@@ -35,7 +35,7 @@ extension String {
         for key in inchesList {
             if let range = self.range(of: key) {
                 let inchesRange = Range(uncheckedBounds: (feetEndRange?.upperBound ?? self.startIndex, range.lowerBound))
-                let inches = Double(self[inchesRange].trimmingCharacters(in: .whitespaces))!
+                let inches = Double(self[inchesRange].trimmingCharacters(in: .whitespaces)) ?? 0
                 let inchesInFeet = Measurement<UnitLength>(value: inches, unit: .inches).converted(to: .feet).value
                 value = value != nil ? value! + inchesInFeet : inchesInFeet
                 break
@@ -50,9 +50,11 @@ extension String {
             
             for (key, metricUnit) in metricMap {
                 if let range = self.range(of: key) {
-                    value = Double(self[..<range.lowerBound].trimmingCharacters(in: .whitespaces))!
-                    unit = metricUnit
-                    break
+                    value = Double(self[..<range.lowerBound].trimmingCharacters(in: .whitespaces))
+                    if value != nil {
+                        unit = metricUnit
+                        break
+                    }
                 }
             }
         }

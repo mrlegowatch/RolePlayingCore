@@ -48,7 +48,7 @@ public class Player: Codable {
         }
     }
     
-    public enum Gender: String, Codable {
+    public enum Gender: String, Codable, CaseIterable {
         case female = "Female"
         case male = "Male"
     }

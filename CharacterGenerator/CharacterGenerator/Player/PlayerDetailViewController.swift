@@ -49,9 +49,11 @@ class PlayerDetailViewController: UICollectionViewController {
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         // TODO: implement a TraitCellFactory.
         let cellIdentifier = characterSheet.cellIdentifiers[indexPath.section][indexPath.row]
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellIdentifier, for: indexPath) as! TraitCell
-        
-        cell.configure(characterSheet, at: indexPath)
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellIdentifier, for: indexPath)
+            
+        if let configurable = cell as? TraitConfigurable {
+            configurable.configure(characterSheet, at: indexPath)
+        }
         
         return cell
     }

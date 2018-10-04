@@ -13,33 +13,35 @@ import RolePlayingCore
 /// Use a mock random number generator so we can hardcode expected generated names.
 class MockRandomNumberGenerator: RandomNumberGenerator {
     
-    var current: Int = 0
+    var current: UInt64 = 0
     
-    func random(_ upperBound: Int) -> Int {
+    func next() -> UInt64 {
         defer { current += 1 }
-        return current % upperBound
+        return current
     }
     
 }
+
 class NameGeneratorTests: XCTestCase {
     
     func testNameGenerator() {
-        NameGenerator.randomNumberGenerator = MockRandomNumberGenerator()
-        defer { NameGenerator.randomNumberGenerator = DefaultRandomNumberGenerator() }
-        
         let bundle = Bundle(for: NameGeneratorTests.self)
         let data = try! bundle.loadJSON("TestNames")
         let decoder = JSONDecoder()
-        let generator = try! decoder.decode(NameGenerator.self, from: data)
+        let nameGenerator = try! decoder.decode(NameGenerator.self, from: data)
+        var generator = MockRandomNumberGenerator()
         
-        let expectedNames = ["Abadh", "Eunach", "Aillach", "Alsearbore", "Aod", "Aodel", "Edan", "Aodvoda", "Argcran", "Art", "Baedan", "Behman", "Borigricus", "Briccus", "Kerbeas", "Caoinn", "Keid", "Cardhan", "Cathailgne", "Cathach"]
+        let expectedNames = ["Shad", "Sin", "Singnan", "Sirewy", "Teilich", "Tighirgan", "Tirí", "Tatigre", "Toigothar", "Abhdach", "Adcomhadhan", "Aert", "Agus", "Aiel", "Ail", "Ain", "Ain", "Airbhirecan", "Ama", "Aodfingan"]
         var generatedNames = [String]()
         for index in 0..<20 {
-            let name = generator.makeName()
+            let name = nameGenerator.makeName(using: &generator)
             generatedNames.append(name)
             XCTAssertEqual(expectedNames[index], name, "expected generated name")
         }
         print("Generated names: \(generatedNames)")
+        
+        // For code coverage: call makeName with the default Random implementation.
+        let _ = nameGenerator.makeName()
     }
     
 }

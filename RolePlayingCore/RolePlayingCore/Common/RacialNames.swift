@@ -77,39 +77,40 @@ public struct RacialNames: Codable {
         }
     }
     
-    let names: [String: FamilyNames]
+    internal let names: [String: FamilyNames]
     
-    
-    static let randomNumberGenerator: RandomNumberGenerator = DefaultRandomNumberGenerator()
-    
-    func resolveRacialNames(_ racialTraits: RacialTraits) -> FamilyNames {
+    private func resolveRacialNames(_ racialTraits: RacialTraits) -> FamilyNames {
         guard names[racialTraits.name] == nil, let parentName = racialTraits.parentName else { return names[racialTraits.name]! }
         
         return names[parentName]!
     }
     
-    func resolveAliasNames(_ familyNames: FamilyNames) -> FamilyNames {
+    private func resolveAliasNames<G: RandomNumberGenerator>(_ familyNames: FamilyNames, using generator: inout G) -> FamilyNames {
         guard let aliases = familyNames.aliases else { return familyNames }
         
-        let index = RacialNames.randomNumberGenerator.random(aliases.count)
-        let randomName = aliases[index]
+        let randomName = aliases.randomElement(using: &generator)!
         return names[randomName]!
     }
     
-    func resolveGender(_ gender: Player.Gender?) -> Player.Gender {
+    private func resolveGender<G: RandomNumberGenerator>(_ gender: Player.Gender?, using generator: inout G) -> Player.Gender {
         guard gender == nil else { return gender! }
-        return RacialNames.randomNumberGenerator.random(2) == 0 ? .male : .female
+        return Player.Gender.allCases.randomElement(using: &generator)!
+    }
+    
+    public func randomName<G: RandomNumberGenerator>(racialTraits: RacialTraits, gender: Player.Gender?, using generator: inout G) -> String {
+        // Determine race or parent race (for subraces)
+        var familyNames = resolveRacialNames(racialTraits)
+        familyNames = resolveAliasNames(familyNames, using: &generator)
+        
+        let gender = resolveGender(gender, using: &generator)
+        let genderNames = gender == .male ? familyNames.maleNames : familyNames.femaleNames
+        let nameGenerator = NameGenerator(genderNames)
+        return nameGenerator.makeName(using: &generator)
     }
     
     public func randomName(racialTraits: RacialTraits, gender: Player.Gender?) -> String {
-        // Determine race or parent race (for subraces)
-        var familyNames = resolveRacialNames(racialTraits)
-        familyNames = resolveAliasNames(familyNames)
-        
-        let gender = resolveGender(gender)
-        let genderNames = gender == .male ? familyNames.maleNames : familyNames.femaleNames
-        let nameGenerator = NameGenerator(genderNames)
-        return nameGenerator.makeName()
+        var rng = SystemRandomNumberGenerator()
+        return randomName(racialTraits: racialTraits, gender: gender, using: &rng)
     }
     
     // TODO: family names, child names, nicknames
