@@ -35,7 +35,7 @@ internal enum Token {
     
     static let mathOperatorCharacters = CharacterSet(charactersIn: CompoundDice.mathOperators.keys.reduce("", +))
     static let dieCharacters = CharacterSet(charactersIn: "dD")
-    static let dropCharacters = CharacterSet(charactersIn: DroppingDice.Drop.allValues.map({ $0.rawValue }).reduce("", +))
+    static let dropCharacters = CharacterSet(charactersIn: DroppingDice.Drop.allCases.map({ $0.rawValue }).reduce("", +))
     static let percentCharacters = CharacterSet(charactersIn: "%")
     
     init?(from scalar: UnicodeScalar) {

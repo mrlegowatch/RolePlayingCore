@@ -14,11 +14,9 @@ public struct DroppingDice: Dice {
     public let dice: SimpleDice
     
     /// Options to drop the lowest or highest roll.
-    public enum Drop: String {
+    public enum Drop: String, CaseIterable {
         case lowest = "L"
         case highest = "H"
-        
-        static let allValues: [Drop] = [.lowest, .highest]
     }
     
     /// Whether to drop the lowest or highest roll.

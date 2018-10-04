@@ -28,42 +28,31 @@ public struct CharacterGenerator {
         self.names = try decoder.decode(RacialNames.self, from: data)
     }
     
-    // TODO: support non-uniform distributions for different traits
+    // TODO: support non-uniform distributions for different traits (e.g., some races and classes tend to have specific alignments)
     
-    static let randomNumberGenerator: RandomNumberGenerator = DefaultRandomNumberGenerator()
-    
-    func random(_ upperBound: Int) -> Int {
-        return CharacterGenerator.randomNumberGenerator.random(upperBound)
-    }
-    
-    func randomAlignment() -> Alignment {
-        let ethics: Ethics
-        switch random(3) {
-        case 0: ethics = .chaotic
-        case 2: ethics = .lawful
-        default:  ethics = .neutral
-        }
-        
-        let morals: Morals
-        switch random(3) {
-        case 0: morals = .evil
-        case 2: morals = .good
-        default:  morals = .neutral
-        }
-        
+    func randomAlignment<G: RandomNumberGenerator>(using generator: inout G) -> Alignment {
+        let ethics = Ethics.allCases.randomElement(using: &generator)!
+        let morals = Morals.allCases.randomElement(using: &generator)!
         return Alignment(ethics, morals)
     }
     
-    public func makeCharacter() -> Player {
-        let randomRace = random(configuration.races.count)
-        let randomClass = random(configuration.classes.count)
-        let gender: Player.Gender = random(2) == 0 ? .male : .female
+    public func makeCharacter<G: RandomNumberGenerator>(using generator: inout G) -> Player {
+        // TODO: have RacialTraits, ClassTraits conform to whatever protocol specifies the random() function
+        
+        let randomRace = Int.random(in: 0..<configuration.races.count, using: &generator)
+        let randomClass = Int.random(in: 0..<configuration.classes.count, using: &generator)
+        let gender = Player.Gender.allCases.randomElement(using: &generator)
         
         let racialTraits = configuration.races[randomRace]!
         let classTraits = configuration.classes[randomClass]!
-        let name = names.randomName(racialTraits: racialTraits, gender: gender)
-        let alignment = racialTraits.alignment != nil ? racialTraits.alignment : randomAlignment()
-
+        let name = names.randomName(racialTraits: racialTraits, gender: gender, using: &generator)
+        let alignment = racialTraits.alignment != nil ? racialTraits.alignment : randomAlignment(using: &generator)
+        
         return Player(name, racialTraits: racialTraits, classTraits: classTraits, gender: gender, alignment: alignment)
+    }
+    
+    public func makeCharacter() -> Player {
+        var rng = SystemRandomNumberGenerator()
+        return makeCharacter(using: &rng)
     }
 }

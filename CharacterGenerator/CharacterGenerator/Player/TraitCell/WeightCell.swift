@@ -10,12 +10,12 @@ import UIKit
 
 import RolePlayingCore
 
-class WeightCell: TraitCell {
+class WeightCell: UICollectionViewCell, TraitConfigurable {
     
     @IBOutlet weak var textView: UILabel!
     @IBOutlet weak var labelView: UILabel!
     
-    override func configure(_ characterSheet: CharacterSheet, at indexPath: IndexPath) {
+    func configure(_ characterSheet: CharacterSheet, at indexPath: IndexPath) {
         let keyPath = characterSheet.keys[indexPath.section][indexPath.row] as! KeyPath<Player, Weight>
         let formatter = MassFormatter()
         formatter.isForPersonMassUse = true

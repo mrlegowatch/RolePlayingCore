@@ -23,7 +23,7 @@ class CharacterGeneratorTests: XCTestCase {
             
             for _ in 0..<sampleSize {
                 _ = characterGenerator.makeCharacter()
-                // TODO: what to test for here?
+                // TODO: implement a predictable Random implementation and consider testing for expected types, names and properties. Such a test could be too sensitive to order of calls.
             }
         }
         catch let error {
