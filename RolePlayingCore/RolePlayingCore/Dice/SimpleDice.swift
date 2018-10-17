@@ -8,12 +8,10 @@
 
 
 /// A simple dice has a single die, and an optional number of times to roll.
-/// Tracks the last roll (array of Ints) each time roll() is called.
-public class SimpleDice: Dice {
+public struct SimpleDice: Dice {
     
     public let die: Die
     public let times: Int
-    public private(set) var lastRoll: [Int] = []
     
     /// Creates a SimpleDice for the specified die. Optionally specify times to roll,
     /// and whether to drop a high or low result. Defaults to rolling one time.
@@ -22,11 +20,15 @@ public class SimpleDice: Dice {
         self.times = times
     }
     
-    /// Rolls the specified number of times, returning the sum of the rolls.
-    /// The intermediate rolls can be inspected in lastRoll.
-    public func roll() -> Int {
-        lastRoll = die.roll(times)
-        return lastRoll.reduce(0, +)
+    /// Rolls the specified number of times, returning the array of rolls.
+    internal func roll() -> [Int] {
+        return die.roll(times)
+    }
+    
+    /// Rolls the specified number of times, returning the sum of the rolls and a description.
+    public func roll() -> DiceRoll {
+        let lastRoll: [Int] = roll()
+        return DiceRoll(lastRoll.reduce(0, +), rollDescription(lastRoll))
     }
     
     /// Returns the number of dice sides.
@@ -39,11 +41,10 @@ public class SimpleDice: Dice {
     }
     
     /// Returns the last roll as a sequence of added numbers in parenthesis.
-    public var lastRollDescription: String {
-        guard self.lastRoll.count > 0 else { return "" }
+    internal func rollDescription(_ lastRoll: [Int]) -> String {
         var resultString: String
         
-        var rolls = self.lastRoll
+        var rolls = lastRoll
         let last = rolls.popLast()!
         if rolls.count == 0 {
             resultString = "\(last)"

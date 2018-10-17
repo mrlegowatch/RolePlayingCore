@@ -10,6 +10,7 @@ import Foundation
 
 
 /// General-purpose composition of dice rolls.
+///
 /// The two primary use cases for this type are:
 /// - combining two rolls, e.g., "2d4+d6",
 /// - using a modifier, e.g., "d12+2".
@@ -43,28 +44,20 @@ public struct CompoundDice: Dice {
 
     /// Rolls the specified number of times, optionally adding or multiplying a modifier,
     /// and returning the result.
-    public func roll() -> Int {
-        let lhsResult = lhs.roll()
-        let rhsResult = rhs.roll()
-        return CompoundDice.mathOperators[mathOperator]!(lhsResult, rhsResult)
+    public func roll() -> DiceRoll {
+        let lhsRoll = lhs.roll()
+        let rhsRoll = rhs.roll()
+        
+        let result = CompoundDice.mathOperators[mathOperator]!(lhsRoll.result, rhsRoll.result)
+        let description = "\(lhsRoll.description) \(mathOperator) \(rhsRoll.description)"
+        
+        return DiceRoll(result, description)
     }
     
     /// Returns the number of sides of the left hand dice.
     public var sides: Int { return lhs.sides }
     
-    /// Returns a concatenation of the left hand and right hand last rolls.
-    public var lastRoll: [Int] {
-        guard lhs.lastRoll.count > 0 && rhs.lastRoll.count > 0 else { return [] }
-        return lhs.lastRoll + rhs.lastRoll
-    }
-    
     /// Returns a description of the left and right hand sides with the math operator.
     public var description: String { return "\(lhs)\(mathOperator)\(rhs)" }
-    
-    /// Returns a intermediate results of the left and right hand sides with the math operator.
-    public var lastRollDescription: String {
-        guard lhs.lastRoll.count > 0 && rhs.lastRoll.count > 0 else { return "" }
-        return "\(lhs.lastRollDescription) \(mathOperator) \(rhs.lastRollDescription)"
-    }
     
 }

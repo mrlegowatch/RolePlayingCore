@@ -11,18 +11,10 @@
 /// Implementations must conform to the CustomStringConvertible protocol.
 public protocol Dice: CustomStringConvertible {
     
-    /// Rolls the dice, and returns the result.
-    func roll() -> Int
+    /// Rolls the dice, and returns the result in a DiceRoll.
+    func roll() -> DiceRoll
     
     /// Returns the number of dice sides.
     var sides: Int { get }
-    
-    /// Returns the intermediate results of the last dice roll. 
-    /// Returns an empty array if no roll has been made.
-    var lastRoll: [Int] { get }
-    
-    /// Returns a string representing the intermediate results of the dice roll
-    /// (e.g., a "2d6" might return "(4+1)". Returns an empty string if no roll has been made.
-    var lastRollDescription: String { get }
-        
+     
 }
