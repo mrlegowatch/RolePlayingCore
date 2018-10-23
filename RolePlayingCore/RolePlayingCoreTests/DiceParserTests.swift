@@ -24,7 +24,7 @@ class DiceParserTests: XCTestCase {
             var minValue = 0
             var maxValue = 0
             for _ in 0 ..< sampleSize {
-                let roll = formatDice?.roll() ?? 0
+                let roll = formatDice?.roll().result ?? 0
                 XCTAssertTrue((1...12).contains(roll), "rolling \(formatString), got \(roll)")
                 sum += roll
                 minValue = minValue == 0 ? roll : min(minValue, roll)
@@ -38,7 +38,7 @@ class DiceParserTests: XCTestCase {
             
             // Code coverage and manual inspection of test output:
             print("  mean = \(mean) [expect 6.5]")
-            let result = formatDice?.lastRollDescription ?? ""
+            let result = formatDice?.roll().description ?? ""
             print("  lastRoll \"\(result)\"")
         }
         
@@ -53,7 +53,7 @@ class DiceParserTests: XCTestCase {
             var minValue = 0
             var maxValue = 0
             for _ in 0 ..< sampleSize {
-                let roll = formatDice?.roll() ?? 0
+                let roll = formatDice?.roll().result ?? 0
                 XCTAssertTrue((2...20).contains(roll), "rolling \(formatString), got \(roll)")
                 sum += roll
                 minValue = minValue == 0 ? roll : min(minValue, roll)
@@ -68,7 +68,7 @@ class DiceParserTests: XCTestCase {
             
             // Code coverage and manual inspection of test output:
             print("  mean = \(mean) [expect 11.0]")
-            let result = formatDice?.lastRollDescription ?? ""
+            let result = formatDice?.roll().description ?? ""
             print("  lastRoll \"\(result)\"")
         }
         
@@ -83,7 +83,7 @@ class DiceParserTests: XCTestCase {
             var minValue = 0
             var maxValue = 0
             for _ in 0 ..< sampleSize {
-                let roll = formatDice?.roll() ?? 0
+                let roll = formatDice?.roll().result ?? 0
                 XCTAssertTrue((2...20).contains(roll), "rolling \(formatString), got \(roll)")
                 sum += roll
                 minValue = minValue == 0 ? roll : min(minValue, roll)
@@ -98,7 +98,7 @@ class DiceParserTests: XCTestCase {
             
             // Code coverage and manual inspection of test output:
             print("  mean = \(mean) [expect 11.0]")
-            let result = formatDice?.lastRollDescription ?? ""
+            let result = formatDice?.roll().description ?? ""
             print("  lastRoll \"\(result)\"")
         }
         
@@ -113,7 +113,7 @@ class DiceParserTests: XCTestCase {
             var minValue = 0
             var maxValue = 0
             for _ in 0 ..< sampleSize {
-                let roll = formatDice?.roll() ?? 0
+                let roll = formatDice?.roll().result ?? 0
                 XCTAssertTrue((5...24).contains(roll), "rolling \(formatString), got \(roll)")
                 sum += roll
                 minValue = minValue == 0 ? roll : min(minValue, roll)
@@ -127,7 +127,7 @@ class DiceParserTests: XCTestCase {
             
             // Code coverage and manual inspection of test output:
             print("  mean = \(mean) [expect 14.5]")
-            let result = formatDice?.lastRollDescription ?? ""
+            let result = formatDice?.roll().description ?? ""
             print("  lastRoll \"\(result)\"")
         }
         
@@ -142,7 +142,7 @@ class DiceParserTests: XCTestCase {
             var minValue = 0
             var maxValue = 0
             for _ in 0 ..< sampleSize {
-                let roll = formatDice?.roll() ?? 0
+                let roll = formatDice?.roll().result ?? 0
                 XCTAssertTrue((1...100).contains(roll), "rolling \(formatString), got \(roll)")
                 sum += roll
                 minValue = minValue == 0 ? roll : min(minValue, roll)
@@ -162,7 +162,7 @@ class DiceParserTests: XCTestCase {
             
             // Code coverage and manual inspection of test output:
             print("  mean = \(mean) [expect 50.5]")
-            let result = formatDice?.lastRollDescription ?? ""
+            let result = formatDice?.roll().description ?? ""
             print("  lastRoll \"\(result)\"")
         }
         
@@ -177,7 +177,7 @@ class DiceParserTests: XCTestCase {
             var minValue = 0
             var maxValue = 0
             for _ in 0 ..< sampleSize {
-                let roll = formatDice?.roll() ?? 0
+                let roll = formatDice?.roll().result ?? 0
                 XCTAssertTrue((20...80).contains(roll), "rolling \(formatString), got \(roll)")
                 sum += roll
                 minValue = minValue == 0 ? roll : min(minValue, roll)
@@ -191,7 +191,7 @@ class DiceParserTests: XCTestCase {
             
             // Code coverage and manual inspection of test output:
             print("  mean = \(mean) [expect 50.0]")
-            let result = formatDice?.lastRollDescription ?? ""
+            let result = formatDice?.roll().description ?? ""
             print("  lastRoll \"\(result)\"")
         }
         
@@ -206,7 +206,7 @@ class DiceParserTests: XCTestCase {
             var minValue = 0
             var maxValue = 0
             for _ in 0 ..< sampleSize {
-                let roll = formatDice?.roll() ?? 0
+                let roll = formatDice?.roll().result ?? 0
                 XCTAssertTrue((20...80).contains(roll), "rolling \(formatString), got \(roll)")
                 sum += roll
                 minValue = minValue == 0 ? roll : min(minValue, roll)
@@ -220,7 +220,7 @@ class DiceParserTests: XCTestCase {
             
             // Code coverage and manual inspection of test output:
             print("  mean = \(mean) [expect 50.0]")
-            let result = formatDice?.lastRollDescription ?? ""
+            let result = formatDice?.roll().description ?? ""
             print("  lastRoll \"\(result)\"")
         }
         
@@ -235,7 +235,7 @@ class DiceParserTests: XCTestCase {
             var minValue = 0
             var maxValue = 0
             for _ in 0 ..< sampleSize {
-                let roll = formatDice?.roll() ?? 0
+                let roll = formatDice?.roll().result ?? 0
                 XCTAssertTrue((0...10).contains(roll), "rolling \(formatString), got \(roll)")
                 sum += roll
                 minValue = minValue == 0 ? roll : min(minValue, roll)
@@ -249,7 +249,7 @@ class DiceParserTests: XCTestCase {
             
             // Code coverage and manual inspection of test output:
             print("  mean = \(mean) [expect 4.5]")
-            let result = formatDice?.lastRollDescription ?? ""
+            let result = formatDice?.roll().description ?? ""
             print("  lastRoll \"\(result)\"")
         }
         
@@ -264,7 +264,7 @@ class DiceParserTests: XCTestCase {
             var minValue = 0
             var maxValue = 0
             for _ in 0 ..< sampleSize {
-                let roll = formatDice?.roll() ?? 0
+                let roll = formatDice?.roll().result ?? 0
                 XCTAssertTrue((3...18).contains(roll), "rolling \(formatString), got \(roll)")
                 sum += roll
                 minValue = minValue == 0 ? roll : min(minValue, roll)
@@ -285,7 +285,7 @@ class DiceParserTests: XCTestCase {
             
             // Code coverage and manual inspection of test output:
             print("  mean = \(mean) [expect 12.25]")
-            let result = formatDice?.lastRollDescription ?? ""
+            let result = formatDice?.roll().description ?? ""
             print("  lastRoll \"\(result)\"")
         }
     }
@@ -301,7 +301,7 @@ class DiceParserTests: XCTestCase {
             var minValue = 0
             var maxValue = 0
             for _ in 0 ..< sampleSize {
-                let roll = formatDice?.roll() ?? 0
+                let roll = formatDice?.roll().result ?? 0
                 XCTAssertTrue((1...40).contains(roll), "rolling \(formatString), got \(roll)")
                 sum += roll
                 minValue = minValue == 0 ? roll : min(minValue, roll)
@@ -322,7 +322,7 @@ class DiceParserTests: XCTestCase {
             
             // Code coverage and manual inspection of test output:
             print("  mean = \(mean) [expect 20.5]")
-            let result = formatDice?.lastRollDescription ?? ""
+            let result = formatDice?.roll().description ?? ""
             print("  lastRoll \"\(result)\"")
         }
         
@@ -340,7 +340,7 @@ class DiceParserTests: XCTestCase {
             var lastRoll = 0
             
             for _ in 0 ..< sampleSize {
-                let roll = formatDice?.roll() ?? 0
+                let roll = formatDice?.roll().result ?? 0
                 XCTAssertTrue((6...23).contains(roll), "rolling \(formatString), got \(roll)")
                 sum += roll
                 minValue = minValue == 0 ? roll : min(minValue, roll)
@@ -363,7 +363,7 @@ class DiceParserTests: XCTestCase {
             
             // Code coverage and manual inspection of test output:
             print("  mean = \(mean) [expect 14.5]")
-            let result = formatDice?.lastRollDescription ?? ""
+            let result = formatDice?.roll().description ?? ""
             print("  lastRoll \"\(result)\" = \(lastRoll)")
         }
         
@@ -381,7 +381,7 @@ class DiceParserTests: XCTestCase {
             var lastRoll = 0
             
             for _ in 0 ..< sampleSize {
-                let roll = formatDice?.roll() ?? 0
+                let roll = formatDice?.roll().result ?? 0
                 XCTAssertTrue((6...23).contains(roll), "rolling \(formatString), got \(roll)")
                 sum += roll
                 minValue = minValue == 0 ? roll : min(minValue, roll)
@@ -404,7 +404,7 @@ class DiceParserTests: XCTestCase {
             
             // Code coverage and manual inspection of test output:
             print("  mean = \(mean) [expect 14.5]")
-            let result = formatDice?.lastRollDescription ?? ""
+            let result = formatDice?.roll().description ?? ""
             print("  lastRoll \"\(result)\" = \(lastRoll)")
         }
         
@@ -416,7 +416,8 @@ class DiceParserTests: XCTestCase {
             
             if let formatDice = formatDice {
                 XCTAssertEqual(formatDice.description, "1+3", "format string")
-                XCTAssertEqual(formatDice.lastRollDescription, "1 + 3", "format string")
+                let lastRoll = formatDice.roll()
+                XCTAssertEqual(lastRoll.description, "1 + 3", "format string")
             }
         }
     }

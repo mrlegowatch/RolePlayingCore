@@ -80,13 +80,12 @@ class DiceTests: XCTestCase {
     
     func testDiceModifier() {
         let diceModifier = DiceModifier(7)
-        
+        let diceRoll = diceModifier.roll()
         XCTAssertEqual(diceModifier.modifier, 7, "dice modifier value")
-        XCTAssertEqual(diceModifier.roll(), 7, "dice modifier roll")
+        XCTAssertEqual(diceRoll.result, 7, "dice modifier roll")
         XCTAssertEqual(diceModifier.sides, 7, "dice modifier sides")
-        XCTAssertEqual(diceModifier.lastRoll, [7], "dice modifier lastRoll")
         XCTAssertEqual(diceModifier.description, "7", "dice modifier description")
-        XCTAssertEqual(diceModifier.lastRollDescription, "7", "dice modifier lastRollDescription")
+        XCTAssertEqual(diceRoll.description, "7", "dice modifier lastRollDescription")
     }
     
     func testSimpleDice() {
@@ -94,14 +93,12 @@ class DiceTests: XCTestCase {
         do {
             print("SimpleDice d12:")
             let simpleDice = SimpleDice(.d12)
-            XCTAssertEqual(simpleDice.lastRoll.count, 0, "last roll should initially be 0 count")
-            XCTAssertEqual(simpleDice.lastRollDescription, "", "last roll description should initially be empty")
             
             var sum = 0
             var minValue = 0
             var maxValue = 0
             for _ in 0 ..< sampleSize {
-                let roll = simpleDice.roll()
+                let roll = simpleDice.roll().result
                 XCTAssertTrue((1...12).contains(roll), "rolling d12, got \(roll)")
                 sum += roll
                 minValue = minValue == 0 ? roll : min(minValue, roll)
@@ -115,12 +112,12 @@ class DiceTests: XCTestCase {
             XCTAssertGreaterThanOrEqual(maxValue, 12, "max value")
             
             XCTAssertEqual(simpleDice.sides, 12, "SimpleDice sides")
-            XCTAssertEqual(simpleDice.lastRoll.count, 1, "SimpleDice roll count")
             XCTAssertEqual("\(simpleDice.description)", "d12", "SimpleDice description")
             
             // Code coverage and manual inspection of test output:
             print("  mean = \(mean) [expect 6.5]")
-            print("  lastRoll \"\(simpleDice.lastRollDescription)\" = \(simpleDice.lastRoll)")
+            let lastRoll = simpleDice.roll()
+            print("  lastRoll = \"\(lastRoll.description)\"")
         }
         
         // Test 2d8
@@ -132,7 +129,7 @@ class DiceTests: XCTestCase {
             var minValue = 0
             var maxValue = 0
             for _ in 0 ..< sampleSize {
-                let roll = simpleDice.roll()
+                let roll = simpleDice.roll().result
                 XCTAssertTrue((2...16).contains(roll), "rolling 2d8, got \(roll)")
                 sum += roll
                 minValue = minValue == 0 ? roll : min(minValue, roll)
@@ -146,12 +143,12 @@ class DiceTests: XCTestCase {
             XCTAssertEqual(maxValue, 16, "max value")
             
             XCTAssertEqual(simpleDice.sides, 8, "SimpleDice sides")
-            XCTAssertEqual(simpleDice.lastRoll.count, 2, "SimpleDice roll count")
             XCTAssertEqual("\(simpleDice.description)", "2d8", "SimpleDice description")
             
             // Code coverage and manual inspection of test output:
             print("  mean = \(mean) [expect 8.5]")
-            print("  lastRoll \"\(simpleDice.lastRollDescription)\" = \(simpleDice.lastRoll)")
+            let lastRoll = simpleDice.roll()
+            print("  lastRoll = \"\(lastRoll.description)\"")
         }
     }
     
@@ -160,16 +157,12 @@ class DiceTests: XCTestCase {
         do {
             print("SimpleDice 4d6-L:")
             let simpleDice = DroppingDice(.d6, times: 4, drop: .lowest)
-            XCTAssertEqual(simpleDice.lastRoll.count, 0, "last roll should initially be 0 count")
-            XCTAssertEqual(simpleDice.lastRollDescription, "", "last roll description should initially be empty")
-            XCTAssertNil(simpleDice.droppedRoll, "droppedRoll() should initially be nil")
-            XCTAssertNil(simpleDice.droppedIndex, "droppedIndex() should initially be nil")
 
             var sum = 0
             var minValue = 0
             var maxValue = 0
             for _ in 0 ..< sampleSize {
-                let roll = simpleDice.roll()
+                let roll = simpleDice.roll().result
                 XCTAssertTrue((3...18).contains(roll), "rolling 4d6-L, got \(roll)")
                 sum += roll
                 minValue = minValue == 0 ? roll : min(minValue, roll)
@@ -183,18 +176,14 @@ class DiceTests: XCTestCase {
             XCTAssertGreaterThanOrEqual(maxValue, 16, "max value")
             
             XCTAssertEqual(simpleDice.sides, 6, "SimpleDice sides")
-            XCTAssertEqual(simpleDice.lastRoll.count, 3, "SimpleDice roll count")
             XCTAssertEqual("\(simpleDice.description)", "4d6-L", "SimpleDice description")
-            
-            
-            let lowest = simpleDice.dice.lastRoll.min()!
-            let index = simpleDice.dice.lastRoll.index(of: lowest)
-            XCTAssertEqual(lowest, simpleDice.droppedRoll, "dropped roll")
-            XCTAssertEqual(index, simpleDice.droppedIndex, "dropped index")
 
             // Code coverage and manual inspection of test output:
             print("  mean = \(mean) [expect 12.25]")
-            print("  lastRoll \"\(simpleDice.lastRollDescription)\" = \(simpleDice.lastRoll)")
+            let lastRoll = simpleDice.roll()
+            print("  lastRoll = \"\(lastRoll.description)\"")
+            
+            // TODO: verify that it is actually dropping the lowest score.
         }
         
         // Test 3d4, dropping the highest
@@ -206,7 +195,7 @@ class DiceTests: XCTestCase {
             var minValue = 0
             var maxValue = 0
             for _ in 0 ..< sampleSize {
-                let roll = simpleDice.roll()
+                let roll = simpleDice.roll().result
                 XCTAssertTrue((2...8).contains(roll), "rolling 3d4-H, got \(roll)")
                 sum += roll
                 minValue = minValue == 0 ? roll : min(minValue, roll)
@@ -223,12 +212,11 @@ class DiceTests: XCTestCase {
             
             // Code coverage and manual inspection of test output:
             print("  mean = \(mean) [expect 4]")
-            print("  lastRoll \"\(simpleDice.lastRollDescription)\" = \(simpleDice.lastRoll)")
+            let lastRoll = simpleDice.roll()
+            print("  lastRoll = \"\(lastRoll.description)\"")
 
-            let highest = simpleDice.dice.lastRoll.max()!
-            let index = simpleDice.dice.lastRoll.index(of: highest)
-            XCTAssertEqual(highest, simpleDice.droppedRoll, "dropped roll")
-            XCTAssertEqual(index, simpleDice.droppedIndex, "dropped index")
+            // TODO: verify that it is actually dropping the highest score.
+
         }
     }
     
@@ -238,14 +226,12 @@ class DiceTests: XCTestCase {
             print("CompoundDice 2d8+4:")
 
             let compoundDice = CompoundDice(.d8, times: 2, modifier: 4)
-            XCTAssertEqual(compoundDice.lastRoll.count, 0, "last roll count should be 0")
-            XCTAssertEqual(compoundDice.lastRollDescription, "", "last roll description should be empty")
 
             var sum = 0
             var minValue = 0
             var maxValue = 0
             for _ in 0 ..< sampleSize {
-                let roll = compoundDice.roll()
+                let roll = compoundDice.roll().result
                 XCTAssertTrue((6...20).contains(roll), "rolling 2d8+4, got \(roll)")
                 sum += roll
                 minValue = minValue == 0 ? roll : min(minValue, roll)
@@ -258,13 +244,13 @@ class DiceTests: XCTestCase {
             XCTAssertEqual(maxValue, 20, "max value")
             
             XCTAssertEqual(compoundDice.sides, 8, "CompoundDice sides")
-            XCTAssertEqual(compoundDice.lastRoll.count, 3, "last roll count")
 
             XCTAssertEqual("\(compoundDice.description)", "2d8+4", "CompoundDice description")
             
             // Code coverage and manual inspection of test output:
             print("  mean = \(mean) [expect 13.0]")
-            print("  lastRoll \"\(compoundDice.lastRollDescription)\" = \(compoundDice.lastRoll)")
+            let lastRoll = compoundDice.roll()
+            print("  lastRoll = \"\(lastRoll.description)\"")
         }
     
         // Test 2d8+d4
@@ -275,7 +261,7 @@ class DiceTests: XCTestCase {
             var minValue = 0
             var maxValue = 0
             for _ in 0 ..< sampleSize {
-                let roll = compoundDice.roll()
+                let roll = compoundDice.roll().result
                 XCTAssertTrue((3...20).contains(roll), "rolling 2d8+d4, got \(roll)")
                 sum += roll
                 minValue = minValue == 0 ? roll : min(minValue, roll)
@@ -292,7 +278,8 @@ class DiceTests: XCTestCase {
             
             // Code coverage and manual inspection of test output:
             print("  mean = \(mean) [expect 11.5]")
-            print("  lastRoll \"\(compoundDice.lastRollDescription)\" = \(compoundDice.lastRoll)")
+            let lastRoll = compoundDice.roll()
+            print("  lastRoll = \"\(lastRoll.description)\"")
         }
     }
 

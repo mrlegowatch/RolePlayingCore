@@ -14,7 +14,7 @@ public extension AbilityScores {
     public mutating func roll() {
         let dice = DroppingDice(.d6, times: 4, drop: .lowest)
         for ability in abilities {
-            scores[ability] = dice.roll()
+            scores[ability] = dice.roll().result
         }
     }
 
@@ -172,10 +172,10 @@ public class Player: Codable {
         self.gender = gender
         self.alignment = alignment
         
-        let extraHeight = racialTraits.heightModifier.roll()
+        let extraHeight = racialTraits.heightModifier.roll().result
         self.height = (racialTraits.baseHeight + Height(value: Double(extraHeight), unit: .inches)).converted(to: .feet)
         
-        let extraWeight = extraHeight * racialTraits.weightModifier.roll()
+        let extraWeight = extraHeight * racialTraits.weightModifier.roll().result
         self.weight = racialTraits.baseWeight + Weight(value: Double(extraWeight), unit: .pounds)
         
         self.baseAbilities = AbilityScores()
@@ -184,7 +184,7 @@ public class Player: Codable {
         self.maximumHitPoints = Player.rollHitPoints(classTraits: classTraits, racialTraits: racialTraits)
         self.currentHitPoints = self.maximumHitPoints
         
-        let startingWealth = classTraits.startingWealth.roll()
+        let startingWealth = classTraits.startingWealth.roll().result
         self.money = Money(value: Double(startingWealth), unit: .baseUnit())
         
         self.experiencePoints = 0
@@ -194,7 +194,7 @@ public class Player: Codable {
     // MARK: Implementation
     
     class func rollHitPoints(classTraits: ClassTraits, racialTraits: RacialTraits) -> Int {
-        return max(classTraits.hitDice.sides / 2 + 1, classTraits.hitDice.roll()) + racialTraits.hitPointBonus
+        return max(classTraits.hitDice.sides / 2 + 1, classTraits.hitDice.roll().result) + racialTraits.hitPointBonus
     }
     
     func rollHitPoints() -> Int {
