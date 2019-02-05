@@ -243,7 +243,7 @@ public extension String {
     /// - returns: Dice representing the parsed string. Returns `nil` if the string
     ///   could not be interpreted; for example, if there are extraneous
     ///   characters, or an unsupported dice such as d7 is specified.
-    public var parseDice: Dice? {
+    var parseDice: Dice? {
         var dice: Dice? = nil
         
         do {
@@ -269,7 +269,7 @@ public extension KeyedDecodingContainer  {
     /// See `String.parseDice` for supported string formats.
     ///
     /// - throws `DecodingError.dataCorrupted` if the dice is not present or could not be decoded.
-    public func decode(_ type: Dice.Protocol, forKey key: K) throws -> Dice {
+    func decode(_ type: Dice.Protocol, forKey key: K) throws -> Dice {
         let dice: Dice?
         
         if let number = try? self.decode(Int.self, forKey: key) {
@@ -291,7 +291,7 @@ public extension KeyedDecodingContainer  {
     /// See `String.parseDice` for supported string formats.
     ///
     /// - throws `DecodingError.dataCorrupted` if the dice could not be decoded.
-    public func decodeIfPresent(_ type: Dice.Protocol, forKey key: K) throws -> Dice? {
+    func decodeIfPresent(_ type: Dice.Protocol, forKey key: K) throws -> Dice? {
         let dice: Dice?
         
         if let number = try? self.decode(Int.self, forKey: key) {

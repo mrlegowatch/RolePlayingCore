@@ -8,7 +8,7 @@
 
 import XCTest
 
-import RolePlayingCore
+@testable import RolePlayingCore
 
 
 class UnitCurrencyTests: XCTestCase {
