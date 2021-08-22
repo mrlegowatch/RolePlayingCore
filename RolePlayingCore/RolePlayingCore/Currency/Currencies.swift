@@ -8,14 +8,30 @@
 
 public struct Currencies {
     
-    /// An array of all currently loaded currencies.
-    public static var allCurrencies: [UnitCurrency] = []
+    /// A map of all currently loaded currencies.
+    internal static var allCurrencies: [String: UnitCurrency] = [:]
     
-    /// Looks up the currency instance that matches the specified symbol.
-    /// Returns nil if the symbol isn't found.
+    /// Returns the unit currency corresponding to this symbol. Returns nil if no symbol matches.
     public static func find(_ symbol: String) -> UnitCurrency? {
-        return allCurrencies.first(where: { $0.symbol == symbol })
+        return Currencies.allCurrencies[symbol]
     }
+  
+    public static func add(_ currency: UnitCurrency) {
+        allCurrencies[currency.symbol] = currency
+    }
+
+    public static func setDefault(_ newBaseUnit: UnitCurrency) {
+        // Remove the old base unit from all currencies.
+        let oldSymbol = UnitCurrency.baseUnitCurrency.symbol
+        guard oldSymbol != newBaseUnit.symbol else {
+            return
+        }
+        
+        allCurrencies[oldSymbol] = nil
+        
+        UnitCurrency.baseUnitCurrency = newBaseUnit
+    }
+    
 }
 
 extension Currencies: Codable {
@@ -27,14 +43,34 @@ extension Currencies: Codable {
         let coefficient: Double
         let name: String
         let plural: String
-        let `default`: Bool? // TODO: this is fishy
+        let isDefault: Bool
         
+        private enum CodingKeys: String, CodingKey {
+            case symbol
+            case coefficient
+            case name
+            case plural
+            case isDefault = "is default"
+        }
+        
+        // For writing
         init(_ unitCurrency: UnitCurrency) {
             self.symbol = unitCurrency.symbol
             self.coefficient = (unitCurrency.converter as! UnitConverterLinear).coefficient
             self.name = unitCurrency.name
             self.plural = unitCurrency.plural
-            self.default = unitCurrency == .baseUnit()
+            self.isDefault = unitCurrency == .baseUnit()
+        }
+        
+        // For reading
+        init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+
+            symbol = try container.decode(String.self, forKey: .symbol)
+            coefficient = try container.decode(Double.self, forKey: .coefficient)
+            name = try container.decode(String.self, forKey: .name)
+            plural = try container.decode(String.self, forKey: .plural)
+            isDefault = try container.decodeIfPresent(Bool.self, forKey: .isDefault) ?? false
         }
     }
     
@@ -48,14 +84,13 @@ extension Currencies: Codable {
         
         let currencies = try container.decode([Currency].self, forKey: .currencies)
         for currency in currencies {
-            if Currencies.find(currency.symbol) == nil {
-                let converter = UnitConverterLinear(coefficient: currency.coefficient)
-                let unitCurrency = UnitCurrency(symbol: currency.symbol, converter: converter, name: currency.name, plural: currency.plural)
-                Currencies.allCurrencies.append(unitCurrency)
-                
-                if currency.default != nil, currency.default! {
-                    UnitCurrency.default = unitCurrency
-                }
+            let converter = UnitConverterLinear(coefficient: currency.coefficient)
+            let unitCurrency = UnitCurrency(symbol: currency.symbol, converter: converter, name: currency.name, plural: currency.plural)
+            
+            Currencies.add(unitCurrency)
+            
+            if currency.isDefault {
+                Currencies.setDefault(unitCurrency)
             }
         }
     }
@@ -64,7 +99,7 @@ extension Currencies: Codable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
         var currencies = [Currency]()
-        for unitCurrency in Currencies.allCurrencies {
+        for unitCurrency in Currencies.allCurrencies.values {
             let currency = Currency(unitCurrency)
             currencies.append(currency)
         }

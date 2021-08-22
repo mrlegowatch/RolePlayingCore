@@ -18,7 +18,7 @@ public extension String {
         var value: Double?
         var unit: UnitCurrency = .baseUnit()
         
-        for currency in Currencies.allCurrencies {
+        for currency in Currencies.allCurrencies.values {
             if let range = self.range(of: currency.symbol), range.upperBound == self.endIndex {
                 value = Double(self[..<range.lowerBound].trimmingCharacters(in: .whitespaces))!
                 unit = currency

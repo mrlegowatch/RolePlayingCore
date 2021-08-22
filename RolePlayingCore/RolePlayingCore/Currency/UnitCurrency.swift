@@ -11,7 +11,7 @@ import Foundation
 /// Units of currency or coinage.
 ///
 /// Use `Measurement<UnitCurrency>` to hold values of currency.
-public class UnitCurrency : Dimension {
+public final class UnitCurrency : Dimension {
     
     /// The singular unit name used when the unitStyle is long.
     public internal(set) var name: String!
@@ -19,13 +19,11 @@ public class UnitCurrency : Dimension {
     /// The plural unit name used when the unitStyle is long.
     public internal(set) var plural: String!
     
-    /// The default unit currency. Set during load().
-    public internal(set) static var `default`: UnitCurrency?
+    /// The default base unit is a currency called "credit". It may be replaced at runtime.
+    internal static var baseUnitCurrency = UnitCurrency(symbol: "c", converter: UnitConverterLinear(coefficient: 1.0), name: "credit", plural: "credits")
     
-    /// Returns the default unit currency. Will unwrap nil if load() hasn't been called,
-    /// or if none of the loaded currencies was marked default.
     public override class func baseUnit() -> UnitCurrency {
-        return UnitCurrency.default!
+        return baseUnitCurrency
     }
     
     public init(symbol: String, converter: UnitConverter, name: String, plural: String) {

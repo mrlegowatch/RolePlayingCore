@@ -217,9 +217,8 @@ extension Alignment: Codable {
             // The value must decode into either two doubles or two strings with the coding keys.
             let values = try decoder.container(keyedBy: CodingKeys.self)
             if let ethicsValue = try? values.decodeIfPresent(Double.self, forKey: .ethics),
-                let moralsValue = try? values.decodeIfPresent(Double.self, forKey: .morals),
-                ethicsValue != nil && moralsValue != nil {
-                self.init(ethics: ethicsValue!, morals: moralsValue!)
+                let moralsValue = try? values.decodeIfPresent(Double.self, forKey: .morals) {
+                self.init(ethics: ethicsValue, morals: moralsValue)
             } else {
                 let ethics = try values.decode(Ethics.self, forKey: .ethics)
                 let morals = try values.decode(Morals.self, forKey: .morals)
