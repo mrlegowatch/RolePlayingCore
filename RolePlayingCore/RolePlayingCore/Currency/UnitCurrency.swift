@@ -11,7 +11,7 @@ import Foundation
 /// Units of currency or coinage.
 ///
 /// Use `Measurement<UnitCurrency>` to hold values of currency.
-public final class UnitCurrency : Dimension {
+public final class UnitCurrency : Dimension, @unchecked Sendable {
     
     /// The singular unit name used when the unitStyle is long.
     public internal(set) var name: String!

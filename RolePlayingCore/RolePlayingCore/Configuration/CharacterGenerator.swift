@@ -30,20 +30,18 @@ public struct CharacterGenerator {
     
     // TODO: support non-uniform distributions for different traits (e.g., some races and classes tend to have specific alignments)
     
-    func randomAlignment<G: RandomNumberGenerator>(using generator: inout G) -> Alignment {
-        let ethics = Ethics.allCases.randomElement(using: &generator)!
-        let morals = Morals.allCases.randomElement(using: &generator)!
+    func randomAlignment<G: RandomIndexGenerator>(using generator: inout G) -> Alignment {
+        let ethics = Ethics.allCases.randomElementByIndex(using: &generator)!
+        let morals = Morals.allCases.randomElementByIndex(using: &generator)!
         return Alignment(ethics, morals)
     }
     
-    public func makeCharacter<G: RandomNumberGenerator>(using generator: inout G) -> Player {
+    public func makeCharacter<G: RandomIndexGenerator>(using generator: inout G) -> Player {
         // TODO: have RacialTraits, ClassTraits conform to whatever protocol specifies the random() function
+        let randomClass = generator.randomIndex(upperBound: configuration.classes.count)
+        let gender = Player.Gender.allCases.randomElementByIndex(using: &generator)
         
-        let randomRace = Int.random(in: 0..<configuration.races.count, using: &generator)
-        let randomClass = Int.random(in: 0..<configuration.classes.count, using: &generator)
-        let gender = Player.Gender.allCases.randomElement(using: &generator)
-        
-        let racialTraits = configuration.races[randomRace]!
+        let racialTraits = configuration.races.randomElementByIndex(using: &generator)
         let classTraits = configuration.classes[randomClass]!
         let name = names.randomName(racialTraits: racialTraits, gender: gender, using: &generator)
         let alignment = racialTraits.alignment != nil ? racialTraits.alignment : randomAlignment(using: &generator)
@@ -52,7 +50,7 @@ public struct CharacterGenerator {
     }
     
     public func makeCharacter() -> Player {
-        var rng = SystemRandomNumberGenerator()
-        return makeCharacter(using: &rng)
+        var generator = DefaultRandomIndexGenerator()
+        return makeCharacter(using: &generator)
     }
 }

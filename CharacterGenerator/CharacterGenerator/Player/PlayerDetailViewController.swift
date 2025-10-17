@@ -38,7 +38,7 @@ class PlayerDetailViewController: UICollectionViewController {
     }
 
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return characterSheet.numberOfSections
+        return characterSheet?.numberOfSections ?? 0
     }
     
     

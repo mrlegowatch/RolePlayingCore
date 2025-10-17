@@ -61,9 +61,9 @@ class AbilityTests: XCTestCase {
     
     func testAbilityEncodable() {
         struct AbilityContainer: Codable {
-            let ability = Ability("Strength")
+            let ability: Ability
         }
-        let abilityScores = AbilityContainer()
+        let abilityScores = AbilityContainer(ability: Ability("Strength"))
         let encoder = JSONEncoder()
         do {
             let encoded = try encoder.encode(abilityScores)

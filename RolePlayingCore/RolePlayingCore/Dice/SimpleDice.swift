@@ -36,7 +36,7 @@ public struct SimpleDice: Dice {
     }
     
     /// Returns the number of dice sides.
-    public var sides: Int { return die.rawValue }
+    public var sides: Int { die.rawValue }
     
     /// Returns a description, "[<times>]d<sides>"; times is left out if it is 1.
     public var description: String {

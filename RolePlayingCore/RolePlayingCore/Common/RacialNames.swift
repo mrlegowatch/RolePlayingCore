@@ -85,19 +85,21 @@ public struct RacialNames: Codable {
         return names[parentName]!
     }
     
-    private func resolveAliasNames<G: RandomNumberGenerator>(_ familyNames: FamilyNames, using generator: inout G) -> FamilyNames {
+    private func resolveAliasNames<G: RandomIndexGenerator>(_ familyNames: FamilyNames, using generator: inout G) -> FamilyNames {
         guard let aliases = familyNames.aliases else { return familyNames }
         
-        let randomName = aliases.randomElement(using: &generator)!
+        let randomIndex = generator.randomIndex(upperBound: aliases.count)
+        let randomName = aliases[randomIndex]
         return names[randomName]!
     }
     
-    private func resolveGender<G: RandomNumberGenerator>(_ gender: Player.Gender?, using generator: inout G) -> Player.Gender {
+    private func resolveGender<G: RandomIndexGenerator>(_ gender: Player.Gender?, using generator: inout G) -> Player.Gender {
         guard gender == nil else { return gender! }
-        return Player.Gender.allCases.randomElement(using: &generator)!
+        let randomIndex = generator.randomIndex(upperBound: Player.Gender.allCases.count)
+        return Player.Gender.allCases[randomIndex]
     }
     
-    public func randomName<G: RandomNumberGenerator>(racialTraits: RacialTraits, gender: Player.Gender?, using generator: inout G) -> String {
+    public func randomName<G: RandomIndexGenerator>(racialTraits: RacialTraits, gender: Player.Gender?, using generator: inout G) -> String {
         // Determine race or parent race (for subraces)
         var familyNames = resolveRacialNames(racialTraits)
         familyNames = resolveAliasNames(familyNames, using: &generator)
@@ -109,7 +111,7 @@ public struct RacialNames: Codable {
     }
     
     public func randomName(racialTraits: RacialTraits, gender: Player.Gender?) -> String {
-        var rng = SystemRandomNumberGenerator()
+        var rng = DefaultRandomIndexGenerator()
         return randomName(racialTraits: racialTraits, gender: gender, using: &rng)
     }
     

@@ -38,6 +38,10 @@ public class Races: Codable {
         }
     }
     
+    public func randomElementByIndex<G: RandomIndexGenerator>(using generator: inout G) -> RacialTraits {
+        return races.randomElementByIndex(using: &generator)!
+    }
+    
     enum CodingKeys: String, CodingKey {
         case races
     }
