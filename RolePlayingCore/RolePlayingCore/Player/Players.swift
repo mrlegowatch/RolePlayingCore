@@ -11,11 +11,11 @@ import Foundation
 extension Player {
     
     // TODO: support KeyedArchiver?
-    func resolveRace(from races: Races) throws {
-        guard let racialTraits = races.find(self.raceName) else {
-            throw RuntimeError("Could not resolve race name \(self.raceName)")
+    func resolveSpecies(from species: Species) throws {
+        guard let speciesTraits = species.find(self.speciesName) else {
+            throw RuntimeError("Could not resolve species name \(self.speciesName)")
         }
-        self.racialTraits = racialTraits
+        self.speciesTraits = speciesTraits
     }
    
     // TODO: support KeyedArchiver?
@@ -32,9 +32,9 @@ public class Players: Codable {
 
     public var players = [Player]()
     
-    public func resolve(classes: Classes, races: Races) throws {
+    public func resolve(classes: Classes, species: Species) throws {
         for player in players {
-            try player.resolveRace(from: races)
+            try player.resolveSpecies(from: species)
             try player.resolveClass(from: classes)
         }
     }

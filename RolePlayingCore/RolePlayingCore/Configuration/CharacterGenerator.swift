@@ -8,27 +8,27 @@
 
 import Foundation
 
-/// Given a configuration of racial traits and class traits,
+/// Given a configuration of species traits and class traits,
 /// provides a random character.
 public struct CharacterGenerator {
     
     let configuration: Configuration
     
-    let names: RacialNames
+    let names: SpeciesNames
     
     /// Creates a character generator instance with a reference to the current configuration.
     public init(_ configuration: Configuration, from bundle: Bundle = .main) throws {
-        guard let racialNamesFile = configuration.configurationFiles.racialNames else {
-            throw RuntimeError("Missing racialNames file name in configuration file")
+        guard let speciesNamesFile = configuration.configurationFiles.speciesNames else {
+            throw RuntimeError("Missing speciesNames file name in configuration file")
         }
         
         self.configuration = configuration
-        let data = try bundle.loadJSON(racialNamesFile)
+        let data = try bundle.loadJSON(speciesNamesFile)
         let decoder = JSONDecoder()
-        self.names = try decoder.decode(RacialNames.self, from: data)
+        self.names = try decoder.decode(SpeciesNames.self, from: data)
     }
     
-    // TODO: support non-uniform distributions for different traits (e.g., some races and classes tend to have specific alignments)
+    // TODO: support non-uniform distributions for different traits (e.g., some species and classes tend to have specific alignments)
     
     func randomAlignment<G: RandomIndexGenerator>(using generator: inout G) -> Alignment {
         let ethics = Ethics.allCases.randomElementByIndex(using: &generator)!
@@ -37,16 +37,16 @@ public struct CharacterGenerator {
     }
     
     public func makeCharacter<G: RandomIndexGenerator>(using generator: inout G) -> Player {
-        // TODO: have RacialTraits, ClassTraits conform to whatever protocol specifies the random() function
+        // TODO: have SpeciesTraits, ClassTraits conform to whatever protocol specifies the random() function
         let randomClass = generator.randomIndex(upperBound: configuration.classes.count)
         let gender = Player.Gender.allCases.randomElementByIndex(using: &generator)
         
-        let racialTraits = configuration.races.randomElementByIndex(using: &generator)
+        let speciesTraits = configuration.species.randomElementByIndex(using: &generator)
         let classTraits = configuration.classes[randomClass]!
-        let name = names.randomName(racialTraits: racialTraits, gender: gender, using: &generator)
-        let alignment = racialTraits.alignment != nil ? racialTraits.alignment : randomAlignment(using: &generator)
+        let name = names.randomName(speciesTraits: speciesTraits, gender: gender, using: &generator)
+        let alignment = speciesTraits.alignment != nil ? speciesTraits.alignment : randomAlignment(using: &generator)
         
-        return Player(name, racialTraits: racialTraits, classTraits: classTraits, gender: gender, alignment: alignment)
+        return Player(name, speciesTraits: speciesTraits, classTraits: classTraits, gender: gender, alignment: alignment)
     }
     
     public func makeCharacter() -> Player {

@@ -21,36 +21,36 @@
 		B66AF8FD1EAE87A800C15F8E /* TestConfiguration.json in Resources */ = {isa = PBXBuildFile; fileRef = B66AF8F51EAE87A800C15F8E /* TestConfiguration.json */; };
 		B66AF8FE1EAE87A800C15F8E /* TestCurrencies.json in Resources */ = {isa = PBXBuildFile; fileRef = B66AF8F61EAE87A800C15F8E /* TestCurrencies.json */; };
 		B66AF8FF1EAE87A800C15F8E /* TestMoreClasses.json in Resources */ = {isa = PBXBuildFile; fileRef = B66AF8F71EAE87A800C15F8E /* TestMoreClasses.json */; };
-		B66AF9001EAE87A800C15F8E /* TestMoreRaces.json in Resources */ = {isa = PBXBuildFile; fileRef = B66AF8F81EAE87A800C15F8E /* TestMoreRaces.json */; };
+		B66AF9001EAE87A800C15F8E /* TestMoreSpecies.json in Resources */ = {isa = PBXBuildFile; fileRef = B66AF8F81EAE87A800C15F8E /* TestMoreSpecies.json */; };
 		B66AF9011EAE87A800C15F8E /* TestNames.json in Resources */ = {isa = PBXBuildFile; fileRef = B66AF8F91EAE87A800C15F8E /* TestNames.json */; };
 		B66AF9021EAE87A800C15F8E /* TestPlayers.json in Resources */ = {isa = PBXBuildFile; fileRef = B66AF8FA1EAE87A800C15F8E /* TestPlayers.json */; };
-		B66AF9031EAE87A800C15F8E /* TestRaces.json in Resources */ = {isa = PBXBuildFile; fileRef = B66AF8FB1EAE87A800C15F8E /* TestRaces.json */; };
+		B66AF9031EAE87A800C15F8E /* TestSpecies.json in Resources */ = {isa = PBXBuildFile; fileRef = B66AF8FB1EAE87A800C15F8E /* TestSpecies.json */; };
 		B66AF9051EAE88C300C15F8E /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = B66AF9041EAE88C300C15F8E /* Configuration.swift */; };
 		B66AF9071EAE88FF00C15F8E /* ConfigurationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B66AF9061EAE88FF00C15F8E /* ConfigurationTests.swift */; };
 		B66AF9091EAE8B8100C15F8E /* MissingClassPlayers.json in Resources */ = {isa = PBXBuildFile; fileRef = B66AF9081EAE8B8000C15F8E /* MissingClassPlayers.json */; };
-		B66AF90B1EAE8BF100C15F8E /* MissingRacePlayers.json in Resources */ = {isa = PBXBuildFile; fileRef = B66AF90A1EAE8BF100C15F8E /* MissingRacePlayers.json */; };
-		B67450E41F118A8B0061FD6F /* RacialNamesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B67450E31F118A8B0061FD6F /* RacialNamesTests.swift */; };
+		B66AF90B1EAE8BF100C15F8E /* MissingSpeciesPlayers.json in Resources */ = {isa = PBXBuildFile; fileRef = B66AF90A1EAE8BF100C15F8E /* MissingSpeciesPlayers.json */; };
+		B67450E41F118A8B0061FD6F /* SpeciesNamesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B67450E31F118A8B0061FD6F /* SpeciesNamesTests.swift */; };
 		B681B7161EAAC8E2001DE78B /* SimpleDice.swift in Sources */ = {isa = PBXBuildFile; fileRef = B681B7151EAAC8E2001DE78B /* SimpleDice.swift */; };
 		B681B7181EAAC8EE001DE78B /* DiceModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = B681B7171EAAC8EE001DE78B /* DiceModifier.swift */; };
 		B681B71A1EAAC8FB001DE78B /* CompoundDice.swift in Sources */ = {isa = PBXBuildFile; fileRef = B681B7191EAAC8FB001DE78B /* CompoundDice.swift */; };
 		B681B71C1EAAC904001DE78B /* DroppingDice.swift in Sources */ = {isa = PBXBuildFile; fileRef = B681B71B1EAAC904001DE78B /* DroppingDice.swift */; };
 		B681B71E1EAACA9B001DE78B /* Die.swift in Sources */ = {isa = PBXBuildFile; fileRef = B681B71D1EAACA9B001DE78B /* Die.swift */; };
-		B698515E1F1171EC006A537A /* RacialNames.swift in Sources */ = {isa = PBXBuildFile; fileRef = B698515D1F1171EC006A537A /* RacialNames.swift */; };
-		B69851621F11850A006A537A /* TestRacialNames.json in Resources */ = {isa = PBXBuildFile; fileRef = B69851611F11850A006A537A /* TestRacialNames.json */; };
+		B698515E1F1171EC006A537A /* SpeciesNames.swift in Sources */ = {isa = PBXBuildFile; fileRef = B698515D1F1171EC006A537A /* SpeciesNames.swift */; };
+		B69851621F11850A006A537A /* TestSpeciesNames.json in Resources */ = {isa = PBXBuildFile; fileRef = B69851611F11850A006A537A /* TestSpeciesNames.json */; };
 		B69F84691E58B8F700A4D2B0 /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69F84681E58B8F700A4D2B0 /* Player.swift */; };
 		B69F846B1E58D33900A4D2B0 /* PlayerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69F846A1E58D33900A4D2B0 /* PlayerTests.swift */; };
 		B69F846D1E58D66900A4D2B0 /* Players.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69F846C1E58D66900A4D2B0 /* Players.swift */; };
 		B69F846F1E59155A00A4D2B0 /* PlayersTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69F846E1E59155A00A4D2B0 /* PlayersTests.swift */; };
 		B69F84731E591DE400A4D2B0 /* InvalidClassPlayers.json in Resources */ = {isa = PBXBuildFile; fileRef = B69F84721E591DE400A4D2B0 /* InvalidClassPlayers.json */; };
-		B69F84751E591E9800A4D2B0 /* InvalidRacePlayers.json in Resources */ = {isa = PBXBuildFile; fileRef = B69F84741E591E9800A4D2B0 /* InvalidRacePlayers.json */; };
+		B69F84751E591E9800A4D2B0 /* InvalidSpeciesPlayers.json in Resources */ = {isa = PBXBuildFile; fileRef = B69F84741E591E9800A4D2B0 /* InvalidSpeciesPlayers.json */; };
 		B6A1AE591F0E4C59008ADF08 /* InvalidConfiguration.json in Resources */ = {isa = PBXBuildFile; fileRef = B6A1AE581F0E4C59008ADF08 /* InvalidConfiguration.json */; };
 		B6A29EB51EFE9B9F00DAB40C /* Currencies.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A29EB41EFE9B9F00DAB40C /* Currencies.swift */; };
 		B6CF53901E51DA1300CADD9F /* ClassTraits.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6CF538F1E51DA1300CADD9F /* ClassTraits.swift */; };
 		B6CF53921E51DEDD00CADD9F /* ClassTraitsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6CF53911E51DEDD00CADD9F /* ClassTraitsTests.swift */; };
 		B6CF53CE1E54DF4500CADD9F /* JSONFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6CF53CD1E54DF4500CADD9F /* JSONFile.swift */; };
 		B6CF53D01E54E2E200CADD9F /* Classes.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6CF53CF1E54E2E200CADD9F /* Classes.swift */; };
-		B6CF53D21E54E2EF00CADD9F /* Races.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6CF53D11E54E2EF00CADD9F /* Races.swift */; };
-		B6CF53D91E56442800CADD9F /* RacesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6CF53D81E56442800CADD9F /* RacesTests.swift */; };
+		B6CF53D21E54E2EF00CADD9F /* Species.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6CF53D11E54E2EF00CADD9F /* Species.swift */; };
+		B6CF53D91E56442800CADD9F /* SpeciesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6CF53D81E56442800CADD9F /* SpeciesTests.swift */; };
 		B6CF53DB1E56443A00CADD9F /* ClassesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6CF53DA1E56443A00CADD9F /* ClassesTests.swift */; };
 		B6CF53E51E57429D00CADD9F /* JSONFileTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6CF53E41E57429D00CADD9F /* JSONFileTests.swift */; };
 		B6CF53E71E5742C700CADD9F /* JSONFile.json in Resources */ = {isa = PBXBuildFile; fileRef = B6CF53E61E5742C700CADD9F /* JSONFile.json */; };
@@ -58,9 +58,9 @@
 		B6CF53EB1E574ED400CADD9F /* HalfBakedJSONFile.json in Resources */ = {isa = PBXBuildFile; fileRef = B6CF53EA1E574ED400CADD9F /* HalfBakedJSONFile.json */; };
 		B6D2EB1F26D7B7E900F99B35 /* RandomIndexGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6D2EB1E26D7B7E900F99B35 /* RandomIndexGenerator.swift */; };
 		B6F070361E4F991D00F66918 /* AlignmentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F070351E4F991D00F66918 /* AlignmentTests.swift */; };
-		B6F070381E4FBD6500F66918 /* RacialTraits.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F070371E4FBD6500F66918 /* RacialTraits.swift */; };
+		B6F070381E4FBD6500F66918 /* SpeciesTraits.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F070371E4FBD6500F66918 /* SpeciesTraits.swift */; };
 		B6F0703A1E4FC03700F66918 /* Money.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F070391E4FC03700F66918 /* Money.swift */; };
-		B6F0703C1E4FC18500F66918 /* RacialTraitsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F0703B1E4FC18500F66918 /* RacialTraitsTests.swift */; };
+		B6F0703C1E4FC18500F66918 /* SpeciesTraitsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F0703B1E4FC18500F66918 /* SpeciesTraitsTests.swift */; };
 		B6F4AA481F12C9FA000C72D2 /* CharacterGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F4AA471F12C9FA000C72D2 /* CharacterGenerator.swift */; };
 		B6F4AA4A1F12CD2A000C72D2 /* CharacterGeneratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F4AA491F12CD2A000C72D2 /* CharacterGeneratorTests.swift */; };
 		B6F4AA4C1F12CE17000C72D2 /* TestCharacterGenerator.json in Resources */ = {isa = PBXBuildFile; fileRef = B6F4AA4B1F12CE17000C72D2 /* TestCharacterGenerator.json */; };
@@ -105,36 +105,36 @@
 		B66AF8F51EAE87A800C15F8E /* TestConfiguration.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TestConfiguration.json; sourceTree = "<group>"; };
 		B66AF8F61EAE87A800C15F8E /* TestCurrencies.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TestCurrencies.json; sourceTree = "<group>"; };
 		B66AF8F71EAE87A800C15F8E /* TestMoreClasses.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TestMoreClasses.json; sourceTree = "<group>"; };
-		B66AF8F81EAE87A800C15F8E /* TestMoreRaces.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TestMoreRaces.json; sourceTree = "<group>"; };
+		B66AF8F81EAE87A800C15F8E /* TestMoreSpecies.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TestMoreSpecies.json; sourceTree = "<group>"; };
 		B66AF8F91EAE87A800C15F8E /* TestNames.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TestNames.json; sourceTree = "<group>"; };
 		B66AF8FA1EAE87A800C15F8E /* TestPlayers.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TestPlayers.json; sourceTree = "<group>"; };
-		B66AF8FB1EAE87A800C15F8E /* TestRaces.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TestRaces.json; sourceTree = "<group>"; };
+		B66AF8FB1EAE87A800C15F8E /* TestSpecies.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TestSpecies.json; sourceTree = "<group>"; };
 		B66AF9041EAE88C300C15F8E /* Configuration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Configuration.swift; sourceTree = "<group>"; };
 		B66AF9061EAE88FF00C15F8E /* ConfigurationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfigurationTests.swift; sourceTree = "<group>"; };
 		B66AF9081EAE8B8000C15F8E /* MissingClassPlayers.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = MissingClassPlayers.json; sourceTree = "<group>"; };
-		B66AF90A1EAE8BF100C15F8E /* MissingRacePlayers.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = MissingRacePlayers.json; sourceTree = "<group>"; };
-		B67450E31F118A8B0061FD6F /* RacialNamesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RacialNamesTests.swift; sourceTree = "<group>"; };
+		B66AF90A1EAE8BF100C15F8E /* MissingSpeciesPlayers.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = MissingSpeciesPlayers.json; sourceTree = "<group>"; };
+		B67450E31F118A8B0061FD6F /* SpeciesNamesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeciesNamesTests.swift; sourceTree = "<group>"; };
 		B681B7151EAAC8E2001DE78B /* SimpleDice.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleDice.swift; sourceTree = "<group>"; };
 		B681B7171EAAC8EE001DE78B /* DiceModifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiceModifier.swift; sourceTree = "<group>"; };
 		B681B7191EAAC8FB001DE78B /* CompoundDice.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CompoundDice.swift; sourceTree = "<group>"; };
 		B681B71B1EAAC904001DE78B /* DroppingDice.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DroppingDice.swift; sourceTree = "<group>"; };
 		B681B71D1EAACA9B001DE78B /* Die.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Die.swift; sourceTree = "<group>"; };
-		B698515D1F1171EC006A537A /* RacialNames.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RacialNames.swift; path = ../Common/RacialNames.swift; sourceTree = "<group>"; };
-		B69851611F11850A006A537A /* TestRacialNames.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = TestRacialNames.json; sourceTree = "<group>"; };
+		B698515D1F1171EC006A537A /* SpeciesNames.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeciesNames.swift; sourceTree = "<group>"; };
+		B69851611F11850A006A537A /* TestSpeciesNames.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = TestSpeciesNames.json; sourceTree = "<group>"; };
 		B69F84681E58B8F700A4D2B0 /* Player.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
 		B69F846A1E58D33900A4D2B0 /* PlayerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerTests.swift; sourceTree = "<group>"; };
 		B69F846C1E58D66900A4D2B0 /* Players.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Players.swift; sourceTree = "<group>"; };
 		B69F846E1E59155A00A4D2B0 /* PlayersTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayersTests.swift; sourceTree = "<group>"; };
 		B69F84721E591DE400A4D2B0 /* InvalidClassPlayers.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = InvalidClassPlayers.json; sourceTree = "<group>"; };
-		B69F84741E591E9800A4D2B0 /* InvalidRacePlayers.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = InvalidRacePlayers.json; sourceTree = "<group>"; };
+		B69F84741E591E9800A4D2B0 /* InvalidSpeciesPlayers.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = InvalidSpeciesPlayers.json; sourceTree = "<group>"; };
 		B6A1AE581F0E4C59008ADF08 /* InvalidConfiguration.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = InvalidConfiguration.json; sourceTree = "<group>"; };
 		B6A29EB41EFE9B9F00DAB40C /* Currencies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Currencies.swift; sourceTree = "<group>"; };
 		B6CF538F1E51DA1300CADD9F /* ClassTraits.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClassTraits.swift; sourceTree = "<group>"; };
 		B6CF53911E51DEDD00CADD9F /* ClassTraitsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClassTraitsTests.swift; sourceTree = "<group>"; };
 		B6CF53CD1E54DF4500CADD9F /* JSONFile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONFile.swift; sourceTree = "<group>"; };
 		B6CF53CF1E54E2E200CADD9F /* Classes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Classes.swift; sourceTree = "<group>"; };
-		B6CF53D11E54E2EF00CADD9F /* Races.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Races.swift; sourceTree = "<group>"; };
-		B6CF53D81E56442800CADD9F /* RacesTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RacesTests.swift; sourceTree = "<group>"; };
+		B6CF53D11E54E2EF00CADD9F /* Species.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Species.swift; sourceTree = "<group>"; };
+		B6CF53D81E56442800CADD9F /* SpeciesTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpeciesTests.swift; sourceTree = "<group>"; };
 		B6CF53DA1E56443A00CADD9F /* ClassesTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClassesTests.swift; sourceTree = "<group>"; };
 		B6CF53E41E57429D00CADD9F /* JSONFileTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONFileTests.swift; sourceTree = "<group>"; };
 		B6CF53E61E5742C700CADD9F /* JSONFile.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = JSONFile.json; sourceTree = "<group>"; };
@@ -142,9 +142,9 @@
 		B6CF53EA1E574ED400CADD9F /* HalfBakedJSONFile.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = HalfBakedJSONFile.json; sourceTree = "<group>"; };
 		B6D2EB1E26D7B7E900F99B35 /* RandomIndexGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RandomIndexGenerator.swift; sourceTree = "<group>"; };
 		B6F070351E4F991D00F66918 /* AlignmentTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlignmentTests.swift; sourceTree = "<group>"; };
-		B6F070371E4FBD6500F66918 /* RacialTraits.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RacialTraits.swift; sourceTree = "<group>"; };
+		B6F070371E4FBD6500F66918 /* SpeciesTraits.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpeciesTraits.swift; sourceTree = "<group>"; };
 		B6F070391E4FC03700F66918 /* Money.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Money.swift; sourceTree = "<group>"; };
-		B6F0703B1E4FC18500F66918 /* RacialTraitsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RacialTraitsTests.swift; sourceTree = "<group>"; };
+		B6F0703B1E4FC18500F66918 /* SpeciesTraitsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpeciesTraitsTests.swift; sourceTree = "<group>"; };
 		B6F4AA471F12C9FA000C72D2 /* CharacterGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CharacterGenerator.swift; sourceTree = "<group>"; };
 		B6F4AA491F12CD2A000C72D2 /* CharacterGeneratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterGeneratorTests.swift; sourceTree = "<group>"; };
 		B6F4AA4B1F12CE17000C72D2 /* TestCharacterGenerator.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = TestCharacterGenerator.json; sourceTree = "<group>"; };
@@ -227,31 +227,31 @@
 				B6FA6CC01E47C306004D91B1 /* WeightTests.swift */,
 				B6CF53911E51DEDD00CADD9F /* ClassTraitsTests.swift */,
 				B6CF53DA1E56443A00CADD9F /* ClassesTests.swift */,
-				B6F0703B1E4FC18500F66918 /* RacialTraitsTests.swift */,
-				B6CF53D81E56442800CADD9F /* RacesTests.swift */,
+				B6F0703B1E4FC18500F66918 /* SpeciesTraitsTests.swift */,
+				B6CF53D81E56442800CADD9F /* SpeciesTests.swift */,
 				B66AF9061EAE88FF00C15F8E /* ConfigurationTests.swift */,
 				B6CF53E41E57429D00CADD9F /* JSONFileTests.swift */,
 				B6FA6CB81E47B4B1004D91B1 /* ServiceErrorTests.swift */,
-				B67450E31F118A8B0061FD6F /* RacialNamesTests.swift */,
+				B67450E31F118A8B0061FD6F /* SpeciesNamesTests.swift */,
 				B621A3971F0C052D00E55236 /* NameGeneratorTests.swift */,
 				B6F4AA491F12CD2A000C72D2 /* CharacterGeneratorTests.swift */,
 				B6CF53E61E5742C700CADD9F /* JSONFile.json */,
 				B6CF53E81E57460F00CADD9F /* InvalidJSONFile.json */,
 				B6CF53EA1E574ED400CADD9F /* HalfBakedJSONFile.json */,
 				B66AF9081EAE8B8000C15F8E /* MissingClassPlayers.json */,
-				B66AF90A1EAE8BF100C15F8E /* MissingRacePlayers.json */,
+				B66AF90A1EAE8BF100C15F8E /* MissingSpeciesPlayers.json */,
 				B69F84721E591DE400A4D2B0 /* InvalidClassPlayers.json */,
-				B69F84741E591E9800A4D2B0 /* InvalidRacePlayers.json */,
+				B69F84741E591E9800A4D2B0 /* InvalidSpeciesPlayers.json */,
 				B66AF8F41EAE87A800C15F8E /* TestClasses.json */,
 				B66AF8F71EAE87A800C15F8E /* TestMoreClasses.json */,
 				B66AF8F51EAE87A800C15F8E /* TestConfiguration.json */,
 				B6F4AA4B1F12CE17000C72D2 /* TestCharacterGenerator.json */,
 				B66AF8F61EAE87A800C15F8E /* TestCurrencies.json */,
 				B66AF8F91EAE87A800C15F8E /* TestNames.json */,
-				B69851611F11850A006A537A /* TestRacialNames.json */,
+				B69851611F11850A006A537A /* TestSpeciesNames.json */,
 				B66AF8FA1EAE87A800C15F8E /* TestPlayers.json */,
-				B66AF8FB1EAE87A800C15F8E /* TestRaces.json */,
-				B66AF8F81EAE87A800C15F8E /* TestMoreRaces.json */,
+				B66AF8FB1EAE87A800C15F8E /* TestSpecies.json */,
+				B66AF8F81EAE87A800C15F8E /* TestMoreSpecies.json */,
 				B6A1AE581F0E4C59008ADF08 /* InvalidConfiguration.json */,
 				B62055FE1E19DD23002494AB /* Info.plist */,
 			);
@@ -291,6 +291,7 @@
 				B621A3961F0C020000E55236 /* NameGenerator.swift */,
 				B6D2EB1E26D7B7E900F99B35 /* RandomIndexGenerator.swift */,
 				B6CF53CD1E54DF4500CADD9F /* JSONFile.swift */,
+				B698515D1F1171EC006A537A /* SpeciesNames.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -314,9 +315,8 @@
 				B6CF53CF1E54E2E200CADD9F /* Classes.swift */,
 				B69F84681E58B8F700A4D2B0 /* Player.swift */,
 				B69F846C1E58D66900A4D2B0 /* Players.swift */,
-				B6F070371E4FBD6500F66918 /* RacialTraits.swift */,
-				B698515D1F1171EC006A537A /* RacialNames.swift */,
-				B6CF53D11E54E2EF00CADD9F /* Races.swift */,
+				B6F070371E4FBD6500F66918 /* SpeciesTraits.swift */,
+				B6CF53D11E54E2EF00CADD9F /* Species.swift */,
 			);
 			path = Player;
 			sourceTree = "<group>";
@@ -426,21 +426,21 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B69851621F11850A006A537A /* TestRacialNames.json in Resources */,
+				B69851621F11850A006A537A /* TestSpeciesNames.json in Resources */,
 				B6A1AE591F0E4C59008ADF08 /* InvalidConfiguration.json in Resources */,
 				B6CF53E91E57460F00CADD9F /* InvalidJSONFile.json in Resources */,
 				B66AF9021EAE87A800C15F8E /* TestPlayers.json in Resources */,
 				B66AF8FE1EAE87A800C15F8E /* TestCurrencies.json in Resources */,
-				B66AF90B1EAE8BF100C15F8E /* MissingRacePlayers.json in Resources */,
-				B69F84751E591E9800A4D2B0 /* InvalidRacePlayers.json in Resources */,
+				B66AF90B1EAE8BF100C15F8E /* MissingSpeciesPlayers.json in Resources */,
+				B69F84751E591E9800A4D2B0 /* InvalidSpeciesPlayers.json in Resources */,
 				B66AF9011EAE87A800C15F8E /* TestNames.json in Resources */,
 				B66AF8FD1EAE87A800C15F8E /* TestConfiguration.json in Resources */,
 				B66AF9091EAE8B8100C15F8E /* MissingClassPlayers.json in Resources */,
 				B69F84731E591DE400A4D2B0 /* InvalidClassPlayers.json in Resources */,
 				B66AF8FF1EAE87A800C15F8E /* TestMoreClasses.json in Resources */,
-				B66AF9031EAE87A800C15F8E /* TestRaces.json in Resources */,
+				B66AF9031EAE87A800C15F8E /* TestSpecies.json in Resources */,
 				B6F4AA4C1F12CE17000C72D2 /* TestCharacterGenerator.json in Resources */,
-				B66AF9001EAE87A800C15F8E /* TestMoreRaces.json in Resources */,
+				B66AF9001EAE87A800C15F8E /* TestMoreSpecies.json in Resources */,
 				B6CF53EB1E574ED400CADD9F /* HalfBakedJSONFile.json in Resources */,
 				B66AF8FC1EAE87A800C15F8E /* TestClasses.json in Resources */,
 				B6CF53E71E5742C700CADD9F /* JSONFile.json in Resources */,
@@ -462,11 +462,11 @@
 				B6D2EB1F26D7B7E900F99B35 /* RandomIndexGenerator.swift in Sources */,
 				B6F0703A1E4FC03700F66918 /* Money.swift in Sources */,
 				B6FA6CCB1E4E7AEA004D91B1 /* Alignment.swift in Sources */,
-				B698515E1F1171EC006A537A /* RacialNames.swift in Sources */,
+				B698515E1F1171EC006A537A /* SpeciesNames.swift in Sources */,
 				B6A29EB51EFE9B9F00DAB40C /* Currencies.swift in Sources */,
 				B66AF9051EAE88C300C15F8E /* Configuration.swift in Sources */,
 				B6CF53CE1E54DF4500CADD9F /* JSONFile.swift in Sources */,
-				B6CF53D21E54E2EF00CADD9F /* Races.swift in Sources */,
+				B6CF53D21E54E2EF00CADD9F /* Species.swift in Sources */,
 				B6FA6CB01E47ACA1004D91B1 /* UnitCurrency.swift in Sources */,
 				B6CF53901E51DA1300CADD9F /* ClassTraits.swift in Sources */,
 				B621A3991F0C06A700E55236 /* NameGenerator.swift in Sources */,
@@ -476,7 +476,7 @@
 				B6CF53D01E54E2E200CADD9F /* Classes.swift in Sources */,
 				B620560F1E19DDD0002494AB /* DiceParser.swift in Sources */,
 				B6FA6CBB1E47B7F6004D91B1 /* Height.swift in Sources */,
-				B6F070381E4FBD6500F66918 /* RacialTraits.swift in Sources */,
+				B6F070381E4FBD6500F66918 /* SpeciesTraits.swift in Sources */,
 				B681B71A1EAAC8FB001DE78B /* CompoundDice.swift in Sources */,
 				B6FA6CBD1E47B803004D91B1 /* Weight.swift in Sources */,
 				B6FA6CC51E4A96D1004D91B1 /* Ability.swift in Sources */,
@@ -490,8 +490,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				B6CF53E51E57429D00CADD9F /* JSONFileTests.swift in Sources */,
-				B6CF53D91E56442800CADD9F /* RacesTests.swift in Sources */,
-				B6F0703C1E4FC18500F66918 /* RacialTraitsTests.swift in Sources */,
+				B6CF53D91E56442800CADD9F /* SpeciesTests.swift in Sources */,
+				B6F0703C1E4FC18500F66918 /* SpeciesTraitsTests.swift in Sources */,
 				B6F4AA4A1F12CD2A000C72D2 /* CharacterGeneratorTests.swift in Sources */,
 				B69F846F1E59155A00A4D2B0 /* PlayersTests.swift in Sources */,
 				B62D89C41F09A3870095D587 /* DiceParserTests.swift in Sources */,
@@ -499,7 +499,7 @@
 				B621A3981F0C052D00E55236 /* NameGeneratorTests.swift in Sources */,
 				B6CF53921E51DEDD00CADD9F /* ClassTraitsTests.swift in Sources */,
 				B6FA6CB91E47B4B1004D91B1 /* ServiceErrorTests.swift in Sources */,
-				B67450E41F118A8B0061FD6F /* RacialNamesTests.swift in Sources */,
+				B67450E41F118A8B0061FD6F /* SpeciesNamesTests.swift in Sources */,
 				B6F070361E4F991D00F66918 /* AlignmentTests.swift in Sources */,
 				B6FA6CC91E4BF5F9004D91B1 /* AbilityTests.swift in Sources */,
 				B6FA6CB61E47B080004D91B1 /* CurrencyTests.swift in Sources */,

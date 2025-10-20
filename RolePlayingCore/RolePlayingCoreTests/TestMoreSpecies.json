@@ -1,5 +1,5 @@
 {
-    "races": [
+    "species": [
               {
               "name": "Dragonborn",
               "plural": "Dragonborn",
@@ -29,7 +29,7 @@
               "darkvision": 60,
               "skills": ["gnome cunning"],
               "languages": ["Common", "Gnomish"],
-              "subraces": [{
+              "subspecies": [{
                            "name": "Forest Gnome",
                            "plural": "Forest Gnomes",
                            "ability scores": { "Dexterity": 1 },

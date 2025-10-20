@@ -1,5 +1,5 @@
 {
-    "races": [
+    "species": [
               {
               "name": "Dwarf",
               "plural": "Dwarves",
@@ -18,7 +18,7 @@
               "tools": ["smith's tools", "brewer's supplies", "mason's tools"],
               "history": ["stonecunning"],
               "languages": ["Common", "Dwarvish"],
-              "subraces": [{
+              "subspecies": [{
                            "name": "Hill Dwarf",
                            "plural": "Hill Dwarves",
                            "ability scores": { "Wisdom": 2 },
@@ -49,7 +49,7 @@
               "resilience": ["poison", "poison damage"],
               "skills": ["keen senses", "fey ancestry", "trance"],
               "languages": ["Common", "Elvish"],
-              "subraces": [{
+              "subspecies": [{
                            "name": "High Elf",
                            "plural": "High Elves",
                            "ability scores": { "Intelligence": 1 },
@@ -96,7 +96,7 @@
               "tools": ["smith's tools", "brewer's supplies", "mason's tools"],
               "history": ["stonecunning"],
               "languages": ["Common", "Halfling"],
-              "subraces": [{
+              "subspecies": [{
                            "name": "Lightfoot",
                            "plural": "Lightfoots",
                            "ability scores": { "Charisma": 1 },
@@ -122,6 +122,99 @@
               "speed": 30,
               "languages": ["Common"],
               "extra languages": 1
+              },
+              {
+              "name": "Dragonborn",
+              "plural": "Dragonborn",
+              "ability scores": { "Strength": 2, "Charisma": 1 },
+              "minimum age": 15,
+              "lifespan": 80,
+              "alignment": "Good",
+              "base height": "5'6\"",
+              "height modifier": "2d8",
+              "base weight": 175,
+              "weight modifier": "2d6",
+              "speed": 30,
+              "skills": ["draconic ancestry", "breath weapon", "damage"],
+              "languages": ["Common", "Draconic"]
+              },
+              {
+              "name": "Gnome",
+              "plural": "Gnomes",
+              "ability scores": { "Intelligence": 2 },
+              "minimum age": 40,
+              "lifespan": 425,
+              "alignment": "Good",
+              "base height": "2'11\"",
+              "height modifier": "2d4",
+              "base weight": 35,
+              "speed": 25,
+              "darkvision": 60,
+              "skills": ["gnome cunning"],
+              "languages": ["Common", "Gnomish"],
+              "subspecies": [{
+                           "name": "Forest Gnome",
+                           "plural": "Forest Gnomes",
+                           "ability scores": { "Dexterity": 1 },
+                           "skills": ["natural illusionist", "speak with small beasts"]
+                           },
+                           {
+                           "name": "Rock Gnome",
+                           "plural": "Rock Gnomes",
+                           "ability scores": { "Constitution": 1 },
+                           "skills": ["artificers lore", "tinker"]
+                           }]
+              },
+              {
+              "name": "Half-Elf",
+              "plural": "Half-Elves",
+              "ability scores": { "Strength": 1 },
+              "ability score bonuses": 2,
+              "minimum age": 20,
+              "lifespan": 180,
+              "alignment": "Chaotic",
+              "base height": "4'9\"",
+              "height modifier": "2d8",
+              "base weight": 110,
+              "weight modifier": "2d4",
+              "speed": 30,
+              "darkvision": 60,
+              "skills": ["fey ancestry"],
+              "languages": ["Common", "Elvish"],
+              "extra languages": 1,
+              "skill versatility": 2
+              },
+              {
+              "name": "Half-Orc",
+              "plural": "Half-Orcs",
+              "ability scores": { "Strength": 2, "Constitution": 1 },
+              "minimum age": 14,
+              "lifespan": 75,
+              "alignment": "Chaotic",
+              "base height": "4'10\"",
+              "height modifier": "2d10",
+              "base weight": 140,
+              "weight modifier": "2d6",
+              "speed": 30,
+              "darkvision": 60,
+              "skills": ["menacing", "relentless endurance", "savage attacks"],
+              "languages": ["Common", "Orcish"]
+              },
+              {
+              "name": "Tiefling",
+              "plural": "Tieflings",
+              "ability scores": { "Intelligence": 1, "Charisma": 2 },
+              "minimum age": 18,
+              "lifespan": 100,
+              "alignment": "Chaotic",
+              "base height": "4'9\"",
+              "height modifier": "2d8",
+              "base weight": 110,
+              "weight modifier": "2d4",
+              "speed": 30,
+              "darkvision": 60,
+              "skills": ["hellish resistance", "infernal legacy"],
+              "languages": ["Common", "Infernal"]
               }
               ]
 }

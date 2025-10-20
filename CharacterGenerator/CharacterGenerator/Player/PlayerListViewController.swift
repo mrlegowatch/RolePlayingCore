@@ -71,7 +71,7 @@ class PlayerListViewController: UITableViewController {
 
         let player = players[indexPath.row]!
         cell.textLabel!.text = player.name
-        cell.detailTextLabel!.text = "Level \(player.level) \(player.raceName) \(player.className)"
+        cell.detailTextLabel!.text = "Level \(player.level) \(player.speciesName) \(player.className)"
         cell.imageView!.image = UIImage(named: "GenericPlayer")
         return cell
     }

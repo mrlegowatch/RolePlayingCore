@@ -1,8 +1,8 @@
 {
     "currencies": ["TestCurrencies"],
     "classes": ["TestClasses", "TestMoreClasses"],
-    "races": ["TestRaces", "TestMoreRaces"],
+    "species": ["TestSpecies", "TestMoreSpecies"],
     "players": ["TestPlayers"],
-    "racial names": "TestRacialNames"
+    "species names": "TestSpeciesNames"
 }
 

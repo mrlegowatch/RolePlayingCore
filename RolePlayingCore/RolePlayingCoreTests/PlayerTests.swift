@@ -13,7 +13,7 @@ import RolePlayingCore
 class PlayerTests: XCTestCase {
     
     var humanTraits: Data!
-    var human: RacialTraits!
+    var human: SpeciesTraits!
     var fighterTraits: Data!
     var fighter: ClassTraits!
     
@@ -55,7 +55,7 @@ class PlayerTests: XCTestCase {
             "extra languages": 1
         }
         """.data(using: .utf8)
-        self.human = try! decoder.decode(RacialTraits.self, from: self.humanTraits)
+        self.human = try! decoder.decode(SpeciesTraits.self, from: self.humanTraits)
     }
     
     func testPlayer() {
@@ -63,17 +63,17 @@ class PlayerTests: XCTestCase {
         
         // Test construction from types
         do {
-            let player = Player("Frodo", racialTraits: human, classTraits: fighter, gender: .female, alignment: Alignment(.lawful, .neutral))
+            let player = Player("Frodo", speciesTraits: human, classTraits: fighter, gender: .female, alignment: Alignment(.lawful, .neutral))
             XCTAssertEqual(player.name, "Frodo", "player name")
             XCTAssertEqual(player.className, "Fighter", "class name")
-            XCTAssertEqual(player.raceName, "Human", "race name")
+            XCTAssertEqual(player.speciesName, "Human", "species name")
             
             XCTAssertEqual(player.descriptiveTraits.count, 0, "descriptiveTraits")
             
             XCTAssertEqual(player.gender, Player.Gender.female, "gender")
             XCTAssertEqual(player.alignment, Alignment(.lawful, .neutral), "alignment")
             
-            // Abilities is scores plus race modifiers, so + 1
+            // Abilities is scores plus species modifiers, so + 1
             for key in player.abilities.abilities {
                 let score = player.abilities[key]!
                 XCTAssertTrue((4...19).contains(score), "ability score \(score) for \(key)")
@@ -101,7 +101,7 @@ class PlayerTests: XCTestCase {
             let playerTraits = """
             {
                 "name": "Bilbo",
-                "race": "Human",
+                "species": "Human",
                 "class": "Fighter",
                 "gender": "Male",
                 "height": "3'9\\"",
@@ -114,12 +114,12 @@ class PlayerTests: XCTestCase {
             
             do {
                 let player = try decoder.decode(Player.self, from: playerTraits)
-                player.racialTraits = human
+                player.speciesTraits = human
                 player.classTraits = fighter
                 
                 XCTAssertEqual(player.name, "Bilbo", "player name")
                 XCTAssertEqual(player.className, "Fighter", "class name")
-                XCTAssertEqual(player.raceName, "Human", "race name")
+                XCTAssertEqual(player.speciesName, "Human", "species name")
                 
                 XCTAssertEqual(player.gender, Player.Gender.male, "gender")
                 XCTAssertNil(player.alignment, "alignment")
@@ -146,7 +146,7 @@ class PlayerTests: XCTestCase {
             let playerTraits = """
             {
                 "name": "Bilbo",
-                "race": "Human",
+                "species": "Human",
                 "class": "Fighter",
                 "alignment": "Lawful Evil",
                 "height": "3'9\\"",
@@ -161,7 +161,7 @@ class PlayerTests: XCTestCase {
             
             do {
                 let player = try decoder.decode(Player.self, from: playerTraits)
-                player.racialTraits = human
+                player.speciesTraits = human
                 player.classTraits = fighter
                 
                 XCTAssertNil(player.gender, "gender")
@@ -189,7 +189,7 @@ class PlayerTests: XCTestCase {
         let playerTraits = """
         {
             "name": "Bilbo",
-            "race": "Human",
+            "species": "Human",
             "class": "Fighter",
             "gender": "Male",
             "alignment": "Neutral Good",

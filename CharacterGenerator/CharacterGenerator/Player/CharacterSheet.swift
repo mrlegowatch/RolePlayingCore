@@ -22,7 +22,7 @@ class CharacterSheet {
     // Mapping between sections/items and key paths to properties.
     var keys: [[PartialKeyPath<Player>]] = [
         [\Player.name, \Player.experiencePoints],
-        [\Player.level, \Player.className, \Player.raceName, \Player.alignment],
+        [\Player.level, \Player.className, \Player.speciesName, \Player.alignment],
         [\Player.abilities],
         [\Player.armorClass, \Player.maximumHitPoints, \Player.hitDice, \Player.money],
         [\Player.gender, \Player.height, \Player.weight]
@@ -31,7 +31,7 @@ class CharacterSheet {
     // TODO: implement a better mechanism for mapping label keys to properties.
     var labelKeys: [[String]] = [
         ["Name", "Experience Points"],
-        ["Level", "Class", "Race", "Alignment"],
+        ["Level", "Class", "Species", "Alignment"],
         ["Abilities"],
         ["Armor Class", "Hit Points", "Hit Dice", "Money"],
         ["Gender", "Height", "Weight"]

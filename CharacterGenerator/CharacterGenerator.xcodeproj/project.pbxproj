@@ -23,8 +23,8 @@
 		B6A1AE471F0C441E008ADF08 /* Classes.json in Resources */ = {isa = PBXBuildFile; fileRef = B6A1AE431F0C4383008ADF08 /* Classes.json */; };
 		B6A1AE481F0C4421008ADF08 /* Configuration.json in Resources */ = {isa = PBXBuildFile; fileRef = B6A1AE441F0C4383008ADF08 /* Configuration.json */; };
 		B6A1AE491F0C4426008ADF08 /* Currencies.json in Resources */ = {isa = PBXBuildFile; fileRef = B6A1AE451F0C4383008ADF08 /* Currencies.json */; };
-		B6A1AE4A1F0C4429008ADF08 /* Races.json in Resources */ = {isa = PBXBuildFile; fileRef = B6A1AE461F0C4383008ADF08 /* Races.json */; };
-		B6A1AE4C1F0C5ABF008ADF08 /* RacialNames.json in Resources */ = {isa = PBXBuildFile; fileRef = B6A1AE4B1F0C5ABF008ADF08 /* RacialNames.json */; };
+		B6A1AE4A1F0C4429008ADF08 /* Species.json in Resources */ = {isa = PBXBuildFile; fileRef = B6A1AE461F0C4383008ADF08 /* Species.json */; };
+		B6A1AE4C1F0C5ABF008ADF08 /* SpeciesNames.json in Resources */ = {isa = PBXBuildFile; fileRef = B6A1AE4B1F0C5ABF008ADF08 /* SpeciesNames.json */; };
 		B6A1AE501F0D6594008ADF08 /* CharacterSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A1AE4F1F0D6594008ADF08 /* CharacterSheet.swift */; };
 		B6A1AE571F0DB10F008ADF08 /* LabeledTextCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A1AE561F0DB10F008ADF08 /* LabeledTextCell.swift */; };
 		B6C87F431F83CD3E007CB209 /* CharacterGeneratorUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6C87F421F83CD3E007CB209 /* CharacterGeneratorUITests.swift */; };
@@ -88,8 +88,8 @@
 		B6A1AE431F0C4383008ADF08 /* Classes.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Classes.json; sourceTree = "<group>"; };
 		B6A1AE441F0C4383008ADF08 /* Configuration.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Configuration.json; sourceTree = "<group>"; };
 		B6A1AE451F0C4383008ADF08 /* Currencies.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Currencies.json; sourceTree = "<group>"; };
-		B6A1AE461F0C4383008ADF08 /* Races.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Races.json; sourceTree = "<group>"; };
-		B6A1AE4B1F0C5ABF008ADF08 /* RacialNames.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = RacialNames.json; sourceTree = "<group>"; };
+		B6A1AE461F0C4383008ADF08 /* Species.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Species.json; sourceTree = "<group>"; };
+		B6A1AE4B1F0C5ABF008ADF08 /* SpeciesNames.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = SpeciesNames.json; sourceTree = "<group>"; };
 		B6A1AE4F1F0D6594008ADF08 /* CharacterSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterSheet.swift; sourceTree = "<group>"; };
 		B6A1AE561F0DB10F008ADF08 /* LabeledTextCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabeledTextCell.swift; sourceTree = "<group>"; };
 		B6C87F401F83CD3E007CB209 /* CharacterGeneratorUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CharacterGeneratorUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -197,8 +197,8 @@
 				B6A1AE441F0C4383008ADF08 /* Configuration.json */,
 				B6A1AE431F0C4383008ADF08 /* Classes.json */,
 				B6A1AE451F0C4383008ADF08 /* Currencies.json */,
-				B6A1AE461F0C4383008ADF08 /* Races.json */,
-				B6A1AE4B1F0C5ABF008ADF08 /* RacialNames.json */,
+				B6A1AE461F0C4383008ADF08 /* Species.json */,
+				B6A1AE4B1F0C5ABF008ADF08 /* SpeciesNames.json */,
 			);
 			path = Configuration;
 			sourceTree = "<group>";
@@ -340,12 +340,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				B6A1AE481F0C4421008ADF08 /* Configuration.json in Resources */,
-				B6A1AE4A1F0C4429008ADF08 /* Races.json in Resources */,
+				B6A1AE4A1F0C4429008ADF08 /* Species.json in Resources */,
 				B621A3B31F0C1C7400E55236 /* LaunchScreen.storyboard in Resources */,
 				B6A1AE491F0C4426008ADF08 /* Currencies.json in Resources */,
 				B621A3B01F0C1C7400E55236 /* Assets.xcassets in Resources */,
 				B6A1AE471F0C441E008ADF08 /* Classes.json in Resources */,
-				B6A1AE4C1F0C5ABF008ADF08 /* RacialNames.json in Resources */,
+				B6A1AE4C1F0C5ABF008ADF08 /* SpeciesNames.json in Resources */,
 				B621A3AE1F0C1C7400E55236 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

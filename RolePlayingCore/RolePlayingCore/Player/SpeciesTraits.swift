@@ -1,5 +1,5 @@
 //
-//  RacialTraits.swift
+//  SpeciesTraits.swift
 //  RolePlayingCore
 //
 //  Created by Brian Arnold on 11/12/16.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct RacialTraits {
+public struct SpeciesTraits {
     
     public var name: String
     public var plural: String
@@ -27,7 +27,7 @@ public struct RacialTraits {
     public var hitPointBonus: Int
     
     public var parentName: String?
-    public var subraces: [RacialTraits] = []
+    public var subspecies: [SpeciesTraits] = []
     
     public enum Size {
         case small
@@ -84,7 +84,7 @@ public struct RacialTraits {
     }
 }
 
-extension RacialTraits: Codable {
+extension SpeciesTraits: Codable {
     
     private enum CodingKeys: String, CodingKey {
         case name
@@ -102,7 +102,7 @@ extension RacialTraits: Codable {
         case darkVision = "darkvision"
         case speed
         case hitPointBonus = "hit point bonus"
-        case subraces
+        case subspecies
     }
     
     public init(from decoder: Decoder) throws {
@@ -142,20 +142,20 @@ extension RacialTraits: Codable {
         self.speed = speed
         self.hitPointBonus = hitPointBonus ?? 0
         
-        // Decode subraces
-        if var subraces = try? values.nestedUnkeyedContainer(forKey: .subraces) {
-            while (!subraces.isAtEnd) {
-                var subracialTraits = try subraces.decode(RacialTraits.self)
-                subracialTraits.blendTraits(from: self)
-                self.subraces.append(subracialTraits)
+        // Decode subspecies
+        if var subspecies = try? values.nestedUnkeyedContainer(forKey: .subspecies) {
+            while (!subspecies.isAtEnd) {
+                var subspeciesTraits = try subspecies.decode(SpeciesTraits.self)
+                subspeciesTraits.blendTraits(from: self)
+                self.subspecies.append(subspeciesTraits)
             }
         }
         
     }
     
     /// Inherit parent traits, for each trait that is not already set.
-    public mutating func blendTraits(from parent: RacialTraits) {
-        // Name, plural, aliases and descriptive traits are unique to each set of racial traits.
+    public mutating func blendTraits(from parent: SpeciesTraits) {
+        // Name, plural, aliases and descriptive traits are unique to each set of species traits.
         // The rest may be inherited from the parent.
         self.parentName = parent.name
         
@@ -205,7 +205,7 @@ extension RacialTraits: Codable {
         try values.encode(minimumAge, forKey: .minimumAge)
         try values.encode(lifespan, forKey: .lifespan)
         
-        // Encode alignment using its enum string values, since RacialTraits is a type.
+        // Encode alignment using its enum string values, since SpeciesTraits is a type.
         if alignment != nil {
             try values.encode("\(alignment!)", forKey: .alignment)
         }
@@ -218,14 +218,14 @@ extension RacialTraits: Codable {
         try values.encode(speed, forKey: .speed)
         try values.encode(hitPointBonus, forKey: .hitPointBonus)
         
-        var subraceContainer = values.nestedUnkeyedContainer(forKey: .subraces)
-        for subrace in subraces {
-            try subrace.encode(to: &subraceContainer, parent: self)
+        var subspeciesContainer = values.nestedUnkeyedContainer(forKey: .subspecies)
+        for subspeciesTraits in subspecies {
+            try subspeciesTraits.encode(to: &subspeciesContainer, parent: self)
         }
     }
     
-    public func encode(to container: inout UnkeyedEncodingContainer, parent: RacialTraits) throws {
-        // Name, plural, aliases and descriptive traits are unique to each set of racial traits.
+    public func encode(to container: inout UnkeyedEncodingContainer, parent: SpeciesTraits) throws {
+        // Name, plural, aliases and descriptive traits are unique to each set of species traits.
         // The rest may be inherited from the parent.
         var values = container.nestedContainer(keyedBy: CodingKeys.self)
         
