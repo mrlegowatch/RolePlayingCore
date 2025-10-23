@@ -112,3 +112,30 @@ public extension KeyedDecodingContainer  {
         return height
     }
 }
+
+extension Height {
+    
+    /// Returns a string representation of the height suitable for display.
+    public var displayString: String {
+        let locale = Locale.current
+        let usesMetric = locale.measurementSystem == .metric
+        
+        if usesMetric {
+            // Use centimeters for metric locales
+            let cm = self.converted(to: .centimeters)
+            return cm.formatted(.measurement(width: .abbreviated, usage: .personHeight))
+        } else {
+            // Use feet and inches for imperial locales
+            let totalInches = self.converted(to: .inches).value
+            let feet = Int(totalInches / 12)
+            let inches = Int(totalInches.truncatingRemainder(dividingBy: 12))
+            
+            let feetMeasurement = Measurement(value: Double(feet), unit: UnitLength.feet)
+            let feetString = feetMeasurement.formatted(.measurement(width: .abbreviated))
+            
+            let inchesMeasurement = Measurement(value: Double(inches), unit: UnitLength.inches)
+            let inchesString = inchesMeasurement.formatted(.measurement(width: .abbreviated))
+            return "\(feetString), \(inchesString)"
+        }
+    }
+}

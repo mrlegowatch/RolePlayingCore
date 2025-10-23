@@ -85,6 +85,16 @@ public struct AbilityScores {
         }
     }
     
+    /// Accesses a score by its corresponding ability.
+    public subscript(ability: Ability) -> Int {
+        get {
+            return scores[ability]!
+        }
+        set {
+            guard let _ = scores[ability] else { return } // key must already be present
+            scores[ability] = newValue
+        }
+    }
 }
 
 extension AbilityScores: Codable {
@@ -123,6 +133,8 @@ extension AbilityScores: Codable {
     }
 }
 
+extension AbilityScores: Hashable { }
+
 extension Int {
     
     /// Returns the corresponding score modifier for this integer score.
@@ -138,11 +150,7 @@ extension AbilityScores {
     
     /// Returns the ability modifiers for the scores.
     public var modifiers: AbilityScores {
-        var modifiedScores = scores
-        for (key, value) in scores {
-            modifiedScores[key] = value.scoreModifier
-        }
-        return AbilityScores(modifiedScores)
+        return AbilityScores(scores.mapValues { $0.scoreModifier })
     }
     
 }

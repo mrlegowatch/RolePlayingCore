@@ -83,3 +83,14 @@ public extension KeyedDecodingContainer  {
     }
     
 }
+
+extension Weight {
+    
+    /// Returns a string representation of the weight suitable for display.
+    public var displayString: String {
+        let formatter = MeasurementFormatter()
+        formatter.unitStyle = .medium
+        formatter.unitOptions = .providedUnit
+        return formatter.string(from: self)
+    }
+}

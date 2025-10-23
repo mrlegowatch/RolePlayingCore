@@ -193,6 +193,8 @@ extension Alignment: CustomStringConvertible {
 
 extension Alignment: Equatable { }
 
+extension Alignment: Hashable { }
+
 extension Ethics: Codable { }
 
 extension Morals: Codable { }

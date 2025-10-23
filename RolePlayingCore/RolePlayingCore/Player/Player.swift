@@ -69,7 +69,8 @@ public class Player: Codable {
     /// Ability scores
     
     public var baseAbilities: AbilityScores
-    public var abilities: AbilityScores { return baseAbilities + speciesTraits.abilityScoreIncrease }
+    public var abilities: AbilityScores { baseAbilities + speciesTraits.abilityScoreIncrease }
+    public var modifiers: AbilityScores { abilities.modifiers }
     
     /// Hit points, hit dice, experience points, and level
     
@@ -216,4 +217,41 @@ public class Player: Codable {
         // TODO: add more for leveling up
     }
 
+}
+
+extension Player: Hashable {
+    
+    public static func == (lhs: Player, rhs: Player) -> Bool {
+        return lhs.name == rhs.name &&
+               lhs.speciesName == rhs.speciesName &&
+               lhs.className == rhs.className &&
+               lhs.descriptiveTraits == rhs.descriptiveTraits &&
+               lhs.gender == rhs.gender &&
+               lhs.alignment == rhs.alignment &&
+               lhs.height == rhs.height &&
+               lhs.weight == rhs.weight &&
+               lhs.baseAbilities == rhs.baseAbilities &&
+               lhs.maximumHitPoints == rhs.maximumHitPoints &&
+               lhs.currentHitPoints == rhs.currentHitPoints &&
+               lhs.experiencePoints == rhs.experiencePoints &&
+               lhs.level == rhs.level &&
+               lhs.money == rhs.money
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(name)
+        hasher.combine(speciesName)
+        hasher.combine(className)
+        hasher.combine(gender)
+        hasher.combine(alignment)
+        hasher.combine(height)
+        hasher.combine(weight)
+        hasher.combine(baseAbilities)
+        hasher.combine(maximumHitPoints)
+        hasher.combine(currentHitPoints)
+        hasher.combine(experiencePoints)
+        hasher.combine(level)
+        hasher.combine(money)
+    }
+    
 }
