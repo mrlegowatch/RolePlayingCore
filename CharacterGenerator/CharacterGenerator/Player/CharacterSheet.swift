@@ -28,9 +28,10 @@ class CharacterSheet {
         [\.experiencePoints],
         [\.speciesName, \.className],
         [\.abilities],
-        [\.initiative, \.speed, \.size, \.passivePerception],
-        [\.armorClass, \.proficiencyBonus, \.maximumHitPoints, \.hitDice],
-        [\.height, \.weight, \.alignment],
+        [\.initiative, \.speed, \.size],
+        [\.armorClass, \.proficiencyBonus, \.passivePerception],
+        [\.maximumHitPoints, \.hitDice],
+        [\.height, \.weight],
         [\.money]
     ]
     
@@ -39,9 +40,10 @@ class CharacterSheet {
         ["Experience Points"],
         ["Species", "Class", "Subclass"],
         ["Abilities"],
-        ["Initiative", "Speed", "Size", "Passive Perception"],
-        ["Armor Class", "Proficiency Bonus", "Hit Points", "Hit Dice"],
-        ["Height", "Weight", "Alignment"],
+        ["Initiative", "Speed", "Size"],
+        ["Armor Class", "Proficiency Bonus", "Passive Perception"],
+        ["Hit Points", "Hit Dice"],
+        ["Height", "Weight"],
         ["Money"]
     ]
     
@@ -50,9 +52,10 @@ class CharacterSheet {
         ["experiencePoints"],
         ["labeledText", "labeledText"],
         ["abilities"],
-        ["labeledNumber", "labeledNumber", "labeledText", "labeledNumber"],
-        ["labeledNumber", "labeledNumber", "labeledNumber", "labeledText"],
-        ["labeledText", "labeledText", "labeledText"],
+        ["labeledNumber", "labeledNumber", "labeledText"],
+        ["labeledNumber", "labeledNumber", "labeledNumber"],
+        ["labeledNumber", "labeledText"],
+        ["labeledText", "labeledText"],
         ["labeledText"]
     ]
     

@@ -20,9 +20,9 @@ struct PlayerDetailView: View {
     
     var body: some View {
         ScrollView {
-            LazyVStack(spacing: 20) {
+            LazyVStack(spacing: 12) {
                 ForEach(0..<characterSheet.numberOfSections, id: \.self) { section in
-                    HStack(spacing: 12) {
+                    HStack(spacing: 6) {
                         ForEach(0..<characterSheet.numberOfItems(in: section), id: \.self) { item in
                             let indexPath = IndexPath(item: item, section: section)
                             traitView(for: indexPath)
