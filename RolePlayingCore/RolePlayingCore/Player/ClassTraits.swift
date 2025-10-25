@@ -20,6 +20,27 @@ public struct ClassTraits {
     public var savingThrows: [Ability]
     public var experiencePoints: [Int]?
     
+    /// Accesses the experiencePoints array for the specified 1-based level.
+    public func minExperiencePoints(at level: Int) -> Int {
+        // Map the level to an index of the array
+        let index = max(1, level) - 1
+        guard let experiencePoints else { return 0 }
+        guard index < experiencePoints.count else { return experiencePoints.last ?? 0 }
+        return experiencePoints[index]
+    }
+    
+    /// Accesses the maximum level for this class.
+    public var maxLevel: Int {
+        guard let experiencePoints else { return 0 }
+        return experiencePoints.count
+    }
+    
+    /// Accesses the maximum experience points for the specified 1-based level.
+    public func maxExperiencePoints(at level: Int) -> Int {
+        // One less than the minimum for the next level
+        minExperiencePoints(at: level + 1) - 1
+    }
+    
     // TODO: weapons, armor, skills, etc.
     
     public init(name: String, plural: String, hitDice: Dice, startingWealth: Dice, descriptiveTraits: [String: String] = [:], primaryAbility: [Ability] = [], savingThrows: [Ability] = [], experiencePoints: [Int]? = nil) {

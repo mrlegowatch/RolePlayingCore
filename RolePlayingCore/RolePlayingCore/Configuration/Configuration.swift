@@ -10,21 +10,21 @@ import Foundation
 
 // TODO: this needs work. Nominally it's purpose is to help integrate related classes,
 // but because we don't have much in terms of requirements, it's not doing much besides
-// wiring up races and classes to players.
+// wiring up species and classes to players.
 
 public struct ConfigurationFiles: Decodable {
     let currencies: [String]
-    let races: [String]
+    let species: [String]
     let classes: [String]
     let players: [String]?
-    let racialNames: String?
+    let speciesNames: String?
     
     private enum CodingKeys: String, CodingKey {
         case currencies
-        case races
+        case species
         case classes
         case players
-        case racialNames = "racial names"
+        case speciesNames = "species names"
     }
 }
 
@@ -35,7 +35,7 @@ public struct Configuration {
     
     public var configurationFiles: ConfigurationFiles
     
-    public var races = Races()
+    public var species = Species()
     public var classes = Classes()
     public var players = Players()
     
@@ -55,10 +55,10 @@ public struct Configuration {
             _ = try jsonDecoder.decode(Currencies.self, from: jsonData)
         }
         
-        for raceFile in configurationFiles.races {
-            let jsonData = try bundle.loadJSON(raceFile)
-            let races = try jsonDecoder.decode(Races.self, from: jsonData)
-            self.races.races += races.races
+        for speciesFile in configurationFiles.species {
+            let jsonData = try bundle.loadJSON(speciesFile)
+            let species = try jsonDecoder.decode(Species.self, from: jsonData)
+            self.species.species += species.species
         }
         
         for classFile in configurationFiles.classes {
@@ -80,7 +80,7 @@ public struct Configuration {
             for playersFile in playersFiles {
                 let jsonData = try bundle.loadJSON(playersFile)
                 let players = try jsonDecoder.decode(Players.self, from: jsonData)
-                try players.resolve(classes: self.classes, races: self.races)
+                try players.resolve(classes: self.classes, species: self.species)
                 self.players.players += players.players
             }
         }

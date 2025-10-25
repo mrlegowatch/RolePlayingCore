@@ -38,44 +38,22 @@ public struct DroppingDice: Dice {
     /// Returns the number of dice sides.
     public var sides: Int { return dice.sides }
     
-    /// Return the value of the dropped roll. Returns nil if no roll has been made.
-    public var droppedRoll: Int? {
-        return drop == .lowest ? dice.lastRoll.min() : dice.lastRoll.max()
-    }
-    
-    /// Returns the index of the dropped roll. Returns nil if no roll has been made.
-    public var droppedIndex: Int? {
-        guard let roll = droppedRoll else { return nil }
-        return dice.lastRoll.index(of: roll)
-    }
-    
-    /// Returns the last rolls of the dice, with the dropped roll removed.
-    /// To obtain the last roll without the dropped roll removed, use dice.lastRoll.
-    public var lastRoll: [Int] {
-        guard dice.lastRoll.count > 0 else { return [] }
-        
-        var roll = dice.lastRoll // we're going to return a modified copy of the dice's lastRoll
-        roll.remove(at: droppedIndex!)
-        return roll
-    }
-
     /// Rolls the specified number of times, returning the sum of the rolls,
     /// minus the dropped roll. The intermediate rolls, including the dropped roll,
     /// can be inspected in dice.lastRoll.
-    public func roll() -> Int {
-        let _ = dice.roll()
-        return self.lastRoll.reduce(0, +)
+    public func roll() -> DiceRoll {
+        let lastRoll: [Int] = dice.roll()
+        let droppedRoll = (drop == .lowest) ? lastRoll.min() : lastRoll.max()
+        
+        let result = lastRoll.reduce(0, +) - droppedRoll!
+        let description = "(\(dice.rollDescription(lastRoll)) - \(droppedRoll!))"
+        
+        return DiceRoll(result, description)
     }
     
     /// Returns a description of the dice, with "-L" or "-H" appended.
     public var description: String {
         return "\(dice)-\(drop.rawValue)"
-    }
-    
-    /// Returns the last roll as a sequence of added numbers in parenthesis. Includes dropped rolls.
-    public var lastRollDescription: String {
-        guard dice.lastRoll.count > 0 else { return "" }
-        return "(\(dice.lastRollDescription) - \(droppedRoll!))"
     }
     
 }

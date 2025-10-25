@@ -16,7 +16,7 @@ class PlayersTests: XCTestCase {
     let decoder = JSONDecoder()
     
     var classes: Classes!
-    var races: Races!
+    var species: Species!
     
     override func setUp() {
         // TODO: Need to initialize UnitCurrency before creating Money instances in Player class.
@@ -26,8 +26,8 @@ class PlayersTests: XCTestCase {
         let classesData = try! bundle.loadJSON("TestClasses")
         classes = try! decoder.decode(Classes.self, from: classesData)
         
-        let racesData = try! bundle.loadJSON("TestRaces")
-        races = try! decoder.decode(Races.self, from: racesData)
+        let speciesData = try! bundle.loadJSON("TestSpecies")
+        species = try! decoder.decode(Species.self, from: speciesData)
     }
     
     func testPlayers() {
@@ -36,7 +36,7 @@ class PlayersTests: XCTestCase {
         do {
             let playersData = try bundle.loadJSON("TestPlayers")
             players = try decoder.decode(Players.self, from: playersData)
-            try players.resolve(classes: classes, races: races)
+            try players.resolve(classes: classes, species: species)
         }
         catch let error {
             XCTFail("players.load failed, error \(error)")
@@ -57,7 +57,7 @@ class PlayersTests: XCTestCase {
         do {
             let playersData = try! bundle.loadJSON("InvalidClassPlayers")
             let players = try decoder.decode(Players.self, from: playersData)
-            try players.resolve(classes: classes, races: races)
+            try players.resolve(classes: classes, species: species)
             XCTFail("players.load should have failed")
         }
         catch let error {
@@ -65,9 +65,9 @@ class PlayersTests: XCTestCase {
         }
         
         do {
-            let playersData = try! bundle.loadJSON("InvalidRacePlayers")
+            let playersData = try! bundle.loadJSON("InvalidSpeciesPlayers")
             let players = try decoder.decode(Players.self, from: playersData)
-            try players.resolve(classes: classes, races: races)
+            try players.resolve(classes: classes, species: species)
             XCTFail("players.resolve should have failed")
         }
         catch let error {
@@ -77,7 +77,7 @@ class PlayersTests: XCTestCase {
         do {
             let playersData = try! bundle.loadJSON("MissingClassPlayers")
             let players = try decoder.decode(Players.self, from: playersData)
-            try players.resolve(classes: classes, races: races)
+            try players.resolve(classes: classes, species: species)
             XCTFail("players.resolve should have failed")
         }
         catch let error {
@@ -85,9 +85,9 @@ class PlayersTests: XCTestCase {
         }
         
         do {
-            let playersData = try! bundle.loadJSON("MissingRacePlayers")
+            let playersData = try! bundle.loadJSON("MissingSpeciesPlayers")
             let players = try decoder.decode(Players.self, from: playersData)
-            try players.resolve(classes: classes, races: races)
+            try players.resolve(classes: classes, species: species)
             
             XCTFail("players.resolve should have failed")
         }

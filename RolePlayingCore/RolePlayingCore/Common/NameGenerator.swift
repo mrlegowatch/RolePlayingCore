@@ -56,17 +56,19 @@ public struct NameGenerator {
         self.nameParts = parts
     }
 
-    private func randomFirstPart<G: RandomNumberGenerator>(using generator: inout G) -> String {
-        return nameStarters.randomElement(using: &generator)!
+    private func randomFirstPart<G: RandomIndexGenerator>(using generator: inout G) -> String {
+        let randomIndex = generator.randomIndex(upperBound: nameStarters.count)
+        return nameStarters[randomIndex]
     }
     
-    private func randomPartAfter<G: RandomNumberGenerator>(_ key: String, using generator: inout G) -> String {
+    private func randomPartAfter<G: RandomIndexGenerator>(_ key: String, using generator: inout G) -> String {
         let possibleNextParts = nameParts[key]!
-        return possibleNextParts.randomElement(using: &generator)!
+        let randomIndex = generator.randomIndex(upperBound: possibleNextParts.count)
+        return possibleNextParts[randomIndex]
     }
     
     /// Returns a generated name.
-    public func makeName<G: RandomNumberGenerator>(using generator: inout G) -> String {
+    public func makeName<G: RandomIndexGenerator>(using generator: inout G) -> String {
         var loopCount = Int.max
         var name = ""
         
@@ -90,7 +92,7 @@ public struct NameGenerator {
     
     /// Returns a generated name.
     public func makeName() -> String {
-        var rng = SystemRandomNumberGenerator()
+        var rng = DefaultRandomIndexGenerator()
         return makeName(using: &rng)
     }
 }

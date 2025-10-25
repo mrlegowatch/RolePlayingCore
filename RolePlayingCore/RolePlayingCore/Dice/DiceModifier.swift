@@ -12,16 +12,16 @@ public struct DiceModifier: Dice {
     
     public let modifier: Int
     
-    public init(_ modifier: Int) { self.modifier = modifier }
+    public init(_ modifier: Int) {
+        self.modifier = modifier
+    }
     
-    public func roll() -> Int { return modifier }
+    public func roll() -> DiceRoll {
+        return DiceRoll(modifier, "\(modifier)")
+    }
     
-    public var sides: Int { return modifier }
+    public var sides: Int { modifier }
     
-    public var lastRoll: [Int] { return [modifier] }
-    
-    public var description: String { return "\(modifier)" }
-    
-    public var lastRollDescription: String { return "\(modifier)" }
-    
+    public var description: String { "\(modifier)" }
+        
 }

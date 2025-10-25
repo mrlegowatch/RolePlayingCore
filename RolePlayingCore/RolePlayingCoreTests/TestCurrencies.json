@@ -2,7 +2,7 @@
     "currencies": [
                  {
                  "symbol": "gp",
-                 "default": true,
+                 "is default": true,
                  "coefficient": 1.0,
                  "name": "gold piece",
                  "plural": "gold pieces"

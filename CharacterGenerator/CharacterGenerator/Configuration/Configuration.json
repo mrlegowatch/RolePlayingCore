@@ -1,6 +1,6 @@
 {
     "currencies": ["Currencies"],
     "classes": ["Classes"],
-    "races": ["Races"],
-    "racial names": "RacialNames"
+    "species": ["Species"],
+    "species names": "SpeciesNames"
 }
