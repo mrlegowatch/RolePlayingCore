@@ -23,6 +23,11 @@ struct PlayerListView: View {
             }
             .onDelete { indexSet in
                 appState.deleteCharacter(at: indexSet)
+                if let index = indexSet.first, index < appState.players.count, let newPlayer = appState.players[index] {
+                    appState.selectedPlayer = newPlayer
+                } else {
+                    appState.selectedPlayer = nil
+                }
             }
         }
         .navigationTitle("Characters")

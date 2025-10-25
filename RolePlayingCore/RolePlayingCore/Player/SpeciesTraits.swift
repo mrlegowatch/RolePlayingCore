@@ -35,21 +35,19 @@ public struct SpeciesTraits {
         case large
     }
     
-    public var size: Size {
-        let size: Size
-        
-        let heightInFeet = baseHeight.converted(to: .feet)
+    public func size(from height: Height) -> Size {
+        let heightInFeet = height.converted(to: .feet)
         switch heightInFeet.value {
         case 0..<4:
-            size = .small
+            return .small
         case 4..<7:
-            size = .medium
+            return .medium
         default:
-            size = .large
+            return .large
         }
-        
-        return size
     }
+    
+    public var size: Size { size(from: baseHeight) }
     
     public init(name: String,
                 plural: String,

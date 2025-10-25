@@ -22,7 +22,7 @@ struct PlayerDetailView: View {
         ScrollView {
             LazyVStack(spacing: 20) {
                 ForEach(0..<characterSheet.numberOfSections, id: \.self) { section in
-                    VStack(spacing: 12) {
+                    HStack(spacing: 12) {
                         ForEach(0..<characterSheet.numberOfItems(in: section), id: \.self) { item in
                             let indexPath = IndexPath(item: item, section: section)
                             traitView(for: indexPath)
@@ -49,10 +49,13 @@ struct PlayerDetailView: View {
         case "labeledText":
             let value = characterSheet[keyPath: keys] as! String
             LabeledTextView(label: label, value: value)
-        
+        case "labeledNumber":
+            let value = characterSheet[keyPath: keys] as! String
+            LabeledNumberView(label: label, value: value)
+        case "experiencePoints":
+            ExperiencePointsView(experiencePoints: ExperiencePoints(player))
         case "abilities":
             AbilitiesView(abilities: player.abilities)
-            
         default:
             Text("Unknown trait type: \(cellIdentifier)")
                 .foregroundStyle(.secondary)
@@ -72,10 +75,67 @@ struct LabeledTextView: View {
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .textCase(.uppercase)
-           Text(value)
-                .font(.body)
+            Text(value)
+                .font(.title3)
+                .fontWeight(.bold)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+    }
+}
+
+struct LabeledNumberView: View {
+    let label: String
+    let value: String
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(NSLocalizedString(label, comment: ""))
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .textCase(.uppercase)
+            NumberView(number: value)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+}
+
+struct ExperiencePointsView: View {
+    let experiencePoints: ExperiencePoints
+    
+    var body: some View {
+        HStack(spacing: 8) {
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Level".uppercased())
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                let levelUpString = experiencePoints.canLevelUp ? "*" : ""
+                Text("\(experiencePoints.level)\(levelUpString)")
+                    .font(.title3)
+                    .fontWeight(.bold)
+                    .foregroundColor(.primary)
+                Text("Experience Points".uppercased())
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                HStack(spacing: 4) {
+                    Text("\(experiencePoints.experiencePoints)")
+                        .font(.title3)
+                        .fontWeight(.bold)
+                        .foregroundColor(.primary)
+                    Text(" / \(experiencePoints.maxExperiencePoints)")
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                    
+                }
+            }
+            Spacer()
+            Text("\(experiencePoints.level)")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            ProgressView(value: experiencePoints.currentProgress)
+            Text("\(experiencePoints.level + 1)")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
     }
 }
 
@@ -105,6 +165,17 @@ struct AbilitiesView: View {
     }
 }
 
+/// Displays a number in a larger font
+struct NumberView: View {
+    let number: String
+    
+    var body: some View {
+        Text(number)
+            .font(.title3)
+            .fontWeight(.bold)
+    }
+}
+
 struct AbilityItemView: View {
     let abilities: AbilityScores
     let ability: Ability
@@ -113,15 +184,17 @@ struct AbilityItemView: View {
     
     var body: some View {
         VStack(spacing: 4) {
-            Text(ability.abbreviated)
+            Text(ability.name.capitalized)
                 .font(.caption2)
                 .foregroundStyle(.secondary)
                 .textCase(.uppercase)
-
-            let modifierString = modifier > 0 ? " (+\(modifier))" : " (\(modifier))"
-            Text("\(value)\(modifierString)")
-                .font(.title3)
-                .fontWeight(.bold)
+            let modifierString = modifier > 0 ? " +\(modifier) " : " \(modifier) "
+            HStack(spacing: 8) {
+                NumberView(number: "\(modifierString)")
+                Text("\(value)")
+                    .font(.body)
+                    .foregroundStyle(.secondary)
+            }
         }
         .padding(8)
         .frame(maxWidth: .infinity)

@@ -56,7 +56,7 @@ public class Player: Codable {
     /// Androgynous or hermaphroditic are represented as nil.
     public var gender: Gender?
     
-    /// An "undecided" alignment is represented as nil.
+    /// An "unaligned" alignment is represented as nil.
     public var alignment: Alignment?
 
     public var height: Height
@@ -79,14 +79,23 @@ public class Player: Codable {
     public var experiencePoints: Int
     public var level: Int
     
-    public var hitDice: Dice { return classTraits.hitDice.hitDice(level: level) }
+    public var speed: Int { speciesTraits.speed }
+    public var size: SpeciesTraits.Size { speciesTraits.size(from: height) }
     
+    public var hitDice: Dice { classTraits.hitDice.hitDice(level: level) }
+    
+    public var proficiencyBonus: Int { 2 + (level - 1) / 4 }
+    public var passivePerception: Int { 10 + modifiers[.wisdom] }
+    
+    /// Initiative
+    
+    public var initiativeModifier: Int { modifiers[.dexterity] }
+    public var initiativeScore: Int { 10 + initiativeModifier }
+
     // Equipment and money
     
     public var money: Money
     public var armorClass: Int = 0 // TODO: compute armor class
-    public var proficiencyBonus: Int { return 2 + level / 4 }
-    
     // TODO: equipment, weapons, armor, skills, etc.
     
     private enum CodingKeys: String, CodingKey {
@@ -194,17 +203,16 @@ public class Player: Codable {
     
     // MARK: Implementation
     
-    class func rollHitPoints(classTraits: ClassTraits, speciesTraits: SpeciesTraits) -> Int {
+    public class func rollHitPoints(classTraits: ClassTraits, speciesTraits: SpeciesTraits) -> Int {
         return max(classTraits.hitDice.sides / 2 + 1, classTraits.hitDice.roll().result) + speciesTraits.hitPointBonus
     }
     
-    func rollHitPoints() -> Int {
+    public func rollHitPoints() -> Int {
         return Player.rollHitPoints(classTraits: classTraits, speciesTraits: speciesTraits)
     }
 
     public var canLevelUp: Bool {
-        // TODO: min, max level
-        return experiencePoints >= classTraits.experiencePoints![level]
+        return level < classTraits.maxLevel && experiencePoints > classTraits.maxExperiencePoints(at: level)
     }
 
     public func levelUp() {

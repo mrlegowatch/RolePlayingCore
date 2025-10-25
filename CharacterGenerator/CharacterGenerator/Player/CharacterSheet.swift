@@ -10,6 +10,10 @@ import Foundation
 
 import RolePlayingCore
 
+extension Int {
+    var displayModifier: String { self > 0 ? " +\(self) " : " \(self) " }
+}
+
 /// Character sheet provides a mapping between player properties and collection view groupings and views.
 class CharacterSheet {
     
@@ -21,29 +25,35 @@ class CharacterSheet {
     
     // Mapping between sections/items and key paths to properties.
     var keys: [[PartialKeyPath<CharacterSheet>]] = [
-        [\.level, \.experiencePoints],
-        [\.className, \.speciesName, \.alignment],
+        [\.experiencePoints],
+        [\.speciesName, \.className],
         [\.abilities],
-        [\.armorClass, \.proficiencyBonus, \.maximumHitPoints, \.hitDice, \.money],
-        [\.gender, \.height, \.weight]
+        [\.initiative, \.speed, \.size, \.passivePerception],
+        [\.armorClass, \.proficiencyBonus, \.maximumHitPoints, \.hitDice],
+        [\.height, \.weight, \.alignment],
+        [\.money]
     ]
     
     // Mapping of properties to label keys.
     var labelKeys: [[String]] = [
-        ["Level", "Experience Points"],
-        ["Class", "Species", "Alignment"],
+        ["Experience Points"],
+        ["Species", "Class", "Subclass"],
         ["Abilities"],
-        ["Armor Class", "Proficiency Bonus", "Hit Points", "Hit Dice", "Money"],
-        ["Gender", "Height", "Weight"]
+        ["Initiative", "Speed", "Size", "Passive Perception"],
+        ["Armor Class", "Proficiency Bonus", "Hit Points", "Hit Dice"],
+        ["Height", "Weight", "Alignment"],
+        ["Money"]
     ]
     
     // Mapping of properties to view types.
     var cellIdentifiers: [[String]] = [
+        ["experiencePoints"],
         ["labeledText", "labeledText"],
-        ["labeledText", "labeledText", "labeledText"],
         ["abilities"],
-        ["labeledText", "labeledText", "labeledText", "labeledText", "labeledText"],
-        ["labeledText", "labeledText", "labeledText"]
+        ["labeledNumber", "labeledNumber", "labeledText", "labeledNumber"],
+        ["labeledNumber", "labeledNumber", "labeledNumber", "labeledText"],
+        ["labeledText", "labeledText", "labeledText"],
+        ["labeledText"]
     ]
     
     var numberOfSections: Int { return keys.count }
@@ -66,8 +76,9 @@ class CharacterSheet {
         }
     }
     var abilities: AbilityScores { player.abilities }
+    var initiative: String { player.initiativeModifier.displayModifier }
     var armorClass: String { "\(player.armorClass)" }
-    var proficiencyBonus: String { "\(player.proficiencyBonus)" }
+    var proficiencyBonus: String { player.proficiencyBonus.displayModifier }
     var maximumHitPoints: String { "\(player.maximumHitPoints)" }
     var currentHitPoints: String { "\(player.currentHitPoints)" }
     var hitDice: String { "\(player.hitDice)" }
@@ -75,4 +86,15 @@ class CharacterSheet {
     var gender: String { player.gender.map(\.rawValue) ?? "Androgynous" }
     var height: String { player.height.displayString }
     var weight: String { player.weight.displayString }
+    var speed: String {
+        let value = player.speed
+        let distance = Measurement(value: Double(value), unit: UnitLength.feet)
+        
+        let formatter = MeasurementFormatter()
+        formatter.unitStyle = .medium
+        formatter.unitOptions = .providedUnit
+        return formatter.string(from: distance)
+    }
+    var size: String { "\(player.size)".capitalized }
+    var passivePerception: String { "\(player.passivePerception)" }
 }

@@ -17,6 +17,7 @@
 		B621A3991F0C06A700E55236 /* NameGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B621A3961F0C020000E55236 /* NameGenerator.swift */; };
 		B62D89C41F09A3870095D587 /* DiceParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B62D89C31F09A3870095D587 /* DiceParserTests.swift */; };
 		B64C369621756BC300C4F6BE /* DiceRoll.swift in Sources */ = {isa = PBXBuildFile; fileRef = B64C369521756BC300C4F6BE /* DiceRoll.swift */; };
+		B6688B512EACF5B7000A83DD /* Initiative.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6688B502EACF5AE000A83DD /* Initiative.swift */; };
 		B66AF8FC1EAE87A800C15F8E /* TestClasses.json in Resources */ = {isa = PBXBuildFile; fileRef = B66AF8F41EAE87A800C15F8E /* TestClasses.json */; };
 		B66AF8FD1EAE87A800C15F8E /* TestConfiguration.json in Resources */ = {isa = PBXBuildFile; fileRef = B66AF8F51EAE87A800C15F8E /* TestConfiguration.json */; };
 		B66AF8FE1EAE87A800C15F8E /* TestCurrencies.json in Resources */ = {isa = PBXBuildFile; fileRef = B66AF8F61EAE87A800C15F8E /* TestCurrencies.json */; };
@@ -101,6 +102,7 @@
 		B621A3971F0C052D00E55236 /* NameGeneratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NameGeneratorTests.swift; sourceTree = "<group>"; };
 		B62D89C31F09A3870095D587 /* DiceParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiceParserTests.swift; sourceTree = "<group>"; };
 		B64C369521756BC300C4F6BE /* DiceRoll.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiceRoll.swift; sourceTree = "<group>"; };
+		B6688B502EACF5AE000A83DD /* Initiative.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Initiative.swift; sourceTree = "<group>"; };
 		B66AF8F41EAE87A800C15F8E /* TestClasses.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TestClasses.json; sourceTree = "<group>"; };
 		B66AF8F51EAE87A800C15F8E /* TestConfiguration.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TestConfiguration.json; sourceTree = "<group>"; };
 		B66AF8F61EAE87A800C15F8E /* TestCurrencies.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = TestCurrencies.json; sourceTree = "<group>"; };
@@ -314,6 +316,7 @@
 				B6CF538F1E51DA1300CADD9F /* ClassTraits.swift */,
 				B6CF53CF1E54E2E200CADD9F /* Classes.swift */,
 				B69F84681E58B8F700A4D2B0 /* Player.swift */,
+				B6688B502EACF5AE000A83DD /* Initiative.swift */,
 				B69F846C1E58D66900A4D2B0 /* Players.swift */,
 				B6F070371E4FBD6500F66918 /* SpeciesTraits.swift */,
 				B6CF53D11E54E2EF00CADD9F /* Species.swift */,
@@ -470,6 +473,7 @@
 				B6FA6CB01E47ACA1004D91B1 /* UnitCurrency.swift in Sources */,
 				B6CF53901E51DA1300CADD9F /* ClassTraits.swift in Sources */,
 				B621A3991F0C06A700E55236 /* NameGenerator.swift in Sources */,
+				B6688B512EACF5B7000A83DD /* Initiative.swift in Sources */,
 				B681B71E1EAACA9B001DE78B /* Die.swift in Sources */,
 				B64C369621756BC300C4F6BE /* DiceRoll.swift in Sources */,
 				B620560E1E19DDD0002494AB /* Dice.swift in Sources */,

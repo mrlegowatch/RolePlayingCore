@@ -13,6 +13,7 @@
 		B64F68E02EA6867B006D6C77 /* CharacterGeneratorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B64F68DF2EA6867B006D6C77 /* CharacterGeneratorApp.swift */; };
 		B64F68E22EA68686006D6C77 /* PlayerListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B64F68E12EA68686006D6C77 /* PlayerListView.swift */; };
 		B64F68E42EA6868A006D6C77 /* PlayerDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B64F68E32EA6868A006D6C77 /* PlayerDetailView.swift */; };
+		B6688B4F2EABCB11000A83DD /* ExperiencePoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6688B4E2EABCB11000A83DD /* ExperiencePoints.swift */; };
 		B6A1AE471F0C441E008ADF08 /* Classes.json in Resources */ = {isa = PBXBuildFile; fileRef = B6A1AE431F0C4383008ADF08 /* Classes.json */; };
 		B6A1AE481F0C4421008ADF08 /* Configuration.json in Resources */ = {isa = PBXBuildFile; fileRef = B6A1AE441F0C4383008ADF08 /* Configuration.json */; };
 		B6A1AE491F0C4426008ADF08 /* Currencies.json in Resources */ = {isa = PBXBuildFile; fileRef = B6A1AE451F0C4383008ADF08 /* Currencies.json */; };
@@ -67,6 +68,7 @@
 		B64F68DF2EA6867B006D6C77 /* CharacterGeneratorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterGeneratorApp.swift; sourceTree = "<group>"; };
 		B64F68E12EA68686006D6C77 /* PlayerListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerListView.swift; sourceTree = "<group>"; };
 		B64F68E32EA6868A006D6C77 /* PlayerDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerDetailView.swift; sourceTree = "<group>"; };
+		B6688B4E2EABCB11000A83DD /* ExperiencePoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperiencePoints.swift; sourceTree = "<group>"; };
 		B6A1AE431F0C4383008ADF08 /* Classes.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Classes.json; sourceTree = "<group>"; };
 		B6A1AE441F0C4383008ADF08 /* Configuration.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Configuration.json; sourceTree = "<group>"; };
 		B6A1AE451F0C4383008ADF08 /* Currencies.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Currencies.json; sourceTree = "<group>"; };
@@ -156,6 +158,7 @@
 				B64F68E12EA68686006D6C77 /* PlayerListView.swift */,
 				B64F68E32EA6868A006D6C77 /* PlayerDetailView.swift */,
 				B6A1AE4F1F0D6594008ADF08 /* CharacterSheet.swift */,
+				B6688B4E2EABCB11000A83DD /* ExperiencePoints.swift */,
 			);
 			path = Player;
 			sourceTree = "<group>";
@@ -333,6 +336,7 @@
 				B6A1AE501F0D6594008ADF08 /* CharacterSheet.swift in Sources */,
 				B64F68E22EA68686006D6C77 /* PlayerListView.swift in Sources */,
 				B64F68E02EA6867B006D6C77 /* CharacterGeneratorApp.swift in Sources */,
+				B6688B4F2EABCB11000A83DD /* ExperiencePoints.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
