@@ -15,11 +15,11 @@ The current organizational groupings include:
 * **Common**: common utilities such as height and weight, and a runtime error enum
 * **Currency**: currency types, conversion and parsing
 * **Dice**: dice types and parsing
-* **Player**: the player, races, classes and related types
+* **Player**: the player, species, classes, and related types
 
 ### Coming Soon...
 
-In addition to fleshing out the Player grouping with types for classes, races, etc., the following additional groupings are currently being prototyped:
+In addition to fleshing out the Player grouping with types for classes, species, etc., the following additional groupings are currently being prototyped:
 
 * **Items**: Item, Container, Ammunition, Armor, Equipment, Weapon, ...
 * **Map**: Map, Geometry, Room, Door, Segment, Hallway, ...
@@ -34,8 +34,8 @@ The following types have an initial implementation with unit tests and full code
 * **Alignment**: Enumerations for Ethics and Morals, with a Kind and associated Double values.
 * **ClassTraits**: Properties describing a class, that can be created from dictionary traits.
 * **Classes**: A factory for managing ClassTraits.
-* **RacialTraits**: Properties describing a race, that can be created from dictionary traits, and a parent race (for defining subraces).
-* **Races**: A factory for managing RacialTraits.
+* **SpeciesTraits**: Properties describing a species, that can be created from dictionary traits, and a parent species (for defining subspecies).
+* **Species**: A factory for managing SpeciesTraits.
 * **UnitCurrency**: A subclass of Foundation.Dimension that can convert between different types of currency (e.g., gp, cp, pp). A DefaultCurrencies.json file is provided.
 * **Money**: A Foundation.Measurement for UnitCurrency.
 * **Dice**: Includes a Dice protocol, a Die type, and several implementations of the Dice protocol for simple dice rolls, modifiers, dropping and composition of dice rolls.
