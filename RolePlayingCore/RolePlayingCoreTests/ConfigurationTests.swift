@@ -22,7 +22,7 @@ class ConfigurationTests: XCTestCase {
             let abilities = Ability.defaults
             for ability in abilities {
                 var importantFor = [String]()
-                var racialIncreases = [String]()
+                var speciesIncreases = [String]()
                 
                 for classTraits in configuration.classes.classes {
                     if classTraits.primaryAbility.contains(ability) {
@@ -30,10 +30,10 @@ class ConfigurationTests: XCTestCase {
                     }
                 }
                 
-                for racialTraits in configuration.races.races {
-                    if let increase = racialTraits.abilityScoreIncrease[ability], increase != 0 {
+                for speciesTraits in configuration.species.species {
+                    if let increase = speciesTraits.abilityScoreIncrease[ability], increase != 0 {
                         
-                        racialIncreases.append("\(racialTraits.name) (+\(increase))")
+                        speciesIncreases.append("\(speciesTraits.name) (+\(increase))")
                     }
                 }
                 
@@ -41,7 +41,7 @@ class ConfigurationTests: XCTestCase {
                 print(ability.name)
                 let important = importantFor.count == 0 ? ["Everyone"] : importantFor
                 print("Important for: \(important)")
-                print("Racial increases: \(racialIncreases)")
+                print("Species increases: \(speciesIncreases)")
             }
             
             

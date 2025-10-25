@@ -10,7 +10,11 @@ import Foundation
 
 import RolePlayingCore
 
-/// Character sheet provides a mapping between player properties and collection view identifiers.
+extension Int {
+    var displayModifier: String { self > 0 ? " +\(self) " : " \(self) " }
+}
+
+/// Character sheet provides a mapping between player properties and collection view groupings and views.
 class CharacterSheet {
     
     let player: Player
@@ -20,30 +24,39 @@ class CharacterSheet {
     }
     
     // Mapping between sections/items and key paths to properties.
-    var keys: [[PartialKeyPath<Player>]] = [
-        [\Player.name, \Player.experiencePoints],
-        [\Player.level, \Player.className, \Player.raceName, \Player.alignment],
-        [\Player.abilities],
-        [\Player.armorClass, \Player.maximumHitPoints, \Player.hitDice, \Player.money],
-        [\Player.gender, \Player.height, \Player.weight]
+    var keys: [[PartialKeyPath<CharacterSheet>]] = [
+        [\.experiencePoints],
+        [\.speciesName, \.className],
+        [\.abilities],
+        [\.initiative, \.speed, \.size],
+        [\.armorClass, \.proficiencyBonus, \.passivePerception],
+        [\.maximumHitPoints, \.hitDice],
+        [\.height, \.weight],
+        [\.money]
     ]
     
-    // TODO: implement a better mechanism for mapping label keys to properties.
+    // Mapping of properties to label keys.
     var labelKeys: [[String]] = [
-        ["Name", "Experience Points"],
-        ["Level", "Class", "Race", "Alignment"],
+        ["Experience Points"],
+        ["Species", "Class", "Subclass"],
         ["Abilities"],
-        ["Armor Class", "Hit Points", "Hit Dice", "Money"],
-        ["Gender", "Height", "Weight"]
+        ["Initiative", "Speed", "Size"],
+        ["Armor Class", "Proficiency Bonus", "Passive Perception"],
+        ["Hit Points", "Hit Dice"],
+        ["Height", "Weight"],
+        ["Money"]
     ]
     
-    // TODO: this can't live here. We need data transformers to keep the number of cell types down.
+    // Mapping of properties to view types.
     var cellIdentifiers: [[String]] = [
-        ["labeledText", "labeledNumber"],
-        ["labeledNumber", "labeledText", "labeledText", "alignment"],
+        ["experiencePoints"],
+        ["labeledText", "labeledText"],
         ["abilities"],
-        ["labeledNumber", "labeledNumber", "dice", "money"],
-        ["gender", "height", "weight"]
+        ["labeledNumber", "labeledNumber", "labeledText"],
+        ["labeledNumber", "labeledNumber", "labeledNumber"],
+        ["labeledNumber", "labeledText"],
+        ["labeledText", "labeledText"],
+        ["labeledText"]
     ]
     
     var numberOfSections: Int { return keys.count }
@@ -52,4 +65,39 @@ class CharacterSheet {
         return keys[section].count
     }
     
+    // Wrapped properties as display strings
+    
+    var experiencePoints: String { "\(player.experiencePoints)" }
+    var level: String { "\(player.level)" }
+    var className: String { player.className }
+    var speciesName: String { player.speciesName }
+    var alignment: String {
+        if let alignment = player.alignment {
+            return "\(alignment)"
+        } else {
+            return "Unaligned"
+        }
+    }
+    var abilities: AbilityScores { player.abilities }
+    var initiative: String { player.initiativeModifier.displayModifier }
+    var armorClass: String { "\(player.armorClass)" }
+    var proficiencyBonus: String { player.proficiencyBonus.displayModifier }
+    var maximumHitPoints: String { "\(player.maximumHitPoints)" }
+    var currentHitPoints: String { "\(player.currentHitPoints)" }
+    var hitDice: String { "\(player.hitDice)" }
+    var money: String { "\(player.money)" }
+    var gender: String { player.gender.map(\.rawValue) ?? "Androgynous" }
+    var height: String { player.height.displayString }
+    var weight: String { player.weight.displayString }
+    var speed: String {
+        let value = player.speed
+        let distance = Measurement(value: Double(value), unit: UnitLength.feet)
+        
+        let formatter = MeasurementFormatter()
+        formatter.unitStyle = .medium
+        formatter.unitOptions = .providedUnit
+        return formatter.string(from: distance)
+    }
+    var size: String { "\(player.size)".capitalized }
+    var passivePerception: String { "\(player.passivePerception)" }
 }

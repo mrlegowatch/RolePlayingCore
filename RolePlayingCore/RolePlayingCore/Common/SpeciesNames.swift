@@ -1,5 +1,5 @@
 //
-//  RacialNames.swift
+//  SpeciesNames.swift
 //  RolePlayingCore
 //
 //  Created by Brian Arnold on 7/8/17.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct RacialNames: Codable {
+public struct SpeciesNames: Codable {
     
     struct FamilyNames: Codable {
         let familyType: String
@@ -79,27 +79,29 @@ public struct RacialNames: Codable {
     
     internal let names: [String: FamilyNames]
     
-    private func resolveRacialNames(_ racialTraits: RacialTraits) -> FamilyNames {
-        guard names[racialTraits.name] == nil, let parentName = racialTraits.parentName else { return names[racialTraits.name]! }
+    private func resolveSpeciesNames(_ speciesTraits: SpeciesTraits) -> FamilyNames {
+        guard names[speciesTraits.name] == nil, let parentName = speciesTraits.parentName else { return names[speciesTraits.name]! }
         
         return names[parentName]!
     }
     
-    private func resolveAliasNames<G: RandomNumberGenerator>(_ familyNames: FamilyNames, using generator: inout G) -> FamilyNames {
+    private func resolveAliasNames<G: RandomIndexGenerator>(_ familyNames: FamilyNames, using generator: inout G) -> FamilyNames {
         guard let aliases = familyNames.aliases else { return familyNames }
         
-        let randomName = aliases.randomElement(using: &generator)!
+        let randomIndex = generator.randomIndex(upperBound: aliases.count)
+        let randomName = aliases[randomIndex]
         return names[randomName]!
     }
     
-    private func resolveGender<G: RandomNumberGenerator>(_ gender: Player.Gender?, using generator: inout G) -> Player.Gender {
+    private func resolveGender<G: RandomIndexGenerator>(_ gender: Player.Gender?, using generator: inout G) -> Player.Gender {
         guard gender == nil else { return gender! }
-        return Player.Gender.allCases.randomElement(using: &generator)!
+        let randomIndex = generator.randomIndex(upperBound: Player.Gender.allCases.count)
+        return Player.Gender.allCases[randomIndex]
     }
     
-    public func randomName<G: RandomNumberGenerator>(racialTraits: RacialTraits, gender: Player.Gender?, using generator: inout G) -> String {
-        // Determine race or parent race (for subraces)
-        var familyNames = resolveRacialNames(racialTraits)
+    public func randomName<G: RandomIndexGenerator>(speciesTraits: SpeciesTraits, gender: Player.Gender?, using generator: inout G) -> String {
+        // Determine species or parent species (for subspecies)
+        var familyNames = resolveSpeciesNames(speciesTraits)
         familyNames = resolveAliasNames(familyNames, using: &generator)
         
         let gender = resolveGender(gender, using: &generator)
@@ -108,9 +110,9 @@ public struct RacialNames: Codable {
         return nameGenerator.makeName(using: &generator)
     }
     
-    public func randomName(racialTraits: RacialTraits, gender: Player.Gender?) -> String {
-        var rng = SystemRandomNumberGenerator()
-        return randomName(racialTraits: racialTraits, gender: gender, using: &rng)
+    public func randomName(speciesTraits: SpeciesTraits, gender: Player.Gender?) -> String {
+        var rng = DefaultRandomIndexGenerator()
+        return randomName(speciesTraits: speciesTraits, gender: gender, using: &rng)
     }
     
     // TODO: family names, child names, nicknames

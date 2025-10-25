@@ -55,9 +55,9 @@ public struct CompoundDice: Dice {
     }
     
     /// Returns the number of sides of the left hand dice.
-    public var sides: Int { return lhs.sides }
+    public var sides: Int { lhs.sides }
     
     /// Returns a description of the left and right hand sides with the math operator.
-    public var description: String { return "\(lhs)\(mathOperator)\(rhs)" }
+    public var description: String { "\(lhs)\(mathOperator)\(rhs)" }
     
 }

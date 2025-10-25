@@ -20,8 +20,8 @@ public struct DiceModifier: Dice {
         return DiceRoll(modifier, "\(modifier)")
     }
     
-    public var sides: Int { return modifier }
+    public var sides: Int { modifier }
     
-    public var description: String { return "\(modifier)" }
+    public var description: String { "\(modifier)" }
         
 }

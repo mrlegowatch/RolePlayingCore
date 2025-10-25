@@ -36,7 +36,7 @@ class CharacterGeneratorTests: XCTestCase {
             let configuration = try Configuration("TestConfiguration", from: bundle)
             do {
                 _ = try CharacterGenerator(configuration, from: bundle)
-                XCTFail("Unexpectedly succeeded in creating CharacterGenerator with an invalid/missing racialNames file")
+                XCTFail("Unexpectedly succeeded in creating CharacterGenerator with an invalid/missing speciesNames file")
             }
             catch let error {
                 print("Caught expected error with invalid configuration: \(error)")
