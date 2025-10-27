@@ -1,0 +1,37 @@
+{
+    "backgrounds": [
+        {
+        "name": "Acolyte",
+        "ability scores": ["Intelligence", "Wisdom", "Charisma"],
+        "feat": "Magic Initiate (Cleric)",
+        "skill proficiencies" : ["Insight", "Religion"],
+        "tool proficiency": "Calligrapher's Supplies",
+        "equipment": [["Calligrapher's Supplies", "Book (prayers)", "Holy Symbol", "Parchment (10 sheets)", "Robe", "8 GP"], ["50 GP"]]
+        },
+         {
+        "name": "Farmer",
+        "ability scores": ["Strength", "Constitution", "Wisdom"],
+        "feat": "Tough",
+        "skill proficiencies" : ["Animal Handling", "Nature"],
+        "tool proficiency": "Carpenter's Tools",
+        "equipment": [["Sickle", "Carpenter's Tools", "Healer's Kit", "Iron Pot", "Shovel", "Traveler's Clothes", "30 GP"], ["50 GP"]]
+        },
+        {
+        "name": "Guide",
+        "ability scores": ["Dexterity", "Constitution", "Wisdom"],
+        "feat": "Magic Initiate (Druid)",
+        "skill proficiencies" : ["Stealth", "Survival"],
+        "tool proficiency": "Cartographer's Tools",
+        "equipment": [["Shortbow", "20 Arrows", "Cartographer's Tools", "Bedroll", "Quiver", "Tent", "Traveler's Clothes", "3 GP"], ["50 GP"]]
+        },
+        {
+        "name": "Sailor",
+        "ability scores": ["Strength", "Dexterity", "Wisdom"],
+        "feat": "Tavern Brawler",
+        "skill proficiencies" : ["Acrobatics", "Perception"],
+        "tool proficiency": "Navigator's Tools",
+        "equipment": [["Dagger", "Navigator's Tools", "Rope", "Traveler's Clothes", "20 GP"], ["50 GP"]]
+        }
+    ]
+}
+

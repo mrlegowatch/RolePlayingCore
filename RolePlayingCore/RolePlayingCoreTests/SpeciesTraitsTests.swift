@@ -21,7 +21,6 @@ class SpeciesTraitsTests: XCTestCase {
                 {
                     "name": "Human",
                     "plural": "Humans",
-                    "ability scores": {"Strength": 1, "Dexterity": 1, "Constitution": 1, "Intelligence": 1, "Wisdom": 1, "Charisma": 1},
                     "minimum age": 18,
                     "lifespan": 90,
                     "base height": "4'8\\"",
@@ -44,13 +43,7 @@ class SpeciesTraitsTests: XCTestCase {
             XCTAssertNotNil(speciesTraits)
             XCTAssertEqual(speciesTraits?.name, "Human", "name")
             XCTAssertEqual(speciesTraits?.plural, "Humans", "plural")
-            XCTAssertEqual(speciesTraits?.abilityScoreIncrease.count, 6, "ability score increase")
-            if let scores = speciesTraits?.abilityScoreIncrease.values {
-                for score in scores {
-                    XCTAssertEqual(score, 1, "ability score increase")
-                }
-            }
-            
+           
             XCTAssertEqual(speciesTraits?.minimumAge, 18, "minimum age")
             XCTAssertEqual(speciesTraits?.lifespan, 90, "lifespan")
             XCTAssertEqual(speciesTraits?.baseHeight.value ?? 0, 4.666666, accuracy: 0.000001, "base height")
@@ -99,12 +92,6 @@ class SpeciesTraitsTests: XCTestCase {
             XCTAssertNotNil(speciesTraits)
             XCTAssertEqual(speciesTraits?.name, "Giant Human", "name")
             XCTAssertEqual(speciesTraits?.plural, "Giant Humans", "plural")
-            XCTAssertEqual(speciesTraits?.abilityScoreIncrease.count, 6, "ability score increase")
-            if let scores = speciesTraits?.abilityScoreIncrease.values {
-                for score in scores {
-                    XCTAssertEqual(score, 0, "ability score increase")
-                }
-            }
             
             XCTAssertEqual(speciesTraits?.minimumAge, 18, "minimum age")
             XCTAssertEqual(speciesTraits?.lifespan, 90, "lifespan")
@@ -224,10 +211,6 @@ class SpeciesTraitsTests: XCTestCase {
                 
                 XCTAssertEqual(subspeciesTraits.name, "Subhuman", "name")
                 XCTAssertEqual(subspeciesTraits.plural, "Subhumans", "plural")
-                XCTAssertEqual(subspeciesTraits.abilityScoreIncrease.count, 6, "ability score increase")
-                for score in subspeciesTraits.abilityScoreIncrease.values {
-                    XCTAssertEqual(score, 0, "ability score increase")
-                }
                 
                 XCTAssertEqual(subspeciesTraits.minimumAge, 15, "minimum age")
                 XCTAssertEqual(subspeciesTraits.lifespan, 60, "lifespan")
@@ -278,7 +261,6 @@ class SpeciesTraitsTests: XCTestCase {
                         "plural": "Folks",
                         "aliases": ["Plainfolk"],
                         "weight modifier": "d8",
-                        "ability scores": {"Strength": 2, "Dexterity": 1, "Constitution": 3, "Intelligence": 2, "Wisdom": 1, "Charisma": 1},
                         "alignment": "Neutral",
                         "darkvision": 20,
                         "hit point bonus": 2
@@ -293,10 +275,6 @@ class SpeciesTraitsTests: XCTestCase {
                 XCTAssertNotNil(subspeciesTraits)
                 XCTAssertEqual(subspeciesTraits.name, "Folk", "name")
                 XCTAssertEqual(subspeciesTraits.plural, "Folks", "plural")
-                XCTAssertEqual(subspeciesTraits.abilityScoreIncrease.count, 6, "ability score increase")
-                for score in subspeciesTraits.abilityScoreIncrease.values {
-                    XCTAssertNotEqual(score, 0, "ability score increase")
-                }
                 
                 XCTAssertEqual(subspeciesTraits.minimumAge, 18, "minimum age")
                 XCTAssertEqual(subspeciesTraits.lifespan, 90, "lifespan")
@@ -334,7 +312,7 @@ class SpeciesTraitsTests: XCTestCase {
     }
     
     func testEncodingSubspeciesTraits() {
-        let speciesTraits = SpeciesTraits(name: "Human", plural: "Humans", aliases: [], descriptiveTraits: [:], abilityScoreIncrease: AbilityScores(), minimumAge: 18, lifespan: 90, alignment: Alignment(.lawful, .neutral), baseHeight: "4ft 9 in".parseHeight!, heightModifier: DiceModifier(0), baseWeight: "178 lb".parseWeight!, weightModifier: DiceModifier(0), darkVision: 0, speed: 45, hitPointBonus: 0)
+        let speciesTraits = SpeciesTraits(name: "Human", plural: "Humans", aliases: [], descriptiveTraits: [:], minimumAge: 18, lifespan: 90, alignment: Alignment(.lawful, .neutral), baseHeight: "4ft 9 in".parseHeight!, heightModifier: DiceModifier(0), baseWeight: "178 lb".parseWeight!, weightModifier: DiceModifier(0), darkVision: 0, speed: 45, hitPointBonus: 0)
         
         let encoder = JSONEncoder()
         
@@ -390,7 +368,7 @@ class SpeciesTraitsTests: XCTestCase {
         
         do {
             var copyOfSpeciesTraits = speciesTraits
-            let subspeciesTraits = SpeciesTraits(name: "Subhuman", plural: "Subhumans", aliases: ["Minions"], descriptiveTraits: ["background": "Something"], abilityScoreIncrease: AbilityScores([Ability("Strength"): 2]), minimumAge: 14, lifespan: 45, alignment: Alignment(.neutral, .evil), baseHeight: "3 ft".parseHeight!, heightModifier: "d4".parseDice!, baseWeight: "100 lb".parseWeight!, weightModifier: "d6".parseDice!, darkVision: 10, speed: 45, hitPointBonus: 1)
+            let subspeciesTraits = SpeciesTraits(name: "Subhuman", plural: "Subhumans", aliases: ["Minions"], descriptiveTraits: ["background": "Something"], minimumAge: 14, lifespan: 45, alignment: Alignment(.neutral, .evil), baseHeight: "3 ft".parseHeight!, heightModifier: "d4".parseDice!, baseWeight: "100 lb".parseWeight!, weightModifier: "d6".parseDice!, darkVision: 10, speed: 45, hitPointBonus: 1)
             copyOfSpeciesTraits.subspecies.append(subspeciesTraits)
             
             let encoded = try encoder.encode(copyOfSpeciesTraits)

@@ -12,6 +12,8 @@ import RolePlayingCore
 
 class PlayerTests: XCTestCase {
     
+    var soldierTraits: Data!
+    var soldier: BackgroundTraits!
     var humanTraits: Data!
     var human: SpeciesTraits!
     var fighterTraits: Data!
@@ -24,6 +26,18 @@ class PlayerTests: XCTestCase {
         let decoder = JSONDecoder()
         let data = try! bundle.loadJSON("TestCurrencies")
         _ = try! decoder.decode(Currencies.self, from: data)
+        
+        self.soldierTraits = """
+        {
+            "name": "Soldier",
+            "ability scores": ["Strength", "Dexterity", "Constitution"],
+            "feat": "Savage Attacker",
+            "skill proficiencies" : ["Athletics", "Intimidation"],
+            "tool proficiency": "Gaming Set",
+            "equipment": [["Spear", "Shortbow", "20 Arrows", "Gaming Set", "Healer's Kit", "Quiver", "Traveler's Clothes", "14 GP"], ["50 GP"]]
+        }
+        """.data(using: .utf8)
+        self.soldier = try! decoder.decode(BackgroundTraits.self, from: self.soldierTraits)
         
         self.fighterTraits = """
         {
@@ -43,7 +57,6 @@ class PlayerTests: XCTestCase {
         {
             "name": "Human",
             "plural": "Humans",
-            "ability scores": {"Strength": 1, "Dexterity": 1, "Constitution": 1, "Intelligence": 1, "Wisdom": 1, "Charisma": 1},
             "minimum age": 18,
             "lifespan": 90,
             "base height": "4'8\\"",
@@ -63,7 +76,7 @@ class PlayerTests: XCTestCase {
         
         // Test construction from types
         do {
-            let player = Player("Frodo", speciesTraits: human, classTraits: fighter, gender: .female, alignment: Alignment(.lawful, .neutral))
+            let player = Player("Frodo", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter, gender: .female, alignment: Alignment(.lawful, .neutral))
             XCTAssertEqual(player.name, "Frodo", "player name")
             XCTAssertEqual(player.className, "Fighter", "class name")
             XCTAssertEqual(player.speciesName, "Human", "species name")
@@ -101,12 +114,15 @@ class PlayerTests: XCTestCase {
             let playerTraits = """
             {
                 "name": "Bilbo",
+                "background": "Sailor",
                 "species": "Human",
                 "class": "Fighter",
                 "gender": "Male",
                 "height": "3'9\\"",
                 "weight": 120,
-                "ability scores": {"Dexterity": 13},
+                "ability scores": {"Dexterity": 13, "Charisma": 12},
+                "background ability scores": ["Strength", "Strength", "Dexterity"],
+                "skills": ["Athletics"],
                 "money": 130,
                 "maximum hit points": 10
             }
@@ -123,6 +139,9 @@ class PlayerTests: XCTestCase {
                 
                 XCTAssertEqual(player.gender, Player.Gender.male, "gender")
                 XCTAssertNil(player.alignment, "alignment")
+                
+                XCTAssertEqual(player.abilities[.dexterity], 14, "dexterity")
+                XCTAssertEqual(player.abilities[.charisma], 12, "charisma")
                 
                 XCTAssertEqual(player.height.value, 3.75, "height")
                 XCTAssertEqual(player.weight.value, 120, "weight")
@@ -146,12 +165,15 @@ class PlayerTests: XCTestCase {
             let playerTraits = """
             {
                 "name": "Bilbo",
+                "background": "Sailor",
                 "species": "Human",
                 "class": "Fighter",
                 "alignment": "Lawful Evil",
                 "height": "3'9\\"",
                 "weight": 120,
                 "ability scores": {"Strength": 12},
+                "background ability scores": ["Strength", "Strength", "Dexterity"],
+                "skills": ["Athletics"],
                 "money": 130,
                 "maximum hit points": 10,
                 "experience points": 2300,
@@ -189,6 +211,7 @@ class PlayerTests: XCTestCase {
         let playerTraits = """
         {
             "name": "Bilbo",
+            "background": "Sailor",
             "species": "Human",
             "class": "Fighter",
             "gender": "Male",
@@ -196,6 +219,8 @@ class PlayerTests: XCTestCase {
             "height": "3'9\\"",
             "weight": 120,
             "ability scores": {"Dexterity": 13},
+            "background ability scores": ["Strength", "Strength", "Dexterity"],
+            "skills": ["Athletics"],
             "money": 130,
             "maximum hit points": 20,
             "current hit points": 9,
@@ -226,6 +251,12 @@ class PlayerTests: XCTestCase {
             print("\(String(describing: abilities))")
             XCTAssertEqual(abilities?["Dexterity"], 13, "player traits round trip ability scores")
             
+            let backgroundAbilities = encoded["background ability scores"] as? [String]
+            XCTAssertNotNil(backgroundAbilities)
+            XCTAssertEqual(backgroundAbilities?.count, 3, "player traits round trip background ability scores count")
+            XCTAssertTrue(backgroundAbilities!.contains("Strength"), "player traits round trip background ability scores")
+            XCTAssertFalse(backgroundAbilities!.contains("Charisma"), "player traits round trip background ability scores")
+
             XCTAssertEqual(encoded["money"] as? String, "130.0 gp", "player traits round trip money")
             XCTAssertEqual(encoded["maximum hit points"] as? Int, 20, "player traits round trip maximum hit points")
             XCTAssertEqual(encoded["current hit points"] as? Int, 9, "player traits round trip current hit points")
@@ -313,10 +344,11 @@ class PlayerTests: XCTestCase {
     }
     
     func testComputedProperties() {
-        let player = Player("Gandalf", speciesTraits: human, classTraits: fighter, gender: .male, alignment: Alignment(.neutral, .good))
+        let player = Player("Gandalf", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter, gender: .male, alignment: Alignment(.neutral, .good))
         
         // Test speed (from species traits)
         XCTAssertEqual(player.speed, 30, "speed should match species speed")
+        XCTAssertEqual(player.size, .medium, "size should match species size")
         
         // Test modifiers
         for ability in player.modifiers.abilities {
@@ -334,7 +366,7 @@ class PlayerTests: XCTestCase {
     }
     
     func testProficiencyBonus() {
-        let player = Player("Aragorn", speciesTraits: human, classTraits: fighter)
+        let player = Player("Aragorn", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
         
         // Level 1-4: +2
         player.level = 1
@@ -373,7 +405,7 @@ class PlayerTests: XCTestCase {
     }
     
     func testHitDiceAtDifferentLevels() {
-        let player = Player("Legolas", speciesTraits: human, classTraits: fighter)
+        let player = Player("Legolas", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
         
         player.level = 1
         XCTAssertEqual("\(player.hitDice)", "d10", "hit dice at level 1")
@@ -389,10 +421,10 @@ class PlayerTests: XCTestCase {
     }
     
     func testHashableConformance() {
-        let player1 = Player("Gimli", speciesTraits: human, classTraits: fighter, gender: .male, alignment: Alignment(.lawful, .good))
+        let player1 = Player("Gimli", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter, gender: .male, alignment: Alignment(.lawful, .good))
         player1.descriptiveTraits = ["ideal": "Honor", "bond": "My axe"]
         
-        let player2 = Player("Gimli", speciesTraits: human, classTraits: fighter, gender: .male, alignment: Alignment(.lawful, .good))
+        let player2 = Player("Gimli", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter, gender: .male, alignment: Alignment(.lawful, .good))
         player2.speciesTraits = human
         player2.classTraits = fighter
         player2.baseAbilities = player1.baseAbilities
@@ -424,14 +456,14 @@ class PlayerTests: XCTestCase {
     }
     
     func testPlayerInequality() {
-        let player1 = Player("Boromir", speciesTraits: human, classTraits: fighter)
-        let player2 = Player("Faramir", speciesTraits: human, classTraits: fighter)
+        let player1 = Player("Boromir", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        let player2 = Player("Faramir", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
         
         // Different names
         XCTAssertNotEqual(player1, player2, "players with different names should not be equal")
         
         // Different hit points
-        let player3 = Player("Boromir", speciesTraits: human, classTraits: fighter)
+        let player3 = Player("Boromir", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
         player3.baseAbilities = player1.baseAbilities
         player3.height = player1.height
         player3.weight = player1.weight
@@ -443,18 +475,18 @@ class PlayerTests: XCTestCase {
     
     func testGenderCases() {
         // Test all gender cases
-        let female = Player("Diana", speciesTraits: human, classTraits: fighter, gender: .female)
+        let female = Player("Diana", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter, gender: .female)
         XCTAssertEqual(female.gender, .female, "female gender")
         
-        let male = Player("Arthur", speciesTraits: human, classTraits: fighter, gender: .male)
+        let male = Player("Arthur", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter, gender: .male)
         XCTAssertEqual(male.gender, .male, "male gender")
         
-        let agender = Player("Riley", speciesTraits: human, classTraits: fighter, gender: nil)
+        let agender = Player("Riley", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter, gender: nil)
         XCTAssertNil(agender.gender, "nil gender for androgynous/hermaphroditic")
     }
     
     func testDescriptiveTraits() {
-        let player = Player("Samwise", speciesTraits: human, classTraits: fighter)
+        let player = Player("Samwise", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
         
         // Initially empty
         XCTAssertEqual(player.descriptiveTraits.count, 0)
@@ -501,8 +533,9 @@ class PlayerTests: XCTestCase {
     }
     
     func testSpeciesAndClassTraitsDidSet() {
-        let player = Player("Test", speciesTraits: human, classTraits: fighter)
+        let player = Player("Test", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
         
+        XCTAssertEqual(player.backgroundName, "Soldier")
         XCTAssertEqual(player.speciesName, "Human")
         XCTAssertEqual(player.className, "Fighter")
         
@@ -524,6 +557,7 @@ class PlayerTests: XCTestCase {
         let playerTraits = """
         {
             "name": "Pippin",
+            "background": "Sailor",
             "species": "Human",
             "class": "Fighter",
             "descriptive traits": {
@@ -534,6 +568,8 @@ class PlayerTests: XCTestCase {
             "height": "4'2\\"",
             "weight": 95,
             "ability scores": {"Charisma": 14, "Dexterity": 15},
+            "background ability scores": ["Strength", "Strength", "Dexterity"],
+            "skills": ["Athletics"],
             "money": 100,
             "maximum hit points": 12
         }
@@ -573,11 +609,14 @@ class PlayerTests: XCTestCase {
         let playerTraits = """
         {
             "name": "Merry",
+            "background": "Sailor",
             "species": "Human",
             "class": "Fighter",
             "height": "4'2\\"",
             "weight": 95,
             "ability scores": {"Strength": 14},
+            "background ability scores": ["Strength", "Strength", "Dexterity"],
+            "skills": ["Athletics"],
             "money": 100,
             "maximum hit points": 12,
             "experience points": 0,

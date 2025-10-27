@@ -1,5 +1,6 @@
 {
     "currencies": ["Currencies"],
+    "backgrounds": ["Backgrounds"],
     "classes": ["Classes"],
     "species": ["Species"],
     "species names": "SpeciesNames"

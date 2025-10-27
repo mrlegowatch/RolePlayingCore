@@ -9,7 +9,15 @@
 import Foundation
 
 extension Player {
-    
+ 
+    // TODO: support KeyedArchiver?
+    func resolveBackgrounds(from backgrounds: Backgrounds) throws {
+        guard let backgroundTraits = backgrounds.find(self.backgroundName) else {
+            throw RuntimeError("Could not resolve background name \(self.backgroundName)")
+        }
+        self.backgroundTraits = backgroundTraits
+    }
+
     // TODO: support KeyedArchiver?
     func resolveSpecies(from species: Species) throws {
         guard let speciesTraits = species.find(self.speciesName) else {
@@ -32,8 +40,9 @@ public class Players: Codable {
 
     public var players = [Player]()
     
-    public func resolve(classes: Classes, species: Species) throws {
+    public func resolve(backgrounds: Backgrounds, classes: Classes, species: Species) throws {
         for player in players {
+            try player.resolveBackgrounds(from: backgrounds)
             try player.resolveSpecies(from: species)
             try player.resolveClass(from: classes)
         }

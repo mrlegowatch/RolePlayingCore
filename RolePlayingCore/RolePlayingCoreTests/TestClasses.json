@@ -28,8 +28,8 @@
                 "primary ability": ["Wisdom"],
                 "saving throws": ["Wisdom", "Charisma"],
                 "starting wealth": "5d4x10",
-                "armor": ["light", "medium", "shield"],
-                "weapons": ["simple"],
+                "armor training": ["light", "medium", "shield"],
+                "weapon proficiencies": ["simple"],
                 },
                 {
                 "name": "Fighter",
@@ -39,8 +39,8 @@
                 "alternate primary ability": ["Dexterity"],
                 "saving throws": ["Strength", "Constitution"],
                 "starting wealth": "5d4x10",
-                "armor": ["all"],
-                "weapons": ["simple", "martial"],
+                "armor training": ["all"],
+                "weapon proficiencies": ["simple", "martial"],
                 },
                 {
                 "name": "Rogue",
@@ -50,8 +50,8 @@
                 "primary ability": ["Dexterity"],
                 "saving throws": ["Dexterity", "Intelligence"],
                 "starting wealth": "4d4x10",
-                "armor": ["light"],
-                "weapons": ["simple", "hand crossbow", "longsword", "rapier", "shortsword"],
+                "armor training": ["light"],
+                "weapon proficiencies": ["simple", "hand crossbow", "longsword", "rapier", "shortsword"],
                 },
                 {
                 "name": "Wizard",
@@ -60,8 +60,8 @@
                 "primary ability": ["Intelligence"],
                 "saving throws": ["Intelligence", "Wisdom"],
                 "starting wealth": "4d4x10",
-                "armor": [],
-                "weapons": ["dagger", "dart", "sling", "quarterstaff", "light crossbow"],
+                "armor training": [],
+                "weapon proficiencies": ["dagger", "dart", "sling", "quarterstaff", "light crossbow"],
                 }
                 ]
 }

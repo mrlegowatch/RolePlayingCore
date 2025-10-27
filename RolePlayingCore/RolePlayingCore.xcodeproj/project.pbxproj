@@ -15,6 +15,11 @@
 		B620560F1E19DDD0002494AB /* DiceParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = B620560C1E19DDD0002494AB /* DiceParser.swift */; };
 		B621A3981F0C052D00E55236 /* NameGeneratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B621A3971F0C052D00E55236 /* NameGeneratorTests.swift */; };
 		B621A3991F0C06A700E55236 /* NameGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B621A3961F0C020000E55236 /* NameGenerator.swift */; };
+		B626FA592EAE76AE00359F01 /* Skill.swift in Sources */ = {isa = PBXBuildFile; fileRef = B626FA582EAE76AA00359F01 /* Skill.swift */; };
+		B626FA5B2EAE803000359F01 /* BackgroundTraits.swift in Sources */ = {isa = PBXBuildFile; fileRef = B626FA5A2EAE802D00359F01 /* BackgroundTraits.swift */; };
+		B626FA5D2EAE81C900359F01 /* Backgrounds.swift in Sources */ = {isa = PBXBuildFile; fileRef = B626FA5C2EAE81C600359F01 /* Backgrounds.swift */; };
+		B626FA612EAE919900359F01 /* TestBackgrounds.json in Resources */ = {isa = PBXBuildFile; fileRef = B626FA602EAE919200359F01 /* TestBackgrounds.json */; };
+		B626FA642EAF9FCF00359F01 /* BackgroundsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B626FA622EAF9F9200359F01 /* BackgroundsTests.swift */; };
 		B62D89C41F09A3870095D587 /* DiceParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B62D89C31F09A3870095D587 /* DiceParserTests.swift */; };
 		B64C369621756BC300C4F6BE /* DiceRoll.swift in Sources */ = {isa = PBXBuildFile; fileRef = B64C369521756BC300C4F6BE /* DiceRoll.swift */; };
 		B6688B512EACF5B7000A83DD /* Initiative.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6688B502EACF5AE000A83DD /* Initiative.swift */; };
@@ -100,6 +105,11 @@
 		B620560C1E19DDD0002494AB /* DiceParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiceParser.swift; sourceTree = "<group>"; };
 		B621A3961F0C020000E55236 /* NameGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NameGenerator.swift; sourceTree = "<group>"; };
 		B621A3971F0C052D00E55236 /* NameGeneratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NameGeneratorTests.swift; sourceTree = "<group>"; };
+		B626FA582EAE76AA00359F01 /* Skill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Skill.swift; sourceTree = "<group>"; };
+		B626FA5A2EAE802D00359F01 /* BackgroundTraits.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundTraits.swift; sourceTree = "<group>"; };
+		B626FA5C2EAE81C600359F01 /* Backgrounds.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Backgrounds.swift; sourceTree = "<group>"; };
+		B626FA602EAE919200359F01 /* TestBackgrounds.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = TestBackgrounds.json; sourceTree = "<group>"; };
+		B626FA622EAF9F9200359F01 /* BackgroundsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundsTests.swift; sourceTree = "<group>"; };
 		B62D89C31F09A3870095D587 /* DiceParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiceParserTests.swift; sourceTree = "<group>"; };
 		B64C369521756BC300C4F6BE /* DiceRoll.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DiceRoll.swift; sourceTree = "<group>"; };
 		B6688B502EACF5AE000A83DD /* Initiative.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Initiative.swift; sourceTree = "<group>"; };
@@ -220,6 +230,7 @@
 				B62055FC1E19DD23002494AB /* RolePlayingCoreTests.swift */,
 				B6FA6CC81E4BF5F9004D91B1 /* AbilityTests.swift */,
 				B6F070351E4F991D00F66918 /* AlignmentTests.swift */,
+				B626FA622EAF9F9200359F01 /* BackgroundsTests.swift */,
 				B69F846A1E58D33900A4D2B0 /* PlayerTests.swift */,
 				B69F846E1E59155A00A4D2B0 /* PlayersTests.swift */,
 				B6FA6CB51E47B080004D91B1 /* CurrencyTests.swift */,
@@ -245,6 +256,7 @@
 				B69F84721E591DE400A4D2B0 /* InvalidClassPlayers.json */,
 				B69F84741E591E9800A4D2B0 /* InvalidSpeciesPlayers.json */,
 				B66AF8F41EAE87A800C15F8E /* TestClasses.json */,
+				B626FA602EAE919200359F01 /* TestBackgrounds.json */,
 				B66AF8F71EAE87A800C15F8E /* TestMoreClasses.json */,
 				B66AF8F51EAE87A800C15F8E /* TestConfiguration.json */,
 				B6F4AA4B1F12CE17000C72D2 /* TestCharacterGenerator.json */,
@@ -313,6 +325,9 @@
 			children = (
 				B6FA6CC41E4A96D1004D91B1 /* Ability.swift */,
 				B6FA6CCA1E4E7AEA004D91B1 /* Alignment.swift */,
+				B626FA582EAE76AA00359F01 /* Skill.swift */,
+				B626FA5A2EAE802D00359F01 /* BackgroundTraits.swift */,
+				B626FA5C2EAE81C600359F01 /* Backgrounds.swift */,
 				B6CF538F1E51DA1300CADD9F /* ClassTraits.swift */,
 				B6CF53CF1E54E2E200CADD9F /* Classes.swift */,
 				B69F84681E58B8F700A4D2B0 /* Player.swift */,
@@ -438,6 +453,7 @@
 				B69F84751E591E9800A4D2B0 /* InvalidSpeciesPlayers.json in Resources */,
 				B66AF9011EAE87A800C15F8E /* TestNames.json in Resources */,
 				B66AF8FD1EAE87A800C15F8E /* TestConfiguration.json in Resources */,
+				B626FA612EAE919900359F01 /* TestBackgrounds.json in Resources */,
 				B66AF9091EAE8B8100C15F8E /* MissingClassPlayers.json in Resources */,
 				B69F84731E591DE400A4D2B0 /* InvalidClassPlayers.json in Resources */,
 				B66AF8FF1EAE87A800C15F8E /* TestMoreClasses.json in Resources */,
@@ -484,8 +500,11 @@
 				B681B71A1EAAC8FB001DE78B /* CompoundDice.swift in Sources */,
 				B6FA6CBD1E47B803004D91B1 /* Weight.swift in Sources */,
 				B6FA6CC51E4A96D1004D91B1 /* Ability.swift in Sources */,
+				B626FA592EAE76AE00359F01 /* Skill.swift in Sources */,
 				B681B7181EAAC8EE001DE78B /* DiceModifier.swift in Sources */,
+				B626FA5B2EAE803000359F01 /* BackgroundTraits.swift in Sources */,
 				B69F84691E58B8F700A4D2B0 /* Player.swift in Sources */,
+				B626FA5D2EAE81C900359F01 /* Backgrounds.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -499,6 +518,7 @@
 				B6F4AA4A1F12CD2A000C72D2 /* CharacterGeneratorTests.swift in Sources */,
 				B69F846F1E59155A00A4D2B0 /* PlayersTests.swift in Sources */,
 				B62D89C41F09A3870095D587 /* DiceParserTests.swift in Sources */,
+				B626FA642EAF9FCF00359F01 /* BackgroundsTests.swift in Sources */,
 				B6CF53DB1E56443A00CADD9F /* ClassesTests.swift in Sources */,
 				B621A3981F0C052D00E55236 /* NameGeneratorTests.swift in Sources */,
 				B6CF53921E51DEDD00CADD9F /* ClassTraitsTests.swift in Sources */,

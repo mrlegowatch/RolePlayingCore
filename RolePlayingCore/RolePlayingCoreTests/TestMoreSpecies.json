@@ -3,7 +3,6 @@
               {
               "name": "Dragonborn",
               "plural": "Dragonborn",
-              "ability scores": { "Strength": 2, "Charisma": 1 },
               "minimum age": 15,
               "lifespan": 80,
               "alignment": "Good",
@@ -12,13 +11,12 @@
               "base weight": 175,
               "weight modifier": "2d6",
               "speed": 30,
-              "skills": ["draconic ancestry", "breath weapon", "damage"],
+              "skill proficiencies": ["draconic ancestry", "breath weapon", "damage"],
               "languages": ["Common", "Draconic"]
               },
               {
               "name": "Gnome",
               "plural": "Gnomes",
-              "ability scores": { "Intelligence": 2 },
               "minimum age": 40,
               "lifespan": 425,
               "alignment": "Good",
@@ -27,25 +25,22 @@
               "base weight": 35,
               "speed": 25,
               "darkvision": 60,
-              "skills": ["gnome cunning"],
+              "skill proficiencies": ["gnome cunning"],
               "languages": ["Common", "Gnomish"],
               "subspecies": [{
                            "name": "Forest Gnome",
                            "plural": "Forest Gnomes",
-                           "ability scores": { "Dexterity": 1 },
-                           "skills": ["natural illusionist", "speak with small beasts"]
+                           "skill proficiencies": ["natural illusionist", "speak with small beasts"]
                            },
                            {
                            "name": "Rock Gnome",
                            "plural": "Rock Gnomes",
-                           "ability scores": { "Constitution": 1 },
-                           "skills": ["artificers lore", "tinker"]
+                           "skill proficiencies": ["artificers lore", "tinker"]
                            }]
               },
               {
               "name": "Half-Elf",
               "plural": "Half-Elves",
-              "ability scores": { "Strength": 1 },
               "ability score bonuses": 2,
               "minimum age": 20,
               "lifespan": 180,
@@ -56,7 +51,7 @@
               "weight modifier": "2d4",
               "speed": 30,
               "darkvision": 60,
-              "skills": ["fey ancestry"],
+              "skill proficiencies": ["fey ancestry"],
               "languages": ["Common", "Elvish"],
               "extra languages": 1,
               "skill versatility": 2
@@ -64,7 +59,6 @@
               {
               "name": "Half-Orc",
               "plural": "Half-Orcs",
-              "ability scores": { "Strength": 2, "Constitution": 1 },
               "minimum age": 14,
               "lifespan": 75,
               "alignment": "Chaotic",
@@ -74,13 +68,12 @@
               "weight modifier": "2d6",
               "speed": 30,
               "darkvision": 60,
-              "skills": ["menacing", "relentless endurance", "savage attacks"],
+              "skill proficiencies": ["menacing", "relentless endurance", "savage attacks"],
               "languages": ["Common", "Orcish"]
               },
               {
               "name": "Tiefling",
               "plural": "Tieflings",
-              "ability scores": { "Intelligence": 1, "Charisma": 2 },
               "minimum age": 18,
               "lifespan": 100,
               "alignment": "Chaotic",
@@ -90,7 +83,7 @@
               "weight modifier": "2d4",
               "speed": 30,
               "darkvision": 60,
-              "skills": ["hellish resistance", "infernal legacy"],
+              "skill proficiencies": ["hellish resistance", "infernal legacy"],
               "languages": ["Common", "Infernal"]
               }
               ]

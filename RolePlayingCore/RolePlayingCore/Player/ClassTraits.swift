@@ -17,8 +17,15 @@ public struct ClassTraits {
     
     public var descriptiveTraits: [String: String]
     public var primaryAbility: [Ability]
+    public var alternatePrimaryAbility: [Ability]?
     public var savingThrows: [Ability]
     public var experiencePoints: [Int]?
+    public var startingSkillCount: Int
+    public var skillProficiencies: [String]
+    public var weaponProficiencies: [String]
+    public var toolProficiencies: [String]
+    public var armorTraining: [String]
+    public var startingEquipment: [[String]]
     
     /// Accesses the experiencePoints array for the specified 1-based level.
     public func minExperiencePoints(at level: Int) -> Int {
@@ -37,13 +44,29 @@ public struct ClassTraits {
     
     /// Accesses the maximum experience points for the specified 1-based level.
     public func maxExperiencePoints(at level: Int) -> Int {
+        guard level > 0 else { return 0 }
+        
         // One less than the minimum for the next level
-        minExperiencePoints(at: level + 1) - 1
+        return minExperiencePoints(at: level + 1) - 1
     }
     
     // TODO: weapons, armor, skills, etc.
     
-    public init(name: String, plural: String, hitDice: Dice, startingWealth: Dice, descriptiveTraits: [String: String] = [:], primaryAbility: [Ability] = [], savingThrows: [Ability] = [], experiencePoints: [Int]? = nil) {
+    public init(name: String,
+                plural: String,
+                hitDice: Dice,
+                startingWealth: Dice,
+                descriptiveTraits: [String: String] = [:],
+                primaryAbility: [Ability] = [],
+                alternatePrimaryAbility: [Ability]? = nil,
+                savingThrows: [Ability] = [],
+                startingSkillCount: Int = 2,
+                skillProficiencies: [String] = [],
+                weaponProficiencies: [String] = [],
+                toolProficiencies: [String] = [],
+                armorTraining: [String] = [],
+                startingEquipment: [[String]] = [],
+                experiencePoints: [Int]? = nil) {
         self.name = name
         self.plural = plural
         self.hitDice = hitDice
@@ -51,7 +74,14 @@ public struct ClassTraits {
         
         self.descriptiveTraits = descriptiveTraits
         self.primaryAbility = primaryAbility
+        self.alternatePrimaryAbility = alternatePrimaryAbility
         self.savingThrows = savingThrows
+        self.startingSkillCount = startingSkillCount
+        self.skillProficiencies = skillProficiencies
+        self.weaponProficiencies = weaponProficiencies
+        self.toolProficiencies = toolProficiencies
+        self.armorTraining = armorTraining
+        self.startingEquipment = startingEquipment
         self.experiencePoints = experiencePoints
     }
 }
@@ -65,7 +95,14 @@ extension ClassTraits: Codable {
         case startingWealth = "starting wealth"
         case descriptiveTraits = "descriptive traits"
         case primaryAbility = "primary ability"
+        case alternatePrimaryAbility = "alternate primary ability"
         case savingThrows = "saving throws"
+        case startingSkillCount = "starting skill count"
+        case skillProficiencies = "skill proficiencies"
+        case weaponProficiencies = "weapon proficiencies"
+        case toolProficiencies = "tool proficiencies"
+        case armorTraining = "armor training"
+        case startingEquipment = "starting equipment"
         case experiencePoints = "experience points"
     }
     
@@ -80,7 +117,15 @@ extension ClassTraits: Codable {
         
         let descriptiveTraits = try values.decodeIfPresent([String:String].self, forKey: .descriptiveTraits)
         let primaryAbility = try values.decodeIfPresent([Ability].self, forKey: .primaryAbility)
+        let alternatePrimaryAbility = try values.decodeIfPresent([Ability].self, forKey: .alternatePrimaryAbility)
         let savingThrows = try values.decodeIfPresent([Ability].self, forKey: .savingThrows)
+        let startingSkillCount: Int? = try values.decodeIfPresent(Int.self, forKey: .startingSkillCount)
+        let skillProficiencies = try values.decodeIfPresent([String].self, forKey: .skillProficiencies)
+        let weaponProficiencies = try values.decodeIfPresent([String].self, forKey: .weaponProficiencies)
+        let toolProficiencies = try values.decodeIfPresent([String].self, forKey: .toolProficiencies)
+        let armorTraining: [String]? = try values.decodeIfPresent([String].self, forKey: .armorTraining)
+        let startingEquipment: [[String]]? = try values.decodeIfPresent([[String]].self, forKey: .startingEquipment)
+        
         let experiencePoints = try values.decodeIfPresent([Int].self, forKey: .experiencePoints)
         
         // Safely set properties
@@ -91,7 +136,15 @@ extension ClassTraits: Codable {
         
         self.descriptiveTraits = descriptiveTraits ?? [:]
         self.primaryAbility = primaryAbility ?? []
+        self.alternatePrimaryAbility = alternatePrimaryAbility
         self.savingThrows = savingThrows ?? []
+        self.startingSkillCount = startingSkillCount ?? 2
+        self.skillProficiencies = skillProficiencies ?? []
+        self.weaponProficiencies = weaponProficiencies ?? []
+        self.toolProficiencies = toolProficiencies ?? []
+        self.armorTraining = armorTraining ?? []
+        self.startingEquipment = startingEquipment ?? []
+        
         self.experiencePoints = experiencePoints
     }
         
@@ -103,9 +156,17 @@ extension ClassTraits: Codable {
         try values.encode("\(hitDice)", forKey: .hitDice)
         try values.encode("\(startingWealth)", forKey: .startingWealth)
         
-        try values.encodeIfPresent(descriptiveTraits, forKey: .descriptiveTraits)
-        try values.encodeIfPresent(primaryAbility, forKey: .primaryAbility)
-        try values.encodeIfPresent(savingThrows, forKey: .savingThrows)
+        try values.encode(descriptiveTraits, forKey: .descriptiveTraits)
+        try values.encode(primaryAbility, forKey: .primaryAbility)
+        try values.encodeIfPresent(alternatePrimaryAbility, forKey: .alternatePrimaryAbility)
+        try values.encode(savingThrows, forKey: .savingThrows)
+        try values.encode(startingSkillCount, forKey: .startingSkillCount)
+        try values.encode(skillProficiencies, forKey: .skillProficiencies)
+        try values.encode(weaponProficiencies, forKey: .weaponProficiencies)
+        try values.encode(toolProficiencies, forKey: .toolProficiencies)
+        try values.encode(armorTraining, forKey: .armorTraining)
+        try values.encode(startingEquipment, forKey: .startingEquipment)
+        
         try values.encodeIfPresent(experiencePoints, forKey: .experiencePoints)
     }
 }

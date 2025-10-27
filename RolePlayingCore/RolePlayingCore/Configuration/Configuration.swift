@@ -14,6 +14,7 @@ import Foundation
 
 public struct ConfigurationFiles: Decodable {
     let currencies: [String]
+    let backgrounds: [String]
     let species: [String]
     let classes: [String]
     let players: [String]?
@@ -21,6 +22,7 @@ public struct ConfigurationFiles: Decodable {
     
     private enum CodingKeys: String, CodingKey {
         case currencies
+        case backgrounds
         case species
         case classes
         case players
@@ -35,6 +37,7 @@ public struct Configuration {
     
     public var configurationFiles: ConfigurationFiles
     
+    public var backgrounds = Backgrounds()
     public var species = Species()
     public var classes = Classes()
     public var players = Players()
@@ -53,6 +56,12 @@ public struct Configuration {
         for currenciesFile in configurationFiles.currencies {
             let jsonData = try bundle.loadJSON(currenciesFile)
             _ = try jsonDecoder.decode(Currencies.self, from: jsonData)
+        }
+        
+        for backgroundsFile in configurationFiles.backgrounds {
+            let jsonData = try bundle.loadJSON(backgroundsFile)
+            let backgrounds = try jsonDecoder.decode(Backgrounds.self, from: jsonData)
+            self.backgrounds.backgrounds += backgrounds.backgrounds
         }
         
         for speciesFile in configurationFiles.species {
@@ -80,7 +89,7 @@ public struct Configuration {
             for playersFile in playersFiles {
                 let jsonData = try bundle.loadJSON(playersFile)
                 let players = try jsonDecoder.decode(Players.self, from: jsonData)
-                try players.resolve(classes: self.classes, species: self.species)
+                try players.resolve(backgrounds: self.backgrounds, classes: self.classes, species: self.species)
                 self.players.players += players.players
             }
         }

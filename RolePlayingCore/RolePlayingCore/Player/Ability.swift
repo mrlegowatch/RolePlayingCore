@@ -232,10 +232,7 @@ extension AbilityScores {
     
     /// Creates a set of default ability scores with values initialized to 0.
     public init(defaults: [Ability] = Ability.defaults) {
-        scores = [Ability: Int](minimumCapacity: defaults.count)
-        for ability in defaults {
-            scores[ability] = 0
-        }
+        scores = Dictionary(uniqueKeysWithValues: defaults.map { ($0, 0) })
     }
     
 }

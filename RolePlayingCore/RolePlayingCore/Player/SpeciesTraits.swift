@@ -14,7 +14,6 @@ public struct SpeciesTraits {
     public var plural: String
     public var aliases: [String]
     public var descriptiveTraits: [String: String]
-    public var abilityScoreIncrease: AbilityScores
     public var minimumAge: Int!
     public var lifespan: Int!
     public var alignment: Alignment?
@@ -30,30 +29,54 @@ public struct SpeciesTraits {
     public var subspecies: [SpeciesTraits] = []
     
     public enum Size {
+        case tiny
         case small
         case medium
         case large
-    }
-    
-    public func size(from height: Height) -> Size {
-        let heightInFeet = height.converted(to: .feet)
-        switch heightInFeet.value {
-        case 0..<4:
-            return .small
-        case 4..<7:
-            return .medium
-        default:
-            return .large
+        case huge
+        case gargantuan
+        
+        init(from height: Height) {
+            let heightInFeet = height.converted(to: .feet)
+            switch heightInFeet.value {
+            case 0..<4:
+                self = .small
+            case 4..<7:
+                self = .medium
+            default:
+                self = .large
+            }
+        }
+        
+        /// Space required in feet (dimension feet x feet)
+        var space: Double {
+            switch self {
+            case .tiny: return 2.5
+            case .small, .medium: return 5.0
+            case .large: return 10.0
+            case .huge: return 15.0
+            case .gargantuan: return 20.0
+            }
+        }
+        
+        /// Space required in squares
+        var squares: Double {
+            switch self {
+            case .tiny: return 0.25
+            case .small, .medium: return 1.0
+            case .large: return 4.0
+            case .huge: return 9.0
+            case .gargantuan: return 16.0
+            }
         }
     }
     
-    public var size: Size { size(from: baseHeight) }
+    public var size: Size { Size(from: baseHeight) }
     
     public init(name: String,
                 plural: String,
                 aliases: [String] = [],
                 descriptiveTraits: [String: String] = [:],
-                abilityScoreIncrease: AbilityScores = AbilityScores(),
                 minimumAge: Int,
                 lifespan: Int,
                 alignment: Alignment? = nil,
@@ -68,7 +91,6 @@ public struct SpeciesTraits {
         self.plural = plural
         self.aliases = aliases
         self.descriptiveTraits = descriptiveTraits
-        self.abilityScoreIncrease = abilityScoreIncrease
         self.minimumAge = minimumAge
         self.lifespan = lifespan
         self.alignment = alignment
@@ -89,7 +111,6 @@ extension SpeciesTraits: Codable {
         case plural
         case aliases
         case descriptiveTraits = "descriptive traits"
-        case abilityScoreIncrease = "ability scores"
         case minimumAge = "minimum age"
         case lifespan
         case alignment
@@ -111,7 +132,6 @@ extension SpeciesTraits: Codable {
         let plural = try values.decode(String.self, forKey: .plural)
         let aliases = try values.decodeIfPresent([String].self, forKey: .aliases)
         let descriptiveTraits = try values.decodeIfPresent([String:String].self, forKey: .descriptiveTraits)
-        let abilityScoreIncrease = try values.decodeIfPresent(AbilityScores.self, forKey: .abilityScoreIncrease)
         let minimumAge = try values.decodeIfPresent(Int.self, forKey: .minimumAge)
         let lifespan = try values.decodeIfPresent(Int.self, forKey: .lifespan)
         let alignment = try values.decodeIfPresent(Alignment.self, forKey: .alignment)
@@ -128,7 +148,6 @@ extension SpeciesTraits: Codable {
         self.plural = plural
         self.aliases = aliases ?? []
         self.descriptiveTraits = descriptiveTraits ?? [:]
-        self.abilityScoreIncrease = abilityScoreIncrease ?? AbilityScores()
         self.minimumAge = minimumAge
         self.lifespan = lifespan
         self.alignment = alignment
@@ -156,9 +175,6 @@ extension SpeciesTraits: Codable {
         // Name, plural, aliases and descriptive traits are unique to each set of species traits.
         // The rest may be inherited from the parent.
         self.parentName = parent.name
-        
-        // Combine ability scores together
-        self.abilityScoreIncrease += parent.abilityScoreIncrease
         
         if self.minimumAge == nil {
             self.minimumAge = parent.minimumAge
@@ -199,7 +215,6 @@ extension SpeciesTraits: Codable {
         try values.encode(plural, forKey: .plural)
         try values.encode(aliases, forKey: .aliases)
         try values.encode(descriptiveTraits, forKey: .descriptiveTraits)
-        try values.encode(abilityScoreIncrease, forKey: .abilityScoreIncrease)
         try values.encode(minimumAge, forKey: .minimumAge)
         try values.encode(lifespan, forKey: .lifespan)
         
@@ -234,12 +249,6 @@ extension SpeciesTraits: Codable {
         }
         if self.descriptiveTraits.count > 0 {
             try values.encode(descriptiveTraits, forKey: .descriptiveTraits)
-        }
-        
-        // Un-combine ability scores
-        if self.abilityScoreIncrease != parent.abilityScoreIncrease {
-            let delta = self.abilityScoreIncrease - parent.abilityScoreIncrease
-            try values.encode(delta, forKey: .abilityScoreIncrease)
         }
         
         if self.minimumAge != parent.minimumAge {

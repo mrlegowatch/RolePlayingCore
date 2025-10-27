@@ -22,7 +22,6 @@ class ConfigurationTests: XCTestCase {
             let abilities = Ability.defaults
             for ability in abilities {
                 var importantFor = [String]()
-                var speciesIncreases = [String]()
                 
                 for classTraits in configuration.classes.classes {
                     if classTraits.primaryAbility.contains(ability) {
@@ -30,21 +29,11 @@ class ConfigurationTests: XCTestCase {
                     }
                 }
                 
-                for speciesTraits in configuration.species.species {
-                    if let increase = speciesTraits.abilityScoreIncrease[ability], increase != 0 {
-                        
-                        speciesIncreases.append("\(speciesTraits.name) (+\(increase))")
-                    }
-                }
-                
                 // TODO: make into assertions. For now, visually compare results.
                 print(ability.name)
                 let important = importantFor.count == 0 ? ["Everyone"] : importantFor
                 print("Important for: \(important)")
-                print("Species increases: \(speciesIncreases)")
             }
-            
-            
         }
         catch let error {
             XCTFail("Configuration threw an error: \(error)")

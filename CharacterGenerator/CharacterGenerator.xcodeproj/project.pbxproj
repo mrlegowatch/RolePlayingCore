@@ -10,6 +10,7 @@
 		B621A3B01F0C1C7400E55236 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B621A3AF1F0C1C7400E55236 /* Assets.xcassets */; };
 		B621A3B31F0C1C7400E55236 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B621A3B11F0C1C7400E55236 /* LaunchScreen.storyboard */; };
 		B621A3BE1F0C1C7500E55236 /* CharacterGeneratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B621A3BD1F0C1C7500E55236 /* CharacterGeneratorTests.swift */; };
+		B626FA5F2EAE829D00359F01 /* Backgrounds.json in Resources */ = {isa = PBXBuildFile; fileRef = B626FA5E2EAE829300359F01 /* Backgrounds.json */; };
 		B64F68E02EA6867B006D6C77 /* CharacterGeneratorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B64F68DF2EA6867B006D6C77 /* CharacterGeneratorApp.swift */; };
 		B64F68E22EA68686006D6C77 /* PlayerListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B64F68E12EA68686006D6C77 /* PlayerListView.swift */; };
 		B64F68E42EA6868A006D6C77 /* PlayerDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B64F68E32EA6868A006D6C77 /* PlayerDetailView.swift */; };
@@ -65,6 +66,7 @@
 		B621A3BD1F0C1C7500E55236 /* CharacterGeneratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterGeneratorTests.swift; sourceTree = "<group>"; };
 		B621A3BF1F0C1C7500E55236 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B621A3D61F0C1E3500E55236 /* GenericPlayer image license.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "GenericPlayer image license.txt"; sourceTree = "<group>"; };
+		B626FA5E2EAE829300359F01 /* Backgrounds.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Backgrounds.json; sourceTree = "<group>"; };
 		B64F68DF2EA6867B006D6C77 /* CharacterGeneratorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterGeneratorApp.swift; sourceTree = "<group>"; };
 		B64F68E12EA68686006D6C77 /* PlayerListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerListView.swift; sourceTree = "<group>"; };
 		B64F68E32EA6868A006D6C77 /* PlayerDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerDetailView.swift; sourceTree = "<group>"; };
@@ -175,6 +177,7 @@
 			children = (
 				B6A1AE441F0C4383008ADF08 /* Configuration.json */,
 				B6A1AE431F0C4383008ADF08 /* Classes.json */,
+				B626FA5E2EAE829300359F01 /* Backgrounds.json */,
 				B6A1AE451F0C4383008ADF08 /* Currencies.json */,
 				B6A1AE461F0C4383008ADF08 /* Species.json */,
 				B6A1AE4B1F0C5ABF008ADF08 /* SpeciesNames.json */,
@@ -304,6 +307,7 @@
 				B6A1AE481F0C4421008ADF08 /* Configuration.json in Resources */,
 				B6A1AE4A1F0C4429008ADF08 /* Species.json in Resources */,
 				B621A3B31F0C1C7400E55236 /* LaunchScreen.storyboard in Resources */,
+				B626FA5F2EAE829D00359F01 /* Backgrounds.json in Resources */,
 				B6A1AE491F0C4426008ADF08 /* Currencies.json in Resources */,
 				B621A3B01F0C1C7400E55236 /* Assets.xcassets in Resources */,
 				B6A1AE471F0C441E008ADF08 /* Classes.json in Resources */,

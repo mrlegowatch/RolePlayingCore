@@ -7,8 +7,8 @@
                 "primary ability": ["Strength"],
                 "saving throws": ["Strength", "Constitution"],
                 "starting wealth": "2d4x10",
-                "armor": ["light", "medium", "shield"],
-                "weapons": ["simple", "martial"],
+                "armor training": ["light", "medium", "shield"],
+                "weapon proficiencies": ["simple", "martial"],
                 },
                 {
                 "name": "Bard",
@@ -17,8 +17,8 @@
                 "primary ability": ["Charisma"],
                 "saving throws": ["Dexterity", "Charisma"],
                 "starting wealth": "5d4x10",
-                "armor": ["light"],
-                "weapons": ["simple", "hand crossbow", "longsword", "rapier", "shortsword"],
+                "armor training": ["light"],
+                "weapon proficiencies": ["simple", "hand crossbow", "longsword", "rapier", "shortsword"],
                 },
                 {
                 "name": "Druid",
@@ -27,8 +27,8 @@
                 "primary ability": ["Wisdom"],
                 "saving throws": ["Intelligence", "Wisdom"],
                 "starting wealth": "2d4x10",
-                "armor": ["light", "medium", "shields", "nonmetal"],
-                "weapons": ["club", "dagger", "dart", "javelin", "mace", "quarterstaff", "scimitar", "sickle", "sling", "spear"],
+                "armor training": ["light", "medium", "shields", "nonmetal"],
+                "weapon proficiencies": ["club", "dagger", "dart", "javelin", "mace", "quarterstaff", "scimitar", "sickle", "sling", "spear"],
                 },
                 {
                 "name": "Monk",
@@ -37,8 +37,8 @@
                 "primary ability": ["Dexterity", "Wisdom"],
                 "saving throws": ["Strength", "Dexterity"],
                 "starting wealth": "5d4",
-                "armor": [],
-                "weapons": ["simple", "shortsword"],
+                "armor training": [],
+                "weapon proficiencies": ["simple", "shortsword"],
                 },
                 {
                 "name": "Paladin",
@@ -47,8 +47,8 @@
                 "primary ability": ["Strength", "Charisma"],
                 "saving throws": ["Wisdom", "Charisma"],
                 "starting wealth": "5d4x10",
-                "armor": ["all"],
-                "weapons": ["simple", "martial"],
+                "armor training": ["all"],
+                "weapon proficiencies": ["simple", "martial"],
                 },
                 {
                 "name": "Ranger",
@@ -57,8 +57,8 @@
                 "primary ability": ["Dexterity", "Wisdom"],
                 "saving throws": ["Strength", "Dexterity"],
                 "starting wealth": "5d4x10",
-                "armor": ["light", "medium", "shield"],
-                "weapons": ["simple", "martial"],
+                "armor training": ["light", "medium", "shield"],
+                "weapon proficiencies": ["simple", "martial"],
                 },
                 {
                 "name": "Sorcerer",
@@ -67,8 +67,8 @@
                 "primary ability": ["Charisma"],
                 "saving throws": ["Constitution", "Charisma"],
                 "starting wealth": "3d4x10",
-                "armor": [],
-                "weapons": ["dagger", "dart", "sling", "quarterstaff", "light crossbow"],
+                "armor training": [],
+                "weapon proficiencies": ["dagger", "dart", "sling", "quarterstaff", "light crossbow"],
                 },
                 {
                 "name": "Warlock",
@@ -77,8 +77,8 @@
                 "primary ability": ["Charisma"],
                 "saving throws": ["Wisdom", "Charisma"],
                 "starting wealth": "4d4x10",
-                "armor": ["light"],
-                "weapons": ["simple"],
+                "armor training": ["light"],
+                "weapon proficiencies": ["simple"],
                 }
                 ]
 }

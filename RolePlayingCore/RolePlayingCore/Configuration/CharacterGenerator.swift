@@ -41,12 +41,13 @@ public struct CharacterGenerator {
         let randomClass = generator.randomIndex(upperBound: configuration.classes.count)
         let gender = Player.Gender.allCases.randomElementByIndex(using: &generator)
         
+        let backgroundTraits = configuration.backgrounds.randomElementByIndex(using: &generator)
         let speciesTraits = configuration.species.randomElementByIndex(using: &generator)
         let classTraits = configuration.classes[randomClass]!
         let name = names.randomName(speciesTraits: speciesTraits, gender: gender, using: &generator)
         let alignment = speciesTraits.alignment != nil ? speciesTraits.alignment : randomAlignment(using: &generator)
         
-        return Player(name, speciesTraits: speciesTraits, classTraits: classTraits, gender: gender, alignment: alignment)
+        return Player(name, backgroundTraits: backgroundTraits, speciesTraits: speciesTraits, classTraits: classTraits, gender: gender, alignment: alignment)
     }
     
     public func makeCharacter() -> Player {

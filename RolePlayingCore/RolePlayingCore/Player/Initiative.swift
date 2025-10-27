@@ -6,6 +6,7 @@
 //  Copyright © 2025 Brian Arnold. All rights reserved.
 //
 
+// TODO: Make this public, add tests, etc.
 struct Initiative {
     let player: Player
     var value: Int

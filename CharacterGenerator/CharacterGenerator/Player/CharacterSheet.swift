@@ -26,8 +26,9 @@ class CharacterSheet {
     // Mapping between sections/items and key paths to properties.
     var keys: [[PartialKeyPath<CharacterSheet>]] = [
         [\.experiencePoints],
-        [\.speciesName, \.className],
+        [\.backgroundName, \.speciesName, \.className],
         [\.abilities],
+        [\.skills],
         [\.initiative, \.speed, \.size],
         [\.armorClass, \.proficiencyBonus, \.passivePerception],
         [\.maximumHitPoints, \.hitDice],
@@ -38,8 +39,9 @@ class CharacterSheet {
     // Mapping of properties to label keys.
     var labelKeys: [[String]] = [
         ["Experience Points"],
-        ["Species", "Class", "Subclass"],
+        ["Background", "Species", "Class", "Subclass"],
         ["Abilities"],
+        ["Skills"],
         ["Initiative", "Speed", "Size"],
         ["Armor Class", "Proficiency Bonus", "Passive Perception"],
         ["Hit Points", "Hit Dice"],
@@ -50,8 +52,9 @@ class CharacterSheet {
     // Mapping of properties to view types.
     var cellIdentifiers: [[String]] = [
         ["experiencePoints"],
-        ["labeledText", "labeledText"],
+        ["labeledText", "labeledText", "labeledText"],
         ["abilities"],
+        ["labeledText"],
         ["labeledNumber", "labeledNumber", "labeledText"],
         ["labeledNumber", "labeledNumber", "labeledNumber"],
         ["labeledNumber", "labeledText"],
@@ -69,6 +72,7 @@ class CharacterSheet {
     
     var experiencePoints: String { "\(player.experiencePoints)" }
     var level: String { "\(player.level)" }
+    var backgroundName: String { player.backgroundName }
     var className: String { player.className }
     var speciesName: String { player.speciesName }
     var alignment: String {
@@ -79,6 +83,9 @@ class CharacterSheet {
         }
     }
     var abilities: AbilityScores { player.abilities }
+    var skills: String {
+        player.skills.map(\.name).joined(separator: ", ")
+    }
     var initiative: String { player.initiativeModifier.displayModifier }
     var armorClass: String { "\(player.armorClass)" }
     var proficiencyBonus: String { player.proficiencyBonus.displayModifier }

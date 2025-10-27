@@ -34,9 +34,15 @@ public class Player: Codable {
     public var name: String
     public var descriptiveTraits: [String: String] // ideals, bonds, flaws, background
     
+    public private(set) var backgroundName: String
     public private(set) var speciesName: String
     public private(set) var className: String
     
+    public var backgroundTraits: BackgroundTraits! {
+        didSet {
+            self.backgroundName = backgroundTraits.name
+        }
+    }
     public var speciesTraits: SpeciesTraits! {
         didSet {
             self.speciesName = speciesTraits.name
@@ -69,8 +75,20 @@ public class Player: Codable {
     /// Ability scores
     
     public var baseAbilities: AbilityScores
-    public var abilities: AbilityScores { baseAbilities + speciesTraits.abilityScoreIncrease }
+    public var backgroundAbilities: [Ability]
+    public var backgroundAbilityIncrease: AbilityScores {
+        var scores = AbilityScores()
+        for ability in backgroundAbilities {
+            scores[ability]! += 1
+        }
+        return scores
+    }
+    
+    // TODO: limit adding backgroundAbilityIncrease to max score of 20
+    public var abilities: AbilityScores { baseAbilities + backgroundAbilityIncrease }
     public var modifiers: AbilityScores { abilities.modifiers }
+    
+    public var skills: [Skill]
     
     /// Hit points, hit dice, experience points, and level
     
@@ -80,7 +98,7 @@ public class Player: Codable {
     public var level: Int
     
     public var speed: Int { speciesTraits.speed }
-    public var size: SpeciesTraits.Size { speciesTraits.size(from: height) }
+    public var size: SpeciesTraits.Size { SpeciesTraits.Size(from: height) }
     
     public var hitDice: Dice { classTraits.hitDice.hitDice(level: level) }
     
@@ -100,6 +118,7 @@ public class Player: Codable {
     
     private enum CodingKeys: String, CodingKey {
         case name
+        case backgroundName = "background"
         case speciesName = "species"
         case className = "class"
         case descriptiveTraits = "descriptive traits"
@@ -108,6 +127,8 @@ public class Player: Codable {
         case height
         case weight
         case baseAbilities = "ability scores"
+        case backgroundAbilities = "background ability scores"
+        case skills
         case maximumHitPoints = "maximum hit points"
         case currentHitPoints = "current hit points"
         case experiencePoints = "experience points"
@@ -120,6 +141,7 @@ public class Player: Codable {
         
         // Try decoding properties
         let name = try values.decode(String.self, forKey: .name)
+        let backgroundName = try values.decode(String.self, forKey: .backgroundName)
         let speciesName = try values.decode(String.self, forKey: .speciesName)
         let className = try values.decode(String.self, forKey: .className)
         let descriptiveTraits = try values.decodeIfPresent([String:String].self, forKey: .descriptiveTraits)
@@ -128,6 +150,8 @@ public class Player: Codable {
         let height = try values.decode(Height.self, forKey: .height)
         let weight = try values.decode(Weight.self, forKey: .weight)
         let baseAbilities = try values.decode(AbilityScores.self, forKey: .baseAbilities)
+        let backgroundAbilities = try values.decode([String].self, forKey: .backgroundAbilities)
+        let skillNames = try values.decode([String].self, forKey: .skills)
         let maximumHitPoints = try values.decode(Int.self, forKey: .maximumHitPoints)
         let currentHitPoints = try values.decodeIfPresent(Int.self, forKey: .currentHitPoints)
         let experiencePoints = try values.decodeIfPresent(Int.self, forKey: .experiencePoints)
@@ -136,6 +160,7 @@ public class Player: Codable {
         
         // Safely set properties
         self.name = name
+        self.backgroundName = backgroundName
         self.speciesName = speciesName
         self.className = className
         self.descriptiveTraits = descriptiveTraits ?? [:]
@@ -144,6 +169,8 @@ public class Player: Codable {
         self.height = height
         self.weight = weight
         self.baseAbilities = baseAbilities
+        self.backgroundAbilities = backgroundAbilities.map { Ability($0) }
+        self.skills = Skill.skills(from: skillNames)
         self.maximumHitPoints = maximumHitPoints
         self.currentHitPoints = currentHitPoints ?? maximumHitPoints
         self.experiencePoints = experiencePoints ?? 0
@@ -156,6 +183,7 @@ public class Player: Codable {
         
         // Try decoding properties
         try values.encode(name, forKey: .name)
+        try values.encode(backgroundName, forKey: .backgroundName)
         try values.encode(speciesName, forKey: .speciesName)
         try values.encode(className, forKey: .className)
         try values.encodeIfPresent(descriptiveTraits, forKey: .descriptiveTraits)
@@ -164,6 +192,8 @@ public class Player: Codable {
         try values.encode("\(height)", forKey: .height)
         try values.encode("\(weight)", forKey: .weight)
         try values.encode(baseAbilities, forKey: .baseAbilities)
+        try values.encode(backgroundAbilities.map({ $0.name }), forKey: .backgroundAbilities)
+        try values.encode(skills.skillNames, forKey: .skills)
         try values.encode(maximumHitPoints, forKey: .maximumHitPoints)
         try values.encodeIfPresent(currentHitPoints, forKey: .currentHitPoints)
         try values.encodeIfPresent(experiencePoints, forKey: .experiencePoints)
@@ -172,11 +202,13 @@ public class Player: Codable {
     }
     
     // Creates a player character.
-    public init(_ name: String, speciesTraits: SpeciesTraits, classTraits: ClassTraits, gender: Gender? = nil, alignment: Alignment? = nil) {
+    public init(_ name: String, backgroundTraits: BackgroundTraits, speciesTraits: SpeciesTraits, classTraits: ClassTraits, gender: Gender? = nil, alignment: Alignment? = nil) {
         self.name = name
         self.descriptiveTraits = [:]
+        self.backgroundName = backgroundTraits.name
         self.speciesName = speciesTraits.name
         self.className = classTraits.name
+        self.backgroundTraits = backgroundTraits
         self.speciesTraits = speciesTraits
         self.classTraits = classTraits
         self.gender = gender
@@ -190,6 +222,13 @@ public class Player: Codable {
         
         self.baseAbilities = AbilityScores()
         self.baseAbilities.roll()
+        
+        // TODO: roll for 2 or 3 background abilities, and if 2, add one random ability score twice
+        self.backgroundAbilities = backgroundTraits.abilityScores.map { Ability($0) }
+        
+        let skillProficiencies = Skill.skills(from: classTraits.skillProficiencies)
+        self.skills = skillProficiencies.randomSkills(count: classTraits.startingSkillCount)
+        self.skills.append(backgroundTraits.skillProficiencies)
 
         self.maximumHitPoints = Player.rollHitPoints(classTraits: classTraits, speciesTraits: speciesTraits)
         self.currentHitPoints = self.maximumHitPoints
@@ -231,6 +270,7 @@ extension Player: Hashable {
     
     public static func == (lhs: Player, rhs: Player) -> Bool {
         return lhs.name == rhs.name &&
+               lhs.backgroundName == rhs.backgroundName &&
                lhs.speciesName == rhs.speciesName &&
                lhs.className == rhs.className &&
                lhs.descriptiveTraits == rhs.descriptiveTraits &&
@@ -248,6 +288,7 @@ extension Player: Hashable {
     
     public func hash(into hasher: inout Hasher) {
         hasher.combine(name)
+        hasher.combine(backgroundName)
         hasher.combine(speciesName)
         hasher.combine(className)
         hasher.combine(gender)
