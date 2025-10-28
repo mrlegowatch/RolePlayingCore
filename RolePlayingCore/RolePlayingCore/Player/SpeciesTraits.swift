@@ -184,5 +184,4 @@ extension SpeciesTraits: Codable {
             try values.encode(self.speed, forKey: .speed)
         }
     }
-    
 }

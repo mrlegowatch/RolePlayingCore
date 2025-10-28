@@ -12,8 +12,6 @@ import RolePlayingCore
 
 class UnitWeightTests: XCTestCase {
     
-    let decoder = JSONDecoder()
-    
     func testWeights() {
         do {
             let howHeavy = "70".parseWeight
@@ -82,7 +80,6 @@ class UnitWeightTests: XCTestCase {
             let weight: Weight
         }
         
-        // Test decoding from string height
         do {
             let traits = """
             {
@@ -99,8 +96,6 @@ class UnitWeightTests: XCTestCase {
             }
         }
         
-        
-        // Test decoding from double height
         do {
             let traits = """
             {
@@ -117,8 +112,6 @@ class UnitWeightTests: XCTestCase {
             }
         }
         
-        // Test failure to decode
-        // Test decoding from double height
         do {
             let traits = """
             {
@@ -134,7 +127,6 @@ class UnitWeightTests: XCTestCase {
                 print("Decoding invalid weight successfully threw an error: \(error)")
             }
         }
-        
     }
     
     func testDecodingWeightIfPresent() {
@@ -142,7 +134,6 @@ class UnitWeightTests: XCTestCase {
             let weight: Weight? // The ? will trigger decodeIfPresent in the decoder
         }
         
-        // Test decoding from string height
         do {
             let traits = """
             {
@@ -159,8 +150,6 @@ class UnitWeightTests: XCTestCase {
             }
         }
         
-        
-        // Test decoding from double height
         do {
             let traits = """
             {
@@ -177,5 +166,4 @@ class UnitWeightTests: XCTestCase {
             }
         }
     }
-    
 }

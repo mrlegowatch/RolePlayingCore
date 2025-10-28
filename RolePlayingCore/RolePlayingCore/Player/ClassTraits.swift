@@ -9,7 +9,6 @@
 import Foundation
 
 public struct ClassTraits {
-    
     public var name: String
     public var plural: String
     public var hitDice: Dice

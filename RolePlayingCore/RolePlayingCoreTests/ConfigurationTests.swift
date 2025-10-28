@@ -51,5 +51,4 @@ class ConfigurationTests: XCTestCase {
             print("Invalid configuration correctly threw an error: \(error)")
         }
     }
-    
 }

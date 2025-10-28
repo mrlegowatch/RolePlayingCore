@@ -8,7 +8,6 @@
 
 import Foundation
 
-
 // TODO: the initial implementation performed naïve sub-string searches, and was very limited.
 // This implementation uses a lightweight tokenizer and parser, and is a lot more robust.
 // A smaller implementation might leverage regular expression, but may be harder to maintain.
@@ -253,7 +252,6 @@ public extension String {
         
         return dice
     }
-    
 }
 
 // TODO: this works around the fact that we can't explicitly make the Dice protocol Decodable.
@@ -301,5 +299,4 @@ public extension KeyedDecodingContainer  {
         
         return dice
     }
-    
 }

@@ -6,7 +6,7 @@
 //  Copyright © 2025 Brian Arnold. All rights reserved.
 //
 
-// A set of background traits
+/// A collection of background traits
 public struct Backgrounds: Codable {
     
     public var backgrounds = [BackgroundTraits]()
@@ -30,5 +30,4 @@ public struct Backgrounds: Codable {
     public func randomElementByIndex<G: RandomIndexGenerator>(using generator: inout G) -> BackgroundTraits {
         return backgrounds.randomElementByIndex(using: &generator)!
     }
-
 }

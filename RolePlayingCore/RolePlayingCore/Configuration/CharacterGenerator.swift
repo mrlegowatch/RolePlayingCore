@@ -11,9 +11,7 @@ import Foundation
 /// Given a configuration of species traits and class traits,
 /// provides a random character.
 public struct CharacterGenerator {
-    
     let configuration: Configuration
-    
     let names: SpeciesNames
     
     /// Creates a character generator instance with a reference to the current configuration.

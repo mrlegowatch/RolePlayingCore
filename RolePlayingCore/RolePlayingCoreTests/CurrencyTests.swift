@@ -10,7 +10,6 @@ import XCTest
 
 @testable import RolePlayingCore
 
-
 class UnitCurrencyTests: XCTestCase {
     
     static var currencies: Currencies!

@@ -31,7 +31,6 @@ public struct Currencies {
         
         UnitCurrency.baseUnitCurrency = newBaseUnit
     }
-    
 }
 
 extension Currencies: Codable {
@@ -106,5 +105,4 @@ extension Currencies: Codable {
         
         try container.encode(currencies, forKey: .currencies)
     }
-    
 }

@@ -8,7 +8,7 @@
 
 /// Encapsulates a result with its intermediate values.
 public struct DiceRoll: CustomStringConvertible {
-    
+
     /// The result of the roll.
     public let result: Int
     
@@ -21,6 +21,5 @@ public struct DiceRoll: CustomStringConvertible {
         self.result = result
         self.description = description
     }
-    
 }
 

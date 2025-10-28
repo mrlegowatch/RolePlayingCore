@@ -10,8 +10,6 @@ import XCTest
 
 import RolePlayingCore
 
-
-
 /// Use a sample size large enough to hit relatively tight ranges of
 /// expected mean, min and max values below.
 let sampleSize = 1024
@@ -216,7 +214,6 @@ class DiceTests: XCTestCase {
             print("  lastRoll = \"\(lastRoll.description)\"")
 
             // TODO: verify that it is actually dropping the highest score.
-
         }
     }
     
@@ -282,6 +279,5 @@ class DiceTests: XCTestCase {
             print("  lastRoll = \"\(lastRoll.description)\"")
         }
     }
-
 }
 

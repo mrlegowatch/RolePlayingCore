@@ -95,5 +95,4 @@ extension MeasurementFormatter {
         let formatString = unitStyle == .short ? "%@%@" : "%@ %@"
         return String(format: formatString, valueString, unitsString!)
     }
-    
 }

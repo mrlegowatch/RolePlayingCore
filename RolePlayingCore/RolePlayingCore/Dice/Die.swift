@@ -37,12 +37,10 @@ public enum Die: Int {
         }
         return rolls
     }
-    
 }
 
 extension Die: CustomStringConvertible {
     
     /// Returns the number of die sides with "d" prepended.
     public var description: String { rawValue == 100 ? "d%" : "d\(rawValue)" }
-    
 }

@@ -24,7 +24,5 @@ class ServiceErrorTests: XCTestCase {
             XCTAssertTrue(description.contains("testServiceError"), "should have throw function name in it")
             XCTAssertTrue(description.contains("ServiceErrorTests"), "should have throw file name in it")
         }
-
     }
-    
 }

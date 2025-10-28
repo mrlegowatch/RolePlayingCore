@@ -11,11 +11,8 @@ import XCTest
 import RolePlayingCore
 
 class UnitHeightTests: XCTestCase {
-    
-    let decoder = JSONDecoder()
 
     func testHeights() {
-
         do {
             let howTall = "5".parseHeight
             XCTAssertNotNil(howTall, "height should be non-nil")
@@ -58,16 +55,11 @@ class UnitHeightTests: XCTestCase {
             XCTAssertNotNil(howTall, "height should be non-nil")
             XCTAssertEqual(howTall?.value, 2.1, "height should be 2.1")
         }
-
-        
     }
     
     func testInvalidHeights() {
-        do {
-            let howTall = "3 hello".parseHeight
-            XCTAssertNil(howTall, "height should be nil")
-        }
-
+        let howTall = "3 hello".parseHeight
+        XCTAssertNil(howTall, "height should be nil")
     }
     
     func testEncodingHeight() {
@@ -122,7 +114,6 @@ class UnitHeightTests: XCTestCase {
             }
         }
         
-        
         // Test decoding from double height
         do {
             let traits = """
@@ -157,7 +148,6 @@ class UnitHeightTests: XCTestCase {
                 print("Decoding invalid height successfully threw an error: \(error)")
             }
         }
-        
     }
     
     func testDecodingHeightIfPresent() {
@@ -200,7 +190,6 @@ class UnitHeightTests: XCTestCase {
             }
         }
     }
-
 }
 
 

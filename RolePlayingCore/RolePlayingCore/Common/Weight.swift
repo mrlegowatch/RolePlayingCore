@@ -39,7 +39,6 @@ extension String {
         
         return Weight(value: value!, unit: unit)
     }
-    
 }
 
 public extension KeyedDecodingContainer  {
@@ -81,7 +80,6 @@ public extension KeyedDecodingContainer  {
         
         return weight
     }
-    
 }
 
 extension Weight {

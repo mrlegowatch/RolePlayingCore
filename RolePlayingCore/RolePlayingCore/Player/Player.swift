@@ -17,7 +17,6 @@ public extension AbilityScores {
             scores[ability] = dice.roll().result
         }
     }
-
 }
 
 public extension Dice {
@@ -30,7 +29,6 @@ public extension Dice {
 
 // TODO: Is this a base class for Character? What about NPC? Monster? Should we have a protocol?
 public class Player: Codable {
-    
     public var name: String
     public var descriptiveTraits: [String: String] // ideals, bonds, flaws, background
     
@@ -254,9 +252,8 @@ public class Player: Codable {
         
         maximumHitPoints += rollHitPoints()
         
-        // TODO: add more for leveling up
+        // TODO: add more details for leveling up
     }
-
 }
 
 extension Player: Hashable {
@@ -293,5 +290,4 @@ extension Player: Hashable {
         hasher.combine(level)
         hasher.combine(money)
     }
-    
 }

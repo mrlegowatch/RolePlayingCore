@@ -11,7 +11,6 @@
 /// This implements a Markov-Chain-based name generator.
 /// See <http://en.wikipedia.org/wiki/Markov_chains> for a description.
 public struct NameGenerator {
-    
     private var nameStarters: [String]
     private var nameParts: [String: [String]]
     

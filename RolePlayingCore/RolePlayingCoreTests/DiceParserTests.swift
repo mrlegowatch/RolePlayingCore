@@ -498,7 +498,6 @@ class DiceParserTests: XCTestCase {
             let roll = badFormatString.parseDice
             XCTAssertNil(roll, "'\(badFormatString)' consecutive dice expressions")
         }
-        
     }
     
     func testDecodingDice() {

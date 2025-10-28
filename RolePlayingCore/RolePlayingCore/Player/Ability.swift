@@ -7,14 +7,12 @@
 //
 
 public struct Ability {
-    
     public let name: String
     
     /// Creates an ability name.
     public init(_ name: String) {
         self.name = name
     }
-    
 }
 
 extension Ability: Equatable { }
@@ -28,7 +26,6 @@ extension String {
         let index = self.index(self.startIndex, offsetBy: min(self.count, 3))
         return self[..<index].uppercased()
     }
-    
 }
 
 extension Ability {
@@ -37,7 +34,6 @@ extension Ability {
     public var abbreviated: String {
         return name.abbreviated
     }
-    
 }
 
 extension Ability: Codable {
@@ -54,7 +50,6 @@ extension Ability: Codable {
 }
 
 public struct AbilityScores {
-    
     var scores: [Ability: Int]
     
     public init(_ scores: [Ability: Int]) {
@@ -139,11 +134,10 @@ extension Int {
     
     /// Returns the corresponding score modifier for this integer score.
     public var scoreModifier: Int {
-        /// Integer divide of negative number rounds towards 0. Use floor with Double to round down.
+        /// Integer divide of negative number rounds towards 0.
         let selfMinus10 = self - 10
-        return selfMinus10 < 0 ? Int(floor(Double(selfMinus10) / 2.0)) : selfMinus10 / 2
+        return selfMinus10 < 0 ? Int(((Double(selfMinus10) / 2.0).rounded(.down))) : selfMinus10 / 2
     }
-    
 }
 
 extension AbilityScores {
@@ -152,7 +146,6 @@ extension AbilityScores {
     public var modifiers: AbilityScores {
         return AbilityScores(scores.mapValues { $0.scoreModifier })
     }
-    
 }
 
 extension AbilityScores: Equatable { }
@@ -198,7 +191,6 @@ extension AbilityScores {
             lhs[key]? -= value
         }
     }
-    
 }
 
 // MARK: Default abilities
@@ -225,7 +217,6 @@ extension Ability {
     
     /// An array of the default abilities.
     public static let defaults: [Ability] = [.strength, .dexterity, .constitution, .intelligence, .wisdom, .charisma]
-    
 }
 
 extension AbilityScores {
@@ -234,5 +225,4 @@ extension AbilityScores {
     public init(defaults: [Ability] = Ability.defaults) {
         scores = Dictionary(uniqueKeysWithValues: defaults.map { ($0, 0) })
     }
-    
 }

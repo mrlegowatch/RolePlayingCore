@@ -9,7 +9,6 @@
 
 /// A dice modifier is a constant value that can take the place of a Dice instance.
 public struct DiceModifier: Dice {
-    
     public let modifier: Int
     
     public init(_ modifier: Int) {
@@ -23,5 +22,4 @@ public struct DiceModifier: Dice {
     public var sides: Int { modifier }
     
     public var description: String { "\(modifier)" }
-        
 }

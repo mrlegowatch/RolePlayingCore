@@ -15,7 +15,6 @@ import Foundation
 /// - combining two rolls, e.g., "2d4+d6",
 /// - using a modifier, e.g., "d12+2".
 public struct CompoundDice: Dice {
-    
     public let lhs: Dice
     public let rhs: Dice
     public let mathOperator: String
@@ -59,5 +58,4 @@ public struct CompoundDice: Dice {
     
     /// Returns a description of the left and right hand sides with the math operator.
     public var description: String { "\(lhs)\(mathOperator)\(rhs)" }
-    
 }

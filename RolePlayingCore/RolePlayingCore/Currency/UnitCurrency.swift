@@ -37,5 +37,4 @@ public final class UnitCurrency : Dimension, @unchecked Sendable {
     public required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
-    
 }

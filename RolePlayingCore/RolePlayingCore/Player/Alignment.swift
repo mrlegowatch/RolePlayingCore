@@ -8,7 +8,6 @@
 
 /// A measure of order, obedience, and following rules vs. disorder, and disobedience.
 public enum Ethics: String, CaseIterable {
-    
     case lawful = "Lawful"
     case neutral = "Neutral"
     case chaotic = "Chaotic"
@@ -28,7 +27,6 @@ public enum Ethics: String, CaseIterable {
     public var value: Double {
         return self == .lawful ? 1.0 : self == .chaotic ? -1.0 : 0.0
     }
-    
 }
 
 extension Ethics: CustomStringConvertible {
@@ -37,7 +35,6 @@ extension Ethics: CustomStringConvertible {
     public var description: String {
         return self.rawValue
     }
-    
 }
 
 /// A measure of goodness vs. evil.
@@ -62,7 +59,6 @@ public enum Morals: String, CaseIterable {
     public var value: Double {
         return self == .good ? 1.0 : self == .evil ? -1.0 : 0.0
     }
-    
 }
 
 extension Morals: CustomStringConvertible {
@@ -71,7 +67,6 @@ extension Morals: CustomStringConvertible {
     public var description: String {
         return self.rawValue
     }
-    
 }
 
 extension String {
@@ -98,7 +93,6 @@ extension String {
             return nil
         }
     }
-    
 }
 
 /// A combined measure of ethics and morals.
@@ -167,7 +161,6 @@ public struct Alignment {
         self.ethics = ethics
         self.morals = morals
     }
-    
 }
 
 extension Alignment.Kind: CustomStringConvertible {
@@ -188,7 +181,6 @@ extension Alignment: CustomStringConvertible {
     public var description: String {
         return kind.description
     }
-    
 }
 
 extension Alignment: Equatable { }

@@ -14,164 +14,101 @@ import RolePlayingCore
 
 class AlignmentTests: XCTestCase {
 
-    func testEthics() {
-        // Test the literal values
-        do {
-            XCTAssertEqual(Ethics.lawful.rawValue, "Lawful", "lawful string")
-            XCTAssertEqual(Ethics.neutral.rawValue, "Neutral", "neutral string")
-            XCTAssertEqual(Ethics.chaotic.rawValue, "Chaotic", "chaotic string")
-            
-            XCTAssertEqual(Ethics.lawful.value, 1.0, "lawful value")
-            XCTAssertEqual(Ethics.neutral.value, 0.0, "neutral value")
-            XCTAssertEqual(Ethics.chaotic.value, -1.0, "chaotic value")
-        }
+    func testEthicsByString() {
+        let lawful = Ethics(rawValue: "Lawful")
+        XCTAssertNotNil(lawful, "lawful should be non-nil")
+        XCTAssertEqual(lawful, Ethics.lawful, "lawful enum")
+        XCTAssertEqual(lawful?.value, 1.0, "lawful value")
         
-        // Test creation by raw value
-        do {
-            let lawful = Ethics(rawValue: "Lawful")
-            XCTAssertNotNil(lawful, "lawful should be non-nil")
-            XCTAssertEqual(lawful, Ethics.lawful, "lawful enum")
-            XCTAssertEqual(lawful?.value, 1.0, "lawful value")
-            
-            let neutral = Ethics(rawValue: "Neutral")
-            XCTAssertNotNil(neutral, "neutral should be non-nil")
-            XCTAssertEqual(neutral, Ethics.neutral, "neutral enum")
-            XCTAssertEqual(neutral?.value, 0.0, "neutral value")
-            
-            let chaotic = Ethics(rawValue: "Chaotic")
-            XCTAssertNotNil(chaotic, "chaotic should be non-nil")
-            XCTAssertEqual(chaotic, Ethics.chaotic, "chaotic enum")
-            XCTAssertEqual(chaotic?.value, -1.0, "chaotic value")
-        }
+        let neutral = Ethics(rawValue: "Neutral")
+        XCTAssertNotNil(neutral, "neutral should be non-nil")
+        XCTAssertEqual(neutral, Ethics.neutral, "neutral enum")
+        XCTAssertEqual(neutral?.value, 0.0, "neutral value")
         
-        // Test creation by Double value
-        do {
-            let lawful = Ethics(0.8)
-            XCTAssertNotNil(lawful, "lawful should be non-nil")
-            XCTAssertEqual(lawful, Ethics.lawful, "lawful enum")
-            XCTAssertEqual(lawful.value, 1.0, "lawful value")
-            
-            let neutral = Ethics(-0.1)
-            XCTAssertNotNil(neutral, "neutral should be non-nil")
-            XCTAssertEqual(neutral, Ethics.neutral, "neutral enum")
-            XCTAssertEqual(neutral.value, 0.0, "neutral value")
-            
-            let chaotic = Ethics(-0.34)
-            XCTAssertNotNil(chaotic, "chaotic should be non-nil")
-            XCTAssertEqual(chaotic, Ethics.chaotic, "chaotic enum")
-            XCTAssertEqual(chaotic.value, -1.0, "chaotic value")
-        }
+        let chaotic = Ethics(rawValue: "Chaotic")
+        XCTAssertNotNil(chaotic, "chaotic should be non-nil")
+        XCTAssertEqual(chaotic, Ethics.chaotic, "chaotic enum")
+        XCTAssertEqual(chaotic?.value, -1.0, "chaotic value")
     }
     
-    func testMorals() {
-        // Test the literal values
-        do {
-            XCTAssertEqual(Morals.good.rawValue, "Good", "good string")
-            XCTAssertEqual(Morals.neutral.rawValue, "Neutral", "neutral string")
-            XCTAssertEqual(Morals.evil.rawValue, "Evil", "evil string")
-            
-            XCTAssertEqual(Morals.good.value, 1.0, "good value")
-            XCTAssertEqual(Morals.neutral.value, 0.0, "neutral value")
-            XCTAssertEqual(Morals.evil.value, -1.0, "evil value")
-        }
+    func testEthicsByValue() {
+        let lawful = Ethics(0.8)
+        XCTAssertNotNil(lawful, "lawful should be non-nil")
+        XCTAssertEqual(lawful, Ethics.lawful, "lawful enum")
+        XCTAssertEqual(lawful.value, 1.0, "lawful value")
         
-        // Test creation by raw value
-        do {
-            let good = Morals(rawValue: "Good")
-            XCTAssertNotNil(good, "good should be non-nil")
-            XCTAssertEqual(good, Morals.good, "good enum")
-            XCTAssertEqual(good?.value, 1.0, "good value")
-            
-            let neutral = Morals(rawValue: "Neutral")
-            XCTAssertNotNil(neutral, "neutral should be non-nil")
-            XCTAssertEqual(neutral, Morals.neutral, "neutral enum")
-            XCTAssertEqual(neutral?.value, 0.0, "neutral value")
-            
-            let evil = Morals(rawValue: "Evil")
-            XCTAssertNotNil(evil, "evil should be non-nil")
-            XCTAssertEqual(evil, Morals.evil, "evil enum")
-            XCTAssertEqual(evil?.value, -1.0, "evil value")
-        }
+        let neutral = Ethics(-0.1)
+        XCTAssertNotNil(neutral, "neutral should be non-nil")
+        XCTAssertEqual(neutral, Ethics.neutral, "neutral enum")
+        XCTAssertEqual(neutral.value, 0.0, "neutral value")
         
-        // Test creation by Double value
-        do {
-            let good = Morals(0.334)
-            XCTAssertNotNil(good, "good should be non-nil")
-            XCTAssertEqual(good, Morals.good, "good enum")
-            XCTAssertEqual(good.value, 1.0, "good value")
-            
-            let neutral = Morals(0.2)
-            XCTAssertNotNil(neutral, "neutral should be non-nil")
-            XCTAssertEqual(neutral, Morals.neutral, "neutral enum")
-            XCTAssertEqual(neutral.value, 0.0, "neutral value")
-            
-            let evil = Morals(-0.9)
-            XCTAssertNotNil(evil, "evil should be non-nil")
-            XCTAssertEqual(evil, Morals.evil, "evil enum")
-            XCTAssertEqual(evil.value, -1.0, "evil value")
-        }
-
+        let chaotic = Ethics(-0.34)
+        XCTAssertNotNil(chaotic, "chaotic should be non-nil")
+        XCTAssertEqual(chaotic, Ethics.chaotic, "chaotic enum")
+        XCTAssertEqual(chaotic.value, -1.0, "chaotic value")
     }
     
-    func testAlignmentType() {
-        // Test creation by raw value
-        do {
-            let neutralGood = Alignment.Kind(.neutral, .good)
-            XCTAssertEqual(neutralGood.description, "Neutral Good", "description")
-            
-            let neutralEvil = Alignment.Kind(.neutral, .evil)
-            XCTAssertEqual(neutralEvil.description, "Neutral Evil", "description")
-            
-            let chaoticNeutral = Alignment.Kind(.chaotic, .neutral)
-            XCTAssertEqual(chaoticNeutral.description, "Chaotic Neutral", "description")
-            
-            XCTAssertEqual(neutralGood, Alignment.Kind(.neutral, .good), "equatable")
-            XCTAssertNotEqual(neutralGood, neutralEvil, "equatable")
-            XCTAssertNotEqual(neutralEvil, chaoticNeutral, "equatable")
-        }
+    func testMoralsByString() {
+        let good = Morals(rawValue: "Good")
+        XCTAssertNotNil(good, "good should be non-nil")
+        XCTAssertEqual(good, Morals.good, "good enum")
+        XCTAssertEqual(good?.value, 1.0, "good value")
         
-        // Test creation by Double value
-        do {
-            let lawfulNeutral = Alignment(ethics: 0.7, morals: 0.0)
-            XCTAssertEqual(lawfulNeutral.description, "Lawful Neutral", "description")
-            
-            let neutral = Alignment(ethics: 0.1, morals: -0.2)
-            XCTAssertEqual(neutral.description, "Neutral", "description")
-            
-            let chaoticGood = Alignment(ethics: -1, morals: 1)
-            XCTAssertEqual(chaoticGood.description, "Chaotic Good", "description")
-        }
+        let neutral = Morals(rawValue: "Neutral")
+        XCTAssertNotNil(neutral, "neutral should be non-nil")
+        XCTAssertEqual(neutral, Morals.neutral, "neutral enum")
+        XCTAssertEqual(neutral?.value, 0.0, "neutral value")
+        
+        let evil = Morals(rawValue: "Evil")
+        XCTAssertNotNil(evil, "evil should be non-nil")
+        XCTAssertEqual(evil, Morals.evil, "evil enum")
+        XCTAssertEqual(evil?.value, -1.0, "evil value")
+    }
+        
+    func testMoralsByValue() {
+        let good = Morals(0.334)
+        XCTAssertNotNil(good, "good should be non-nil")
+        XCTAssertEqual(good, Morals.good, "good enum")
+        XCTAssertEqual(good.value, 1.0, "good value")
+        
+        let neutral = Morals(0.2)
+        XCTAssertNotNil(neutral, "neutral should be non-nil")
+        XCTAssertEqual(neutral, Morals.neutral, "neutral enum")
+        XCTAssertEqual(neutral.value, 0.0, "neutral value")
+        
+        let evil = Morals(-0.9)
+        XCTAssertNotNil(evil, "evil should be non-nil")
+        XCTAssertEqual(evil, Morals.evil, "evil enum")
+        XCTAssertEqual(evil.value, -1.0, "evil value")
     }
     
-    func testAlignment() {
-        // Test creation by raw value
-        do {
-            let lawfulGood = Alignment(.lawful, .good)
-            XCTAssertEqual(lawfulGood.description, "Lawful Good", "description")
-
-            let neutralGood = Alignment(.neutral, .good)
-            XCTAssertEqual(neutralGood.description, "Neutral Good", "description")
-
-            let chaoticNeutral = Alignment(.chaotic, .neutral)
-            XCTAssertEqual(chaoticNeutral.description, "Chaotic Neutral", "description")
-            
-            XCTAssertEqual(lawfulGood, Alignment(.lawful, .good), "equatable")
-            XCTAssertNotEqual(lawfulGood, neutralGood, "equatable")
-            XCTAssertNotEqual(neutralGood, chaoticNeutral, "equatable")
-        }
+    func testAlignmentByType() {
+        let neutralGood = Alignment.Kind(.neutral, .good)
+        XCTAssertEqual(neutralGood.description, "Neutral Good", "description")
         
-        // Test creation by Double value
-        do {
-            let lawfulNeutral = Alignment(ethics: 0.9, morals: 0.0)
-            XCTAssertEqual(lawfulNeutral.description, "Lawful Neutral", "description")
-            
-            let neutral = Alignment(ethics: 0.1, morals: -0.1)
-            XCTAssertEqual(neutral.description, "Neutral", "description")
-            
-            let chaoticEvil = Alignment(ethics: -1, morals: -1)
-            XCTAssertEqual(chaoticEvil.description, "Chaotic Evil", "description")
-        }
+        let neutralEvil = Alignment.Kind(.neutral, .evil)
+        XCTAssertEqual(neutralEvil.description, "Neutral Evil", "description")
         
+        let chaoticNeutral = Alignment.Kind(.chaotic, .neutral)
+        XCTAssertEqual(chaoticNeutral.description, "Chaotic Neutral", "description")
+        
+        XCTAssertEqual(neutralGood, Alignment.Kind(.neutral, .good), "equatable")
+        XCTAssertNotEqual(neutralGood, neutralEvil, "equatable")
+        XCTAssertNotEqual(neutralEvil, chaoticNeutral, "equatable")
+    }
+    
+    func testAlignmentByValue() {
+        let lawfulNeutral = Alignment(ethics: 0.7, morals: 0.0)
+        XCTAssertEqual(lawfulNeutral.description, "Lawful Neutral", "description")
+        
+        let neutral = Alignment(ethics: 0.1, morals: -0.2)
+        XCTAssertEqual(neutral.description, "Neutral", "description")
+        
+        let chaoticGood = Alignment(ethics: -1, morals: 1)
+        XCTAssertEqual(chaoticGood.description, "Chaotic Good", "description")
+    }
+    
+    func testCHangingAlignment() {
         // Test changing alignment
         do {
             var alignment = Alignment(.neutral, .evil)
@@ -207,43 +144,36 @@ class AlignmentTests: XCTestCase {
     
     func testAlignmentParsing() {        
         // Test initializing from valid string
-        do {
-            let neutralGood = "Neutral Good".parseAlignment
-            XCTAssertNotNil(neutralGood, "alignment should be non-nil")
-            XCTAssertEqual(neutralGood?.0, Ethics.neutral, "ethics enumeration")
-            XCTAssertEqual(neutralGood?.1, Morals.good, "morals enumeration")
-            
-            let neutral = "Neutral".parseAlignment
-            XCTAssertNotNil(neutral, "alignment should be non-nil")
-            XCTAssertEqual(neutral?.0, Ethics.neutral, "ethics enumeration")
-            XCTAssertEqual(neutral?.1, Morals.neutral, "morals enumeration")
-        }
+        let neutralGood = "Neutral Good".parseAlignment
+        XCTAssertNotNil(neutralGood, "alignment should be non-nil")
+        XCTAssertEqual(neutralGood?.0, Ethics.neutral, "ethics enumeration")
+        XCTAssertEqual(neutralGood?.1, Morals.good, "morals enumeration")
         
+        let neutral = "Neutral".parseAlignment
+        XCTAssertNotNil(neutral, "alignment should be non-nil")
+        XCTAssertEqual(neutral?.0, Ethics.neutral, "ethics enumeration")
+        XCTAssertEqual(neutral?.1, Morals.neutral, "morals enumeration")
+    
         // Test initializing from partial valid string
-        do {
-            let chaotic = "Chaotic".parseAlignment
-            XCTAssertNotNil(chaotic, "alignment should be non-nil")
-            XCTAssertEqual(chaotic?.0, Ethics.chaotic, "ethics enumeration")
-            XCTAssertEqual(chaotic?.1, Morals.neutral, "morals enumeration")
-            
-            let good = "Good".parseAlignment
-            XCTAssertNotNil(good, "alignment should be non-nil")
-            XCTAssertEqual(good?.0, Ethics.neutral, "ethics enumeration")
-            XCTAssertEqual(good?.1, Morals.good, "morals enumeration")
-        }
+        let chaotic = "Chaotic".parseAlignment
+        XCTAssertNotNil(chaotic, "alignment should be non-nil")
+        XCTAssertEqual(chaotic?.0, Ethics.chaotic, "ethics enumeration")
+        XCTAssertEqual(chaotic?.1, Morals.neutral, "morals enumeration")
         
+        let good = "Good".parseAlignment
+        XCTAssertNotNil(good, "alignment should be non-nil")
+        XCTAssertEqual(good?.0, Ethics.neutral, "ethics enumeration")
+        XCTAssertEqual(good?.1, Morals.good, "morals enumeration")
+    
         // Test initializing from bad string
-        do {
-            let tooManyWords = "Neutral Neutral Neutral".parseAlignment
-            XCTAssertNil(tooManyWords, "too many words should be nil")
-            
-            let mismatchedWords = "Foo Bar".parseAlignment
-            XCTAssertNil(mismatchedWords, "mismatched words should be nil")
-            
-            let wrongWord = "Cat".parseAlignment
-            XCTAssertNil(wrongWord, "wrong word should be nil")
-        }
+        let tooManyWords = "Neutral Neutral Neutral".parseAlignment
+        XCTAssertNil(tooManyWords, "too many words should be nil")
         
+        let mismatchedWords = "Foo Bar".parseAlignment
+        XCTAssertNil(mismatchedWords, "mismatched words should be nil")
+        
+        let wrongWord = "Cat".parseAlignment
+        XCTAssertNil(wrongWord, "wrong word should be nil")
     }
     
     func testAlignmentDictionaryDecoding() {
@@ -320,88 +250,78 @@ class AlignmentTests: XCTestCase {
         }
         
         // Test string values
+        let stringTrait = """
+            {
+                "alignment": "Chaotic Evil"
+            }
+            """.data(using: .utf8)!
         do {
-            let stringTrait = """
-                {
-                    "alignment": "Chaotic Evil"
-                }
-                """.data(using: .utf8)!
-            do {
-                let decoded = try decoder.decode(AlignmentContainer.self, from: stringTrait)
-                XCTAssertEqual("\(decoded.alignment)", "Chaotic Evil", "decoded string should be round-trip")
+            let decoded = try decoder.decode(AlignmentContainer.self, from: stringTrait)
+            XCTAssertEqual("\(decoded.alignment)", "Chaotic Evil", "decoded string should be round-trip")
+        }
+        catch let error {
+            XCTFail("Error decoding string trait: \(error)")
+        }
+        
+        let notValidTrait = """
+            {
+                "alignment": "Hello"
             }
-            catch let error {
-                XCTFail("Error decoding string trait: \(error)")
-            }
-            
-            let notValidTrait = """
-                {
-                    "alignment": "Hello"
-                }
-                """.data(using: .utf8)!
-            do {
-                let notValid = try decoder.decode(AlignmentContainer.self, from: notValidTrait)
-                XCTAssertNil(notValid, "non-valid traits should be nil")
-            }
-            catch let error {
-                print("Successfully failed decoding invalid string trait: \(error)")
-            }
+            """.data(using: .utf8)!
+        do {
+            let notValid = try decoder.decode(AlignmentContainer.self, from: notValidTrait)
+            XCTAssertNil(notValid, "non-valid traits should be nil")
+        }
+        catch let error {
+            print("Successfully failed decoding invalid string trait: \(error)")
         }
     }
     
     func testAlignmentEncoding() {
         let encoder = JSONEncoder()
         
-        // Test default encoding
-        do {
-            struct AlignmentContainer: Encodable {
-                let alignment: Alignment
-            }
-            let container = AlignmentContainer(alignment: Alignment(.chaotic, .good))
-            let encoded = try encoder.encode(container)
-            let deserialized = try JSONSerialization.jsonObject(with: encoded, options: [])
-            
-            if let dictionary = deserialized as? [String: Any] {
-                XCTAssertNotNil(dictionary["alignment"] as? [String: Double], "player traits round trip alignment")
-                if let alignment = dictionary["alignment"] as? [String: Double] {
-                    XCTAssertEqual(alignment["ethics"], -1, "player traits round trip alignment ethics")
-                    XCTAssertEqual(alignment["morals"], 1, "player traits round trip alignment ethics")
-                }
+        struct AlignmentContainer: Encodable {
+            let alignment: Alignment
+        }
+        let container = AlignmentContainer(alignment: Alignment(.chaotic, .good))
+        let encoded = try! encoder.encode(container)
+        let deserialized = try? JSONSerialization.jsonObject(with: encoded, options: [])
+        
+        if let dictionary = deserialized as? [String: Any] {
+            XCTAssertNotNil(dictionary["alignment"] as? [String: Double], "player traits round trip alignment")
+            if let alignment = dictionary["alignment"] as? [String: Double] {
+                XCTAssertEqual(alignment["ethics"], -1, "player traits round trip alignment ethics")
+                XCTAssertEqual(alignment["morals"], 1, "player traits round trip alignment ethics")
             }
         }
-        catch let error {
-            XCTFail("Encoding Alignment failed, error: \(error)")
-        }
-        
-        // Test stringified encoding
-        do {
-            struct AlignmentContainer: Encodable {
-                let alignment: Alignment
-                
-                enum CodingKeys: String, CodingKey {
-                    case alignment
-                }
-                
-                // Stringify alignment
-                func encode(to encoder: Encoder) throws {
-                    var container = encoder.container(keyedBy: CodingKeys.self)
-                    try container.encode("\(alignment)", forKey: .alignment)
-                }
-            }
-            
-            let container = AlignmentContainer(alignment: Alignment(.chaotic, .good))
-            let encoded = try! encoder.encode(container)
-            let deserialized = try? JSONSerialization.jsonObject(with: encoded, options: [])
-            XCTAssertNotNil(deserialized, "player traits round trip")
-            
-            if let dictionary = deserialized as? [String: String] {
-                if let alignment = dictionary["alignment"] {
-                    XCTAssertEqual(alignment, "Chaotic Good", "player traits round trip alignment ethics")
-                }
-            }
-        }
-        
-        
     }
     
+    func testStringifiedEncoding() {
+        let encoder = JSONEncoder()
+
+        struct AlignmentContainer: Encodable {
+            let alignment: Alignment
+            
+            enum CodingKeys: String, CodingKey {
+                case alignment
+            }
+            
+            // Stringify alignment
+            func encode(to encoder: Encoder) throws {
+                var container = encoder.container(keyedBy: CodingKeys.self)
+                try container.encode("\(alignment)", forKey: .alignment)
+            }
+        }
+        
+        let container = AlignmentContainer(alignment: Alignment(.chaotic, .good))
+        let encoded = try! encoder.encode(container)
+        let deserialized = try? JSONSerialization.jsonObject(with: encoded, options: [])
+        XCTAssertNotNil(deserialized, "player traits round trip")
+        
+        if let dictionary = deserialized as? [String: String] {
+            if let alignment = dictionary["alignment"] {
+                XCTAssertEqual(alignment, "Chaotic Good", "player traits round trip alignment ethics")
+            }
+        }
+    }
 }

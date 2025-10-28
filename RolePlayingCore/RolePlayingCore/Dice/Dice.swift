@@ -16,5 +16,4 @@ public protocol Dice: CustomStringConvertible {
     
     /// Returns the number of dice sides.
     var sides: Int { get }
-     
 }

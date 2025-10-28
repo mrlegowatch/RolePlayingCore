@@ -19,5 +19,4 @@ extension Bundle {
         guard let url = self.url(forResource: fileName, withExtension: "json") else { throw RuntimeError("Could not load \(fileName).json from \(self.bundleURL)") }
         return try Data(contentsOf: url, options: [.mappedIfSafe])
     }
-
 }

@@ -33,11 +33,9 @@ extension Player {
         }
         self.classTraits = classTraits
     }
-    
 }
 
 public class Players: Codable {
-
     public var players = [Player]()
     
     public func resolve(backgrounds: Backgrounds, classes: Classes, species: Species) throws {
@@ -65,5 +63,4 @@ public class Players: Codable {
     public func remove(at index: Int) {
         players.remove(at: index)
     }
-    
 }

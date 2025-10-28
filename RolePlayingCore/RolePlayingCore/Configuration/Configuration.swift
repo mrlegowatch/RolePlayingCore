@@ -32,7 +32,6 @@ public struct ConfigurationFiles: Decodable {
 
 /// This is designed to configure a client from a framework or application bundle.
 public struct Configuration {
-    
     let bundle: Bundle
     
     public var configurationFiles: ConfigurationFiles
@@ -94,5 +93,4 @@ public struct Configuration {
             }
         }
     }
-    
 }

@@ -57,5 +57,4 @@ class SpeciesTests: XCTestCase {
             XCTFail("Species threw an error: \(error)")
         }
     }
-    
 }

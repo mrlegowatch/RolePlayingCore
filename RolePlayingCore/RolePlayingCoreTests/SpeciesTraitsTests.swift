@@ -15,90 +15,79 @@ class SpeciesTraitsTests: XCTestCase {
     let decoder = JSONDecoder()
     
     func testSpeciesTraits() {
-        // Test typical traits
+        let traits = """
+            {
+                "name": "Human",
+                "plural": "Humans",
+                "lifespan": 90,
+                "speed": 30,
+                "languages": ["Common"],
+                "extra languages": 1
+            }
+            """.data(using: .utf8)!
+        var speciesTraits: SpeciesTraits? = nil
         do {
-            let traits = """
-                {
-                    "name": "Human",
-                    "plural": "Humans",
-                    "lifespan": 90,
-                    "speed": 30,
-                    "languages": ["Common"],
-                    "extra languages": 1
-                }
-                """.data(using: .utf8)!
-            var speciesTraits: SpeciesTraits? = nil
-            do {
-                speciesTraits = try decoder.decode(SpeciesTraits.self, from: traits)
-            }
-            catch let error {
-                XCTFail("Failed to decode species traits, error: \(error)")
-            }
-            
-            XCTAssertNotNil(speciesTraits)
-            XCTAssertEqual(speciesTraits?.name, "Human", "name")
-            XCTAssertEqual(speciesTraits?.plural, "Humans", "plural")
-            XCTAssertEqual(speciesTraits?.aliases.count, 0, "aliases")
-
-            XCTAssertEqual(speciesTraits?.lifespan, 90, "lifespan")
-            
-            XCTAssertEqual(speciesTraits?.speed, 30, "speed")
+            speciesTraits = try decoder.decode(SpeciesTraits.self, from: traits)
         }
-
-        // Test minimum traits
-        do {
-            let traits = """
-                {
-                    "name": "Giant Human",
-                    "plural": "Giant Humans",
-                    "lifespan": 90,
-                    "speed": 30
-                }
-                """.data(using: .utf8)!
-            var speciesTraits: SpeciesTraits? = nil
-            do {
-                speciesTraits = try decoder.decode(SpeciesTraits.self, from: traits)
-            }
-            catch let error {
-                XCTFail("Failed to decode species traits, error: \(error)")
-            }
-            XCTAssertNotNil(speciesTraits)
-            XCTAssertEqual(speciesTraits?.name, "Giant Human", "name")
-            XCTAssertEqual(speciesTraits?.plural, "Giant Humans", "plural")
-            
-            XCTAssertEqual(speciesTraits?.lifespan, 90, "lifespan")
-            
-            XCTAssertEqual(speciesTraits?.speed, 30, "speed")
-            
-            XCTAssertEqual(speciesTraits?.aliases.count, 0, "aliases")
+        catch let error {
+            XCTFail("Failed to decode species traits, error: \(error)")
         }
         
-        // Test optional traits
+        XCTAssertNotNil(speciesTraits)
+        XCTAssertEqual(speciesTraits?.name, "Human", "name")
+        XCTAssertEqual(speciesTraits?.plural, "Humans", "plural")
+        XCTAssertEqual(speciesTraits?.aliases.count, 0, "aliases")
+        XCTAssertEqual(speciesTraits?.lifespan, 90, "lifespan")
+        XCTAssertEqual(speciesTraits?.speed, 30, "speed")
+    }
+    
+    func testMinimumTraits() {
+        let traits = """
+            {
+                "name": "Giant Human",
+                "plural": "Giant Humans",
+                "lifespan": 90,
+                "speed": 30
+            }
+            """.data(using: .utf8)!
+        var speciesTraits: SpeciesTraits? = nil
         do {
-            let traits = """
-                {
-                    "name": "Small Human",
-                    "plural": "Small Humans",
-                    "lifespan": 90,
-                    "speed": 30,
-                    "aliases": ["Big Human"]
-                }
-                """.data(using: .utf8)!
-            
-            var speciesTraits: SpeciesTraits? = nil
-            do {
-                speciesTraits = try decoder.decode(SpeciesTraits.self, from: traits)
-            }
-            catch let error {
-                XCTFail("Failed to decode species traits, error: \(error)")
-            }
-            XCTAssertNotNil(speciesTraits)
-            XCTAssertEqual(speciesTraits?.aliases.count, 1, "aliases count")
+            speciesTraits = try decoder.decode(SpeciesTraits.self, from: traits)
         }
+        catch let error {
+            XCTFail("Failed to decode species traits, error: \(error)")
+        }
+        XCTAssertNotNil(speciesTraits)
+        XCTAssertEqual(speciesTraits?.name, "Giant Human", "name")
+        XCTAssertEqual(speciesTraits?.plural, "Giant Humans", "plural")
+        XCTAssertEqual(speciesTraits?.lifespan, 90, "lifespan")
+        XCTAssertEqual(speciesTraits?.speed, 30, "speed")
+        XCTAssertEqual(speciesTraits?.aliases.count, 0, "aliases")
+    }
+    
+    func testOptionalTraits() {
+        let traits = """
+            {
+                "name": "Small Human",
+                "plural": "Small Humans",
+                "lifespan": 90,
+                "speed": 30,
+                "aliases": ["Big Human"]
+            }
+            """.data(using: .utf8)!
+        
+        var speciesTraits: SpeciesTraits? = nil
+        do {
+            speciesTraits = try decoder.decode(SpeciesTraits.self, from: traits)
+        }
+        catch let error {
+            XCTFail("Failed to decode species traits, error: \(error)")
+        }
+        XCTAssertNotNil(speciesTraits)
+        XCTAssertEqual(speciesTraits?.aliases.count, 1, "aliases count")
     }
     
     func testMissingTraits() {
-
         // Test that each missing trait results in nil
         do {
             let traits = "{}".data(using: .utf8)!
@@ -113,7 +102,6 @@ class SpeciesTraitsTests: XCTestCase {
             let speciesTraits = try? decoder.decode(SpeciesTraits.self, from: traits)
             XCTAssertNil(speciesTraits)
         }
-        
         
         do {
             let traits = """
@@ -146,14 +134,10 @@ class SpeciesTraitsTests: XCTestCase {
             """.data(using: .utf8)!
             let speciesTraits = try decoder.decode(SpeciesTraits.self, from: traits)
             if let subspeciesTraits = speciesTraits.subspecies.first {
-                
                 XCTAssertEqual(subspeciesTraits.name, "Subhuman", "name")
                 XCTAssertEqual(subspeciesTraits.plural, "Subhumans", "plural")
-                
                 XCTAssertEqual(subspeciesTraits.lifespan, 60, "lifespan")
-                                
                 XCTAssertEqual(subspeciesTraits.speed, 10, "speed")
-                
                 XCTAssertEqual(subspeciesTraits.aliases.count, 0, "aliases")
             } else {
                 XCTFail("decode failed for traits with subspecies traits")
@@ -184,17 +168,12 @@ class SpeciesTraitsTests: XCTestCase {
             
             let speciesTraits = try decoder.decode(SpeciesTraits.self, from: traits)
             if let subspeciesTraits = speciesTraits.subspecies.first {
-            
                 XCTAssertNotNil(subspeciesTraits)
                 XCTAssertEqual(subspeciesTraits.name, "Folk", "name")
                 XCTAssertEqual(subspeciesTraits.plural, "Folks", "plural")
-                
                 XCTAssertEqual(subspeciesTraits.lifespan, 90, "lifespan")
-                                
                 XCTAssertEqual(subspeciesTraits.speed, 30, "speed")
-                
                 XCTAssertEqual(subspeciesTraits.aliases.count, 1, "aliases")
-                
                 XCTAssertEqual(subspeciesTraits.baseSizes, speciesTraits.baseSizes, "size")
             } else {
                 XCTFail("decode failed for traits with subspecies traits")
@@ -222,9 +201,7 @@ class SpeciesTraitsTests: XCTestCase {
             // Confirm species traits
             XCTAssertEqual(dictionary["name"] as? String, "Human", "encoding name")
             XCTAssertEqual(dictionary["plural"] as? String, "Humans", "encoding name")
-            
             XCTAssertEqual(dictionary["lifespan"] as? Int, 90, "encoding lifespan")
-            
             XCTAssertEqual(dictionary["darkvision"] as? Int, 0, "encoding name")
             XCTAssertEqual(dictionary["speed"] as? Int, 45, "encoding name")
             
@@ -232,9 +209,7 @@ class SpeciesTraitsTests: XCTestCase {
             if let subspecies = dictionary["subspecies"] as? [[String: Any]], let firstSubspecies = subspecies.first {
                 XCTAssertEqual(firstSubspecies["name"] as? String, "Subhuman", "encoding name")
                 XCTAssertEqual(firstSubspecies["plural"] as? String, "Subhumans", "encoding name")
-                
                 XCTAssertEqual(firstSubspecies["lifespan"] as? Int, 45, "encoding lifespan")
-                
                 XCTAssertNil(firstSubspecies["darkvision"], "encoding darkvision")
                 XCTAssertEqual(firstSubspecies["speed"] as? Int, 30, "encoding speed")
             } else {
@@ -257,9 +232,7 @@ class SpeciesTraitsTests: XCTestCase {
             if let subspecies = dictionary["subspecies"] as? [[String: Any]], let firstSubspecies = subspecies.first {
                 XCTAssertEqual(firstSubspecies["name"] as? String, "Subhuman", "encoding name")
                 XCTAssertEqual(firstSubspecies["plural"] as? String, "Subhumans", "encoding name")
-                
                 XCTAssertEqual(firstSubspecies["lifespan"] as? Int, 45, "encoding lifespan")
-                
                 XCTAssertEqual(firstSubspecies["darkvision"] as? Int, 10, "encoding darkvision")
                 XCTAssertNil(firstSubspecies["speed"], "encoding speed")
             } else {
@@ -269,7 +242,5 @@ class SpeciesTraitsTests: XCTestCase {
         catch let error {
             XCTFail("decode failed with error: \(error)")
         }
-        
     }
- 
 }

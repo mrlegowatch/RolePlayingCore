@@ -64,5 +64,4 @@ public class Species: Codable {
         
         self.species = species
     }
-    
 }

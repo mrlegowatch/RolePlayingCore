@@ -10,7 +10,6 @@
 /// A dropping dice is an extension of SimpleDice that drops the highest or lowest roll.
 /// This is done through composition, instead of subclassing.
 public struct DroppingDice: Dice {
-    
     public let dice: SimpleDice
     
     /// Options to drop the lowest or highest roll.
@@ -55,5 +54,4 @@ public struct DroppingDice: Dice {
     public var description: String {
         return "\(dice)-\(drop.rawValue)"
     }
-    
 }

@@ -9,7 +9,6 @@
 
 /// A simple dice has a single die, and an optional number of times to roll.
 public struct SimpleDice: Dice {
-    
     public let die: Die
     public let times: Int
     
@@ -62,5 +61,4 @@ public struct SimpleDice: Dice {
         
         return resultString
     }
-    
 }
