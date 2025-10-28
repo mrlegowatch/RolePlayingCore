@@ -66,7 +66,6 @@ public class Player: Codable {
     public var alignment: Alignment?
 
     public var height: Height
-    public var weight: Weight
 
     // TODO: birthdate and age
     
@@ -98,7 +97,7 @@ public class Player: Codable {
     public var level: Int
     
     public var speed: Int { speciesTraits.speed }
-    public var size: SpeciesTraits.Size { SpeciesTraits.Size(from: height) }
+    public var size: CreatureSize { CreatureSize(from: height) }
     
     public var hitDice: Dice { classTraits.hitDice.hitDice(level: level) }
     
@@ -125,7 +124,6 @@ public class Player: Codable {
         case gender
         case alignment
         case height
-        case weight
         case baseAbilities = "ability scores"
         case backgroundAbilities = "background ability scores"
         case skills
@@ -148,7 +146,6 @@ public class Player: Codable {
         let gender = try values.decodeIfPresent(Gender.self, forKey: .gender)
         let alignment = try values.decodeIfPresent(Alignment.self, forKey: .alignment)
         let height = try values.decode(Height.self, forKey: .height)
-        let weight = try values.decode(Weight.self, forKey: .weight)
         let baseAbilities = try values.decode(AbilityScores.self, forKey: .baseAbilities)
         let backgroundAbilities = try values.decode([String].self, forKey: .backgroundAbilities)
         let skillNames = try values.decode([String].self, forKey: .skills)
@@ -167,7 +164,6 @@ public class Player: Codable {
         self.gender = gender
         self.alignment = alignment
         self.height = height
-        self.weight = weight
         self.baseAbilities = baseAbilities
         self.backgroundAbilities = backgroundAbilities.map { Ability($0) }
         self.skills = Skill.skills(from: skillNames)
@@ -190,7 +186,6 @@ public class Player: Codable {
         try values.encodeIfPresent(gender, forKey: .gender)
         try values.encodeIfPresent(alignment, forKey: .alignment)
         try values.encode("\(height)", forKey: .height)
-        try values.encode("\(weight)", forKey: .weight)
         try values.encode(baseAbilities, forKey: .baseAbilities)
         try values.encode(backgroundAbilities.map({ $0.name }), forKey: .backgroundAbilities)
         try values.encode(skills.skillNames, forKey: .skills)
@@ -214,11 +209,9 @@ public class Player: Codable {
         self.gender = gender
         self.alignment = alignment
         
-        let extraHeight = speciesTraits.heightModifier.roll().result
-        self.height = (speciesTraits.baseHeight + Height(value: Double(extraHeight), unit: .inches)).converted(to: .feet)
-        
-        let extraWeight = extraHeight * speciesTraits.weightModifier.roll().result
-        self.weight = speciesTraits.baseWeight + Weight(value: Double(extraWeight), unit: .pounds)
+        // TODO: More heavily weight the first base size (primary vs. secondary)
+        let baseSize = speciesTraits.baseSizes.randomElement()!
+        self.height = Height.randomHeight(from: baseSize)
         
         self.baseAbilities = AbilityScores()
         self.baseAbilities.roll()
@@ -243,7 +236,7 @@ public class Player: Codable {
     // MARK: Implementation
     
     public class func rollHitPoints(classTraits: ClassTraits, speciesTraits: SpeciesTraits) -> Int {
-        return max(classTraits.hitDice.sides / 2 + 1, classTraits.hitDice.roll().result) + speciesTraits.hitPointBonus
+        return max(classTraits.hitDice.sides / 2 + 1, classTraits.hitDice.roll().result)
     }
     
     public func rollHitPoints() -> Int {
@@ -277,7 +270,6 @@ extension Player: Hashable {
                lhs.gender == rhs.gender &&
                lhs.alignment == rhs.alignment &&
                lhs.height == rhs.height &&
-               lhs.weight == rhs.weight &&
                lhs.baseAbilities == rhs.baseAbilities &&
                lhs.maximumHitPoints == rhs.maximumHitPoints &&
                lhs.currentHitPoints == rhs.currentHitPoints &&
@@ -294,7 +286,6 @@ extension Player: Hashable {
         hasher.combine(gender)
         hasher.combine(alignment)
         hasher.combine(height)
-        hasher.combine(weight)
         hasher.combine(baseAbilities)
         hasher.combine(maximumHitPoints)
         hasher.combine(currentHitPoints)

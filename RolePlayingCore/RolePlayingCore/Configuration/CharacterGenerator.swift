@@ -45,7 +45,7 @@ public struct CharacterGenerator {
         let speciesTraits = configuration.species.randomElementByIndex(using: &generator)
         let classTraits = configuration.classes[randomClass]!
         let name = names.randomName(speciesTraits: speciesTraits, gender: gender, using: &generator)
-        let alignment = speciesTraits.alignment != nil ? speciesTraits.alignment : randomAlignment(using: &generator)
+        let alignment = randomAlignment(using: &generator)
         
         return Player(name, backgroundTraits: backgroundTraits, speciesTraits: speciesTraits, classTraits: classTraits, gender: gender, alignment: alignment)
     }

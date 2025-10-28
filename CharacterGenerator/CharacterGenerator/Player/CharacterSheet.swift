@@ -29,10 +29,10 @@ class CharacterSheet {
         [\.backgroundName, \.speciesName, \.className],
         [\.abilities],
         [\.skills],
-        [\.initiative, \.speed, \.size],
+        [\.initiative, \.speed],
         [\.armorClass, \.proficiencyBonus, \.passivePerception],
         [\.maximumHitPoints, \.hitDice],
-        [\.height, \.weight],
+        [\.height, \.size],
         [\.money]
     ]
     
@@ -42,10 +42,10 @@ class CharacterSheet {
         ["Background", "Species", "Class", "Subclass"],
         ["Abilities"],
         ["Skills"],
-        ["Initiative", "Speed", "Size"],
+        ["Initiative", "Speed"],
         ["Armor Class", "Proficiency Bonus", "Passive Perception"],
         ["Hit Points", "Hit Dice"],
-        ["Height", "Weight"],
+        ["Height", "Size"],
         ["Money"]
     ]
     
@@ -55,7 +55,7 @@ class CharacterSheet {
         ["labeledText", "labeledText", "labeledText"],
         ["abilities"],
         ["labeledText"],
-        ["labeledNumber", "labeledNumber", "labeledText"],
+        ["labeledNumber", "labeledNumber"],
         ["labeledNumber", "labeledNumber", "labeledNumber"],
         ["labeledNumber", "labeledText"],
         ["labeledText", "labeledText"],
@@ -95,7 +95,6 @@ class CharacterSheet {
     var money: String { "\(player.money)" }
     var gender: String { player.gender.map(\.rawValue) ?? "Androgynous" }
     var height: String { player.height.displayString }
-    var weight: String { player.weight.displayString }
     var speed: String {
         let value = player.speed
         let distance = Measurement(value: Double(value), unit: UnitLength.feet)

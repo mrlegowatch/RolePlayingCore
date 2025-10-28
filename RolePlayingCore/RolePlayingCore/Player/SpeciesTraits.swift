@@ -10,97 +10,58 @@ import Foundation
 
 public struct SpeciesTraits {
     
+    public struct CreatureType {
+        public let name: String
+        
+        public static let aberration = CreatureType(name: "Aberration")
+        public static let beast = CreatureType(name: "Beast")
+        public static let celestial = CreatureType(name: "Celestial")
+        public static let construct = CreatureType(name: "Construct")
+        public static let dragon = CreatureType(name: "Dragon")
+        public static let elemental = CreatureType(name: "Elemental")
+        public static let fey = CreatureType(name: "Fey")
+        public static let fiend = CreatureType(name: "Fiend")
+        public static let giant = CreatureType(name: "Giant")
+        public static let humanoid = CreatureType(name: "Humanoid")
+        public static let monstrosity = CreatureType(name: "Monstrosity")
+        public static let ooze = CreatureType(name: "Ooze")
+        public static let plant = CreatureType(name: "Plant")
+        public static let undead = CreatureType(name: "Undead")
+    }
     public var name: String
     public var plural: String
     public var aliases: [String]
+    public var creatureType: CreatureType
     public var descriptiveTraits: [String: String]
-    public var minimumAge: Int!
     public var lifespan: Int!
-    public var alignment: Alignment?
-    public var baseHeight: Height!
-    public var heightModifier: Dice
-    public var baseWeight: Weight!
-    public var weightModifier: Dice
+    
+    public var baseSizes: [String]
+    
     public var darkVision: Int!
     public var speed: Int!
-    public var hitPointBonus: Int
     
     public var parentName: String?
     public var subspecies: [SpeciesTraits] = []
     
-    public enum Size {
-        case tiny
-        case small
-        case medium
-        case large
-        case huge
-        case gargantuan
-        
-        init(from height: Height) {
-            let heightInFeet = height.converted(to: .feet)
-            switch heightInFeet.value {
-            case 0..<4:
-                self = .small
-            case 4..<7:
-                self = .medium
-            default:
-                self = .large
-            }
-        }
-        
-        /// Space required in feet (dimension feet x feet)
-        var space: Double {
-            switch self {
-            case .tiny: return 2.5
-            case .small, .medium: return 5.0
-            case .large: return 10.0
-            case .huge: return 15.0
-            case .gargantuan: return 20.0
-            }
-        }
-        
-        /// Space required in squares
-        var squares: Double {
-            switch self {
-            case .tiny: return 0.25
-            case .small, .medium: return 1.0
-            case .large: return 4.0
-            case .huge: return 9.0
-            case .gargantuan: return 16.0
-            }
-        }
-    }
-    
-    public var size: Size { Size(from: baseHeight) }
-    
     public init(name: String,
                 plural: String,
                 aliases: [String] = [],
+                creatureType: CreatureType = .humanoid,
                 descriptiveTraits: [String: String] = [:],
-                minimumAge: Int,
                 lifespan: Int,
-                alignment: Alignment? = nil,
-                baseHeight: Height,
-                heightModifier: Dice = DiceModifier(0),
-                baseWeight: Weight,
-                weightModifier: Dice = DiceModifier(0),
+                baseSizes: [String] = ["4-7"],
                 darkVision: Int,
                 speed: Int,
                 hitPointBonus: Int = 0) {
         self.name = name
         self.plural = plural
         self.aliases = aliases
+        self.creatureType = creatureType
         self.descriptiveTraits = descriptiveTraits
-        self.minimumAge = minimumAge
         self.lifespan = lifespan
-        self.alignment = alignment
-        self.baseHeight = baseHeight
-        self.heightModifier = heightModifier
-        self.baseWeight = baseWeight
-        self.weightModifier = weightModifier
+        self.baseSizes = baseSizes
         self.darkVision = darkVision
         self.speed = speed
-        self.hitPointBonus = hitPointBonus
     }
 }
 
@@ -110,17 +71,12 @@ extension SpeciesTraits: Codable {
         case name
         case plural
         case aliases
+        case creatureType = "creature type"
         case descriptiveTraits = "descriptive traits"
-        case minimumAge = "minimum age"
         case lifespan
-        case alignment
-        case baseHeight = "base height"
-        case heightModifier = "height modifier"
-        case baseWeight = "base weight"
-        case weightModifier = "weight modifier"
+        case baseSizes = "base sizes"
         case darkVision = "darkvision"
         case speed
-        case hitPointBonus = "hit point bonus"
         case subspecies
     }
     
@@ -131,33 +87,23 @@ extension SpeciesTraits: Codable {
         let name = try values.decode(String.self, forKey: .name)
         let plural = try values.decode(String.self, forKey: .plural)
         let aliases = try values.decodeIfPresent([String].self, forKey: .aliases)
+        let creatureType = try values.decodeIfPresent(String.self, forKey: .creatureType)
         let descriptiveTraits = try values.decodeIfPresent([String:String].self, forKey: .descriptiveTraits)
-        let minimumAge = try values.decodeIfPresent(Int.self, forKey: .minimumAge)
         let lifespan = try values.decodeIfPresent(Int.self, forKey: .lifespan)
-        let alignment = try values.decodeIfPresent(Alignment.self, forKey: .alignment)
-        let baseHeight = try values.decodeIfPresent(Height.self, forKey: .baseHeight)
-        let heightModifier = try values.decodeIfPresent(Dice.self, forKey: .heightModifier)
-        let baseWeight = try values.decodeIfPresent(Weight.self, forKey: .baseWeight)
-        let weightModifier = try values.decodeIfPresent(Dice.self, forKey: .weightModifier)
+        let baseSizes = try values.decodeIfPresent([String].self, forKey: .baseSizes)
         let darkVision = try values.decodeIfPresent(Int.self, forKey: .darkVision)
         let speed = try values.decodeIfPresent(Int.self, forKey: .speed)
-        let hitPointBonus = try values.decodeIfPresent(Int.self, forKey: .hitPointBonus)
         
         // Safely set properties
         self.name = name
         self.plural = plural
         self.aliases = aliases ?? []
+        self.creatureType = CreatureType(name: creatureType ?? CreatureType.humanoid.name)
         self.descriptiveTraits = descriptiveTraits ?? [:]
-        self.minimumAge = minimumAge
         self.lifespan = lifespan
-        self.alignment = alignment
-        self.baseHeight = baseHeight
-        self.heightModifier = heightModifier ?? DiceModifier(0)
-        self.baseWeight = baseWeight
-        self.weightModifier = weightModifier ?? DiceModifier(0)
+        self.baseSizes = baseSizes ?? ["4-7"]
         self.darkVision = darkVision
         self.speed = speed
-        self.hitPointBonus = hitPointBonus ?? 0
         
         // Decode subspecies
         if var subspecies = try? values.nestedUnkeyedContainer(forKey: .subspecies) {
@@ -167,7 +113,6 @@ extension SpeciesTraits: Codable {
                 self.subspecies.append(subspeciesTraits)
             }
         }
-        
     }
     
     /// Inherit parent traits, for each trait that is not already set.
@@ -175,36 +120,21 @@ extension SpeciesTraits: Codable {
         // Name, plural, aliases and descriptive traits are unique to each set of species traits.
         // The rest may be inherited from the parent.
         self.parentName = parent.name
+        self.creatureType = parent.creatureType
         
-        if self.minimumAge == nil {
-            self.minimumAge = parent.minimumAge
+        if self.baseSizes.isEmpty {
+            self.baseSizes = parent.baseSizes
         }
+        
         if self.lifespan == nil {
             self.lifespan = parent.lifespan
         }
-        if self.alignment == nil {
-            self.alignment = parent.alignment
-        }
-        if self.baseHeight == nil {
-            self.baseHeight = parent.baseHeight
-        }
-        if self.heightModifier.sides == 0 {
-            self.heightModifier = parent.heightModifier
-        }
-        if self.baseWeight == nil {
-            self.baseWeight = parent.baseWeight
-        }
-        if self.weightModifier.sides == 0 {
-            self.weightModifier = parent.weightModifier
-        }
+        
         if self.darkVision == nil {
             self.darkVision = parent.darkVision
         }
         if self.speed == nil {
             self.speed = parent.speed
-        }
-        if self.hitPointBonus == 0 {
-            self.hitPointBonus = parent.hitPointBonus
         }
     }
     
@@ -214,22 +144,12 @@ extension SpeciesTraits: Codable {
         try values.encode(name, forKey: .name)
         try values.encode(plural, forKey: .plural)
         try values.encode(aliases, forKey: .aliases)
+        try values.encode(creatureType.name, forKey: .creatureType)
         try values.encode(descriptiveTraits, forKey: .descriptiveTraits)
-        try values.encode(minimumAge, forKey: .minimumAge)
         try values.encode(lifespan, forKey: .lifespan)
-        
-        // Encode alignment using its enum string values, since SpeciesTraits is a type.
-        if alignment != nil {
-            try values.encode("\(alignment!)", forKey: .alignment)
-        }
-        
-        try values.encode("\(baseHeight!)", forKey: .baseHeight)
-        try values.encode("\(heightModifier)", forKey: .heightModifier)
-        try values.encode("\(baseWeight!)", forKey: .baseWeight)
-        try values.encode("\(weightModifier)", forKey: .weightModifier)
+        try values.encode(baseSizes, forKey: .baseSizes)
         try values.encode(darkVision, forKey: .darkVision)
         try values.encode(speed, forKey: .speed)
-        try values.encode(hitPointBonus, forKey: .hitPointBonus)
         
         var subspeciesContainer = values.nestedUnkeyedContainer(forKey: .subspecies)
         for subspeciesTraits in subspecies {
@@ -244,42 +164,24 @@ extension SpeciesTraits: Codable {
         
         try values.encode(name, forKey: .name)
         try values.encode(plural, forKey: .plural)
+        try values.encode(creatureType.name, forKey: .creatureType)
         if self.aliases.count > 0 {
             try values.encode(aliases, forKey: .aliases)
         }
         if self.descriptiveTraits.count > 0 {
             try values.encode(descriptiveTraits, forKey: .descriptiveTraits)
         }
-        
-        if self.minimumAge != parent.minimumAge {
-            try values.encode(self.minimumAge, forKey: .minimumAge)
-        }
         if self.lifespan != parent.lifespan {
             try values.encode(self.lifespan, forKey: .lifespan)
         }
-        if self.alignment != nil && self.alignment != parent.alignment {
-            try values.encode("\(alignment!)", forKey: .alignment)
-        }
-        if self.baseHeight != parent.baseHeight {
-            try values.encode("\(self.baseHeight!)", forKey: .baseHeight)
-        }
-        if self.heightModifier.sides != parent.heightModifier.sides {
-            try values.encode("\(self.heightModifier)", forKey: .heightModifier)
-        }
-        if self.baseWeight != parent.baseWeight {
-            try values.encode("\(self.baseWeight!)", forKey: .baseWeight)
-        }
-        if self.weightModifier.sides != parent.weightModifier.sides {
-            try values.encode("\(self.weightModifier)", forKey: .weightModifier)
+        if self.baseSizes != parent.baseSizes {
+            try values.encode(self.baseSizes, forKey: .baseSizes)
         }
         if self.darkVision != parent.darkVision {
             try values.encode(self.darkVision, forKey: .darkVision)
         }
         if self.speed != parent.speed {
             try values.encode(self.speed, forKey: .speed)
-        }
-        if self.hitPointBonus != parent.hitPointBonus {
-            try values.encode(self.hitPointBonus, forKey: .hitPointBonus)
         }
     }
     

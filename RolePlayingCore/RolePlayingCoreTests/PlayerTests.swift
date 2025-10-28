@@ -57,7 +57,6 @@ class PlayerTests: XCTestCase {
         {
             "name": "Human",
             "plural": "Humans",
-            "minimum age": 18,
             "lifespan": 90,
             "base height": "4'8\\"",
             "height modifier": "2d10",
@@ -93,10 +92,7 @@ class PlayerTests: XCTestCase {
             }
             
             // I do the maths
-            XCTAssertTrue((4.66666...6.33334).contains(player.height.value), "height \(player.height.value)")
-      
-            // 110 + 2...8 * 2...20
-            XCTAssertTrue((114...270).contains(player.weight.value), "weight \(player.weight.value)")
+            XCTAssertTrue((4..<7).contains(player.height.value), "height \(player.height.value)")
             
             XCTAssertTrue((1...10).contains(player.maximumHitPoints), "maximum hit points")
             XCTAssertEqual(player.maximumHitPoints, player.currentHitPoints, "current hit points")
@@ -119,7 +115,6 @@ class PlayerTests: XCTestCase {
                 "class": "Fighter",
                 "gender": "Male",
                 "height": "3'9\\"",
-                "weight": 120,
                 "ability scores": {"Dexterity": 13, "Charisma": 12},
                 "background ability scores": ["Strength", "Strength", "Dexterity"],
                 "skills": ["Athletics"],
@@ -144,7 +139,6 @@ class PlayerTests: XCTestCase {
                 XCTAssertEqual(player.abilities[.charisma], 12, "charisma")
                 
                 XCTAssertEqual(player.height.value, 3.75, "height")
-                XCTAssertEqual(player.weight.value, 120, "weight")
                 
                 XCTAssertEqual(player.maximumHitPoints, 10, "maximum hit points")
                 XCTAssertEqual(player.maximumHitPoints, player.currentHitPoints, "current hit points")
@@ -170,7 +164,6 @@ class PlayerTests: XCTestCase {
                 "class": "Fighter",
                 "alignment": "Lawful Evil",
                 "height": "3'9\\"",
-                "weight": 120,
                 "ability scores": {"Strength": 12},
                 "background ability scores": ["Strength", "Strength", "Dexterity"],
                 "skills": ["Athletics"],
@@ -217,7 +210,6 @@ class PlayerTests: XCTestCase {
             "gender": "Male",
             "alignment": "Neutral Good",
             "height": "3'9\\"",
-            "weight": 120,
             "ability scores": {"Dexterity": 13},
             "background ability scores": ["Strength", "Strength", "Dexterity"],
             "skills": ["Athletics"],
@@ -244,7 +236,6 @@ class PlayerTests: XCTestCase {
                 XCTAssertEqual(alignment["morals"], 1, "player traits round trip alignment ethics")
             }
             XCTAssertEqual(encoded["height"] as? String, "3.75 ft", "player traits round trip height")
-            XCTAssertEqual(encoded["weight"] as? String, "120.0 lb", "player traits round trip weight")
             
             let abilities = encoded["ability scores"] as? [String: Int]
             XCTAssertNotNil(abilities)
@@ -303,7 +294,6 @@ class PlayerTests: XCTestCase {
             {
                 "name": "Bilbo",
                 "height": "3'9\\"",
-                "weight": 120
             }
             """.data(using: .utf8)!
             let player = try? decoder.decode(Player.self, from: traits)
@@ -315,7 +305,6 @@ class PlayerTests: XCTestCase {
             {
                 "name": "Bilbo",
                 "height": "3'9\\"",
-                "weight": 120,
                 "ability scores": {"Dexterity": 13}
             }
             """.data(using: .utf8)!
@@ -328,7 +317,6 @@ class PlayerTests: XCTestCase {
             {
                 "name": "Bilbo",
                 "height": "3'9\\"",
-                "weight": 120,
                 "ability scores": {"Dexterity": 13},
                 "money": 130]
             }
@@ -429,7 +417,6 @@ class PlayerTests: XCTestCase {
         player2.classTraits = fighter
         player2.baseAbilities = player1.baseAbilities
         player2.height = player1.height
-        player2.weight = player1.weight
         player2.maximumHitPoints = player1.maximumHitPoints
         player2.currentHitPoints = player1.currentHitPoints
         player2.experiencePoints = player1.experiencePoints
@@ -466,7 +453,6 @@ class PlayerTests: XCTestCase {
         let player3 = Player("Boromir", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
         player3.baseAbilities = player1.baseAbilities
         player3.height = player1.height
-        player3.weight = player1.weight
         player3.money = player1.money
         player3.currentHitPoints = player3.currentHitPoints - 5
         
@@ -566,7 +552,6 @@ class PlayerTests: XCTestCase {
                 "flaw": "Impulsive"
             },
             "height": "4'2\\"",
-            "weight": 95,
             "ability scores": {"Charisma": 14, "Dexterity": 15},
             "background ability scores": ["Strength", "Strength", "Dexterity"],
             "skills": ["Athletics"],
@@ -613,7 +598,6 @@ class PlayerTests: XCTestCase {
             "species": "Human",
             "class": "Fighter",
             "height": "4'2\\"",
-            "weight": 95,
             "ability scores": {"Strength": 14},
             "background ability scores": ["Strength", "Strength", "Dexterity"],
             "skills": ["Athletics"],

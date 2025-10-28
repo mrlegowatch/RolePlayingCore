@@ -1,5 +1,11 @@
 {
     "names": {
+        "Aasimar": {
+            "family type": "Family",
+            "Male": ["Aliban", "Mykiel", "Tadriel", "Valandras", "Diero", "Evendur", "Hunin", "Taman", "Zasheir", "Azrael", "Castiel", "Metatron", "Remiel", "Sachiel"],
+            "Female": ["Galladia", "Myllandra", "Seraphina", "Arveene", "Nephis", "Reani", "Selise", "Yasha", "Zora", "Jhessail", "Ananiel", "Jophiel", "Sariel", "Zuriel"],
+            "family": ["Amolune", "Solvaar", "Vaerthine", "Brightsun", "Moontide", "Whisperwind"]
+        },
         "Dwarf": {
             "family type": "Clan",
             "Male": ["Adrik", "Alberich", "Baern", "Barendd", "Brottor", "Flint", "Dain", "Darrak", "Delg", "Eberk", "Einkil", "Fargrim", "Flint", "Gardain", "Harbek", "Kildrak", "Morgran", "Orsik", "Oskar", "Rangrim", "Rurik", "Talkinn", "Thoradin", "Thorin", "Tordek", "Traubon", "Travok", "Ulfgar", "Veit", "Vondal"],
@@ -33,18 +39,19 @@
             "family": ["Clethtinthiallor", "Daardendrian", "Delmirev", "Drachedandion", "Fenkenkabradon", "Kepeshkmolik", "Kerrhylon", "Kimbatuul", "Linxakasendalor", "Myastan", "Nemmonis", "Norixius", "Ophinshtalajiir", "Prexijandilin", "Shestendeliath", "Turnuroth", "Verthisathurgiesh", "Yarjerit"],
             "child": ["Climber", "Earbender", "Leaper", "Pious", "Shieldbiter", "Zealous"]
         },
+        "Goliath": {
+            "family type": "Clan",
+            "Male": ["Aukan", "Eglath", "Gae-Al", "Gauthak", "Ilikan", "Keothi", "Kuori", "Lo-Kag", "Manneo", "Maveith", "Nalla", "Orilo", "Paavu", "Pethani", "Thalai", "Thotham", "Uthal", "Vaunea", "Vimak"],
+            "Female": ["Aukan", "Eglath", "Gae-Al", "Gauthak", "Ilikan", "Keothi", "Kuori", "Lo-Kag", "Manneo", "Maveith", "Nalla", "Orilo", "Paavu", "Pethani", "Thalai", "Thotham", "Uthal", "Vaunea", "Vimak"],
+            "family": ["Anakalathai", "Elanithino", "Gathakanathi", "Kalagiano", "Katho-Olavi", "Kolae-Gileana", "Ogolakanu", "Thuliaga", "Thunukalathi", "Vaimei-Laga"],
+            "nickname": ["Bearkiller", "Dawncaller", "Fearless", "Flintfinder", "Horncarver", "Keeneye", "Lonehunter", "Longleaper", "Rootsmasher", "Skywatcher", "Steadyhand", "Threadtwister", "Twice-Orphaned", "Twistedlimb", "Wordpainter"]
+        },
         "Gnome": {
             "family type": "Clan",
             "Male": ["Alston", "Alvyn", "Boddynock", "Brocc", "Burgell", "Dimble", "Eldon", "Erky", "Fonkin", "Frug", "Gerbo", "Gimble", "Glim", "Jebeddo", "Kellen", "Namfoodle", "Orryn", "Roondar", "Seebo", "Sindri", "Warryn", "Wrenn", "Zook"],
             "Female": ["Bimpnottin", "Breena", "Caramip", "Carlin", "Donella", "Dovamil", "Ella", "Ellyjobell", "Ellywick", "Lilli", "Loopmottin", "Lorilla", "Mardnab", "Nissa", "Nyx", "Oda", "Orla", "Roywyn", "Shamil", "Tana", "Waywocket", "Zanna"],
             "family": ["Beren", "Daergel", "Folkor", "Garrick", "Nackle", "Murning", "Ningel", "Raulnor", "Scheppen", "Timbers", "Turen"],
             "nickname": ["Aleslosh", "Ashhearth", "Badger", "Cloak", "Doublelock", "Filchbatter", "Fnipper", "Ku", "Nim", "Oneshoe", "Pock", "Sparklegem", "Stumbleduck"]
-        },
-        "Half-Elf": {
-            "aliases": ["Elf", "Human"]
-        },
-        "Half-Orc": {
-            "aliases": ["Orc", "Human"]
         },
         "Orc": {
             "family type": "",
