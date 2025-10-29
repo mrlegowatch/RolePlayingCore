@@ -6,19 +6,21 @@
 //  Copyright © 2017 Brian Arnold. All rights reserved.
 //
 
-import XCTest
+import Testing
 
 import RolePlayingCore
 
 /// Use a mock random number generator so we can hardcode expected generated names.
 
-class NameGeneratorTests: XCTestCase {
+@Suite("Name Generator Tests")
+struct NameGeneratorTests {
     
-    func testNameGenerator() {
-        let bundle = Bundle(for: NameGeneratorTests.self)
-        let data = try! bundle.loadJSON("TestNames")
+    @Test("Name generator produces expected names with mock generator")
+    func nameGenerator() throws {
+        let bundle = testBundle
+        let data = try bundle.loadJSON("TestNames")
         let decoder = JSONDecoder()
-        let nameGenerator = try! decoder.decode(NameGenerator.self, from: data)
+        let nameGenerator = try decoder.decode(NameGenerator.self, from: data)
         var generator = MockIndexGenerator()
         
         let expectedNames = ["Abadh", "Eunach", "Aillach", "Alsearbore", "Aod", "Aodel", "Edan", "Aodvoda", "Argcran", "Art"]
@@ -26,7 +28,7 @@ class NameGeneratorTests: XCTestCase {
         for index in 0..<10 {
             let name = nameGenerator.makeName(using: &generator)
             generatedNames.append(name)
-            XCTAssertEqual(expectedNames[index], name, "expected generated name")
+            #expect(expectedNames[index] == name, "Expected generated name to match")
         }
         print("Generated names: \(generatedNames)")
         
@@ -34,7 +36,8 @@ class NameGeneratorTests: XCTestCase {
         let _ = nameGenerator.makeName()
     }
     
-    func testRandomNumberGenerator() {
+    @Test("Random number generator produces sequential indices")
+    func randomNumberGenerator() {
         var generator = MockIndexGenerator()
         
         let testNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]

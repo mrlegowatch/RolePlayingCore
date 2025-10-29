@@ -40,12 +40,6 @@
             "family": ["Beren", "Daergel", "Folkor", "Garrick", "Nackle", "Murning", "Ningel", "Raulnor", "Scheppen", "Timbers", "Turen"],
             "nickname": ["Aleslosh", "Ashhearth", "Badger", "Cloak", "Doublelock", "Filchbatter", "Fnipper", "Ku", "Nim", "Oneshoe", "Pock", "Sparklegem", "Stumbleduck"]
         },
-        "Half-Elf": {
-            "aliases": ["Elf", "Human"]
-        },
-        "Half-Orc": {
-            "aliases": ["Orc", "Human"]
-        },
         "Orc": {
             "family type": "",
             "Male": ["Dench", "Feng", "Gell", "Henk", "Holg", "Imsh", "Keth", "Krusk", "Mhurren", "Ront", "Shump", "Thokk"],

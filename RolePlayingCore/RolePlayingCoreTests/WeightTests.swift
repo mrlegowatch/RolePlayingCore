@@ -6,46 +6,47 @@
 //  Copyright © 2017 Brian Arnold. All rights reserved.
 //
 
-import XCTest
-
+import Testing
 import RolePlayingCore
 
-class UnitWeightTests: XCTestCase {
+@Suite("Weight Parsing and Serialization Tests")
+struct UnitWeightTests {
     
-    func testWeights() {
+    @Test("Parse various weight formats")
+    func weights() async throws {
         do {
             let howHeavy = "70".parseWeight
-            XCTAssertNotNil(howHeavy, "weight should be non-nil")
-            XCTAssertEqual(howHeavy?.value, 70, "weight should be 3.0")
+            #expect(howHeavy != nil, "weight should be non-nil")
+            #expect(howHeavy?.value == 70, "weight should be 70")
         }
 
         do {
             let howHeavy = "3.0".parseWeight
-            XCTAssertNotNil(howHeavy, "weight should be non-nil")
-            XCTAssertEqual(howHeavy?.value, 3.0, "weight should be 3.0")
+            #expect(howHeavy != nil, "weight should be non-nil")
+            #expect(howHeavy?.value == 3.0, "weight should be 3.0")
         }
 
         do {
             let howHeavy = "45lb".parseWeight
-            XCTAssertNotNil(howHeavy, "weight should be non-nil")
-            XCTAssertEqual(howHeavy?.value, 45, "weight should be 45")
+            #expect(howHeavy != nil, "weight should be non-nil")
+            #expect(howHeavy?.value == 45, "weight should be 45")
         }
 
         do {
             let howHeavy = "174 kg".parseWeight
-            XCTAssertNotNil(howHeavy, "weight should be non-nil")
-            XCTAssertEqual(howHeavy?.value, 174, "weight should be 174")
+            #expect(howHeavy != nil, "weight should be non-nil")
+            #expect(howHeavy?.value == 174, "weight should be 174")
         }
     }
     
-    func testInvalidWeights() {
-        do {
-            let howHeavy = "99 hello".parseWeight
-            XCTAssertNil(howHeavy, "weight should be nil")
-        }
+    @Test("Parse invalid weight strings")
+    func invalidWeights() async throws {
+        let howHeavy = "99 hello".parseWeight
+        #expect(howHeavy == nil, "weight should be nil")
     }
     
-    func testEncodingWeight() {
+    @Test("Encode weight to JSON")
+    func encodingWeight() async throws {
         struct WeightContainer: Encodable {
             let weight: Weight
             
@@ -61,21 +62,17 @@ class UnitWeightTests: XCTestCase {
         let weightContainer = WeightContainer(weight: Weight(value: 2.9, unit: .kilograms))
         
         // Do a round-trip through serialization, then deserialization to confirm that it became a string
-        do {
-            let encoder = JSONEncoder()
-            let encoded = try encoder.encode(weightContainer)
-            let deserialized = try JSONSerialization.jsonObject(with: encoded, options: .allowFragments)
-            print("deserialized = \n\(deserialized)")
-            let container = deserialized as? [String: Any]
-            let weight = container?["weight"] as? String
-            XCTAssertEqual(weight, "2.9 kg", "Encoded weight did not become a string")
-        }
-        catch let error {
-            XCTFail("Encoding weight threw an error: \(error)")
-        }
+        let encoder = JSONEncoder()
+        let encoded = try encoder.encode(weightContainer)
+        let deserialized = try JSONSerialization.jsonObject(with: encoded, options: .allowFragments)
+        print("deserialized = \n\(deserialized)")
+        let container = deserialized as? [String: Any]
+        let weight = container?["weight"] as? String
+        #expect(weight == "2.9 kg", "Encoded weight did not become a string")
     }
     
-    func testDecodingHeight() {
+    @Test("Decode weight from JSON")
+    func decodingWeight() async throws {
         struct WeightContainer: Decodable {
             let weight: Weight
         }
@@ -86,14 +83,11 @@ class UnitWeightTests: XCTestCase {
                 "weight": "147 lb"
             }
             """.data(using: .utf8)!
-            do {
-                let decoder = JSONDecoder()
-                let decoded = try decoder.decode(WeightContainer.self, from: traits)
-                
-                XCTAssertEqual(decoded.weight.value, 147, "Decoded weight should be 147 lb")
-            } catch let error {
-                XCTFail("Decoding weight threw an error: \(error)")
-            }
+            
+            let decoder = JSONDecoder()
+            let decoded = try decoder.decode(WeightContainer.self, from: traits)
+            
+            #expect(decoded.weight.value == 147, "Decoded weight should be 147 lb")
         }
         
         do {
@@ -102,14 +96,11 @@ class UnitWeightTests: XCTestCase {
                 "weight": 17
             }
             """.data(using: .utf8)!
-            do {
-                let decoder = JSONDecoder()
-                let decoded = try decoder.decode(WeightContainer.self, from: traits)
-                
-                XCTAssertEqual(decoded.weight.value, 17, "Decoded weight should be 17 lb")
-            } catch let error {
-                XCTFail("Decoding weight threw an error: \(error)")
-            }
+            
+            let decoder = JSONDecoder()
+            let decoded = try decoder.decode(WeightContainer.self, from: traits)
+            
+            #expect(decoded.weight.value == 17, "Decoded weight should be 17 lb")
         }
         
         do {
@@ -118,18 +109,16 @@ class UnitWeightTests: XCTestCase {
                 "weight": "abcdefg"
             }
             """.data(using: .utf8)!
-            do {
-                let decoder = JSONDecoder()
+            
+            let decoder = JSONDecoder()
+            #expect(throws: (any Error).self) {
                 _ = try decoder.decode(WeightContainer.self, from: traits)
-                XCTFail("Decoding weight should have thrown an error")
-                
-            } catch let error {
-                print("Decoding invalid weight successfully threw an error: \(error)")
             }
         }
     }
     
-    func testDecodingWeightIfPresent() {
+    @Test("Decode optional weight from JSON")
+    func decodingWeightIfPresent() async throws {
         struct WeightContainer: Decodable {
             let weight: Weight? // The ? will trigger decodeIfPresent in the decoder
         }
@@ -140,14 +129,11 @@ class UnitWeightTests: XCTestCase {
                 "weight": "220 lb"
             }
             """.data(using: .utf8)!
-            do {
-                let decoder = JSONDecoder()
-                let decoded = try decoder.decode(WeightContainer.self, from: traits)
-                
-                XCTAssertEqual(decoded.weight?.value, 220.0, "Decoded weight should be 220 lb")
-            } catch let error {
-                XCTFail("Decoding weight threw an error: \(error)")
-            }
+            
+            let decoder = JSONDecoder()
+            let decoded = try decoder.decode(WeightContainer.self, from: traits)
+            
+            #expect(decoded.weight?.value == 220.0, "Decoded weight should be 220 lb")
         }
         
         do {
@@ -156,14 +142,11 @@ class UnitWeightTests: XCTestCase {
                 "weight": 6.5
             }
             """.data(using: .utf8)!
-            do {
-                let decoder = JSONDecoder()
-                let decoded = try decoder.decode(WeightContainer.self, from: traits)
-                
-                XCTAssertEqual(decoded.weight?.value, 6.5, "Decoded weight should be 4 ft 3 in")
-            } catch let error {
-                XCTFail("Decoding weight threw an error: \(error)")
-            }
+            
+            let decoder = JSONDecoder()
+            let decoded = try decoder.decode(WeightContainer.self, from: traits)
+            
+            #expect(decoded.weight?.value == 6.5, "Decoded weight should be 6.5")
         }
     }
 }

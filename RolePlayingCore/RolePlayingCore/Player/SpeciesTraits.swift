@@ -51,8 +51,7 @@ public struct SpeciesTraits {
                 lifespan: Int,
                 baseSizes: [String] = ["4-7"],
                 darkVision: Int,
-                speed: Int,
-                hitPointBonus: Int = 0) {
+                speed: Int) {
         self.name = name
         self.plural = plural
         self.aliases = aliases

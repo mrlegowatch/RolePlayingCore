@@ -62,6 +62,7 @@
 		B6CF53E71E5742C700CADD9F /* JSONFile.json in Resources */ = {isa = PBXBuildFile; fileRef = B6CF53E61E5742C700CADD9F /* JSONFile.json */; };
 		B6CF53E91E57460F00CADD9F /* InvalidJSONFile.json in Resources */ = {isa = PBXBuildFile; fileRef = B6CF53E81E57460F00CADD9F /* InvalidJSONFile.json */; };
 		B6CF53EB1E574ED400CADD9F /* HalfBakedJSONFile.json in Resources */ = {isa = PBXBuildFile; fileRef = B6CF53EA1E574ED400CADD9F /* HalfBakedJSONFile.json */; };
+		B6D226F82EB25ABF00939968 /* TestBundleClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6D226F72EB25AB900939968 /* TestBundleClass.swift */; };
 		B6D2EB1F26D7B7E900F99B35 /* RandomIndexGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6D2EB1E26D7B7E900F99B35 /* RandomIndexGenerator.swift */; };
 		B6F070361E4F991D00F66918 /* AlignmentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F070351E4F991D00F66918 /* AlignmentTests.swift */; };
 		B6F070381E4FBD6500F66918 /* SpeciesTraits.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F070371E4FBD6500F66918 /* SpeciesTraits.swift */; };
@@ -152,6 +153,7 @@
 		B6CF53E61E5742C700CADD9F /* JSONFile.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = JSONFile.json; sourceTree = "<group>"; };
 		B6CF53E81E57460F00CADD9F /* InvalidJSONFile.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = InvalidJSONFile.json; sourceTree = "<group>"; };
 		B6CF53EA1E574ED400CADD9F /* HalfBakedJSONFile.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = HalfBakedJSONFile.json; sourceTree = "<group>"; };
+		B6D226F72EB25AB900939968 /* TestBundleClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestBundleClass.swift; sourceTree = "<group>"; };
 		B6D2EB1E26D7B7E900F99B35 /* RandomIndexGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RandomIndexGenerator.swift; sourceTree = "<group>"; };
 		B6F070351E4F991D00F66918 /* AlignmentTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlignmentTests.swift; sourceTree = "<group>"; };
 		B6F070371E4FBD6500F66918 /* SpeciesTraits.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpeciesTraits.swift; sourceTree = "<group>"; };
@@ -227,6 +229,7 @@
 		B62055FB1E19DD23002494AB /* RolePlayingCoreTests */ = {
 			isa = PBXGroup;
 			children = (
+				B6D226F72EB25AB900939968 /* TestBundleClass.swift */,
 				B6FA6CC81E4BF5F9004D91B1 /* AbilityTests.swift */,
 				B6F070351E4F991D00F66918 /* AlignmentTests.swift */,
 				B626FA622EAF9F9200359F01 /* BackgroundsTests.swift */,
@@ -328,12 +331,12 @@
 				B626FA5C2EAE81C600359F01 /* Backgrounds.swift */,
 				B6CF538F1E51DA1300CADD9F /* ClassTraits.swift */,
 				B6CF53CF1E54E2E200CADD9F /* Classes.swift */,
+				B6C3076D2EAFBEBE0066D9F0 /* CreatureSize.swift */,
 				B6688B502EACF5AE000A83DD /* Initiative.swift */,
 				B69F84681E58B8F700A4D2B0 /* Player.swift */,
 				B69F846C1E58D66900A4D2B0 /* Players.swift */,
-				B6F070371E4FBD6500F66918 /* SpeciesTraits.swift */,
-				B6C3076D2EAFBEBE0066D9F0 /* CreatureSize.swift */,
 				B626FA582EAE76AA00359F01 /* Skill.swift */,
+				B6F070371E4FBD6500F66918 /* SpeciesTraits.swift */,
 				B6CF53D11E54E2EF00CADD9F /* Species.swift */,
 			);
 			path = Player;
@@ -519,6 +522,7 @@
 				B6F4AA4A1F12CD2A000C72D2 /* CharacterGeneratorTests.swift in Sources */,
 				B69F846F1E59155A00A4D2B0 /* PlayersTests.swift in Sources */,
 				B62D89C41F09A3870095D587 /* DiceParserTests.swift in Sources */,
+				B6D226F82EB25ABF00939968 /* TestBundleClass.swift in Sources */,
 				B626FA642EAF9FCF00359F01 /* BackgroundsTests.swift in Sources */,
 				B6CF53DB1E56443A00CADD9F /* ClassesTests.swift in Sources */,
 				B621A3981F0C052D00E55236 /* NameGeneratorTests.swift in Sources */,

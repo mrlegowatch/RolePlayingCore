@@ -6,47 +6,38 @@
 //  Copyright © 2017 Brian Arnold. All rights reserved.
 //
 
-import XCTest
+import Testing
 
 import RolePlayingCore
 
-class ClassesTests: XCTestCase {
+@Suite("Classes Tests")
+struct ClassesTests {
     
-    let bundle = Bundle(for: ClassesTests.self)
+    let bundle = testBundle
     let decoder = JSONDecoder()
     
-    func testDefaultClasses() {
-        do {
-            let jsonData = try bundle.loadJSON("TestClasses")
-            let classes = try decoder.decode(Classes.self, from: jsonData)
-            XCTAssertEqual(classes.classes.count, 4, "classes count failed")
-            XCTAssertEqual(classes.count, 4, "classes count failed")
-            XCTAssertNotNil(classes[0], "class by index failed")
-            
-            XCTAssertEqual(classes.experiencePoints?.count, 20, "array of experience points failed")
-            
-            // Test finding a class by name
-            XCTAssertNotNil(classes.find("Fighter"), "Fighter should be non-nil")
-            XCTAssertNil(classes.find("Foo"), "Foo should be nil")
-            XCTAssertNil(classes.find(nil), "nil class name should find nil")
-        }
-        catch {
-            XCTFail("Classes threw an error: \(error)")
-        }
+    @Test("Default classes")
+    func defaultClasses() throws {
+        let jsonData = try bundle.loadJSON("TestClasses")
+        let classes = try decoder.decode(Classes.self, from: jsonData)
+        #expect(classes.classes.count == 4, "classes count failed")
+        #expect(classes.count == 4, "classes count failed")
+        #expect(classes[0] != nil, "class by index failed")
         
+        #expect(classes.experiencePoints?.count == 20, "array of experience points failed")
+        
+        // Test finding a class by name
+        #expect(classes.find("Fighter") != nil, "Fighter should be non-nil")
+        #expect(classes.find("Foo") == nil, "Foo should be nil")
+        #expect(classes.find(nil) == nil, "nil class name should find nil")
     }
     
-    func testUncommonClasses() {
-        var classes: Classes! = nil
-        do {
-            let jsonData = try bundle.loadJSON("TestMoreClasses")
-            classes = try decoder.decode(Classes.self, from: jsonData)
-        }
-        catch let error {
-            XCTFail("Classes threw an error: \(error)")
-        }
+    @Test("Uncommon classes")
+    func uncommonClasses() throws {
+        let jsonData = try bundle.loadJSON("TestMoreClasses")
+        let classes = try decoder.decode(Classes.self, from: jsonData)
         
-        XCTAssertEqual(classes.classes.count, 8, "classes count failed")
+        #expect(classes.classes.count == 8, "classes count failed")
     }
     
 }

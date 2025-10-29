@@ -6,99 +6,71 @@
 //  Copyright © 2017 Brian Arnold. All rights reserved.
 //
 
-import XCTest
-
+import Testing
 import RolePlayingCore
 
-class PlayersTests: XCTestCase {
+@Suite("Players Tests")
+struct PlayersTests {
     
-    let bundle = Bundle(for: PlayersTests.self)
+    let bundle = testBundle
     let decoder = JSONDecoder()
+    let backgrounds: Backgrounds
+    let classes: Classes
+    let species: Species
     
-    var backgrounds: Backgrounds!
-    var classes: Classes!
-    var species: Species!
-    
-    override func setUp() {
+    init() throws {
         // TODO: Need to initialize UnitCurrency before creating Money instances in Player class.
         let currenciesData = try! bundle.loadJSON("TestCurrencies")
         _ = try! decoder.decode(Currencies.self, from: currenciesData)
         
         let backgroundsData = try! bundle.loadJSON("TestBackgrounds")
-        backgrounds = try! decoder.decode(Backgrounds.self, from: backgroundsData)
+        self.backgrounds = try! decoder.decode(Backgrounds.self, from: backgroundsData)
         
         let classesData = try! bundle.loadJSON("TestClasses")
-        classes = try! decoder.decode(Classes.self, from: classesData)
+        self.classes = try! decoder.decode(Classes.self, from: classesData)
         
         let speciesData = try! bundle.loadJSON("TestSpecies")
-        species = try! decoder.decode(Species.self, from: speciesData)
+        self.species = try! decoder.decode(Species.self, from: speciesData)
     }
     
-    func testPlayers() {
+    @Test("Load and manipulate players collection")
+    func players() async throws {
+        let playersData = try bundle.loadJSON("TestPlayers")
+        let players = try decoder.decode(Players.self, from: playersData)
+        try players.resolve(backgrounds: backgrounds, classes: classes, species: species)
         
-        var players: Players! = nil
-        do {
-            let playersData = try bundle.loadJSON("TestPlayers")
-            players = try decoder.decode(Players.self, from: playersData)
-            try players.resolve(backgrounds: backgrounds, classes: classes, species: species)
-        }
-        catch let error {
-            XCTFail("players.load failed, error \(error)")
-        }
-        XCTAssertEqual(players.players.count, 2, "players count")
-        XCTAssertEqual(players.count, 2, "players count")
+        #expect(players.players.count == 2, "players count")
+        #expect(players.count == 2, "players count")
 
-        let removedPlayer = players[0]!
+        let removedPlayer = try #require(players[0])
         players.remove(at: 0)
-        XCTAssertEqual(players.count, 1, "players count")
+        #expect(players.count == 1, "players count")
         
         players.insert(removedPlayer, at: 1)
-        XCTAssertEqual(players.count, 2, "players count")
-        XCTAssertTrue(players[1]! === removedPlayer, "players count")
+        #expect(players.count == 2, "players count")
+        #expect(players[1]! === removedPlayer, "players count")
     }
     
-    func testMissingTraits() {
-        do {
-            let playersData = try! bundle.loadJSON("InvalidClassPlayers")
-            let players = try decoder.decode(Players.self, from: playersData)
-            try players.resolve(backgrounds: backgrounds, classes: classes, species: species)
-            XCTFail("players.load should have failed")
-        }
-        catch let error {
-            print("players.load correctly threw an error \(error)")
-        }
+    @Test("Verify missing or invalid traits cause resolution failure", arguments: [
+        "InvalidClassPlayers",
+        "InvalidSpeciesPlayers",
+        "MissingClassPlayers",
+        "MissingSpeciesPlayers"
+    ])
+    func missingTraits(jsonFile: String) async throws {
+        let playersData = try bundle.loadJSON(jsonFile)
         
+        // Attempt to decode and resolve, expecting an error to be thrown
+        // Error could occur during decoding (missing required fields) or resolution (invalid references)
         do {
-            let playersData = try! bundle.loadJSON("InvalidSpeciesPlayers")
-            let players = try decoder.decode(Players.self, from: playersData)
-            try players.resolve(backgrounds: backgrounds, classes: classes, species: species)
-            XCTFail("players.resolve should have failed")
-        }
-        catch let error {
-            print("players.resolve correctly threw an error \(error)")
-        }
-        
-        do {
-            let playersData = try! bundle.loadJSON("MissingClassPlayers")
-            let players = try decoder.decode(Players.self, from: playersData)
-            try players.resolve(backgrounds: backgrounds, classes: classes, species: species)
-            XCTFail("players.resolve should have failed")
-        }
-        catch let error {
-            print("players.resolve correctly threw an error \(error)")
-        }
-        
-        do {
-            let playersData = try! bundle.loadJSON("MissingSpeciesPlayers")
             let players = try decoder.decode(Players.self, from: playersData)
             try players.resolve(backgrounds: backgrounds, classes: classes, species: species)
             
-            XCTFail("players.resolve should have failed")
-        }
-        catch let error {
-            print("players.resolve correctly threw an error \(error)")
+            // If we reach here, no error was thrown - the test should fail
+            Issue.record("Expected an error to be thrown for \(jsonFile), but none was thrown")
+        } catch {
+            // Success - an error was thrown as expected
+            // Optionally, you could verify the specific error type or message here
         }
     }
-    
-    
 }

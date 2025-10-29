@@ -11,16 +11,26 @@ public struct Currencies {
     /// A map of all currently loaded currencies.
     internal static var allCurrencies: [String: UnitCurrency] = [:]
     
+    /// A lock to protect access to allCurrencies from multiple threads.
+    private static let lock = NSLock()
+    
     /// Returns the unit currency corresponding to this symbol. Returns nil if no symbol matches.
     public static func find(_ symbol: String) -> UnitCurrency? {
+        lock.lock()
+        defer { lock.unlock() }
         return Currencies.allCurrencies[symbol]
     }
   
     public static func add(_ currency: UnitCurrency) {
+        lock.lock()
+        defer { lock.unlock() }
         allCurrencies[currency.symbol] = currency
     }
 
     public static func setDefault(_ newBaseUnit: UnitCurrency) {
+        lock.lock()
+        defer { lock.unlock() }
+        
         // Remove the old base unit from all currencies.
         let oldSymbol = UnitCurrency.baseUnitCurrency.symbol
         guard oldSymbol != newBaseUnit.symbol else {
@@ -97,8 +107,12 @@ extension Currencies: Codable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
+//        Currencies.lock.lock()
+        let allCurrenciesSnapshot = Currencies.allCurrencies.values
+//        Currencies.lock.unlock()
+        
         var currencies = [Currency]()
-        for unitCurrency in Currencies.allCurrencies.values {
+        for unitCurrency in allCurrenciesSnapshot {
             let currency = Currency(unitCurrency)
             currencies.append(currency)
         }

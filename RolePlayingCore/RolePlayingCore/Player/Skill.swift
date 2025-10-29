@@ -35,11 +35,9 @@ extension Skill {
     public static let stealth = Skill(name: "Stealth", ability: .dexterity)
     public static let survival = Skill(name: "Survival", ability: .wisdom)
     
-    public static var all: [Skill] {
-        [
-            .acrobatics, .animalHandling, .arcana, .athletics, .deception, .history, .insight, .intimidation, .investigation, .medicine, .nature, .perception, .performance, .persuasion, .religion, .sleightOfHand, .stealth, .survival
-        ]
-    }
+    public static var all: [Skill] = [
+        .acrobatics, .animalHandling, .arcana, .athletics, .deception, .history, .insight, .intimidation, .investigation, .medicine, .nature, .perception, .performance, .persuasion, .religion, .sleightOfHand, .stealth, .survival
+    ]
     
     public static func skills(from names: [String]) -> [Skill] {
         // Use the full set of skills if the names are empty.
@@ -49,7 +47,7 @@ extension Skill {
 }
 
 extension Sequence where Element == Skill {
-
+    
     /// Returns a random array of skills with the specified skill count.
     public func randomSkills(count: Int) -> [Element] {
         var selected: [Element] = []

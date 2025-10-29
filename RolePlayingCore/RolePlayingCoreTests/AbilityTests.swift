@@ -6,72 +6,77 @@
 //  Copyright © 2017 Brian Arnold. All rights reserved.
 //
 
-import XCTest
+import Testing
 
 @testable import RolePlayingCore
 
-class AbilityTests: XCTestCase {
+@Suite("Ability Tests")
+struct AbilityTests {
     
-    func testStringAbbreviation() {
+    @Test("String abbreviation")
+    func stringAbbreviation() {
         let strength = "Strength"
-        XCTAssertEqual(strength.abbreviated, "STR", "Strength abbreviated")
+        #expect(strength.abbreviated == "STR", "Strength abbreviated")
 
         let lettera = "a"
-        XCTAssertEqual(lettera.abbreviated, "A", "A abbreviated")
+        #expect(lettera.abbreviated == "A", "A abbreviated")
    
         let empty = ""
-        XCTAssertEqual(empty.abbreviated, "", "empty abbreviated")
+        #expect(empty.abbreviated == "", "empty abbreviated")
     }
     
-    func testIntScoreModifier() {
+    @Test("Int score modifier")
+    func intScoreModifier() {
         let expectedScores = [-5, -4, -4, -3, -3, -2, -2, -1, -1, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10]
         
         for score in 1...30 {
             let expectedScore = expectedScores[score - 1]
-            XCTAssertEqual(score.scoreModifier, expectedScore, "score \(score) modifier")
+            #expect(score.scoreModifier == expectedScore, "score \(score) modifier")
         }
     }
     
-    func testAbilityStruct() {
+    @Test("Ability struct")
+    func abilityStruct() {
         let strength = Ability("Strength")
-        XCTAssertEqual(strength.name, "Strength", "strength name")
-        XCTAssertEqual(strength.abbreviated, "STR", "strength name abbreviated")
+        #expect(strength.name == "Strength", "strength name")
+        #expect(strength.abbreviated == "STR", "strength name abbreviated")
     }
     
-    func testAbilityEquatable() {
+    @Test("Ability equatable")
+    func abilityEquatable() {
         let strength = Ability("Strength")
-        XCTAssertTrue(strength == Ability("Strength"), "strength equatable")
+        #expect(strength == Ability("Strength"), "strength equatable")
+        #expect(strength != Ability("Intelligence"), "intelligence not equal to strength")
     }
     
-    func testAbilityHashable() {
+    @Test("Ability hashable")
+    func abilityHashable() {
         let strength = Ability("Strength")
         let strengthClone = Ability("Strength")
         let intelligence = Ability("Intelligence")
         
         var map: [Ability: Int] = [strength: 12, intelligence: 3]
         map[strengthClone] = 9
-        XCTAssertEqual(map[strength], 9, "strength hashable")
+        #expect(map[strength] == 9, "strength hashable")
     }
     
-    func testAbilityEncodable() {
+    @Test("Ability encodable")
+    func abilityEncodable() throws {
         struct AbilityContainer: Codable {
             let ability: Ability
         }
         let abilityScores = AbilityContainer(ability: Ability("Strength"))
         let encoder = JSONEncoder()
-        do {
-            let encoded = try encoder.encode(abilityScores)
-            let dictionary = try JSONSerialization.jsonObject(with: encoded, options: .allowFragments) as? [String: String]
-            XCTAssertNotNil(dictionary, "serialized strength should be non-nil")
-            let strength = dictionary?["ability"]
-            XCTAssertEqual(strength, "Strength", "Round-trip for Ability should be Strength")
-        }
-        catch let error {
-            XCTFail("encoding threw an error: \(error)")
-        }
+        
+        let encoded = try encoder.encode(abilityScores)
+        let dictionary = try JSONSerialization.jsonObject(with: encoded, options: .allowFragments) as? [String: String]
+        let unwrappedDictionary = try #require(dictionary, "serialized strength should be non-nil")
+        let strength = unwrappedDictionary["ability"]
+        #expect(strength == "Strength", "Round-trip for Ability should be Strength")
     }
     
-    func testAbilityDecodable() {
+    @Test("Ability decodable")
+    func abilityDecodable() throws {
         let traits = """
         {
              "ability": "Strength"
@@ -82,32 +87,29 @@ class AbilityTests: XCTestCase {
         }
         
         let decoder = JSONDecoder()
-        do {
-            let decoded = try decoder.decode(AbilityContainer.self, from: traits)
-            XCTAssertEqual(decoded.ability.name, "Strength", "decoded ability name")
-        }
-        catch let error {
-            XCTFail("decoding threw an error: \(error)")
-        }
+        let decoded = try decoder.decode(AbilityContainer.self, from: traits)
+        #expect(decoded.ability.name == "Strength", "decoded ability name")
     }
     
-    func testNonMutableAbilityScores() {
+    @Test("Non-mutable ability scores")
+    func nonMutableAbilityScores() {
         let brawn = Ability("Brawn")
         let reflexes = Ability("Reflexes")
         let stamina = Ability("Stamina")
         
         let abilityScores = AbilityScores([brawn: 9, reflexes: 12, stamina: 15])
         
-        XCTAssertEqual(abilityScores.count, 3, "ability scores count")
-        XCTAssertEqual(abilityScores[brawn], 9, "ability scores brawn")
-        XCTAssertEqual(abilityScores[reflexes], 12, "ability scores reflexes")
-        XCTAssertEqual(abilityScores[stamina], 15, "ability scores stamina")
+        #expect(abilityScores.count == 3, "ability scores count")
+        #expect(abilityScores[brawn] == 9, "ability scores brawn")
+        #expect(abilityScores[reflexes] == 12, "ability scores reflexes")
+        #expect(abilityScores[stamina] == 15, "ability scores stamina")
         
         let expectedModifiers = AbilityScores([brawn: -1, reflexes: 1, stamina: 2])
-        XCTAssertEqual(abilityScores.modifiers, expectedModifiers, "ability scores modifiers")
+        #expect(abilityScores.modifiers == expectedModifiers, "ability scores modifiers")
     }
     
-    func testMutableAbilityScores() {
+    @Test("Mutable ability scores")
+    func mutableAbilityScores() {
         let brawn = Ability("Brawn")
         let reflexes = Ability("Reflexes")
         let stamina = Ability("Stamina")
@@ -119,24 +121,25 @@ class AbilityTests: XCTestCase {
         abilityScores[stamina] = 18
         
         // Verify that 2 of the 3 scores changed
-        XCTAssertEqual(abilityScores[brawn], 8, "ability scores reflexes")
-        XCTAssertEqual(abilityScores[reflexes], 11, "ability scores reflexes")
-        XCTAssertEqual(abilityScores[stamina], 18, "ability scores reflexes")
+        #expect(abilityScores[brawn] == 8, "ability scores reflexes")
+        #expect(abilityScores[reflexes] == 11, "ability scores reflexes")
+        #expect(abilityScores[stamina] == 18, "ability scores reflexes")
         
         // Check that modifiers reflect mutated scores
         let expectedModifiers = AbilityScores([brawn: -1, reflexes: 0, stamina: 4])
-        XCTAssertEqual(abilityScores.modifiers, expectedModifiers, "ability scores modifiers")
+        #expect(abilityScores.modifiers == expectedModifiers, "ability scores modifiers")
         
         // Verify that a score can't be nil'd out
         abilityScores[stamina] = nil
-        XCTAssertEqual(abilityScores[stamina], 18, "ability scores can't be set to nil")
+        #expect(abilityScores[stamina] == 18, "ability scores can't be set to nil")
         
         let invalidAbility = Ability("Charm")
         abilityScores[invalidAbility] = 8
-        XCTAssertNil(abilityScores[invalidAbility], "invalid ability should not set a score")
+        #expect(abilityScores[invalidAbility] == nil, "invalid ability should not set a score")
     }
     
-    func testAbilityScoresDecodable() {
+    @Test("Ability scores decodable")
+    func abilityScoresDecodable() throws {
         // Test with implicit [String: Int] as from JSON
         let traits = """
             {"Strength": 12, "Intelligence": 8}
@@ -144,42 +147,40 @@ class AbilityTests: XCTestCase {
         
         let decoder = JSONDecoder()
         let abilityScores = try? decoder.decode(AbilityScores.self, from: traits)
-        XCTAssertNotNil(abilityScores, "ability scores should be non-nil")
+        let unwrappedAbilityScores = try #require(abilityScores, "ability scores should be non-nil")
         
         let strength = Ability("Strength")
         let intelligence = Ability("Intelligence")
         
-        XCTAssertEqual(abilityScores?[strength], 12, "ability scores dictionary strength")
-        XCTAssertEqual(abilityScores?[intelligence], 8, "ability scores dictionary intelligence")
+        #expect(unwrappedAbilityScores[strength] == 12, "ability scores dictionary strength")
+        #expect(unwrappedAbilityScores[intelligence] == 8, "ability scores dictionary intelligence")
     }
     
-    func testAbilityScoresEncodable() {
+    @Test("Ability scores encodable")
+    func abilityScoresEncodable() throws {
         let abilityScores = AbilityScores([Ability("Brawn"): 12, Ability("Charm"): 3])
         
         let encoder = JSONEncoder()
-        do {
-            let encoded = try encoder.encode(abilityScores)
-            let serialized = try JSONSerialization.jsonObject(with: encoded, options: []) as? [String:Int]
-            let brawn = serialized?["Brawn"]
-            let charm = serialized?["Charm"]
-            XCTAssertEqual(brawn, 12, "encoded brawn")
-            XCTAssertEqual(charm, 3, "encoded charm")
-        }
-        catch let error {
-            XCTFail("decoding threw an error: \(error)")
-        }
+        let encoded = try encoder.encode(abilityScores)
+        let serialized = try JSONSerialization.jsonObject(with: encoded, options: []) as? [String:Int]
+        let brawn = serialized?["Brawn"]
+        let charm = serialized?["Charm"]
+        #expect(brawn == 12, "encoded brawn")
+        #expect(charm == 3, "encoded charm")
     }
     
-    func testAbilityScoreKey() {
+    @Test("Ability score key")
+    func abilityScoreKey() {
         // Housekeeping: code coverage for AbilityKey
         let wisdomKey = AbilityScores.AbilityKey(stringValue: "Wisdom")!
-        XCTAssertNil(wisdomKey.intValue, "AbilityKey does not use intValue")
+        #expect(wisdomKey.intValue == nil, "AbilityKey does not use intValue")
 
         let intKey = AbilityScores.AbilityKey(intValue: 2)
-        XCTAssertNil(intKey, "AbilityKey does not use intValue")
+        #expect(intKey == nil, "AbilityKey does not use intValue")
     }
     
-    func testAddingModifiers() {
+    @Test("Adding modifiers")
+    func addingModifiers() {
         let brawn = Ability("Brawn")
         let reflexes = Ability("Reflexes")
         let stamina = Ability("Stamina")
@@ -187,12 +188,13 @@ class AbilityTests: XCTestCase {
         let abilityScores = AbilityScores([brawn: 8, reflexes: 13, stamina: 17])
         let combinedScores = abilityScores + abilityScores.modifiers
         
-        XCTAssertEqual(combinedScores[brawn], 7, "adding ability scores brawn")
-        XCTAssertEqual(combinedScores[reflexes], 14, "adding ability scores reflexes")
-        XCTAssertEqual(combinedScores[stamina], 20, "adding ability scores stamina")
+        #expect(combinedScores[brawn] == 7, "adding ability scores brawn")
+        #expect(combinedScores[reflexes] == 14, "adding ability scores reflexes")
+        #expect(combinedScores[stamina] == 20, "adding ability scores stamina")
     }
     
-    func testAddingOneScore() {
+    @Test("Adding one score")
+    func addingOneScore() {
         let brawn = Ability("Brawn")
         let reflexes = Ability("Reflexes")
         let stamina = Ability("Stamina")
@@ -201,12 +203,13 @@ class AbilityTests: XCTestCase {
         let oneScore = AbilityScores([reflexes: -3])
         abilityScores += oneScore
         
-        XCTAssertEqual(abilityScores[brawn], 8, "adding ability scores brawn")
-        XCTAssertEqual(abilityScores[reflexes], 10, "adding ability scores reflexes")
-        XCTAssertEqual(abilityScores[stamina], 17, "adding ability scores stamina")
+        #expect(abilityScores[brawn] == 8, "adding ability scores brawn")
+        #expect(abilityScores[reflexes] == 10, "adding ability scores reflexes")
+        #expect(abilityScores[stamina] == 17, "adding ability scores stamina")
     }
     
-    func testAddingUnrelatedScores() {
+    @Test("Adding unrelated scores")
+    func addingUnrelatedScores() {
         let brawn = Ability("Brawn")
         let reflexes = Ability("Reflexes")
         let stamina = Ability("Stamina")
@@ -218,14 +221,15 @@ class AbilityTests: XCTestCase {
         let unrelatedScores = AbilityScores([intelligence: 14, wisdom: 5])
         let combinedScores = abilityScores + unrelatedScores
         
-        XCTAssertEqual(combinedScores.count, 3, "adding ability scores count")
+        #expect(combinedScores.count == 3, "adding ability scores count")
         
-        XCTAssertEqual(combinedScores[brawn], 8, "adding ability scores brawn")
-        XCTAssertEqual(combinedScores[reflexes], 13, "adding ability scores reflexes")
-        XCTAssertEqual(combinedScores[stamina], 17, "adding ability scores stamina")
+        #expect(combinedScores[brawn] == 8, "adding ability scores brawn")
+        #expect(combinedScores[reflexes] == 13, "adding ability scores reflexes")
+        #expect(combinedScores[stamina] == 17, "adding ability scores stamina")
     }
     
-    func testSubtractingAbilityScores() {
+    @Test("Subtracting ability scores")
+    func subtractingAbilityScores() {
         let brawn = Ability("Brawn")
         let reflexes = Ability("Reflexes")
         let stamina = Ability("Stamina")
@@ -233,12 +237,13 @@ class AbilityTests: XCTestCase {
         let abilityScores = AbilityScores([brawn: 8, reflexes: 13, stamina: 17])
         let combinedScores = abilityScores - abilityScores.modifiers
         
-        XCTAssertEqual(combinedScores[brawn], 9, "adding ability scores brawn")
-        XCTAssertEqual(combinedScores[reflexes], 12, "adding ability scores reflexes")
-        XCTAssertEqual(combinedScores[stamina], 14, "adding ability scores stamina")
+        #expect(combinedScores[brawn] == 9, "adding ability scores brawn")
+        #expect(combinedScores[reflexes] == 12, "adding ability scores reflexes")
+        #expect(combinedScores[stamina] == 14, "adding ability scores stamina")
     }
     
-    func testSubtractingOneScore() {
+    @Test("Subtracting one score")
+    func subtractingOneScore() {
         let brawn = Ability("Brawn")
         let reflexes = Ability("Reflexes")
         let stamina = Ability("Stamina")
@@ -247,12 +252,13 @@ class AbilityTests: XCTestCase {
         let oneScore = AbilityScores([reflexes: -3])
         abilityScores -= oneScore
         
-        XCTAssertEqual(abilityScores[brawn], 8, "adding ability scores brawn")
-        XCTAssertEqual(abilityScores[reflexes], 16, "adding ability scores reflexes")
-        XCTAssertEqual(abilityScores[stamina], 17, "adding ability scores stamina")
+        #expect(abilityScores[brawn] == 8, "adding ability scores brawn")
+        #expect(abilityScores[reflexes] == 16, "adding ability scores reflexes")
+        #expect(abilityScores[stamina] == 17, "adding ability scores stamina")
     }
         
-    func testSubtractingUnrelatedScores() {
+    @Test("Subtracting unrelated scores")
+    func subtractingUnrelatedScores() {
         let brawn = Ability("Brawn")
         let reflexes = Ability("Reflexes")
         let stamina = Ability("Stamina")
@@ -264,40 +270,42 @@ class AbilityTests: XCTestCase {
         let unrelatedScores = AbilityScores([intelligence: 14, wisdom: 5])
         let combinedScores = abilityScores - unrelatedScores
         
-        XCTAssertEqual(combinedScores.count, 3, "adding ability scores count")
+        #expect(combinedScores.count == 3, "adding ability scores count")
         
-        XCTAssertEqual(combinedScores[brawn], 8, "adding ability scores brawn")
-        XCTAssertEqual(combinedScores[reflexes], 13, "adding ability scores reflexes")
-        XCTAssertEqual(combinedScores[stamina], 17, "adding ability scores stamina")
+        #expect(combinedScores[brawn] == 8, "adding ability scores brawn")
+        #expect(combinedScores[reflexes] == 13, "adding ability scores reflexes")
+        #expect(combinedScores[stamina] == 17, "adding ability scores stamina")
     }
     
-    func testDefaultAbilityScores() {
+    @Test("Default ability scores")
+    func defaultAbilityScores() {
         let abilityScores = AbilityScores()
         
-        XCTAssertEqual(abilityScores.count, 6, "default ability scores count")
+        #expect(abilityScores.count == 6, "default ability scores count")
         
         // Test names and values
         let abilityNames = ["Strength", "Dexterity", "Constitution", "Intelligence", "Wisdom", "Charisma"]
         for ability in abilityScores.abilities {
-            XCTAssertTrue(abilityNames.contains(ability.name), "default ability name")
-            XCTAssertEqual(abilityScores[ability], 0, "default ability score 0")
+            #expect(abilityNames.contains(ability.name), "default ability name")
+            #expect(abilityScores[ability] == 0, "default ability score 0")
         }
     }
     
-    func testNonDefaultAbilityScores() {
+    @Test("Non-default ability scores")
+    func nonDefaultAbilityScores() {
         let brawn = Ability("Brawn")
         let reflexes = Ability("Reflexes")
         let stamina = Ability("Stamina")
 
         let abilityScores = AbilityScores(defaults: [brawn, reflexes, stamina])
-        XCTAssertEqual(abilityScores.count, 3, "default ability scores count")
+        #expect(abilityScores.count == 3, "default ability scores count")
         
         // Test values via keys and values
         for ability in abilityScores.abilities {
-            XCTAssertEqual(abilityScores[ability], 0, "default ability score 0")
+            #expect(abilityScores[ability] == 0, "default ability score 0")
         }
         for value in abilityScores.values {
-            XCTAssertEqual(value, 0, "default ability score 0")
+            #expect(value == 0, "default ability score 0")
         }
     }
 }

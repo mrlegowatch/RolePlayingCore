@@ -12,7 +12,7 @@ import RolePlayingCore
 
 class CharacterGeneratorTests: XCTestCase {
     
-    let bundle = Bundle(for: CharacterGeneratorTests.self)
+    let bundle = testBundle
     
     let sampleSize = 256
     

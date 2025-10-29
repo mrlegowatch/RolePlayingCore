@@ -6,8 +6,7 @@
 //  Copyright © 2017 Brian Arnold. All rights reserved.
 //
 
-import XCTest
-
+import Testing
 import RolePlayingCore
 
 struct JSONFileData: Codable {
@@ -25,76 +24,72 @@ struct AnyFileData: Codable {
     // No-op
 }
 
-class JSONFileTests: XCTestCase {
+@Suite("JSON File Loading Tests")
+struct JSONFileTests {
     
     let decoder = JSONDecoder()
     
-    func testJSON() {
+    @Test("Load and parse valid JSON file")
+    func json() async throws {
         // This test file has all of the basic elements of a JSON file
-        let bundle = Bundle(for: JSONFileTests.self)
-        do {
-            let jsonData = try bundle.loadJSON("JSONFile")
-            let jsonObject = try decoder.decode(JSONFileData.self, from: jsonData)
-            
-            // Test for contents of JSON file
-            
-            let bool = jsonObject.boolValue
-            XCTAssertNotNil(bool, "bool should be non-nil")
-            XCTAssertEqual(bool, true, "bool should be true")
-            
-            let dictionary = jsonObject.dictionaryValue
-            
-            let string = dictionary.stringValue
-            XCTAssertEqual(string, "foo", "string should be \"foo\"")
-            
-            let double = dictionary.doubleValue
-            XCTAssertEqual(double, 2.1, "double should be 2.1")
-            
-            let array = dictionary.arrayValue
-            XCTAssertEqual(array, [2, 3], "array should be [2, 3]")
-        }
-        catch let error {
-            XCTFail("loadJSON should not throw an error: \(error)")
-        }
+        let bundle = testBundle
+        
+        let jsonData = try bundle.loadJSON("JSONFile")
+        let jsonObject = try decoder.decode(JSONFileData.self, from: jsonData)
+        
+        // Test for contents of JSON file
+        let bool = jsonObject.boolValue
+        #expect(bool == true, "bool should be true")
+        
+        let dictionary = jsonObject.dictionaryValue
+        
+        let string = dictionary.stringValue
+        #expect(string == "foo", "string should be \"foo\"")
+        
+        let double = dictionary.doubleValue
+        #expect(double == 2.1, "double should be 2.1")
+        
+        let array = dictionary.arrayValue
+        #expect(array == [2, 3], "array should be [2, 3]")
     }
     
-    func testMissingJSON() {
+    @Test("Attempt to load missing JSON file")
+    func missingJSON() async throws {
         // This test file is not present in the bundle.
-        let bundle = Bundle(for: JSONFileTests.self)
-        do {
-            let jsonObject = try bundle.loadJSON("MissingJSONFile")
-            XCTAssertNil(jsonObject, "should not get here")
+        let bundle = testBundle
+        
+        #expect(throws: (any Error).self) {
+            _ = try bundle.loadJSON("MissingJSONFile")
         }
-        catch let error {
-            XCTAssertTrue(error is ServiceError, "expected ServiceError.runtimeError, got \(error)")
+        
+        // Verify it's specifically a ServiceError
+        do {
+            _ = try bundle.loadJSON("MissingJSONFile")
+            Issue.record("Should have thrown an error")
+        } catch {
+            #expect(error is ServiceError, "expected ServiceError, got \(error)")
         }
     }
     
-    func testInvalidJSON() {
+    @Test("Attempt to parse invalid JSON file")
+    func invalidJSON() async throws {
         // This test file contains errors in formatting.
-        let bundle = Bundle(for: JSONFileTests.self)
-        do {
+        let bundle = testBundle
+
+        #expect(throws: (any Error).self) {
             let jsonData = try bundle.loadJSON("InvalidJSONFile")
-            let jsonObject = try decoder.decode(AnyFileData.self, from: jsonData)
-            XCTAssertNil(jsonObject, "should not get here")
-        }
-        catch let error {
-            print("Successfully caught \(error)")
-            // OK we got here. it's an error NSCocoaErrorDomain Code 3840 "No value for key in object around character 41."
+            _ = try decoder.decode(AnyFileData.self, from: jsonData)
         }
     }
     
-    func testHalfBakedJSON() {
+    @Test("Attempt to parse half-baked JSON file")
+    func halfBakedJSON() async throws {
         // This test file lacks a dictionary at the root.
-        let bundle = Bundle(for: JSONFileTests.self)
-        do {
+        let bundle = testBundle
+
+        #expect(throws: (any Error).self) {
             let jsonData = try bundle.loadJSON("HalfBakedJSONFile")
-            let jsonObject = try decoder.decode(AnyFileData.self, from: jsonData)
-            XCTAssertNil(jsonObject, "should not get here")
-        }
-        catch let error {
-            print("Successfully caught \(error)")
-            // OK we got here. it's an error NSCocoaErrorDomain Code 3840 "JSON text did not start with an array or object and option to allow fragments not set."
+            _ = try decoder.decode(AnyFileData.self, from: jsonData)
         }
     }
 }

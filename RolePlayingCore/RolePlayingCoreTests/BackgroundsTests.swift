@@ -6,12 +6,16 @@
 //  Copyright © 2025 Brian Arnold. All rights reserved.
 //
 
-import XCTest
+import Testing
 import RolePlayingCore
 
-class BackgroundsTests: XCTestCase {
+@Suite("Backgrounds Tests")
+struct BackgroundsTests {
     
-    func testBackgroundTraitsDecoding() throws {
+    let decoder = JSONDecoder()
+    
+    @Test("Decode background traits")
+    func backgroundTraitsDecoding() async throws {
         // Given: JSON data representing a background
         let jsonData = """
         {
@@ -24,23 +28,22 @@ class BackgroundsTests: XCTestCase {
         }
         """.data(using: .utf8)!
         
-        let decoder = JSONDecoder()
-        
         // When: Decoding the JSON data
         let background = try decoder.decode(BackgroundTraits.self, from: jsonData)
         
         // Then: The properties should match the input
-        XCTAssertEqual(background.name, "Acolyte", "Name should match")
-        XCTAssertEqual(background.abilityScores, ["Intelligence", "Wisdom"], "Ability scores should match")
-        XCTAssertEqual(background.feat, "Magic Initiate", "Feat should match")
-        XCTAssertEqual(background.skillProficiencies.count, 2, "Should have 2 skill proficiencies")
-        XCTAssertEqual(background.skillProficiencies.skillNames, ["Insight", "Religion"], "Skill names should match")
-        XCTAssertEqual(background.toolProficiency, "Calligrapher's Supplies", "Tool proficiency should match")
-        XCTAssertEqual(background.equipment.count, 2, "Should have 2 equipment choices")
-        XCTAssertEqual(background.equipment[0], ["Holy Symbol", "Prayer Book", "Vestments", "10 GP"], "First equipment choice should match")
+        #expect(background.name == "Acolyte", "Name should match")
+        #expect(background.abilityScores == ["Intelligence", "Wisdom"], "Ability scores should match")
+        #expect(background.feat == "Magic Initiate", "Feat should match")
+        #expect(background.skillProficiencies.count == 2, "Should have 2 skill proficiencies")
+        #expect(background.skillProficiencies.skillNames == ["Insight", "Religion"], "Skill names should match")
+        #expect(background.toolProficiency == "Calligrapher's Supplies", "Tool proficiency should match")
+        #expect(background.equipment.count == 2, "Should have 2 equipment choices")
+        #expect(background.equipment[0] == ["Holy Symbol", "Prayer Book", "Vestments", "10 GP"], "First equipment choice should match")
     }
     
-    func testBackgroundTraitsEncoding() throws {
+    @Test("Encode background traits with round-trip")
+    func backgroundTraitsEncoding() async throws {
         // Given: A BackgroundTraits instance
         let jsonData = """
         {
@@ -53,7 +56,6 @@ class BackgroundsTests: XCTestCase {
         }
         """.data(using: .utf8)!
         
-        let decoder = JSONDecoder()
         let background = try decoder.decode(BackgroundTraits.self, from: jsonData)
         
         // When: Encoding the background back to JSON
@@ -64,15 +66,16 @@ class BackgroundsTests: XCTestCase {
         // Then: The encoded data should be decodable and match the original
         let decodedBackground = try decoder.decode(BackgroundTraits.self, from: encodedData)
         
-        XCTAssertEqual(decodedBackground.name, background.name, "Name should match after round-trip")
-        XCTAssertEqual(decodedBackground.abilityScores, background.abilityScores, "Ability scores should match after round-trip")
-        XCTAssertEqual(decodedBackground.feat, background.feat, "Feat should match after round-trip")
-        XCTAssertEqual(decodedBackground.skillProficiencies.skillNames, background.skillProficiencies.skillNames, "Skills should match after round-trip")
-        XCTAssertEqual(decodedBackground.toolProficiency, background.toolProficiency, "Tool proficiency should match after round-trip")
-        XCTAssertEqual(decodedBackground.equipment, background.equipment, "Equipment should match after round-trip")
+        #expect(decodedBackground.name == background.name, "Name should match after round-trip")
+        #expect(decodedBackground.abilityScores == background.abilityScores, "Ability scores should match after round-trip")
+        #expect(decodedBackground.feat == background.feat, "Feat should match after round-trip")
+        #expect(decodedBackground.skillProficiencies.skillNames == background.skillProficiencies.skillNames, "Skills should match after round-trip")
+        #expect(decodedBackground.toolProficiency == background.toolProficiency, "Tool proficiency should match after round-trip")
+        #expect(decodedBackground.equipment == background.equipment, "Equipment should match after round-trip")
     }
     
-    func testBackgroundsCollection() throws {
+    @Test("Decode and query backgrounds collection")
+    func backgroundsCollection() async throws {
         // Given: JSON data representing a collection of backgrounds
         let jsonData = """
         {
@@ -105,36 +108,30 @@ class BackgroundsTests: XCTestCase {
         }
         """.data(using: .utf8)!
         
-        let decoder = JSONDecoder()
-        
         // When: Decoding the JSON data into a Backgrounds collection
         let backgrounds = try decoder.decode(Backgrounds.self, from: jsonData)
         
         // Then: The collection should have the correct count
-        XCTAssertEqual(backgrounds.count, 3, "Should have 3 backgrounds")
+        #expect(backgrounds.count == 3, "Should have 3 backgrounds")
         
         // Then: The find method should locate backgrounds by name
-        let acolyte = backgrounds.find("Acolyte")
-        XCTAssertNotNil(acolyte, "Should find Acolyte background")
-        XCTAssertEqual(acolyte?.name, "Acolyte", "Found background should be Acolyte")
-        XCTAssertEqual(acolyte?.feat, "Magic Initiate", "Acolyte feat should match")
+        let acolyte = try #require(backgrounds.find("Acolyte"))
+        #expect(acolyte.name == "Acolyte", "Found background should be Acolyte")
+        #expect(acolyte.feat == "Magic Initiate", "Acolyte feat should match")
         
-        let criminal = backgrounds.find("Criminal")
-        XCTAssertNotNil(criminal, "Should find Criminal background")
-        XCTAssertEqual(criminal?.skillProficiencies.skillNames, ["Deception", "Stealth"], "Criminal skills should match")
+        let criminal = try #require(backgrounds.find("Criminal"))
+        #expect(criminal.skillProficiencies.skillNames == ["Deception", "Stealth"], "Criminal skills should match")
         
         // Then: The find method should return nil for non-existent backgrounds
         let nonExistent = backgrounds.find("Wizard")
-        XCTAssertNil(nonExistent, "Should not find non-existent background")
+        #expect(nonExistent == nil, "Should not find non-existent background")
         
         // Then: Subscript access should work correctly
-        let firstBackground = backgrounds[0]
-        XCTAssertNotNil(firstBackground, "Should access first background")
-        XCTAssertEqual(firstBackground?.name, "Acolyte", "First background should be Acolyte")
+        let firstBackground = try #require(backgrounds[0])
+        #expect(firstBackground.name == "Acolyte", "First background should be Acolyte")
         
-        let thirdBackground = backgrounds[2]
-        XCTAssertNotNil(thirdBackground, "Should access third background")
-        XCTAssertEqual(thirdBackground?.name, "Soldier", "Third background should be Soldier")
+        let thirdBackground = try #require(backgrounds[2])
+        #expect(thirdBackground.name == "Soldier", "Third background should be Soldier")
         
         // Then: Round-trip encoding should preserve data
         let encoder = JSONEncoder()
@@ -142,8 +139,8 @@ class BackgroundsTests: XCTestCase {
         let encodedData = try encoder.encode(backgrounds)
         let decodedBackgrounds = try decoder.decode(Backgrounds.self, from: encodedData)
         
-        XCTAssertEqual(decodedBackgrounds.count, backgrounds.count, "Count should match after round-trip")
-        XCTAssertEqual(decodedBackgrounds.find("Criminal")?.name, "Criminal", "Should find Criminal after round-trip")
-        XCTAssertEqual(decodedBackgrounds[1]?.toolProficiency, backgrounds[1]?.toolProficiency, "Tool proficiency should match after round-trip")
+        #expect(decodedBackgrounds.count == backgrounds.count, "Count should match after round-trip")
+        #expect(decodedBackgrounds.find("Criminal")?.name == "Criminal", "Should find Criminal after round-trip")
+        #expect(decodedBackgrounds[1]?.toolProficiency == backgrounds[1]?.toolProficiency, "Tool proficiency should match after round-trip")
     }
 }

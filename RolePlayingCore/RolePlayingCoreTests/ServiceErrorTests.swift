@@ -6,23 +6,23 @@
 //  Copyright © 2017 Brian Arnold. All rights reserved.
 //
 
-import XCTest
-
+import Testing
 import RolePlayingCore
 
-class ServiceErrorTests: XCTestCase {
+@Suite("Service Error Tests")
+struct ServiceErrorTests {
     
-    func testServiceError() {
+    @Test("Verify ServiceError contains expected information")
+    func serviceError() async throws {
         do {
             throw RuntimeError("Gah!")
-        }
-        catch let error {
-            XCTAssertTrue(error is ServiceError, "should be a service error")
+        } catch {
+            #expect(error is ServiceError, "should be a service error")
             let description = "\(error)"
-            XCTAssertTrue(description.contains("Runtime error"), "should be a runtime error")
-            XCTAssertTrue(description.contains("Gah!"), "should contain the message")
-            XCTAssertTrue(description.contains("testServiceError"), "should have throw function name in it")
-            XCTAssertTrue(description.contains("ServiceErrorTests"), "should have throw file name in it")
+            #expect(description.contains("Runtime error"), "should be a runtime error")
+            #expect(description.contains("Gah!"), "should contain the message")
+            #expect(description.contains("serviceError"), "should have throw function name in it")
+            #expect(description.contains("ServiceErrorTests"), "should have throw file name in it")
         }
     }
 }

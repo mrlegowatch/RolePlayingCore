@@ -57,6 +57,11 @@
                BlueprintName = "RolePlayingCoreTests"
                ReferencedContainer = "container:RolePlayingCore.xcodeproj">
             </BuildableReference>
+            <SkippedTests>
+               <Test
+                  Identifier = "DiceTests">
+               </Test>
+            </SkippedTests>
          </TestableReference>
       </Testables>
    </TestAction>

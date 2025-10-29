@@ -29,26 +29,6 @@
                            }]
               },
               {
-              "name": "Half-Elf",
-              "plural": "Half-Elves",
-              "lifespan": 180,
-              "speed": 30,
-              "darkvision": 60,
-              "skill proficiencies": ["fey ancestry"],
-              "languages": ["Common", "Elvish"],
-              "extra languages": 1,
-              "skill versatility": 2
-              },
-              {
-              "name": "Half-Orc",
-              "plural": "Half-Orcs",
-              "lifespan": 75,
-              "speed": 30,
-              "darkvision": 60,
-              "skill proficiencies": ["menacing", "relentless endurance", "savage attacks"],
-              "languages": ["Common", "Orcish"]
-              },
-              {
               "name": "Tiefling",
               "plural": "Tieflings",
               "lifespan": 100,

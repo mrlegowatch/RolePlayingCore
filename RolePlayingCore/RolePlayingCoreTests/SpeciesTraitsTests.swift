@@ -6,15 +6,16 @@
 //  Copyright © 2017 Brian Arnold. All rights reserved.
 //
 
-import XCTest
-
+import Testing
 import RolePlayingCore
 
-class SpeciesTraitsTests: XCTestCase {
+@Suite("Species Traits Tests")
+struct SpeciesTraitsTests {
     
     let decoder = JSONDecoder()
     
-    func testSpeciesTraits() {
+    @Test("Decode basic species traits")
+    func speciesTraits() async throws {
         let traits = """
             {
                 "name": "Human",
@@ -25,23 +26,18 @@ class SpeciesTraitsTests: XCTestCase {
                 "extra languages": 1
             }
             """.data(using: .utf8)!
-        var speciesTraits: SpeciesTraits? = nil
-        do {
-            speciesTraits = try decoder.decode(SpeciesTraits.self, from: traits)
-        }
-        catch let error {
-            XCTFail("Failed to decode species traits, error: \(error)")
-        }
         
-        XCTAssertNotNil(speciesTraits)
-        XCTAssertEqual(speciesTraits?.name, "Human", "name")
-        XCTAssertEqual(speciesTraits?.plural, "Humans", "plural")
-        XCTAssertEqual(speciesTraits?.aliases.count, 0, "aliases")
-        XCTAssertEqual(speciesTraits?.lifespan, 90, "lifespan")
-        XCTAssertEqual(speciesTraits?.speed, 30, "speed")
+        let speciesTraits = try decoder.decode(SpeciesTraits.self, from: traits)
+        
+        #expect(speciesTraits.name == "Human", "name")
+        #expect(speciesTraits.plural == "Humans", "plural")
+        #expect(speciesTraits.aliases.count == 0, "aliases")
+        #expect(speciesTraits.lifespan == 90, "lifespan")
+        #expect(speciesTraits.speed == 30, "speed")
     }
     
-    func testMinimumTraits() {
+    @Test("Decode minimum required traits")
+    func minimumTraits() async throws {
         let traits = """
             {
                 "name": "Giant Human",
@@ -50,22 +46,18 @@ class SpeciesTraitsTests: XCTestCase {
                 "speed": 30
             }
             """.data(using: .utf8)!
-        var speciesTraits: SpeciesTraits? = nil
-        do {
-            speciesTraits = try decoder.decode(SpeciesTraits.self, from: traits)
-        }
-        catch let error {
-            XCTFail("Failed to decode species traits, error: \(error)")
-        }
-        XCTAssertNotNil(speciesTraits)
-        XCTAssertEqual(speciesTraits?.name, "Giant Human", "name")
-        XCTAssertEqual(speciesTraits?.plural, "Giant Humans", "plural")
-        XCTAssertEqual(speciesTraits?.lifespan, 90, "lifespan")
-        XCTAssertEqual(speciesTraits?.speed, 30, "speed")
-        XCTAssertEqual(speciesTraits?.aliases.count, 0, "aliases")
+        
+        let speciesTraits = try decoder.decode(SpeciesTraits.self, from: traits)
+        
+        #expect(speciesTraits.name == "Giant Human", "name")
+        #expect(speciesTraits.plural == "Giant Humans", "plural")
+        #expect(speciesTraits.lifespan == 90, "lifespan")
+        #expect(speciesTraits.speed == 30, "speed")
+        #expect(speciesTraits.aliases.count == 0, "aliases")
     }
     
-    func testOptionalTraits() {
+    @Test("Decode optional traits like aliases")
+    func optionalTraits() async throws {
         let traits = """
             {
                 "name": "Small Human",
@@ -76,119 +68,96 @@ class SpeciesTraitsTests: XCTestCase {
             }
             """.data(using: .utf8)!
         
-        var speciesTraits: SpeciesTraits? = nil
-        do {
-            speciesTraits = try decoder.decode(SpeciesTraits.self, from: traits)
-        }
-        catch let error {
-            XCTFail("Failed to decode species traits, error: \(error)")
-        }
-        XCTAssertNotNil(speciesTraits)
-        XCTAssertEqual(speciesTraits?.aliases.count, 1, "aliases count")
+        let speciesTraits = try decoder.decode(SpeciesTraits.self, from: traits)
+        
+        #expect(speciesTraits.aliases.count == 1, "aliases count")
     }
     
-    func testMissingTraits() {
-        // Test that each missing trait results in nil
-        do {
-            let traits = "{}".data(using: .utf8)!
-            let speciesTraits = try? decoder.decode(SpeciesTraits.self, from: traits)
-            XCTAssertNil(speciesTraits)
+    @Test("Verify missing required traits cause decode failure", arguments: [
+        "{}",
+        """
+        { "name": "Giant Human" }
+        """,
+        """
+        {
+            "plural": "Giant Humans"
         }
+        """
+    ])
+    func missingTraits(json: String) async throws {
+        let traits = json.data(using: .utf8)!
         
-        do {
-            let traits = """
-                { "name": "Giant Human" }
-                """.data(using: .utf8)!
-            let speciesTraits = try? decoder.decode(SpeciesTraits.self, from: traits)
-            XCTAssertNil(speciesTraits)
+        #expect(throws: (any Error).self) {
+            _ = try decoder.decode(SpeciesTraits.self, from: traits)
         }
-        
-        do {
-            let traits = """
+    }
+    
+    @Test("Decode species with subspecies")
+    func decodingSpeciesTraits() async throws {
+        let traits = """
+        {
+            "name": "Human",
+            "plural": "Humans",
+            "lifespan": 90,
+            "speed": 30,
+            "subspecies": [
                 {
-                    "plural": "Giant Humans"
+                    "name": "Subhuman",
+                    "plural": "Subhumans",
+                    "lifespan": 60,
+                    "speed": 10
                 }
-                """.data(using: .utf8)!
-            let speciesTraits = try? decoder.decode(SpeciesTraits.self, from: traits)
-            XCTAssertNil(speciesTraits)
+            ]
         }
-    }
-    
-    func testDecodingSpeciesTraits() {
-        do {
-            let traits = """
-            {
-                "name": "Human",
-                "plural": "Humans",
-                "lifespan": 90,
-                "speed": 30,
-                "subspecies": [
-                    {
-                        "name": "Subhuman",
-                        "plural": "Subhumans",
-                        "lifespan": 60,
-                        "speed": 10
-                    }
-                ]
-            }
-            """.data(using: .utf8)!
-            let speciesTraits = try decoder.decode(SpeciesTraits.self, from: traits)
-            if let subspeciesTraits = speciesTraits.subspecies.first {
-                XCTAssertEqual(subspeciesTraits.name, "Subhuman", "name")
-                XCTAssertEqual(subspeciesTraits.plural, "Subhumans", "plural")
-                XCTAssertEqual(subspeciesTraits.lifespan, 60, "lifespan")
-                XCTAssertEqual(subspeciesTraits.speed, 10, "speed")
-                XCTAssertEqual(subspeciesTraits.aliases.count, 0, "aliases")
-            } else {
-                XCTFail("decode failed for traits with subspecies traits")
-            }
-        }
-        catch let error {
-            XCTFail("decode failed, error: \(error)")
-        }
+        """.data(using: .utf8)!
         
-        // Test the other half overrides
-        do {
-            let traits = """
-            {
-                "name": "Human",
-                "plural": "Humans",
-                "lifespan": 90,
-                "speed": 30,
-                "subspecies": [
-                    {
-                        "name": "Folk",
-                        "plural": "Folks",
-                        "aliases": ["Plainfolk"],
-                        "darkvision": 20
-                    }
-                ]
-            }
-            """.data(using: .utf8)!
-            
-            let speciesTraits = try decoder.decode(SpeciesTraits.self, from: traits)
-            if let subspeciesTraits = speciesTraits.subspecies.first {
-                XCTAssertNotNil(subspeciesTraits)
-                XCTAssertEqual(subspeciesTraits.name, "Folk", "name")
-                XCTAssertEqual(subspeciesTraits.plural, "Folks", "plural")
-                XCTAssertEqual(subspeciesTraits.lifespan, 90, "lifespan")
-                XCTAssertEqual(subspeciesTraits.speed, 30, "speed")
-                XCTAssertEqual(subspeciesTraits.aliases.count, 1, "aliases")
-                XCTAssertEqual(subspeciesTraits.baseSizes, speciesTraits.baseSizes, "size")
-            } else {
-                XCTFail("decode failed for traits with subspecies traits")
-            }
-        }
-        catch let error {
-            XCTFail("decode failed with error: \(error)")
-        }
+        let speciesTraits = try decoder.decode(SpeciesTraits.self, from: traits)
+        let subspeciesTraits = try #require(speciesTraits.subspecies.first)
+        
+        #expect(subspeciesTraits.name == "Subhuman", "name")
+        #expect(subspeciesTraits.plural == "Subhumans", "plural")
+        #expect(subspeciesTraits.lifespan == 60, "lifespan")
+        #expect(subspeciesTraits.speed == 10, "speed")
+        #expect(subspeciesTraits.aliases.count == 0, "aliases")
     }
     
-    func testEncodingSubspeciesTraits() {
+    @Test("Subspecies inherit parent traits")
+    func subspeciesOverrides() async throws {
+        let traits = """
+        {
+            "name": "Human",
+            "plural": "Humans",
+            "lifespan": 90,
+            "speed": 30,
+            "subspecies": [
+                {
+                    "name": "Folk",
+                    "plural": "Folks",
+                    "aliases": ["Plainfolk"],
+                    "darkvision": 20
+                }
+            ]
+        }
+        """.data(using: .utf8)!
+        
+        let speciesTraits = try decoder.decode(SpeciesTraits.self, from: traits)
+        let subspeciesTraits = try #require(speciesTraits.subspecies.first)
+        
+        #expect(subspeciesTraits.name == "Folk", "name")
+        #expect(subspeciesTraits.plural == "Folks", "plural")
+        #expect(subspeciesTraits.lifespan == 90, "lifespan")
+        #expect(subspeciesTraits.speed == 30, "speed")
+        #expect(subspeciesTraits.aliases.count == 1, "aliases")
+        #expect(subspeciesTraits.baseSizes == speciesTraits.baseSizes, "size")
+    }
+    
+    @Test("Encode subspecies traits with blending")
+    func encodingSubspeciesTraits() async throws {
         let speciesTraits = SpeciesTraits(name: "Human", plural: "Humans", aliases: [], descriptiveTraits: [:], lifespan: 90, darkVision: 0, speed: 45)
         
         let encoder = JSONEncoder()
         
+        // Test 1: Subspecies with blended traits
         do {
             var copyOfSpeciesTraits = speciesTraits
             var subspeciesTraits = SpeciesTraits(name: "Subhuman", plural: "Subhumans", lifespan: 45, darkVision: 0, speed: 30)
@@ -199,27 +168,23 @@ class SpeciesTraitsTests: XCTestCase {
             let dictionary = try JSONSerialization.jsonObject(with: encoded, options: []) as! [String: Any]
             
             // Confirm species traits
-            XCTAssertEqual(dictionary["name"] as? String, "Human", "encoding name")
-            XCTAssertEqual(dictionary["plural"] as? String, "Humans", "encoding name")
-            XCTAssertEqual(dictionary["lifespan"] as? Int, 90, "encoding lifespan")
-            XCTAssertEqual(dictionary["darkvision"] as? Int, 0, "encoding name")
-            XCTAssertEqual(dictionary["speed"] as? Int, 45, "encoding name")
+            #expect(dictionary["name"] as? String == "Human", "encoding name")
+            #expect(dictionary["plural"] as? String == "Humans", "encoding plural")
+            #expect(dictionary["lifespan"] as? Int == 90, "encoding lifespan")
+            #expect(dictionary["darkvision"] as? Int == 0, "encoding darkvision")
+            #expect(dictionary["speed"] as? Int == 45, "encoding speed")
             
             // Confirm subspecies traits
-            if let subspecies = dictionary["subspecies"] as? [[String: Any]], let firstSubspecies = subspecies.first {
-                XCTAssertEqual(firstSubspecies["name"] as? String, "Subhuman", "encoding name")
-                XCTAssertEqual(firstSubspecies["plural"] as? String, "Subhumans", "encoding name")
-                XCTAssertEqual(firstSubspecies["lifespan"] as? Int, 45, "encoding lifespan")
-                XCTAssertNil(firstSubspecies["darkvision"], "encoding darkvision")
-                XCTAssertEqual(firstSubspecies["speed"] as? Int, 30, "encoding speed")
-            } else {
-                XCTFail("subspecies should be non-nil and contain at least one subspecies")
-            }
-        }
-        catch let error {
-            XCTFail("decode failed with error: \(error)")
+            let subspecies = try #require(dictionary["subspecies"] as? [[String: Any]])
+            let firstSubspecies = try #require(subspecies.first)
+            #expect(firstSubspecies["name"] as? String == "Subhuman", "encoding name")
+            #expect(firstSubspecies["plural"] as? String == "Subhumans", "encoding plural")
+            #expect(firstSubspecies["lifespan"] as? Int == 45, "encoding lifespan")
+            #expect(firstSubspecies["darkvision"] == nil, "encoding darkvision should be nil")
+            #expect(firstSubspecies["speed"] as? Int == 30, "encoding speed")
         }
         
+        // Test 2: Subspecies with different overrides
         do {
             var copyOfSpeciesTraits = speciesTraits
             let subspeciesTraits = SpeciesTraits(name: "Subhuman", plural: "Subhumans", aliases: ["Minions"], descriptiveTraits: ["background": "Something"], lifespan: 45, darkVision: 10, speed: 45)
@@ -229,18 +194,13 @@ class SpeciesTraitsTests: XCTestCase {
             let dictionary = try JSONSerialization.jsonObject(with: encoded, options: []) as! [String: Any]
             
             // Confirm subspecies traits
-            if let subspecies = dictionary["subspecies"] as? [[String: Any]], let firstSubspecies = subspecies.first {
-                XCTAssertEqual(firstSubspecies["name"] as? String, "Subhuman", "encoding name")
-                XCTAssertEqual(firstSubspecies["plural"] as? String, "Subhumans", "encoding name")
-                XCTAssertEqual(firstSubspecies["lifespan"] as? Int, 45, "encoding lifespan")
-                XCTAssertEqual(firstSubspecies["darkvision"] as? Int, 10, "encoding darkvision")
-                XCTAssertNil(firstSubspecies["speed"], "encoding speed")
-            } else {
-                XCTFail("subspecies should be non-nil and contain at least one subspecies")
-            }
-        }
-        catch let error {
-            XCTFail("decode failed with error: \(error)")
+            let subspecies = try #require(dictionary["subspecies"] as? [[String: Any]])
+            let firstSubspecies = try #require(subspecies.first)
+            #expect(firstSubspecies["name"] as? String == "Subhuman", "encoding name")
+            #expect(firstSubspecies["plural"] as? String == "Subhumans", "encoding plural")
+            #expect(firstSubspecies["lifespan"] as? Int == 45, "encoding lifespan")
+            #expect(firstSubspecies["darkvision"] as? Int == 10, "encoding darkvision")
+            #expect(firstSubspecies["speed"] == nil, "encoding speed should be nil")
         }
     }
 }

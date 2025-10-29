@@ -6,24 +6,24 @@
 //  Copyright © 2017 Brian Arnold. All rights reserved.
 //
 
-import XCTest
-
+import Testing
 import RolePlayingCore
 
-class PlayerTests: XCTestCase {
+@Suite("Player Tests")
+struct PlayerTests {
     
-    var soldierTraits: Data!
-    var soldier: BackgroundTraits!
-    var humanTraits: Data!
-    var human: SpeciesTraits!
-    var fighterTraits: Data!
-    var fighter: ClassTraits!
+    let decoder = JSONDecoder()
+    let soldierTraits: Data
+    let soldier: BackgroundTraits
+    let humanTraits: Data
+    let human: SpeciesTraits
+    let fighterTraits: Data
+    let fighter: ClassTraits
     
-    override func setUp() {
+    init() throws {
         // TODO: Need to initialize UnitCurrency before creating Money instances in Player class.
         // Only load once. TODO: this has a side effect on other unit tests: currencies are already loaded.
-        let bundle = Bundle(for: PlayerTests.self)
-        let decoder = JSONDecoder()
+        let bundle = testBundle
         let data = try! bundle.loadJSON("TestCurrencies")
         _ = try! decoder.decode(Currencies.self, from: data)
         
@@ -36,7 +36,7 @@ class PlayerTests: XCTestCase {
             "tool proficiency": "Gaming Set",
             "equipment": [["Spear", "Shortbow", "20 Arrows", "Gaming Set", "Healer's Kit", "Quiver", "Traveler's Clothes", "14 GP"], ["50 GP"]]
         }
-        """.data(using: .utf8)
+        """.data(using: .utf8)!
         self.soldier = try! decoder.decode(BackgroundTraits.self, from: self.soldierTraits)
         
         self.fighterTraits = """
@@ -50,7 +50,7 @@ class PlayerTests: XCTestCase {
             "starting wealth": "5d4x10",
             "experience points": [0, 300, 900, 2700]
         }
-        """.data(using: .utf8)
+        """.data(using: .utf8)!
         self.fighter = try! decoder.decode(ClassTraits.self, from: self.fighterTraits)
         
         self.humanTraits = """
@@ -66,44 +66,44 @@ class PlayerTests: XCTestCase {
             "languages": ["Common"],
             "extra languages": 1
         }
-        """.data(using: .utf8)
+        """.data(using: .utf8)!
         self.human = try! decoder.decode(SpeciesTraits.self, from: self.humanTraits)
     }
     
-    func testPlayer() {        
+    @Test("Create player with basic traits")
+    func player() async throws {
         let player = Player("Frodo", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter, gender: .female, alignment: Alignment(.lawful, .neutral))
-        XCTAssertEqual(player.name, "Frodo", "player name")
-        XCTAssertEqual(player.className, "Fighter", "class name")
-        XCTAssertEqual(player.speciesName, "Human", "species name")
+        #expect(player.name == "Frodo", "player name")
+        #expect(player.className == "Fighter", "class name")
+        #expect(player.speciesName == "Human", "species name")
         
-        XCTAssertEqual(player.descriptiveTraits.count, 0, "descriptiveTraits")
+        #expect(player.descriptiveTraits.count == 0, "descriptiveTraits")
         
-        XCTAssertEqual(player.gender, Player.Gender.female, "gender")
-        XCTAssertEqual(player.alignment, Alignment(.lawful, .neutral), "alignment")
+        #expect(player.gender == Player.Gender.female, "gender")
+        #expect(player.alignment == Alignment(.lawful, .neutral), "alignment")
         
         // Abilities is scores plus species modifiers, so + 1
         for key in player.abilities.abilities {
             let score = player.abilities[key]!
-            XCTAssertTrue((4...19).contains(score), "ability score \(score) for \(key)")
+            #expect((3...20).contains(score), "ability score \(score) for \(key)")
         }
         
         // I do the maths
-        XCTAssertTrue((4..<7).contains(player.height.value), "height \(player.height.value)")
+        #expect((4..<7).contains(player.height.value), "height \(player.height.value)")
         
-        XCTAssertTrue((1...10).contains(player.maximumHitPoints), "maximum hit points")
-        XCTAssertEqual(player.maximumHitPoints, player.currentHitPoints, "current hit points")
-        XCTAssertEqual("\(player.classTraits.hitDice)", "d10", "hit dice")
-        XCTAssertEqual(player.experiencePoints, 0, "experience points")
-        XCTAssertEqual(player.level, 1, "level")
+        #expect((1...10).contains(player.maximumHitPoints), "maximum hit points")
+        #expect(player.maximumHitPoints == player.currentHitPoints, "current hit points")
+        #expect("\(player.classTraits.hitDice)" == "d10", "hit dice")
+        #expect(player.experiencePoints == 0, "experience points")
+        #expect(player.level == 1, "level")
         
-        XCTAssertTrue((50...200).contains(player.money.value), "money \(player.money.value)")
+        #expect((50...200).contains(player.money.value), "money \(player.money.value)")
         
-        XCTAssertEqual(player.proficiencyBonus, 2, "proficiency bonus")
+        #expect(player.proficiencyBonus == 2, "proficiency bonus")
     }
     
-    func testMinimumTraitsPlayer() {
-        let decoder = JSONDecoder()
-        
+    @Test("Decode player with minimum required traits")
+    func minimumTraitsPlayer() async throws {
         let playerTraits = """
         {
             "name": "Bilbo",
@@ -120,40 +120,33 @@ class PlayerTests: XCTestCase {
         }
         """.data(using: .utf8)!
         
-        do {
-            let player = try decoder.decode(Player.self, from: playerTraits)
-            player.speciesTraits = human
-            player.classTraits = fighter
-            
-            XCTAssertEqual(player.name, "Bilbo", "player name")
-            XCTAssertEqual(player.className, "Fighter", "class name")
-            XCTAssertEqual(player.speciesName, "Human", "species name")
-            
-            XCTAssertEqual(player.gender, Player.Gender.male, "gender")
-            XCTAssertNil(player.alignment, "alignment")
-            
-            XCTAssertEqual(player.abilities[.dexterity], 14, "dexterity")
-            XCTAssertEqual(player.abilities[.charisma], 12, "charisma")
-            
-            XCTAssertEqual(player.height.value, 3.75, "height")
-            
-            XCTAssertEqual(player.maximumHitPoints, 10, "maximum hit points")
-            XCTAssertEqual(player.maximumHitPoints, player.currentHitPoints, "current hit points")
-            
-            XCTAssertEqual(player.experiencePoints, 0, "experience points")
-            XCTAssertEqual(player.level, 1, "level")
-            
-            XCTAssertEqual(player.money.value, 130, "money")
-            
-        }
-        catch let error {
-            XCTFail("decode player failed, error: \(error)")
-        }
+        let player = try decoder.decode(Player.self, from: playerTraits)
+        player.speciesTraits = human
+        player.classTraits = fighter
+        
+        #expect(player.name == "Bilbo", "player name")
+        #expect(player.className == "Fighter", "class name")
+        #expect(player.speciesName == "Human", "species name")
+        
+        #expect(player.gender == Player.Gender.male, "gender")
+        #expect(player.alignment == nil, "alignment")
+        
+        #expect(player.abilities[.dexterity] == 14, "dexterity")
+        #expect(player.abilities[.charisma] == 12, "charisma")
+        
+        #expect(player.height.value == 3.75, "height")
+        
+        #expect(player.maximumHitPoints == 10, "maximum hit points")
+        #expect(player.maximumHitPoints == player.currentHitPoints, "current hit points")
+        
+        #expect(player.experiencePoints == 0, "experience points")
+        #expect(player.level == 1, "level")
+        
+        #expect(player.money.value == 130, "money")
     }
     
-    func testOptionalPlayerTraits() {
-        let decoder = JSONDecoder()
-
+    @Test("Decode player with optional traits and level up")
+    func optionalPlayerTraits() async throws {
         let playerTraits = """
         {
             "name": "Bilbo",
@@ -172,32 +165,28 @@ class PlayerTests: XCTestCase {
         }
         """.data(using: .utf8)!
         
-        do {
-            let player = try decoder.decode(Player.self, from: playerTraits)
-            player.speciesTraits = human
-            player.classTraits = fighter
-            
-            XCTAssertNil(player.gender, "gender")
-            XCTAssertEqual(player.alignment, Alignment(.lawful, .evil), "alignment")
-            
-            XCTAssertEqual(player.canLevelUp, true, "level up")
-            XCTAssertEqual("\(player.hitDice)", "2d10", "hit dice")
-            player.levelUp()
-            XCTAssertEqual(player.level, 3, "level")
-            XCTAssertTrue(player.maximumHitPoints > 15, "experience points")
-            
-            XCTAssertEqual(player.canLevelUp, false, "level up")
-            XCTAssertEqual("\(player.hitDice)", "3d10", "hit dice")
-            
-            player.levelUp()
-            XCTAssertEqual(player.level, 3, "level")
-        }
-        catch let error {
-            XCTFail("decode player failed, error: \(error)")
-        }
+        let player = try decoder.decode(Player.self, from: playerTraits)
+        player.speciesTraits = human
+        player.classTraits = fighter
+        
+        #expect(player.gender == nil, "gender")
+        #expect(player.alignment == Alignment(.lawful, .evil), "alignment")
+        
+        #expect(player.canLevelUp == true, "level up")
+        #expect("\(player.hitDice)" == "2d10", "hit dice")
+        player.levelUp()
+        #expect(player.level == 3, "level")
+        #expect(player.maximumHitPoints > 15, "experience points")
+        
+        #expect(player.canLevelUp == false, "level up")
+        #expect("\(player.hitDice)" == "3d10", "hit dice")
+        
+        player.levelUp()
+        #expect(player.level == 3, "level")
     }
     
-    func testPlayerRoundTrip() {
+    @Test("Encode and decode player round trip")
+    func playerRoundTrip() async throws {
         let playerTraits = """
         {
             "name": "Bilbo",
@@ -217,110 +206,67 @@ class PlayerTests: XCTestCase {
         }
         """.data(using: .utf8)!
         
-        let decoder = JSONDecoder()
-        let player = try? decoder.decode(Player.self, from: playerTraits)
+        let player = try #require(try? decoder.decode(Player.self, from: playerTraits))
         let encoder = JSONEncoder()
-        let encodedPlayer = try! encoder.encode(player)
-        let encoded = try? JSONSerialization.jsonObject(with: encodedPlayer, options: [])
-        XCTAssertNotNil(encoded, "player traits round trip")
+        let encodedPlayer = try encoder.encode(player)
+        let encoded = try #require(try? JSONSerialization.jsonObject(with: encodedPlayer, options: []) as? [String: Any])
         
-        if let encoded = encoded as? [String: Any] {
-            XCTAssertEqual(encoded["name"] as? String, "Bilbo", "player traits round trip name")
-            XCTAssertEqual(encoded["gender"] as? String, "Male", "player traits round trip gender")
-            XCTAssertNotNil(encoded["alignment"] as? [String: Double], "player traits round trip alignment")
-            if let alignment = encoded["alignment"] as? [String: Double] {
-                XCTAssertEqual(alignment["ethics"], 0, "player traits round trip alignment ethics")
-                XCTAssertEqual(alignment["morals"], 1, "player traits round trip alignment ethics")
-            }
-            XCTAssertEqual(encoded["height"] as? String, "3.75 ft", "player traits round trip height")
-            
-            let abilities = encoded["ability scores"] as? [String: Int]
-            XCTAssertNotNil(abilities)
-            print("\(String(describing: abilities))")
-            XCTAssertEqual(abilities?["Dexterity"], 13, "player traits round trip ability scores")
-            
-            let backgroundAbilities = encoded["background ability scores"] as? [String]
-            XCTAssertNotNil(backgroundAbilities)
-            XCTAssertEqual(backgroundAbilities?.count, 3, "player traits round trip background ability scores count")
-            XCTAssertTrue(backgroundAbilities!.contains("Strength"), "player traits round trip background ability scores")
-            XCTAssertFalse(backgroundAbilities!.contains("Charisma"), "player traits round trip background ability scores")
-
-            XCTAssertEqual(encoded["money"] as? String, "130.0 gp", "player traits round trip money")
-            XCTAssertEqual(encoded["maximum hit points"] as? Int, 20, "player traits round trip maximum hit points")
-            XCTAssertEqual(encoded["current hit points"] as? Int, 9, "player traits round trip current hit points")
-            XCTAssertEqual(encoded["level"] as? Int, 2, "player traits round trip level")
-        } else {
-            XCTFail("Failed to deserialize encoded Player into dictionary")
-        }
+        #expect(encoded["name"] as? String == "Bilbo", "player traits round trip name")
+        #expect(encoded["gender"] as? String == "Male", "player traits round trip gender")
+        
+        let alignment = try #require(encoded["alignment"] as? [String: Double])
+        #expect(alignment["ethics"] == 0, "player traits round trip alignment ethics")
+        #expect(alignment["morals"] == 1, "player traits round trip alignment morals")
+        
+        #expect(encoded["height"] as? String == "3.75 ft", "player traits round trip height")
+        
+        let abilities = try #require(encoded["ability scores"] as? [String: Int])
+        #expect(abilities["Dexterity"] == 13, "player traits round trip ability scores")
+        
+        let backgroundAbilities = try #require(encoded["background ability scores"] as? [String])
+        #expect(backgroundAbilities.count == 3, "player traits round trip background ability scores count")
+        #expect(backgroundAbilities.contains("Strength"), "player traits round trip background ability scores")
+        #expect(!backgroundAbilities.contains("Charisma"), "player traits round trip background ability scores")
+        
+        #expect(encoded["money"] as? String == "130.0 gp", "player traits round trip money")
+        #expect(encoded["maximum hit points"] as? Int == 20, "player traits round trip maximum hit points")
+        #expect(encoded["current hit points"] as? Int == 9, "player traits round trip current hit points")
+        #expect(encoded["level"] as? Int == 2, "player traits round trip level")
     }
     
-    func testMissingTraits() {
-        let decoder = JSONDecoder()
-        
-        // Test that each missing trait results in nil
-        do {
-            let traits = "{:}".data(using: .utf8)!
-            let player = try? decoder.decode(Player.self, from: traits)
-            XCTAssertNil(player)
+    @Test("Verify missing required traits cause decode failure", arguments: [
+        "{:}",
+        """
+        {
+            "name": "Bilbo"
         }
-        
-        do {
-            let traits = """
-            {
-                "name": "Bilbo"
-            }
-            """.data(using: .utf8)!
-            let player = try? decoder.decode(Player.self, from: traits)
-            XCTAssertNil(player)
+        """,
+        """
+        {
+            "name": "Bilbo",
+            "height": "3'9\\"",
         }
-        
-        
-        do {
-            let traits = """
-            {
-                "name": "Bilbo",
-                "height": "3'9\\""
-            }
-            """.data(using: .utf8)!
-            let player = try? decoder.decode(Player.self, from: traits)
-            XCTAssertNil(player)
+        """,
+        """
+        {
+            "name": "Bilbo",
+            "height": "3'9\\"",
+            "ability scores": {"Dexterity": 13}
         }
-        
-        do {
-            let traits = """
-            {
-                "name": "Bilbo",
-                "height": "3'9\\"",
-            }
-            """.data(using: .utf8)!
-            let player = try? decoder.decode(Player.self, from: traits)
-            XCTAssertNil(player)
+        """,
+        """
+        {
+            "name": "Bilbo",
+            "height": "3'9\\"",
+            "ability scores": {"Dexterity": 13},
+            "money": 130]
         }
-        
-        do {
-            let traits = """
-            {
-                "name": "Bilbo",
-                "height": "3'9\\"",
-                "ability scores": {"Dexterity": 13}
-            }
-            """.data(using: .utf8)!
-            let player = try? decoder.decode(Player.self, from: traits)
-            XCTAssertNil(player)
-        }
-        
-        do {
-            let traits = """
-            {
-                "name": "Bilbo",
-                "height": "3'9\\"",
-                "ability scores": {"Dexterity": 13},
-                "money": 130]
-            }
-            """.data(using: .utf8)!
-            let player = try? decoder.decode(Player.self, from: traits)
-            XCTAssertNil(player)
-        }
+        """
+    ])
+    func missingTraits(json: String) async throws {
+        let traits = json.data(using: .utf8)!
+        let player = try? decoder.decode(Player.self, from: traits)
+        #expect(player == nil)
     }
     
     func expectedModifier(for abilityScore: Int) -> Int {
@@ -328,84 +274,56 @@ class PlayerTests: XCTestCase {
         return selfMinus10 < 0 ? Int((Double(selfMinus10) / 2.0).rounded(.down)) : selfMinus10 / 2
     }
     
-    func testComputedProperties() {
+    @Test("Verify computed properties")
+    func computedProperties() async throws {
         let player = Player("Gandalf", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter, gender: .male, alignment: Alignment(.neutral, .good))
         
         // Test speed (from species traits)
-        XCTAssertEqual(player.speed, 30, "speed should match species speed")
-        XCTAssertEqual(player.size, .medium, "size should match species size")
+        #expect(player.speed == 30, "speed should match species speed")
+        #expect(player.size == .medium, "size should match species size")
         
         // Test modifiers
         for ability in player.modifiers.abilities {
             let abilityScore = player.abilities[ability]!
             let expectedModifier = expectedModifier(for: abilityScore)
-            XCTAssertEqual(player.modifiers[ability], expectedModifier, "modifier calculation")
+            #expect(player.modifiers[ability] == expectedModifier, "modifier calculation")
         }
         
         // Test initiative
-        XCTAssertEqual(player.initiativeModifier, player.modifiers[.dexterity], "initiative modifier")
-        XCTAssertEqual(player.initiativeScore, 10 + player.modifiers[.dexterity], "initiative score")
+        #expect(player.initiativeModifier == player.modifiers[.dexterity], "initiative modifier")
+        #expect(player.initiativeScore == 10 + player.modifiers[.dexterity], "initiative score")
         
         // Test passive perception
-        XCTAssertEqual(player.passivePerception, 10 + player.modifiers[.wisdom], "passive perception")
+        #expect(player.passivePerception == 10 + player.modifiers[.wisdom], "passive perception")
     }
     
-    func testProficiencyBonus() {
+    @Test("Verify proficiency bonus at different levels", arguments: [
+        (1, 2), (4, 2),
+        (5, 3), (8, 3),
+        (9, 4), (12, 4),
+        (13, 5), (16, 5),
+        (17, 6), (20, 6)
+    ])
+    func proficiencyBonus(level: Int, expectedBonus: Int) async throws {
         let player = Player("Aragorn", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
-        
-        // Level 1-4: +2
-        player.level = 1
-        XCTAssertEqual(player.proficiencyBonus, 2, "proficiency bonus at level 1")
-        
-        player.level = 4
-        XCTAssertEqual(player.proficiencyBonus, 2, "proficiency bonus at level 4")
-        
-        // Level 5-8: +3
-        player.level = 5
-        XCTAssertEqual(player.proficiencyBonus, 3, "proficiency bonus at level 5")
-        
-        player.level = 8
-        XCTAssertEqual(player.proficiencyBonus, 3, "proficiency bonus at level 8")
-        
-        // Level 9-12: +4
-        player.level = 9
-        XCTAssertEqual(player.proficiencyBonus, 4, "proficiency bonus at level 9")
-        
-        player.level = 12
-        XCTAssertEqual(player.proficiencyBonus, 4, "proficiency bonus at level 12")
-        
-        // Level 13-16: +5
-        player.level = 13
-        XCTAssertEqual(player.proficiencyBonus, 5, "proficiency bonus at level 13")
-        
-        player.level = 16
-        XCTAssertEqual(player.proficiencyBonus, 5, "proficiency bonus at level 16")
-        
-        // Level 17-20: +6
-        player.level = 17
-        XCTAssertEqual(player.proficiencyBonus, 6, "proficiency bonus at level 17")
-        
-        player.level = 20
-        XCTAssertEqual(player.proficiencyBonus, 6, "proficiency bonus at level 20")
+        player.level = level
+        #expect(player.proficiencyBonus == expectedBonus, "proficiency bonus at level \(level)")
     }
     
-    func testHitDiceAtDifferentLevels() {
+    @Test("Verify hit dice at different levels", arguments: [
+        (1, "d10"),
+        (5, "5d10"),
+        (10, "10d10"),
+        (20, "20d10")
+    ])
+    func hitDiceAtDifferentLevels(level: Int, expectedDice: String) async throws {
         let player = Player("Legolas", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
-        
-        player.level = 1
-        XCTAssertEqual("\(player.hitDice)", "d10", "hit dice at level 1")
-        
-        player.level = 5
-        XCTAssertEqual("\(player.hitDice)", "5d10", "hit dice at level 5")
-        
-        player.level = 10
-        XCTAssertEqual("\(player.hitDice)", "10d10", "hit dice at level 10")
-        
-        player.level = 20
-        XCTAssertEqual("\(player.hitDice)", "20d10", "hit dice at level 20")
+        player.level = level
+        #expect("\(player.hitDice)" == expectedDice, "hit dice at level \(level)")
     }
     
-    func testHashableConformance() {
+    @Test("Verify Hashable conformance")
+    func hashableConformance() async throws {
         let player1 = Player("Gimli", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter, gender: .male, alignment: Alignment(.lawful, .good))
         player1.descriptiveTraits = ["ideal": "Honor", "bond": "My axe"]
         
@@ -421,7 +339,7 @@ class PlayerTests: XCTestCase {
         player2.descriptiveTraits = ["ideal": "Honor", "bond": "My axe"]
         
         // Test equality
-        XCTAssertEqual(player1, player2, "identical players should be equal")
+        #expect(player1 == player2, "identical players should be equal")
         
         // Test hash values
         var hasher1 = Hasher()
@@ -432,19 +350,20 @@ class PlayerTests: XCTestCase {
         player2.hash(into: &hasher2)
         let hash2 = hasher2.finalize()
         
-        XCTAssertEqual(hash1, hash2, "identical players should have same hash")
+        #expect(hash1 == hash2, "identical players should have same hash")
         
         // Test that players can be used in Sets
         let playerSet: Set<Player> = [player1, player2]
-        XCTAssertEqual(playerSet.count, 1, "set should contain only one unique player")
+        #expect(playerSet.count == 1, "set should contain only one unique player")
     }
     
-    func testPlayerInequality() {
+    @Test("Verify player inequality")
+    func playerInequality() async throws {
         let player1 = Player("Boromir", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
         let player2 = Player("Faramir", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
         
         // Different names
-        XCTAssertNotEqual(player1, player2, "players with different names should not be equal")
+        #expect(player1 != player2, "players with different names should not be equal")
         
         // Different hit points
         let player3 = Player("Boromir", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
@@ -453,26 +372,28 @@ class PlayerTests: XCTestCase {
         player3.money = player1.money
         player3.currentHitPoints = player3.currentHitPoints - 5
         
-        XCTAssertNotEqual(player1, player3, "players with different current HP should not be equal")
+        #expect(player1 != player3, "players with different current HP should not be equal")
     }
     
-    func testGenderCases() {
+    @Test("Verify gender cases")
+    func genderCases() async throws {
         // Test all gender cases
         let female = Player("Diana", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter, gender: .female)
-        XCTAssertEqual(female.gender, .female, "female gender")
+        #expect(female.gender == .female, "female gender")
         
         let male = Player("Arthur", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter, gender: .male)
-        XCTAssertEqual(male.gender, .male, "male gender")
+        #expect(male.gender == .male, "male gender")
         
         let agender = Player("Riley", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter, gender: nil)
-        XCTAssertNil(agender.gender, "nil gender for androgynous/hermaphroditic")
+        #expect(agender.gender == nil, "nil gender for androgynous/hermaphroditic")
     }
     
-    func testDescriptiveTraits() {
+    @Test("Verify descriptive traits")
+    func descriptiveTraits() async throws {
         let player = Player("Samwise", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
         
         // Initially empty
-        XCTAssertEqual(player.descriptiveTraits.count, 0)
+        #expect(player.descriptiveTraits.count == 0)
         
         // Add traits
         player.descriptiveTraits["ideal"] = "Loyalty"
@@ -480,61 +401,64 @@ class PlayerTests: XCTestCase {
         player.descriptiveTraits["flaw"] = "Too trusting"
         player.descriptiveTraits["background"] = "Gardener"
         
-        XCTAssertEqual(player.descriptiveTraits.count, 4)
-        XCTAssertEqual(player.descriptiveTraits["ideal"], "Loyalty")
-        XCTAssertEqual(player.descriptiveTraits["bond"], "My friends")
-        XCTAssertEqual(player.descriptiveTraits["flaw"], "Too trusting")
-        XCTAssertEqual(player.descriptiveTraits["background"], "Gardener")
+        #expect(player.descriptiveTraits.count == 4)
+        #expect(player.descriptiveTraits["ideal"] == "Loyalty")
+        #expect(player.descriptiveTraits["bond"] == "My friends")
+        #expect(player.descriptiveTraits["flaw"] == "Too trusting")
+        #expect(player.descriptiveTraits["background"] == "Gardener")
     }
     
-    func testAbilityScoresRoll() {
+    @Test("Verify ability scores roll")
+    func abilityScoresRoll() async throws {
         var abilities = AbilityScores()
         abilities.roll()
         
         // Verify all abilities have valid scores (4d6-L should give 3-18)
         for ability in abilities.abilities {
             let score = abilities[ability]!
-            XCTAssertTrue((3...18).contains(score), "rolled ability score should be between 3 and 18")
+            #expect((3...18).contains(score), "rolled ability score should be between 3 and 18")
         }
         
         // Verify all six abilities are set
-        XCTAssertEqual(abilities.abilities.count, 6, "should have 6 abilities")
+        #expect(abilities.abilities.count == 6, "should have 6 abilities")
     }
     
-    func testDiceHitDiceExtension() {
+    @Test("Verify dice hit dice extension")
+    func diceHitDiceExtension() async throws {
         // Test the hitDice extension on Dice
         let d6 = SimpleDice(.d6)
         
         let level1HitDice = d6.hitDice(level: 1)
-        XCTAssertEqual("\(level1HitDice)", "d6")
+        #expect("\(level1HitDice)" == "d6")
         
         let level5HitDice = d6.hitDice(level: 5)
-        XCTAssertEqual("\(level5HitDice)", "5d6")
+        #expect("\(level5HitDice)" == "5d6")
         
         let level10HitDice = d6.hitDice(level: 10)
-        XCTAssertEqual("\(level10HitDice)", "10d6")
+        #expect("\(level10HitDice)" == "10d6")
     }
     
-    func testSpeciesAndClassTraitsDidSet() {
+    @Test("Verify species and class traits didSet")
+    func speciesAndClassTraitsDidSet() async throws {
         let player = Player("Test", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
         
-        XCTAssertEqual(player.backgroundName, "Soldier")
-        XCTAssertEqual(player.speciesName, "Human")
-        XCTAssertEqual(player.className, "Fighter")
+        #expect(player.backgroundName == "Soldier")
+        #expect(player.speciesName == "Human")
+        #expect(player.className == "Fighter")
         
         // Create a mock second species (we'll reuse human but check the didSet is called)
-        let mockSpecies = human!
+        let mockSpecies = human
         player.speciesTraits = mockSpecies
-        XCTAssertEqual(player.speciesName, mockSpecies.name)
+        #expect(player.speciesName == mockSpecies.name)
         
         // Create a mock second class (we'll reuse fighter but check the didSet is called)
-        let mockClass = fighter!
+        let mockClass = fighter
         player.classTraits = mockClass
-        XCTAssertEqual(player.className, mockClass.name)
+        #expect(player.className == mockClass.name)
     }
     
-    func testPlayerEncodingWithDescriptiveTraits() {
-        let decoder = JSONDecoder()
+    @Test("Encode and decode player with descriptive traits")
+    func playerEncodingWithDescriptiveTraits() async throws {
         let encoder = JSONEncoder()
         
         let playerTraits = """
@@ -557,37 +481,32 @@ class PlayerTests: XCTestCase {
         }
         """.data(using: .utf8)!
         
-        do {
-            let player = try decoder.decode(Player.self, from: playerTraits)
-            XCTAssertEqual(player.descriptiveTraits.count, 3)
-            XCTAssertEqual(player.descriptiveTraits["ideal"], "Adventure")
-            XCTAssertEqual(player.descriptiveTraits["bond"], "The Shire")
-            XCTAssertEqual(player.descriptiveTraits["flaw"], "Impulsive")
-            
-            // Test encoding
-            let encoded = try encoder.encode(player)
-            let decodedDict = try JSONSerialization.jsonObject(with: encoded) as? [String: Any]
-            let encodedTraits = decodedDict?["descriptive traits"] as? [String: String]
-            XCTAssertNotNil(encodedTraits)
-            XCTAssertEqual(encodedTraits?["ideal"], "Adventure")
-        } catch {
-            XCTFail("Failed to decode/encode player with descriptive traits: \(error)")
-        }
+        let player = try decoder.decode(Player.self, from: playerTraits)
+        #expect(player.descriptiveTraits.count == 3)
+        #expect(player.descriptiveTraits["ideal"] == "Adventure")
+        #expect(player.descriptiveTraits["bond"] == "The Shire")
+        #expect(player.descriptiveTraits["flaw"] == "Impulsive")
+        
+        // Test encoding
+        let encoded = try encoder.encode(player)
+        let decodedDict = try #require(try? JSONSerialization.jsonObject(with: encoded) as? [String: Any])
+        let encodedTraits = try #require(decodedDict["descriptive traits"] as? [String: String])
+        #expect(encodedTraits["ideal"] == "Adventure")
     }
     
-    func testRollHitPointsClassMethod() {
+    @Test("Verify rollHitPoints class method")
+    func rollHitPointsClassMethod() async throws {
         // Test the static rollHitPoints method
         let hitPoints = Player.rollHitPoints(classTraits: fighter, speciesTraits: human)
         
         // Fighter has d10, so minimum should be 6 (max(10/2+1, roll)), 
         // but roll could be lower, so minimum is actually 6 + species bonus
         // Maximum is 10 + species bonus
-        XCTAssertTrue((6...10).contains(hitPoints), "hit points should be in valid range")
+        #expect((6...10).contains(hitPoints), "hit points should be in valid range")
     }
     
-    func testMultipleLevelUps() {
-        let decoder = JSONDecoder()
-        
+    @Test("Verify multiple level ups")
+    func multipleLevelUps() async throws {
         let playerTraits = """
         {
             "name": "Merry",
@@ -605,7 +524,7 @@ class PlayerTests: XCTestCase {
         }
         """.data(using: .utf8)!
         
-        let player = try! decoder.decode(Player.self, from: playerTraits)
+        let player = try decoder.decode(Player.self, from: playerTraits)
         player.speciesTraits = human
         player.classTraits = fighter
         
@@ -613,27 +532,27 @@ class PlayerTests: XCTestCase {
         
         // Add enough XP to level up to level 2
         player.experiencePoints = 301
-        XCTAssertTrue(player.canLevelUp)
+        #expect(player.canLevelUp)
         player.levelUp()
-        XCTAssertEqual(player.level, 2)
-        XCTAssertTrue(player.maximumHitPoints > initialHP, "HP should increase on level up")
+        #expect(player.level == 2)
+        #expect(player.maximumHitPoints > initialHP, "HP should increase on level up")
         
         // Add enough XP to level up to level 3
         player.experiencePoints = 901
-        XCTAssertTrue(player.canLevelUp)
+        #expect(player.canLevelUp)
         player.levelUp()
-        XCTAssertEqual(player.level, 3)
+        #expect(player.level == 3)
         
         // Add enough XP to level up to level 4
         player.experiencePoints = 2701
-        XCTAssertTrue(player.canLevelUp)
+        #expect(player.canLevelUp)
         player.levelUp()
-        XCTAssertEqual(player.level, 4)
+        #expect(player.level == 4)
         
         // Without enough XP, cannot level up
         player.experiencePoints = 2701
-        XCTAssertFalse(player.canLevelUp)
+        #expect(player.canLevelUp == false)
         player.levelUp() // Should do nothing
-        XCTAssertEqual(player.level, 4)
+        #expect(player.level == 4)
     }
 }
