@@ -107,9 +107,9 @@ extension Currencies: Codable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-//        Currencies.lock.lock()
+        Currencies.lock.lock()
         let allCurrenciesSnapshot = Currencies.allCurrencies.values
-//        Currencies.lock.unlock()
+        Currencies.lock.unlock()
         
         var currencies = [Currency]()
         for unitCurrency in allCurrenciesSnapshot {
