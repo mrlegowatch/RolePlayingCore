@@ -6,12 +6,14 @@
 //  Copyright © 2025 Brian Arnold. All rights reserved.
 //
 
-import XCTest
+import Testing
 import RolePlayingCore
 
-class DiceEncodingTests: XCTestCase {
+@Suite("Dice Encoding Tests")
+struct DiceEncodingTests {
     
-    func testEncodingDice() {
+    @Test("Encoding dice")
+    func encodingDice() throws {
         struct DiceContainer: Encodable {
             let dice: Dice
             
@@ -27,16 +29,13 @@ class DiceEncodingTests: XCTestCase {
         
         let diceContainer = DiceContainer(dice: CompoundDice(.d8, times: 3, modifier: 3, mathOperator: "-"))
         let encoder = JSONEncoder()
-        do {
-            let encoded = try encoder.encode(diceContainer)
-            let deserialized = try JSONSerialization.jsonObject(with: encoded, options: []) as? [String: String]
-            XCTAssertEqual(deserialized?["dice"], "3d8-3", "encoded dice failed to deserialize as string")
-        }
-        catch let error {
-            XCTFail("encoded dice failed, error: \(error)")
-        }
+        let encoded = try encoder.encode(diceContainer)
+        let deserialized = try JSONSerialization.jsonObject(with: encoded, options: []) as? [String: String]
+        #expect(deserialized?["dice"] == "3d8-3", "encoded dice failed to deserialize as string")
     }
-    func testDecodingDice() {
+    
+    @Test("Decoding dice - typical expression")
+    func decodingDiceTypicalExpression() throws {
         struct DiceContainer: Decodable {
             let dice: Dice
             
@@ -50,61 +49,71 @@ class DiceEncodingTests: XCTestCase {
             }
         }
         
-        // Decode a typical Dice expression
-        do {
-            let traits = """
-            {
-                "dice": "2d6+2"
+        let traits = """
+        {
+            "dice": "2d6+2"
+        }
+        """.data(using: .utf8)!
+        let decoder = JSONDecoder()
+        let decoded = try decoder.decode(DiceContainer.self, from: traits)
+        #expect(decoded.dice is CompoundDice, "decode as compound dice")
+        #expect(decoded.dice.sides == 6, "decode dice sides")
+    }
+    
+    @Test("Decoding dice - dice modifier")
+    func decodingDiceDiceModifier() throws {
+        struct DiceContainer: Decodable {
+            let dice: Dice
+            
+            enum CodingKeys: String, CodingKey {
+                case dice
             }
-            """.data(using: .utf8)!
-            let decoder = JSONDecoder()
-            do {
-                let decoded = try decoder.decode(DiceContainer.self, from: traits)
-                XCTAssertNotNil(decoded.dice as? CompoundDice, "decode as compound dice")
-                XCTAssertEqual(decoded.dice.sides, 6, "decode dice sides")
-            }
-            catch let error {
-                XCTFail("decoded dice failed, error: \(error)")
+            
+            init(from decoder: Decoder) throws {
+                let container = try decoder.container(keyedBy: CodingKeys.self)
+                dice = try container.decode(Dice.self, forKey: .dice)
             }
         }
         
-        // Decode a dice modifier
-        do {
-            let traits = """
-            {
-                "dice": 5
+        let traits = """
+        {
+            "dice": 5
+        }
+        """.data(using: .utf8)!
+        let decoder = JSONDecoder()
+        let decoded = try decoder.decode(DiceContainer.self, from: traits)
+        #expect(decoded.dice is DiceModifier, "decode as dice modifier")
+        #expect(decoded.dice.sides == 5, "decode dice sides")
+    }
+    
+    @Test("Decoding dice - invalid dice string")
+    func decodingDiceInvalidString() throws {
+        struct DiceContainer: Decodable {
+            let dice: Dice
+            
+            enum CodingKeys: String, CodingKey {
+                case dice
             }
-            """.data(using: .utf8)!
-            let decoder = JSONDecoder()
-            do {
-                let decoded = try decoder.decode(DiceContainer.self, from: traits)
-                XCTAssertNotNil(decoded.dice as? DiceModifier, "decode as compound dice")
-                XCTAssertEqual(decoded.dice.sides, 5, "decode dice sides")
-            }
-            catch let error {
-                XCTFail("decoded dice failed, error: \(error)")
+            
+            init(from decoder: Decoder) throws {
+                let container = try decoder.container(keyedBy: CodingKeys.self)
+                dice = try container.decode(Dice.self, forKey: .dice)
             }
         }
         
-        // Attempt to decode invalid dice
-        do {
-            let traits = """
-            {
-                "dice": "Hello Dice"
-            }
-            """.data(using: .utf8)!
-            let decoder = JSONDecoder()
-            do {
-                _ = try decoder.decode(DiceContainer.self, from: traits)
-                XCTFail("decode invalid dice string should have failed")
-            }
-            catch {
-                // Successfully errored
-            }
+        let traits = """
+        {
+            "dice": "Hello Dice"
+        }
+        """.data(using: .utf8)!
+        let decoder = JSONDecoder()
+        #expect(throws: Error.self) {
+            _ = try decoder.decode(DiceContainer.self, from: traits)
         }
     }
     
-    func testDecodingDiceIfPresent() {
+    @Test("Decoding dice if present - typical expression")
+    func decodingDiceIfPresentTypicalExpression() throws {
         struct DiceContainer: Decodable {
             let dice: Dice?
             
@@ -118,57 +127,65 @@ class DiceEncodingTests: XCTestCase {
             }
         }
         
-        // Decode a typical Dice expression
-        do {
-            let traits = """
-            {
-                "dice": "2d6+2"
+        let traits = """
+        {
+            "dice": "2d6+2"
+        }
+        """.data(using: .utf8)!
+        let decoder = JSONDecoder()
+        let decoded = try decoder.decode(DiceContainer.self, from: traits)
+        #expect(decoded.dice is CompoundDice, "decode as compound dice")
+        #expect(decoded.dice?.sides == 6, "decode dice sides")
+    }
+    
+    @Test("Decoding dice if present - dice modifier")
+    func decodingDiceIfPresentDiceModifier() throws {
+        struct DiceContainer: Decodable {
+            let dice: Dice?
+            
+            enum CodingKeys: String, CodingKey {
+                case dice
             }
-            """.data(using: .utf8)!
-            let decoder = JSONDecoder()
-            do {
-                let decoded = try decoder.decode(DiceContainer.self, from: traits)
-                XCTAssertNotNil(decoded.dice as? CompoundDice, "decode as compound dice")
-                XCTAssertEqual(decoded.dice?.sides, 6, "decode dice sides")
-            }
-            catch let error {
-                XCTFail("decoded dice failed, error: \(error)")
+            
+            init(from decoder: Decoder) throws {
+                let container = try decoder.container(keyedBy: CodingKeys.self)
+                dice = try container.decodeIfPresent(Dice.self, forKey: .dice)
             }
         }
         
-        // Decode a dice modifier
-        do {
-            let traits = """
-            {
-                "dice": 5
+        let traits = """
+        {
+            "dice": 5
+        }
+        """.data(using: .utf8)!
+        let decoder = JSONDecoder()
+        let decoded = try decoder.decode(DiceContainer.self, from: traits)
+        #expect(decoded.dice is DiceModifier, "decode as dice modifier")
+        #expect(decoded.dice?.sides == 5, "decode dice sides")
+    }
+    
+    @Test("Decoding dice if present - invalid dice string")
+    func decodingDiceIfPresentInvalidString() throws {
+        struct DiceContainer: Decodable {
+            let dice: Dice?
+            
+            enum CodingKeys: String, CodingKey {
+                case dice
             }
-            """.data(using: .utf8)!
-            let decoder = JSONDecoder()
-            do {
-                let decoded = try decoder.decode(DiceContainer.self, from: traits)
-                XCTAssertNotNil(decoded.dice as? DiceModifier, "decode as compound dice")
-                XCTAssertEqual(decoded.dice?.sides, 5, "decode dice sides")
-            }
-            catch let error {
-                XCTFail("decoded dice failed, error: \(error)")
+            
+            init(from decoder: Decoder) throws {
+                let container = try decoder.container(keyedBy: CodingKeys.self)
+                dice = try container.decodeIfPresent(Dice.self, forKey: .dice)
             }
         }
         
-        // Attempt to decode invalid dice
-        do {
-            let traits = """
-            {
-                "dice": "Hello Dice"
-            }
-            """.data(using: .utf8)!
-            let decoder = JSONDecoder()
-            do {
-                let decoded = try decoder.decode(DiceContainer.self, from: traits)
-                XCTAssertNil(decoded.dice, "Dice should have not been parsed")
-            }
-            catch let error {
-                XCTFail("decoded dice failed, error: \(error)")
-            }
+        let traits = """
+        {
+            "dice": "Hello Dice"
         }
+        """.data(using: .utf8)!
+        let decoder = JSONDecoder()
+        let decoded = try decoder.decode(DiceContainer.self, from: traits)
+        #expect(decoded.dice == nil, "Dice should have not been parsed")
     }
 }
