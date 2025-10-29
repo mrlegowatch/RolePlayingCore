@@ -7,7 +7,6 @@
 //
 
 import Testing
-
 import RolePlayingCore
 
 @Suite("Classes Tests")

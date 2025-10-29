@@ -6,9 +6,9 @@
 //  Copyright © 2017 Brian Arnold. All rights reserved.
 //
 
-import Foundation
 import Testing
 import RolePlayingCore
+import Foundation
 
 @Suite("Alignment Tests")
 struct AlignmentTests {

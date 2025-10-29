@@ -7,7 +7,6 @@
 //
 
 import XCTest
-
 import RolePlayingCore
 
 class DiceEncodingTests: XCTestCase {

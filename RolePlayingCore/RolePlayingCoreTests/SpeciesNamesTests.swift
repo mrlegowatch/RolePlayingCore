@@ -7,7 +7,6 @@
 //
 
 import Testing
-
 @testable import RolePlayingCore
 
 @Suite("Species Names")

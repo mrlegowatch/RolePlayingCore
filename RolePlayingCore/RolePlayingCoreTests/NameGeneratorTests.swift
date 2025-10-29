@@ -7,7 +7,6 @@
 //
 
 import Testing
-
 import RolePlayingCore
 
 /// Use a mock random number generator so we can hardcode expected generated names.

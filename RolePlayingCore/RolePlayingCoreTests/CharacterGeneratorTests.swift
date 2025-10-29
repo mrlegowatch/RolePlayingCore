@@ -6,44 +6,33 @@
 //  Copyright © 2017 Brian Arnold. All rights reserved.
 //
 
-import XCTest
-
+import Testing
 import RolePlayingCore
 
-class CharacterGeneratorTests: XCTestCase {
+@Suite("Character Generator Tests")
+struct CharacterGeneratorTests {
     
     let bundle = testBundle
     
     let sampleSize = 256
     
-    func testCharacterGenerator() {
-        do {
-            let configuration = try Configuration("TestCharacterGenerator", from: bundle)
-            let characterGenerator = try CharacterGenerator(configuration, from: bundle)
-            
-            for _ in 0..<sampleSize {
-                _ = characterGenerator.makeCharacter()
-                // TODO: implement a predictable Random implementation and consider testing for expected types, names and properties. Such a test could be too sensitive to order of calls.
-            }
-        }
-        catch let error {
-            XCTFail("Loading the test configuration failed, error: \(error)")
+    @Test("Character generation")
+    func characterGenerator() async throws {
+        let configuration = try Configuration("TestCharacterGenerator", from: bundle)
+        let characterGenerator = try CharacterGenerator(configuration, from: bundle)
+        
+        for _ in 0..<sampleSize {
+            _ = characterGenerator.makeCharacter()
+            // TODO: implement a predictable Random implementation and consider testing for expected types, names and properties. Such a test could be too sensitive to order of calls.
         }
     }
     
-    func testInvalidConfiguration() {
-        do {
-            let configuration = try Configuration("TestConfiguration", from: bundle)
-            do {
-                _ = try CharacterGenerator(configuration, from: bundle)
-                XCTFail("Unexpectedly succeeded in creating CharacterGenerator with an invalid/missing speciesNames file")
-            }
-            catch let error {
-                print("Caught expected error with invalid configuration: \(error)")
-            }
-        }
-        catch let error {
-            XCTFail("Loading the test configuration failed, error: \(error)")
+    @Test("Character generator invalid configuration")
+    func invalidConfiguration() async throws {
+        let configuration = try Configuration("TestConfiguration", from: bundle)
+        
+        #expect(throws: Error.self) {
+            try CharacterGenerator(configuration, from: bundle)
         }
     }
 }
