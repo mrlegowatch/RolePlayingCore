@@ -65,7 +65,6 @@
 		B621A3B91F0C1C7500E55236 /* CharacterGeneratorTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CharacterGeneratorTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B621A3BD1F0C1C7500E55236 /* CharacterGeneratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterGeneratorTests.swift; sourceTree = "<group>"; };
 		B621A3BF1F0C1C7500E55236 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		B621A3D61F0C1E3500E55236 /* GenericPlayer image license.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "GenericPlayer image license.txt"; sourceTree = "<group>"; };
 		B626FA5E2EAE829300359F01 /* Backgrounds.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Backgrounds.json; sourceTree = "<group>"; };
 		B64F68DF2EA6867B006D6C77 /* CharacterGeneratorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterGeneratorApp.swift; sourceTree = "<group>"; };
 		B64F68E12EA68686006D6C77 /* PlayerListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerListView.swift; sourceTree = "<group>"; };
@@ -138,7 +137,6 @@
 				B6A1AE421F0C4383008ADF08 /* Configuration */,
 				B621A3D71F0C1EE300E55236 /* Player */,
 				B621A3AF1F0C1C7400E55236 /* Assets.xcassets */,
-				B621A3D61F0C1E3500E55236 /* GenericPlayer image license.txt */,
 				B621A3B11F0C1C7400E55236 /* LaunchScreen.storyboard */,
 				B621A3B41F0C1C7400E55236 /* Info.plist */,
 			);
@@ -176,9 +174,9 @@
 			isa = PBXGroup;
 			children = (
 				B6A1AE441F0C4383008ADF08 /* Configuration.json */,
+				B6A1AE451F0C4383008ADF08 /* Currencies.json */,
 				B6A1AE431F0C4383008ADF08 /* Classes.json */,
 				B626FA5E2EAE829300359F01 /* Backgrounds.json */,
-				B6A1AE451F0C4383008ADF08 /* Currencies.json */,
 				B6A1AE461F0C4383008ADF08 /* Species.json */,
 				B6A1AE4B1F0C5ABF008ADF08 /* SpeciesNames.json */,
 			);

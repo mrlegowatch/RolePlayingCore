@@ -56,7 +56,7 @@ struct PlayerRowView: View {
     
     var body: some View {
         HStack {
-            Image("GenericPlayer")
+            Image(systemName: "tshirt")
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 40, height: 40)
