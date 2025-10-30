@@ -1,7 +1,0 @@
-{
-    "currencies": ["TestCurrencies"],
-    "backgrounds": ["TestBackgrounds"],
-    "classes": ["TestClasses", "TestMoreClasses"],
-    "species": ["TestSpecies", "TestMoreSpecies"],
-    "players": ["TestPlayers"]
-}

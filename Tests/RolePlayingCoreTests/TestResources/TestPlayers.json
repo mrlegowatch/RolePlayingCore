@@ -1,0 +1,33 @@
+{
+    "players": [
+                {
+                "name": "Frodo",
+                "gender": "Male",
+                "background": "Sailor",
+                "class": "Cleric",
+                "species": "High Elf",
+                "height": "3'9\"",
+                "ability scores": {"Dexterity": 13},
+                "background ability scores": ["Strength", "Strength", "Dexterity"],
+                "skill proficiencies": ["Athletics"],
+                "money": 130,
+                "maximum hit points": 10
+                },
+                {
+                "name": "Bilbo",
+                "gender": "Female",
+                "background": "Sailor",
+                "class": "Fighter",
+                "species": "Human",
+                "alignment": "Lawful Evil",
+                "height": "3'9\"",
+                "ability scores": {"Strength": 12},
+                "background ability scores": ["Strength", "Dexterity", "Dexterity"],
+                "skill proficiencies": ["Athletics"],
+                "money": 130,
+                "maximum hit points": 10,
+                "experience points": 2300,
+                "level": 2
+                }
+                ]
+}

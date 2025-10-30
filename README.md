@@ -6,7 +6,7 @@ The short-term goal for this project is to provide core logic for implementing a
 
 ## Requirements
 
-Xcode 26 or Swift 5 are required.
+Xcode 26 or Swift 6 are required.
 
 ## Organization
 
