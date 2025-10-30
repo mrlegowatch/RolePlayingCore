@@ -2,7 +2,9 @@
 
 This framework provides reusable role playing game core logic in the Swift language. It is a work-in-progress. Capabilities will be provided incrementally over time.
 
-The short-term goal for this project is to provide core logic for implementing a role playing game on macOS, iOS and Linux. The architecture is intended to be flexible enough to support Open Game Content in addition to similar kinds of games, and nimble enough to minimize upstream dependencies. The iOS platform in framework library format is being targeted first because this provides the most restrictive environment for implementing a library intended for reuse. The longer-term goal is to leverage this as a framework or library for implementing role playing games and utilities on the desktop and web.
+The short-term goal for this project is to provide core logic for implementing a role playing game on macOS, iOS, and Linux. The architecture is intended to be flexible enough to support Open Game Content in addition to similar kinds of games, and nimble enough to minimize upstream dependencies. 
+
+The library is built as a generic Swift Package, and the Example character generator app uses the iOS SDK with SwiftUI. The longer-term goal is to leverage this as a framework or library for implementing role playing games and utilities on the desktop and web.
 
 ## Requirements
 
@@ -12,8 +14,8 @@ Xcode 26 or Swift 6 are required.
 
 The current organizational groupings include:
 
-* **Common**: common utilities such as height and weight, and a runtime error enum
-* **Currency**: currency types, conversion and parsing
+* **Common**: common utilities such as height and weight, and a runtime error type
+* **Currency**: currency types, conversion, and parsing
 * **Dice**: dice types and parsing
 * **Player**: the player, species, classes, and related types
 
