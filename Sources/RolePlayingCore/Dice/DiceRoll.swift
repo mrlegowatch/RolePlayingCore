@@ -13,7 +13,7 @@ public struct DiceRoll: CustomStringConvertible {
     public let result: Int
     
     /// A string representing the intermediate values of the dice roll.
-    /// For example, a "3d6" might return "(4+1+5)".
+    /// For example, a "`3d6`" might return "`(4+1+5)`".
     public let description: String
     
     /// Creates a roll with its accompanying description of intermediate values.

@@ -12,8 +12,8 @@ import Foundation
 /// General-purpose composition of dice rolls.
 ///
 /// The two primary use cases for this type are:
-/// - combining two rolls, e.g., "2d4+d6",
-/// - using a modifier, e.g., "d12+2".
+/// - combining two rolls, e.g., "`2d4+d6`",
+/// - using a modifier, e.g., "`d12+2`".
 public struct CompoundDice: Dice {
     public let lhs: Dice
     public let rhs: Dice

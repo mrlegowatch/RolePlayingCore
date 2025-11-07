@@ -15,7 +15,8 @@ public enum Die: Int {
     case d10 = 10
     case d12 = 12
     case d20 = 20
-    case d100 = 100 // AKA "d%"
+    /// Also known as "`d%`"
+    case d100 = 100
     
     /// Rolls once and returns a number between 1 and this dice type.
     public func roll<G: RandomNumberGenerator>(using generator: inout G) -> Int {
