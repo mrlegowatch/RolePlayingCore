@@ -8,6 +8,7 @@
 
 import Foundation
 
+/// Collections of species names, for use in generating random names.
 public struct SpeciesNames: Codable {
     
     struct FamilyNames: Codable {

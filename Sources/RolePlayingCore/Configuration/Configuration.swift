@@ -8,10 +8,8 @@
 
 import Foundation
 
-// TODO: this needs work. Nominally it's purpose is to help integrate related classes,
-// but because we don't have much in terms of requirements, it's not doing much besides
-// wiring up species and classes to players.
-
+/// Represents a collection of JSON file names that belong to a bundle.
+/// Used by the `Configuration`.
 public struct ConfigurationFiles: Decodable {
     let currencies: [String]
     let skills: [String]
@@ -32,7 +30,7 @@ public struct ConfigurationFiles: Decodable {
     }
 }
 
-/// This is designed to configure a client from a framework or application bundle.
+/// Configure a client's data from a framework or application bundle.
 public struct Configuration {
     let bundle: Bundle
     

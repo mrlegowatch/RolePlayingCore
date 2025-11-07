@@ -10,7 +10,7 @@ import Foundation
 
 public extension AbilityScores {
     
-    // Sets the ability scores to random values using 4d6-L
+    /// Sets the ability scores to random values using '4d6-L'.
     mutating func roll() {
         let dice = DroppingDice(.d6, times: 4, drop: .lowest)
         for ability in abilities {
@@ -21,18 +21,23 @@ public extension AbilityScores {
 
 public extension Dice {
     
-    // Return a dice with a number of rolls corresponding to level.
+    /// Returns a dice with a number of rolls corresponding to level.
     func hitDice(level: Int) -> Dice {
         return SimpleDice(Die(rawValue: self.sides)!, times: level)
     }
 }
 
-// TODO: Is this a base class for Character? What about NPC? Monster? Should we have a protocol?
+/// The base class for a player character, including its background, species, class, abilities, skills, hit points, and so on.
 public class Player: Codable {
+    
+    /// The player's name.
     public var name: String
-    public var descriptiveTraits: [String: String] // ideals, bonds, flaws, background
+    
+    /// Descriptive traits, such as ideals, bonds, flaws, a background story, etc.
+    public var descriptiveTraits: [String: String]
     
     public private(set) var backgroundName: String
+    
     public private(set) var speciesName: String
     public private(set) var className: String
     

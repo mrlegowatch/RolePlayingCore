@@ -8,6 +8,7 @@
 
 import Foundation
 
+/// Traits representing a species.
 public struct SpeciesTraits {
     
     public struct CreatureType: Sendable {

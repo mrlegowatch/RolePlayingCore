@@ -14,26 +14,27 @@ extension Player {
     
     func resolveBackgrounds(from backgrounds: Backgrounds) throws {
         guard let backgroundTraits = backgrounds.find(self.backgroundName) else {
-            throw RuntimeError("Could not resolve background name \(self.backgroundName)")
+            throw missingTypeError("background", self.backgroundName)
         }
         self.backgroundTraits = backgroundTraits
     }
 
     func resolveSpecies(from species: Species) throws {
         guard let speciesTraits = species.find(self.speciesName) else {
-            throw RuntimeError("Could not resolve species name \(self.speciesName)")
+            throw missingTypeError("species", self.speciesName)
         }
         self.speciesTraits = speciesTraits
     }
    
     func resolveClass(from classes: Classes) throws {
         guard let classTraits = classes.find(self.className) else {
-            throw RuntimeError("Could not resolve class name \(self.className)")
+            throw missingTypeError("class", self.className)
         }
         self.classTraits = classTraits
     }
 }
 
+/// A collection of player characters.
 public class Players: Codable {
     public var players = [Player]()
     

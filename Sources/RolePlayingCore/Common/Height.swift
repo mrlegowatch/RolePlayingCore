@@ -8,7 +8,7 @@
 
 import Foundation
 
-/// Height is a measurement of length.
+/// A measurement of length.
 public typealias Height = Measurement<UnitLength>
 
 extension String {
@@ -16,60 +16,85 @@ extension String {
     /// Parses ft or ', in or ", cm, m into a measurement of length.
     /// Returns nil if the string could not be parsed.
     public var parseHeight: Height? {
-        var value: Double?
-        var unit: UnitLength = .feet
+        let trimmed = self.trimmingCharacters(in: .whitespaces)
         
-        // Try going feet-first.
-        let feetList = ["'", "ft"]
-        var feetEndRange: Range<String.Index>?
-        for key in feetList {
-            feetEndRange = self.range(of: key)
-            if let feetEndRange = feetEndRange {
-                value = Double(self[..<feetEndRange.lowerBound].trimmingCharacters(in: .whitespaces))!
-                break
-            }
+        // Try parsing imperial units (feet and/or inches)
+        if let height = parseImperialHeight(from: trimmed) {
+            return height
         }
         
-        // Try using or adding inches.
-        let inchesList = ["\"", "in"]
-        for key in inchesList {
-            if let range = self.range(of: key) {
-                let inchesRange = Range(uncheckedBounds: (feetEndRange?.upperBound ?? self.startIndex, range.lowerBound))
-                let inches = Double(self[inchesRange].trimmingCharacters(in: .whitespaces)) ?? 0
-                let inchesInFeet = Measurement<UnitLength>(value: inches, unit: .inches).converted(to: .feet).value
-                value = value != nil ? value! + inchesInFeet : inchesInFeet
-                break
-            }
+        // Try parsing metric units
+        if let height = parseMetricHeight(from: trimmed) {
+            return height
         }
         
-        // If neither feet nor inches were specified, try metric.
-        if value == nil {
-            let metricMap: [String: UnitLength] = [
-                "cm": .centimeters,
-                "m": .meters]
-            
-            for (key, metricUnit) in metricMap {
-                if let range = self.range(of: key) {
-                    value = Double(self[..<range.lowerBound].trimmingCharacters(in: .whitespaces))
-                    if value != nil {
-                        unit = metricUnit
-                        break
-                    }
-                }
-            }
+        // Try parsing as a plain number (default to feet)
+        if let value = Double(trimmed) {
+            return Height(value: value, unit: .feet)
         }
         
-        // Try converting string to number.
-        if value == nil {
-            value = Double(self)
-        }
-        
-        // Bail if the value could not be parsed.
-        guard value != nil else { return nil }
-        
-        return Height(value: value!, unit: unit)
+        return nil
     }
     
+    private func parseImperialHeight(from string: String) -> Height? {
+        let feetMarkers = ["'", "ft"]
+        let inchesMarkers = ["\"", "in"]
+        
+        // Look for feet marker
+        var feetValue: Double = 0
+        var feetEndIndex = string.startIndex
+        var foundFeet = false
+        
+        for marker in feetMarkers {
+            if let range = string.range(of: marker) {
+                let feetString = string[..<range.lowerBound].trimmingCharacters(in: .whitespaces)
+                guard let feet = Double(feetString) else { continue }
+                feetValue = feet
+                feetEndIndex = range.upperBound
+                foundFeet = true
+                break
+            }
+        }
+        
+        // Look for inches marker
+        var inchesValue: Double = 0
+        var foundInches = false
+        
+        for marker in inchesMarkers {
+            if let range = string.range(of: marker) {
+                let startIndex = foundFeet ? feetEndIndex : string.startIndex
+                let inchesString = string[startIndex..<range.lowerBound].trimmingCharacters(in: .whitespaces)
+                guard let inches = Double(inchesString) else { continue }
+                inchesValue = inches
+                foundInches = true
+                break
+            }
+        }
+        
+        // Return nil if we didn't find any imperial markers
+        guard foundFeet || foundInches else { return nil }
+        
+        // Convert everything to feet
+        let totalInFeet = feetValue + Measurement(value: inchesValue, unit: UnitLength.inches).converted(to: .feet).value
+        return Height(value: totalInFeet, unit: .feet)
+    }
+    
+    private func parseMetricHeight(from string: String) -> Height? {
+        let metricUnits: [(marker: String, unit: UnitLength)] = [
+            ("cm", .centimeters),
+            ("m", .meters)
+        ]
+        
+        for (marker, unit) in metricUnits {
+            if let range = string.range(of: marker) {
+                let valueString = string[..<range.lowerBound].trimmingCharacters(in: .whitespaces)
+                guard let value = Double(valueString) else { continue }
+                return Height(value: value, unit: unit)
+            }
+        }
+        
+        return nil
+    }
 }
 
 public extension KeyedDecodingContainer  {
@@ -87,12 +112,12 @@ public extension KeyedDecodingContainer  {
         }
         
         // Throw if we were unsuccessful parsing.
-        guard height != nil else {
+        guard let height else {
             let context = DecodingError.Context(codingPath: self.codingPath, debugDescription: "Missing string or number for Height value")
             throw DecodingError.dataCorrupted(context)
         }
         
-        return height!
+        return height
     }
     
     /// Decodes either a number or a string into a Height, if present.

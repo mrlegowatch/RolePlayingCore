@@ -6,6 +6,7 @@
 //  Copyright © 2025 Brian Arnold. All rights reserved.
 //
 
+/// A player character or monster size.
 public enum CreatureSize: String {
     case tiny
     case small
@@ -14,6 +15,7 @@ public enum CreatureSize: String {
     case huge
     case gargantuan
     
+    /// Returns a creature size relative to the specified height.
     init(from height: Height) {
         let heightInFeet = height.converted(to: .feet)
         switch heightInFeet.value {
@@ -26,7 +28,7 @@ public enum CreatureSize: String {
         }
     }
     
-    // Integer range in inches
+    /// Integer range in inches
     var range: Range<Int> {
         switch self {
         case .tiny: return 12..<24

@@ -6,6 +6,7 @@
 //  Copyright © 2025 Brian Arnold. All rights reserved.
 //
 
+/// A skill proficiency associated with an ability.
 public struct Skill {
     public let name: String
     public let ability: Ability
@@ -15,6 +16,7 @@ extension Skill: Codable { }
 
 extension Skill: Hashable { }
 
+/// A collection of skills.
 public struct Skills: Codable {
     
     public var skills = [Skill]()

@@ -15,29 +15,36 @@ extension String {
     
     /// Parses "lb" or "kg" into a measurement of mass.
     public var parseWeight: Weight? {
-        var value: Double?
-        var unit: UnitMass = .pounds
+        let trimmed = self.trimmingCharacters(in: .whitespaces)
         
-        let weightMap: [String: UnitMass] = [
-            "lb": .pounds,
-            "kg": .kilograms]
+        // Try parsing with unit markers
+        if let weight = parseWeightWithUnit(from: trimmed) {
+            return weight
+        }
         
-        for (key, weightUnit) in weightMap {
-            if let range = self.range(of: key) {
-                value = Double(self[..<range.lowerBound].trimmingCharacters(in: .whitespaces))!
-                unit = weightUnit
-                break
+        // Try parsing as a plain number (default to pounds)
+        if let value = Double(trimmed) {
+            return Weight(value: value, unit: .pounds)
+        }
+        
+        return nil
+    }
+    
+    private func parseWeightWithUnit(from string: String) -> Weight? {
+        let weightUnits: [(marker: String, unit: UnitMass)] = [
+            ("lb", .pounds),
+            ("kg", .kilograms)
+        ]
+        
+        for (marker, unit) in weightUnits {
+            if let range = string.range(of: marker) {
+                let valueString = string[..<range.lowerBound].trimmingCharacters(in: .whitespaces)
+                guard let value = Double(valueString) else { continue }
+                return Weight(value: value, unit: unit)
             }
         }
-        // Try converting string to number.
-        if value == nil {
-            value = Double(self)
-        }
         
-        // Bail if the value could not be parsed.
-        guard value != nil else { return nil }
-        
-        return Weight(value: value!, unit: unit)
+        return nil
     }
 }
 
@@ -56,12 +63,12 @@ public extension KeyedDecodingContainer  {
         }
         
         // Throw if we were unsuccessful parsing.
-        guard weight != nil else {
+        guard let weight else {
             let context = DecodingError.Context(codingPath: self.codingPath, debugDescription: "Missing string or number for Weight value")
             throw DecodingError.dataCorrupted(context)
         }
         
-        return weight!
+        return weight
     }
     
     /// Decodes either a number or a string into a Weight, if present.

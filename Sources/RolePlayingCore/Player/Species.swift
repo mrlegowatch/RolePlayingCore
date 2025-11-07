@@ -8,6 +8,7 @@
 
 import Foundation
 
+/// A collection of species traits, including subspecies.
 public class Species: Codable {
     
     /// Accesses all of the species and subspecies that have been loaded.

@@ -17,7 +17,7 @@ public struct CharacterGenerator {
     /// Creates a character generator instance with a reference to the current configuration.
     public init(_ configuration: Configuration, from bundle: Bundle = .main) throws {
         guard let speciesNamesFile = configuration.configurationFiles.speciesNames else {
-            throw RuntimeError("Missing speciesNames file name in configuration file")
+            throw missingJSONError("speciesNames")
         }
         
         self.configuration = configuration

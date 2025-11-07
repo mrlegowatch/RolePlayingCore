@@ -6,7 +6,7 @@
 //  Copyright © 2016 Brian Arnold. All rights reserved.
 //
 
-// A collection of class traits
+/// A collection of class traits.
 public struct Classes: Codable {
     
     public var classes = [ClassTraits]()

@@ -8,6 +8,7 @@
 
 import Foundation
 
+/// Traits representing a class.
 public struct ClassTraits {
     public var name: String
     public var plural: String

@@ -6,6 +6,7 @@
 //  Copyright © 2016-2017 Brian Arnold. All rights reserved.
 //
 
+/// A named ability.
 public struct Ability: Sendable {
     public let name: String
     
@@ -49,6 +50,7 @@ extension Ability: Codable {
     }
 }
 
+/// A dictionary of ability scores.
 public struct AbilityScores {
     var scores: [Ability: Int]
     
@@ -100,7 +102,7 @@ extension AbilityScores: Codable {
             self.stringValue = stringValue
         }
         
-        var intValue: Int? { return nil }
+        var intValue: Int? { nil }
         init?(intValue: Int) { return nil }
     }
     

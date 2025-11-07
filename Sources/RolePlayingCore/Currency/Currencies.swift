@@ -8,13 +8,14 @@
 
 import Foundation
 
+/// A collection of currencies.
 public struct Currencies {
     
     /// A map of all currently loaded currencies.
-    internal static nonisolated(unsafe) var allCurrencies: [String: UnitCurrency] = [:]
+    internal private(set) static nonisolated(unsafe) var allCurrencies: [String: UnitCurrency] = [:]
     
     /// The default base unit is a currency called "credit". It may be replaced at runtime.
-    internal static nonisolated(unsafe) var baseUnitCurrency = UnitCurrency(symbol: "c", converter: UnitConverterLinear(coefficient: 1.0), name: "credit", plural: "credits")
+    fileprivate static nonisolated(unsafe) var baseUnitCurrency = UnitCurrency(symbol: "c", converter: UnitConverterLinear(coefficient: 1.0), name: "credit", plural: "credits")
 
     /// A lock to protect access to allCurrencies from multiple threads.
     private static let lock = NSLock()
@@ -26,13 +27,15 @@ public struct Currencies {
         return Currencies.allCurrencies[symbol]
     }
   
+    /// Adds the unit currency to the collection of currencies.
     public static func add(_ currency: UnitCurrency) {
         lock.lock()
         defer { lock.unlock() }
         allCurrencies[currency.symbol] = currency
     }
 
-    public static func setDefault(_ newBaseUnit: UnitCurrency) {
+    /// Makes this unit currency the default for `Money`.
+    fileprivate static func setDefault(_ newBaseUnit: UnitCurrency) {
         lock.lock()
         defer { lock.unlock() }
         
@@ -47,7 +50,7 @@ public struct Currencies {
         baseUnitCurrency = newBaseUnit
     }
     
-    public static func base() -> UnitCurrency {
+    internal static func base() -> UnitCurrency {
         lock.lock()
         defer { lock.unlock() }
         return baseUnitCurrency
@@ -56,8 +59,8 @@ public struct Currencies {
 
 extension Currencies: Codable {
     
-    /// TODO: Codable and NSCoding haven't yet converged. In the meantime,
-    /// mirror UnitCurrency, using Codable instead of NSCoding.
+    /// TODO: UnitCurrency's Dimension conforms to NSCoding, not Codable . To support Codable, we
+    /// use this type to mirror UnitCurrency, and then map it once decoded.
     private struct Currency: Codable {
         let symbol: String
         let coefficient: Double
@@ -98,7 +101,7 @@ extension Currencies: Codable {
         case currencies
     }
     
-    /// Decodes an array of currencies, setting the default currency if present.
+    /// Decodes an array of currencies, setting the default currency if specified.
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
@@ -115,6 +118,7 @@ extension Currencies: Codable {
         }
     }
     
+    /// Encodes an array of currencies.
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         

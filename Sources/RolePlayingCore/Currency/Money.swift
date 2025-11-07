@@ -14,6 +14,7 @@ public typealias Money = Measurement<UnitCurrency>
 public extension String {
     
     /// Parses numbers with currency symbols into money.
+    /// If there is no currency symbol, the number is associated with the base unit currency.
     var parseMoney: Money? {
         var value: Double?
         var unit: UnitCurrency = .baseUnit()
@@ -32,9 +33,9 @@ public extension String {
         }
         
         // Bail if the value could not be parsed.
-        guard value != nil else { return nil }
+        guard let value else { return nil }
         
-        return Money(value: value!, unit: unit)
+        return Money(value: value, unit: unit)
     }
     
 }

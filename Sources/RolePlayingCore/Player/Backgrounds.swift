@@ -6,7 +6,7 @@
 //  Copyright © 2025 Brian Arnold. All rights reserved.
 //
 
-/// A collection of background traits
+/// A collection of background traits.
 public struct Backgrounds: Codable {
     
     public var backgrounds = [BackgroundTraits]()

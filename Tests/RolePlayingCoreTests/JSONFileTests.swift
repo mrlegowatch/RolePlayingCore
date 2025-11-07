@@ -65,12 +65,12 @@ struct JSONFileTests {
             _ = try bundle.loadJSON("MissingJSONFile")
         }
         
-        // Verify it's specifically a ServiceError
+        // Verify it's specifically a ConfigurationError
         do {
             _ = try bundle.loadJSON("MissingJSONFile")
             Issue.record("Should have thrown an error")
         } catch {
-            #expect(error is ServiceError, "expected ServiceError, got \(error)")
+            #expect(error is ConfigurationError, "expected ConfigurationError, got \(error)")
         }
     }
     
