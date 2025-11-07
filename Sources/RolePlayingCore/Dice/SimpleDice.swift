@@ -20,17 +20,15 @@ public struct SimpleDice: Dice {
     }
     
     /// Rolls the specified number of times, returning the array of rolls.
-    internal func roll() -> [Int] {
+    internal func rollAll() -> [Int] {
         return die.roll(times)
     }
     
     /// Rolls the specified number of times, returning the sum of the rolls and a description.
     public func roll() -> DiceRoll {
-        let lastRoll: [Int] = roll()
-        
+        let lastRoll = rollAll()
         let result = lastRoll.reduce(0, +)
         let description = rollDescription(lastRoll)
-        
         return DiceRoll(result, description)
     }
     
@@ -45,20 +43,15 @@ public struct SimpleDice: Dice {
     
     /// Returns the last roll as a sequence of added numbers in parenthesis.
     internal func rollDescription(_ lastRoll: [Int]) -> String {
-        var resultString: String
+        guard !lastRoll.isEmpty else { return "0" }
         
-        var rolls = lastRoll
-        let last = rolls.popLast()!
-        if rolls.count == 0 {
-            resultString = "\(last)"
-        } else {
-            resultString = "("
-            for roll in rolls {
-                resultString += "\(roll) + "
-            }
-            resultString += "\(last))"
+        // Single roll doesn't need parentheses
+        guard lastRoll.count > 1 else {
+            return "\(lastRoll[0])"
         }
         
-        return resultString
+        // Multiple rolls: format as (roll1 + roll2 + ... + rollN)
+        let rollsString = lastRoll.map(String.init).joined(separator: " + ")
+        return "(\(rollsString))"
     }
 }

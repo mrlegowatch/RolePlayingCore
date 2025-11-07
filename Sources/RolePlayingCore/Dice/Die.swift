@@ -30,12 +30,7 @@ public enum Die: Int {
     
     /// Rolls the specified number of times and returns an array of numbers between 1 and this dice type.
     public func roll(_ times: Int) -> [Int] {
-        var rolls = [Int](repeating: 0, count: times) // preallocating is much faster than appending
-        
-        for index in 0 ..< times {
-            rolls[index] = roll()
-        }
-        return rolls
+        return (0..<times).map { _ in roll() }
     }
 }
 

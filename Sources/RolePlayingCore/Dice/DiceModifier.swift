@@ -19,6 +19,9 @@ public struct DiceModifier: Dice {
         return DiceRoll(modifier, "\(modifier)")
     }
     
+    /// Returns the modifier value to conform to the Dice protocol.
+    /// Note: A modifier doesn't have "sides" in the traditional sense,
+    /// but this property is required by the protocol.
     public var sides: Int { modifier }
     
     public var description: String { "\(modifier)" }

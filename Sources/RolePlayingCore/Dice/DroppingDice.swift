@@ -35,17 +35,21 @@ public struct DroppingDice: Dice {
     }
 
     /// Returns the number of dice sides.
-    public var sides: Int { return dice.sides }
+    public var sides: Int { dice.sides }
     
     /// Rolls the specified number of times, returning the sum of the rolls,
     /// minus the dropped roll. The intermediate rolls, including the dropped roll,
     /// can be inspected in dice.lastRoll.
     public func roll() -> DiceRoll {
-        let lastRoll: [Int] = dice.roll()
-        let droppedRoll = (drop == .lowest) ? lastRoll.min() : lastRoll.max()
+        let lastRoll = dice.rollAll()
         
-        let result = lastRoll.reduce(0, +) - droppedRoll!
-        let description = "(\(dice.rollDescription(lastRoll)) - \(droppedRoll!))"
+        guard let droppedRoll = drop == .lowest ? lastRoll.min() : lastRoll.max() else {
+            // Edge case: no rolls to drop (shouldn't happen in practice)
+            return DiceRoll(0, "(0)")
+        }
+        
+        let result = lastRoll.reduce(0, +) - droppedRoll
+        let description = "(\(dice.rollDescription(lastRoll)) - \(droppedRoll))"
         
         return DiceRoll(result, description)
     }

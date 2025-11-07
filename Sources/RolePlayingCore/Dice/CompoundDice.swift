@@ -41,13 +41,18 @@ public struct CompoundDice: Dice {
     /// Mapping of strings to function signatures.
     internal let mathOperators: [String: MathOperator] = ["+": (+), "-": (-), "x": (*), "*": (*), "/": (/)]
     
-    /// Rolls the specified number of times, optionally adding or multiplying a modifier,
-    /// and returning the result.
+    /// Rolls the dice on both sides and combines them with the math operator,
+    /// returning the result.
     public func roll() -> DiceRoll {
         let lhsRoll = lhs.roll()
         let rhsRoll = rhs.roll()
         
-        let result = mathOperators[mathOperator]!(lhsRoll.result, rhsRoll.result)
+        guard let operation = mathOperators[mathOperator] else {
+            // Fallback if operator is unknown (shouldn't happen if properly constructed)
+            return DiceRoll(lhsRoll.result, "\(lhsRoll.description) ? \(rhsRoll.description)")
+        }
+        
+        let result = operation(lhsRoll.result, rhsRoll.result)
         let description = "\(lhsRoll.description) \(mathOperator) \(rhsRoll.description)"
         
         return DiceRoll(result, description)
