@@ -12,10 +12,10 @@ import Foundation
 public struct Currencies {
     
     /// A map of all currently loaded currencies.
-    internal private(set) static nonisolated(unsafe) var allCurrencies: [String: UnitCurrency] = [:]
+    private static nonisolated(unsafe) var allCurrencies: [String: UnitCurrency] = [:]
     
     /// The default base unit is a currency called "credit". It may be replaced at runtime.
-    fileprivate static nonisolated(unsafe) var baseUnitCurrency = UnitCurrency(symbol: "c", converter: UnitConverterLinear(coefficient: 1.0), name: "credit", plural: "credits")
+    private static nonisolated(unsafe) var baseUnitCurrency = UnitCurrency(symbol: "c", converter: UnitConverterLinear(coefficient: 1.0), name: "credit", plural: "credits")
 
     /// A lock to protect access to allCurrencies from multiple threads.
     private static let lock = NSLock()
@@ -28,7 +28,7 @@ public struct Currencies {
     }
   
     /// Adds the unit currency to the collection of currencies.
-    public static func add(_ currency: UnitCurrency) {
+    fileprivate static func add(_ currency: UnitCurrency) {
         lock.lock()
         defer { lock.unlock() }
         allCurrencies[currency.symbol] = currency
@@ -55,6 +55,21 @@ public struct Currencies {
         defer { lock.unlock() }
         return baseUnitCurrency
     }
+    
+    /// Returns a snapshot of all currency values as an array, and the base currency.
+    fileprivate static func allCurrenciesAndBase() -> (all: [UnitCurrency], base: UnitCurrency) {
+        lock.lock()
+        defer { lock.unlock() }
+        return (Array(allCurrencies.values), baseUnitCurrency)
+    }
+    
+    /// Returns a snapshot of all currency values as an array (for safe iteration).
+    /// - Returns: Array copy of all currencies to avoid holding the lock during iteration
+    internal static func allValues() -> [UnitCurrency] {
+        lock.lock()
+        defer { lock.unlock() }
+        return Array(allCurrencies.values)
+    }
 }
 
 extension Currencies: Codable {
@@ -77,12 +92,12 @@ extension Currencies: Codable {
         }
         
         // For writing
-        init(_ unitCurrency: UnitCurrency) {
+        init(_ unitCurrency: UnitCurrency, isDefault: Bool) {
             self.symbol = unitCurrency.symbol
             self.coefficient = (unitCurrency.converter as! UnitConverterLinear).coefficient
             self.name = unitCurrency.name
             self.plural = unitCurrency.plural
-            self.isDefault = unitCurrency == .baseUnit()
+            self.isDefault = isDefault
         }
         
         // For reading
@@ -122,13 +137,15 @@ extension Currencies: Codable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        Currencies.lock.lock()
-        let allCurrenciesSnapshot = Currencies.allCurrencies.values
-        Currencies.lock.unlock()
+        // Take a snapshot of all currencies AND the base unit in a single lock
+        let allCurrenciesSnapshot = Currencies.allValues()
+        let baseUnit = Currencies.base()
         
+        // Now safely process the snapshot without holding the lock
         var currencies = [Currency]()
         for unitCurrency in allCurrenciesSnapshot {
-            let currency = Currency(unitCurrency)
+            let isDefault = unitCurrency == baseUnit
+            let currency = Currency(unitCurrency, isDefault: isDefault)
             currencies.append(currency)
         }
         
