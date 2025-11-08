@@ -33,27 +33,19 @@ public class Player: CodableWithConfiguration {
     /// The player's name.
     public var name: String
     
-    /// Descriptive traits, such as ideals, bonds, flaws, a background story, etc.
-    public var descriptiveTraits: [String: String]
-    
-    public var backgroundName: String {
-        return backgroundTraits?.name ?? ""
-    }
-    
-    public var speciesName: String {
-        return speciesTraits?.name ?? ""
-    }
-    
-    public var className: String {
-        return classTraits?.name ?? ""
-    }
-    
-    public private(set) var skillProficiencies: [Skill]
-    
     public var backgroundTraits: BackgroundTraits!
     public var speciesTraits: SpeciesTraits!
     public var classTraits: ClassTraits!
-    
+
+    public var backgroundName: String { backgroundTraits?.name ?? "" }
+    public var speciesName: String { speciesTraits?.name ?? "" }
+    public var className: String { classTraits?.name ?? "" }
+
+    public private(set) var skillProficiencies: [Skill]
+
+    /// Descriptive traits, such as ideals, bonds, flaws, a background story, etc.
+    public var descriptiveTraits: [String: String]
+
     public enum Gender: String, Codable, CaseIterable {
         case female = "Female"
         case male = "Male"
