@@ -36,28 +36,23 @@ public class Player: CodableWithConfiguration {
     /// Descriptive traits, such as ideals, bonds, flaws, a background story, etc.
     public var descriptiveTraits: [String: String]
     
-    public private(set) var backgroundName: String
+    public var backgroundName: String {
+        return backgroundTraits?.name ?? ""
+    }
     
-    public private(set) var speciesName: String
-    public private(set) var className: String
+    public var speciesName: String {
+        return speciesTraits?.name ?? ""
+    }
+    
+    public var className: String {
+        return classTraits?.name ?? ""
+    }
     
     public private(set) var skillProficiencies: [String]
     
-    public var backgroundTraits: BackgroundTraits! {
-        didSet {
-            self.backgroundName = backgroundTraits.name
-        }
-    }
-    public var speciesTraits: SpeciesTraits! {
-        didSet {
-            self.speciesName = speciesTraits.name
-        }
-    }
-    public var classTraits: ClassTraits! {
-        didSet {
-            self.className = classTraits.name
-        }
-    }
+    public var backgroundTraits: BackgroundTraits!
+    public var speciesTraits: SpeciesTraits!
+    public var classTraits: ClassTraits!
     
     public enum Gender: String, Codable, CaseIterable {
         case female = "Female"
@@ -158,11 +153,23 @@ public class Player: CodableWithConfiguration {
         let level = try values.decodeIfPresent(Int.self, forKey: .level)
         let money = try values.decode(Money.self, forKey: .money, configuration: configuration.currencies)
         
+        // Resolve backgroundTraits from configuration
+        guard let backgroundTraits = configuration.backgrounds.find(backgroundName) else {
+            throw missingTypeError("background", backgroundName)
+        }
+        
+        // Resolve speciesTraits from configuration
+        guard let speciesTraits = configuration.species.find(speciesName) else {
+            throw missingTypeError("species", speciesName)
+        }
+        
+        // Resolve classTraits from configuration
+        guard let classTraits = configuration.classes.find(className) else {
+            throw missingTypeError("class", className)
+        }
+        
         // Safely set properties
         self.name = name
-        self.backgroundName = backgroundName
-        self.speciesName = speciesName
-        self.className = className
         self.descriptiveTraits = descriptiveTraits ?? [:]
         self.gender = gender
         self.alignment = alignment
@@ -175,6 +182,9 @@ public class Player: CodableWithConfiguration {
         self.experiencePoints = experiencePoints ?? 0
         self.level = level ?? 1
         self.money = money
+        self.backgroundTraits = backgroundTraits
+        self.speciesTraits = speciesTraits
+        self.classTraits = classTraits
     }
     
     public func encode(to encoder: Encoder, configuration: Configuration) throws {
@@ -203,9 +213,6 @@ public class Player: CodableWithConfiguration {
     public init(_ name: String, backgroundTraits: BackgroundTraits, speciesTraits: SpeciesTraits, classTraits: ClassTraits, gender: Gender? = nil, alignment: Alignment? = nil) {
         self.name = name
         self.descriptiveTraits = [:]
-        self.backgroundName = backgroundTraits.name
-        self.speciesName = speciesTraits.name
-        self.className = classTraits.name
         self.backgroundTraits = backgroundTraits
         self.speciesTraits = speciesTraits
         self.classTraits = classTraits

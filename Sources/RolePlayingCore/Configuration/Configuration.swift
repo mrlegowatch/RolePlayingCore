@@ -97,7 +97,6 @@ public struct Configuration {
             for playersFile in playersFiles {
                 let jsonData = try bundle.loadJSON(playersFile)
                 let players = try jsonDecoder.decode(Players.self, from: jsonData, configuration: self)
-                try players.resolve(backgrounds: self.backgrounds, classes: self.classes, species: self.species)
                 self.players.players += players.players
             }
         }

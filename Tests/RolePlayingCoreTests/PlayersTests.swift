@@ -25,7 +25,6 @@ struct PlayersTests {
     func players() async throws {
         let playersData = try bundle.loadJSON("TestPlayers")
         let players = try decoder.decode(Players.self, from: playersData, configuration: configuration)
-        try players.resolve(backgrounds: configuration.backgrounds, classes: configuration.classes, species: configuration.species)
         
         #expect(players.players.count == 2, "players count")
         #expect(players.count == 2, "players count")
@@ -48,11 +47,10 @@ struct PlayersTests {
     func missingTraits(jsonFile: String) async throws {
         let playersData = try bundle.loadJSON(jsonFile)
         
-        // Attempt to decode and resolve, expecting an error to be thrown
-        // Error could occur during decoding (missing required fields) or resolution (invalid references)
+        // Attempt to decode, expecting an error to be thrown during decoding
+        // since all trait resolution now happens during the decoding phase
         do {
-            let players = try decoder.decode(Players.self, from: playersData, configuration: configuration)
-            try players.resolve(backgrounds: configuration.backgrounds, classes: configuration.classes, species: configuration.species)
+            _ = try decoder.decode(Players.self, from: playersData, configuration: configuration)
             
             // If we reach here, no error was thrown - the test should fail
             Issue.record("Expected an error to be thrown for \(jsonFile), but none was thrown")

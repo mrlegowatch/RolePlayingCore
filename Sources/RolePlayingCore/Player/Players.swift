@@ -8,46 +8,12 @@
 
 import Foundation
 
-extension Player {
-
-    // TODO: should we instead support some variation of KeyedArchiver?
-    
-    func resolveBackgrounds(from backgrounds: Backgrounds) throws {
-        guard let backgroundTraits = backgrounds.find(self.backgroundName) else {
-            throw missingTypeError("background", self.backgroundName)
-        }
-        self.backgroundTraits = backgroundTraits
-    }
-
-    func resolveSpecies(from species: Species) throws {
-        guard let speciesTraits = species.find(self.speciesName) else {
-            throw missingTypeError("species", self.speciesName)
-        }
-        self.speciesTraits = speciesTraits
-    }
-   
-    func resolveClass(from classes: Classes) throws {
-        guard let classTraits = classes.find(self.className) else {
-            throw missingTypeError("class", self.className)
-        }
-        self.classTraits = classTraits
-    }
-}
-
 /// A collection of player characters.
 public class Players: CodableWithConfiguration {
     public var players: [Player]
     
     public init(_ players: [Player] = []) {
         self.players = players
-    }
-    
-    public func resolve(backgrounds: Backgrounds, classes: Classes, species: Species) throws {
-        for player in players {
-            try player.resolveBackgrounds(from: backgrounds)
-            try player.resolveSpecies(from: species)
-            try player.resolveClass(from: classes)
-        }
     }
     
     // TODO: inherit protocols for these
