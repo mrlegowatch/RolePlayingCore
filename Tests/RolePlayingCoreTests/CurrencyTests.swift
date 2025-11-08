@@ -110,12 +110,12 @@ struct UnitCurrencyTests {
     
     @Test("Duplicate currencies are ignored")
     func duplicateCurrencies() async throws {
-        #expect(Currencies.allValues().count == 5, "currencies count")
+        #expect(Currencies.all.count == 5, "currencies count")
         
         let data = try bundle.loadJSON("TestCurrencies")
         _ = try decoder.decode(Currencies.self, from: data)
         
-        #expect(Currencies.allValues().count == 5, "currencies count should remain 5")
+        #expect(Currencies.all.count == 5, "currencies count should remain 5")
     }
     
     @Test("Missing currency traits")

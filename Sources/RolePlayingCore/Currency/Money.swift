@@ -20,7 +20,7 @@ public extension String {
         var unit: UnitCurrency = .baseUnit()
         
         // Get a thread-safe snapshot of all currencies
-        let allCurrencies = Currencies.allValues()
+        let allCurrencies = Currencies.all
         for currency in allCurrencies {
             if let range = self.range(of: currency.symbol), range.upperBound == self.endIndex {
                 value = Double(self[..<range.lowerBound].trimmingCharacters(in: .whitespaces))!
