@@ -84,7 +84,7 @@ class CharacterSheet {
     }
     var abilities: AbilityScores { player.abilities }
     var skills: String {
-        player.skillProficiencies.joined(separator: ", ")
+        player.skillProficiencies.skillNames.joined(separator: ", ")
     }
     var initiative: String { player.initiativeModifier.displayModifier }
     var armorClass: String { "\(player.armorClass)" }
