@@ -36,6 +36,7 @@ public struct Configuration {
     
     public var configurationFiles: ConfigurationFiles
     
+    public var currencies = Currencies()
     public var backgrounds = Backgrounds()
     public var skills = Skills()
     public var species = Species()
@@ -55,12 +56,14 @@ public struct Configuration {
         
         for currenciesFile in configurationFiles.currencies {
             let jsonData = try bundle.loadJSON(currenciesFile)
-            _ = try jsonDecoder.decode(Currencies.self, from: jsonData)
+            let currencies = try jsonDecoder.decode(Currencies.self, from: jsonData)
+            self.currencies.add(currencies.all)
         }
 
         for skillsFile in configurationFiles.skills {
             let jsonData = try bundle.loadJSON(skillsFile)
-            _ = try jsonDecoder.decode(Skills.self, from: jsonData)
+            let skills = try jsonDecoder.decode(Skills.self, from: jsonData)
+            self.skills.skills += skills.skills
         }
 
         for backgroundsFile in configurationFiles.backgrounds {
@@ -93,7 +96,7 @@ public struct Configuration {
         if let playersFiles = configurationFiles.players {
             for playersFile in playersFiles {
                 let jsonData = try bundle.loadJSON(playersFile)
-                let players = try jsonDecoder.decode(Players.self, from: jsonData)
+                let players = try jsonDecoder.decode(Players.self, from: jsonData, configuration: self)
                 try players.resolve(backgrounds: self.backgrounds, classes: self.classes, species: self.species)
                 self.players.players += players.players
             }

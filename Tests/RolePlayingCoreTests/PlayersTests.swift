@@ -15,34 +15,17 @@ struct PlayersTests {
     
     let bundle = Bundle.module
     let decoder = JSONDecoder()
-    let skills: Skills
-    let backgrounds: Backgrounds
-    let classes: Classes
-    let species: Species
+    let configuration: Configuration
     
     init() throws {
-        // TODO: Need to initialize UnitCurrency before creating Money instances in Player class.
-        let currenciesData = try! bundle.loadJSON("TestCurrencies")
-        _ = try! decoder.decode(Currencies.self, from: currenciesData)
-        
-        let skillsData = try! bundle.loadJSON("TestSkills")
-        self.skills = try! decoder.decode(Skills.self, from: skillsData)
-        
-        let backgroundsData = try! bundle.loadJSON("TestBackgrounds")
-        self.backgrounds = try! decoder.decode(Backgrounds.self, from: backgroundsData)
-
-        let classesData = try! bundle.loadJSON("TestClasses")
-        self.classes = try! decoder.decode(Classes.self, from: classesData)
-        
-        let speciesData = try! bundle.loadJSON("TestSpecies")
-        self.species = try! decoder.decode(Species.self, from: speciesData)
+        configuration = try Configuration("TestConfiguration", from: .module)
     }
     
     @Test("Load and manipulate players collection")
     func players() async throws {
         let playersData = try bundle.loadJSON("TestPlayers")
-        let players = try decoder.decode(Players.self, from: playersData)
-        try players.resolve(backgrounds: backgrounds, classes: classes, species: species)
+        let players = try decoder.decode(Players.self, from: playersData, configuration: configuration)
+        try players.resolve(backgrounds: configuration.backgrounds, classes: configuration.classes, species: configuration.species)
         
         #expect(players.players.count == 2, "players count")
         #expect(players.count == 2, "players count")
@@ -68,8 +51,8 @@ struct PlayersTests {
         // Attempt to decode and resolve, expecting an error to be thrown
         // Error could occur during decoding (missing required fields) or resolution (invalid references)
         do {
-            let players = try decoder.decode(Players.self, from: playersData)
-            try players.resolve(backgrounds: backgrounds, classes: classes, species: species)
+            let players = try decoder.decode(Players.self, from: playersData, configuration: configuration)
+            try players.resolve(backgrounds: configuration.backgrounds, classes: configuration.classes, species: configuration.species)
             
             // If we reach here, no error was thrown - the test should fail
             Issue.record("Expected an error to be thrown for \(jsonFile), but none was thrown")

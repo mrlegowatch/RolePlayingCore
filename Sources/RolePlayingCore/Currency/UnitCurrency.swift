@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Synchronization
 
 /// Units of currency or coinage.
 ///
@@ -19,10 +20,20 @@ public final class UnitCurrency : Dimension, @unchecked Sendable {
     /// The plural unit name used when the unitStyle is long.
     public internal(set) var plural: String!
     
+    /// Whether this currency is meant to be the default or base unit currency.
     public internal(set) var isDefault: Bool = false
     
+    /// The default or base unit currency.
+    private static let base: Mutex<UnitCurrency> = Mutex(UnitCurrency(symbol: "Credits", converter: UnitConverterLinear(coefficient: 1.0), name: "Credit", plural: "Credits"))
+    
+    /// Sets the base unit currency using a Mutex to manage concurrency.
+    public static func setBaseUnit(_ unit: UnitCurrency) {
+        base.withLock { $0 = unit }
+    }
+    
+    /// Returns the base unit currency using a Mutex to manage concurrency.
     public override class func baseUnit() -> UnitCurrency {
-        return Currencies.base
+        base.withLock { return $0 }
     }
     
     public init(symbol: String, converter: UnitConverter, name: String, plural: String, isDefault: Bool = false) {

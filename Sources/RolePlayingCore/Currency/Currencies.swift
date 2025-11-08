@@ -10,62 +10,31 @@ import Foundation
 
 /// A collection of currencies.
 public struct Currencies {
-    
-    /// Thread-safe storage using NSLock for synchronization.
-    private final class Storage: @unchecked Sendable {
-        private let lock = NSLock()
-        
-        /// A map of all currently loaded currencies.
-        private var allCurrencies: [String: UnitCurrency] = [:]
-        
-        /// The default or base unit currency. It must be set at runtime.
-        private var baseUnitCurrency: UnitCurrency!
-        
-        func add(_ currencies: [UnitCurrency]) {
-            lock.lock()
-            defer { lock.unlock() }
             
-            for currency in currencies {
-                allCurrencies[currency.symbol] = currency
-                if currency.isDefault {
-                    baseUnitCurrency = currency
-                }
-            }
-        }
+    /// A dictionary of all currently loaded currencies.
+    private var allCurrencies: [String: UnitCurrency] = [:]
+    
+    /// Returns a currencies instance that can access a currency by name, and a base unit currency (if one is specified).
+    init(_ currencies: [UnitCurrency] = []) {
+        add(currencies)
+    }
+ 
+    /// Returns the currency with the specified name.
+    ///
+    /// - parameter symbol: The shorthand name of the currency.
+    public func find(_ symbol: String) -> UnitCurrency? { allCurrencies[symbol] }
+    
+    /// Adds the array of currencies to the collection.
+    mutating func add(_ currencies: [UnitCurrency]) {
+        allCurrencies = Dictionary(currencies.map { ($0.symbol, $0) }, uniquingKeysWith: { _, last in last })
         
-        func find(_ symbol: String) -> UnitCurrency? {
-            lock.lock()
-            defer { lock.unlock() }
-            return allCurrencies[symbol]
-        }
-        
-        var base: UnitCurrency {
-            lock.lock()
-            defer { lock.unlock() }
-            return baseUnitCurrency
-        }
-        
-        var all: [UnitCurrency] {
-            lock.lock()
-            defer { lock.unlock() }
-            return Array(allCurrencies.values)
+        if let baseCurrency = allCurrencies.first(where: { $0.value.isDefault }) {
+            UnitCurrency.setBaseUnit(baseCurrency.value)
         }
     }
     
-    /// Shared storage instance.
-    private static let storage = Storage()
-    
-    /// Returns the unit currency corresponding to this symbol. Returns nil if no symbol matches.
-    public static func find(_ symbol: String) -> UnitCurrency? { storage.find(symbol) }
-    
-    /// Adds a collection of currencies, and updates the default or base unit currency.
-    fileprivate static func add(_ currencies: [UnitCurrency]) { storage.add(currencies) }
-    
-    /// Returns the base unit currency.
-    public static var base: UnitCurrency { storage.base }
-    
-    /// Returns all of the currently loaded currencies.
-    public static var all: [UnitCurrency] { storage.all }
+    /// Returns a read-only array of all currencies.
+    var all: [UnitCurrency] { Array(allCurrencies.values) }
 }
 
 extension Currencies: Codable {
@@ -79,14 +48,13 @@ extension Currencies: Codable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         let currencies = try container.decode([UnitCurrency].self, forKey: .currencies)
-        Currencies.add(currencies)
+        add(currencies)
     }
     
     /// Encodes an array of currencies.
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
-        let allCurrencies = Currencies.all
-        try container.encode(allCurrencies, forKey: .currencies)
+        try container.encode(all, forKey: .currencies)
     }
 }

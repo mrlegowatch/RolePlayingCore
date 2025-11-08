@@ -28,7 +28,7 @@ public extension Dice {
 }
 
 /// The base class for a player character, including its background, species, class, abilities, skills, hit points, and so on.
-public class Player: Codable {
+public class Player: CodableWithConfiguration {
     
     /// The player's name.
     public var name: String
@@ -137,7 +137,7 @@ public class Player: Codable {
         case money
     }
     
-    public required init(from decoder: Decoder) throws {
+    public required init(from decoder: Decoder, configuration: Configuration) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         
         // Try decoding properties
@@ -156,7 +156,7 @@ public class Player: Codable {
         let currentHitPoints = try values.decodeIfPresent(Int.self, forKey: .currentHitPoints)
         let experiencePoints = try values.decodeIfPresent(Int.self, forKey: .experiencePoints)
         let level = try values.decodeIfPresent(Int.self, forKey: .level)
-        let money = try values.decode(Money.self, forKey: .money)
+        let money = try values.decode(Money.self, forKey: .money, configuration: configuration.currencies)
         
         // Safely set properties
         self.name = name
@@ -177,7 +177,7 @@ public class Player: Codable {
         self.money = money
     }
     
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: Encoder, configuration: Configuration) throws {
         var values = encoder.container(keyedBy: CodingKeys.self)
         
         // Try decoding properties
@@ -196,7 +196,7 @@ public class Player: Codable {
         try values.encodeIfPresent(currentHitPoints, forKey: .currentHitPoints)
         try values.encodeIfPresent(experiencePoints, forKey: .experiencePoints)
         try values.encodeIfPresent(level, forKey: .level)
-        try values.encode("\(money)", forKey: .money)
+        try values.encode(money, forKey: .money, configuration: configuration.currencies)
     }
     
     // Creates a player character.

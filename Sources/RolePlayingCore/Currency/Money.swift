@@ -11,16 +11,41 @@ import Foundation
 /// A measurement of currency.
 public typealias Money = Measurement<UnitCurrency>
 
+// NOTE: @retroactive is a compiler-suggested workaround in case Measurement
+// adopts CodableWithConfiguration in the future.
+extension Money: @retroactive CodableWithConfiguration {
+    
+    public init(from decoder: any Decoder, configuration: Currencies) throws {
+        let container = try decoder.singleValueContainer()
+        
+        if let double = try? container.decode(Double.self) {
+            self = Money(value: double, unit: UnitCurrency.baseUnit())
+        } else {
+            let string = try container.decode(String.self)
+            if let money = string.parseMoney(configuration) {
+                self = money
+            } else {
+                throw DecodingError.dataCorruptedError(in: container, debugDescription: "Failed to decode Money from \"\(string)\"")
+            }
+        }
+    }
+    
+    public func encode(to encoder: any Encoder, configuration: Currencies) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(self.description)
+    }
+}
+
 public extension String {
     
     /// Parses numbers with currency symbols into money.
     /// If there is no currency symbol, the number is associated with the base unit currency.
-    var parseMoney: Money? {
+    func parseMoney(_ configuration: Currencies) -> Money? {
         var value: Double?
         var unit: UnitCurrency = .baseUnit()
         
         // Get a thread-safe snapshot of all currencies
-        let allCurrencies = Currencies.all
+        let allCurrencies = configuration.all
         for currency in allCurrencies {
             if let range = self.range(of: currency.symbol), range.upperBound == self.endIndex {
                 value = Double(self[..<range.lowerBound].trimmingCharacters(in: .whitespaces))!
@@ -39,51 +64,7 @@ public extension String {
         
         return Money(value: value, unit: unit)
     }
-    
 }
-
-public extension KeyedDecodingContainer  {
-    
-    /// Decodes either a number or a string into Money.
-    ///
-    /// - throws `DecodingError.dataCorrupted` if the money could not be decoded.
-    func decode(_ type: Money.Type, forKey key: K) throws -> Money {
-        let money: Money?
-        
-        if let double = try? self.decode(Double.self, forKey: key) {
-            money = Money(value: double, unit: .baseUnit())
-        } else {
-            money = try self.decode(String.self, forKey: key).parseMoney
-        }
-        
-        // Throw if we were unsuccessful parsing.
-        guard money != nil else {
-            let context = DecodingError.Context(codingPath: self.codingPath, debugDescription: "Missing string or number for Money value")
-            throw DecodingError.dataCorrupted(context)
-        }
-        
-        return money!
-    }
-    
-    /// Decodes either a number or a string into Money, if present.
-    ///
-    /// - throws `DecodingError.dataCorrupted` if the money could not be decoded.
-    func decodeIfPresent(_ type: Money.Type, forKey key: K) throws -> Money? {
-        let money: Money?
-        
-        if let double = try? self.decode(Double.self, forKey: key) {
-            money = Money(value: double, unit: .baseUnit())
-        } else if let string = try self.decodeIfPresent(String.self, forKey: key) {
-            money = string.parseMoney
-        } else {
-            money = nil
-        }
-        
-        return money
-    }
-    
-}
-
 
 extension MeasurementFormatter {
     

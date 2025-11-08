@@ -14,6 +14,7 @@ import Foundation
 struct PlayerTests {
     
     let decoder = JSONDecoder()
+    let configuration: Configuration
     let skillTraits: Data
     let skills: Skills
     let soldierTraits: Data
@@ -24,11 +25,7 @@ struct PlayerTests {
     let fighter: ClassTraits
     
     init() throws {
-        // TODO: Need to initialize UnitCurrency before creating Money instances in Player class.
-        // Only load once. TODO: this has a side effect on other unit tests: currencies are already loaded.
-        let bundle = Bundle.module
-        let data = try! bundle.loadJSON("TestCurrencies")
-        _ = try! decoder.decode(Currencies.self, from: data)
+        configuration = try Configuration("TestConfiguration", from: .module)
         
         self.skillTraits = """
         {
@@ -203,7 +200,7 @@ struct PlayerTests {
         }
         """.data(using: .utf8)!
         
-        let player = try decoder.decode(Player.self, from: playerTraits)
+        let player = try decoder.decode(Player.self, from: playerTraits, configuration: configuration)
         player.speciesTraits = human
         player.classTraits = fighter
         
@@ -248,7 +245,7 @@ struct PlayerTests {
         }
         """.data(using: .utf8)!
         
-        let player = try decoder.decode(Player.self, from: playerTraits)
+        let player = try decoder.decode(Player.self, from: playerTraits, configuration: configuration)
         player.speciesTraits = human
         player.classTraits = fighter
         
@@ -289,9 +286,9 @@ struct PlayerTests {
         }
         """.data(using: .utf8)!
         
-        let player = try #require(try? decoder.decode(Player.self, from: playerTraits))
+        let player = try #require(try? decoder.decode(Player.self, from: playerTraits, configuration: configuration))
         let encoder = JSONEncoder()
-        let encodedPlayer = try encoder.encode(player)
+        let encodedPlayer = try encoder.encode(player, configuration: configuration)
         let encoded = try #require(try? JSONSerialization.jsonObject(with: encodedPlayer, options: []) as? [String: Any])
         
         #expect(encoded["name"] as? String == "Bilbo", "player traits round trip name")
@@ -348,7 +345,7 @@ struct PlayerTests {
     ])
     func missingTraits(json: String) async throws {
         let traits = json.data(using: .utf8)!
-        let player = try? decoder.decode(Player.self, from: traits)
+        let player = try? decoder.decode(Player.self, from: traits, configuration: configuration)
         #expect(player == nil)
     }
     
@@ -564,14 +561,14 @@ struct PlayerTests {
         }
         """.data(using: .utf8)!
         
-        let player = try decoder.decode(Player.self, from: playerTraits)
+        let player = try decoder.decode(Player.self, from: playerTraits, configuration: configuration)
         #expect(player.descriptiveTraits.count == 3)
         #expect(player.descriptiveTraits["ideal"] == "Adventure")
         #expect(player.descriptiveTraits["bond"] == "The Shire")
         #expect(player.descriptiveTraits["flaw"] == "Impulsive")
         
         // Test encoding
-        let encoded = try encoder.encode(player)
+        let encoded = try encoder.encode(player, configuration: configuration)
         let decodedDict = try #require(try? JSONSerialization.jsonObject(with: encoded) as? [String: Any])
         let encodedTraits = try #require(decodedDict["descriptive traits"] as? [String: String])
         #expect(encodedTraits["ideal"] == "Adventure")
@@ -607,7 +604,7 @@ struct PlayerTests {
         }
         """.data(using: .utf8)!
         
-        let player = try decoder.decode(Player.self, from: playerTraits)
+        let player = try decoder.decode(Player.self, from: playerTraits, configuration: configuration)
         player.speciesTraits = human
         player.classTraits = fighter
         

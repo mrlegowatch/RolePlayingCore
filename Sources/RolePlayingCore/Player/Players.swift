@@ -35,8 +35,12 @@ extension Player {
 }
 
 /// A collection of player characters.
-public class Players: Codable {
-    public var players = [Player]()
+public class Players: CodableWithConfiguration {
+    public var players: [Player]
+    
+    public init(_ players: [Player] = []) {
+        self.players = players
+    }
     
     public func resolve(backgrounds: Backgrounds, classes: Classes, species: Species) throws {
         for player in players {
@@ -62,5 +66,21 @@ public class Players: Codable {
     
     public func remove(at index: Int) {
         players.remove(at: index)
+    }
+    
+    // MARK: Codable conformance
+    
+    private enum CodingKeys: String, CodingKey {
+        case players
+    }
+    
+    public required init(from decoder: Decoder, configuration: Configuration) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        players = try container.decode([Player].self, forKey: .players, configuration: configuration)
+    }
+    
+    public func encode(to encoder: Encoder, configuration: Configuration) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(players, forKey: .players, configuration: configuration)
     }
 }
