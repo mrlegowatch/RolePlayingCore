@@ -14,6 +14,11 @@ import Foundation
 struct BackgroundsTests {
     
     let decoder = JSONDecoder()
+    let configuration: Configuration
+    
+    init() throws {
+        configuration = try Configuration("TestConfiguration", from: .module)
+    }
     
     @Test("Decode background traits")
     func backgroundTraitsDecoding() async throws {
@@ -29,15 +34,15 @@ struct BackgroundsTests {
         }
         """.data(using: .utf8)!
         
-        // When: Decoding the JSON data
-        let background = try decoder.decode(BackgroundTraits.self, from: jsonData)
+        // When: Decoding the JSON data with configuration
+        let background = try decoder.decode(BackgroundTraits.self, from: jsonData, configuration: configuration)
         
         // Then: The properties should match the input
         #expect(background.name == "Acolyte", "Name should match")
         #expect(background.abilityScores == ["Intelligence", "Wisdom"], "Ability scores should match")
         #expect(background.feat == "Magic Initiate", "Feat should match")
         #expect(background.skillProficiencies.count == 2, "Should have 2 skill proficiencies")
-        #expect(background.skillProficiencies == ["Insight", "Religion"], "Skill names should match")
+        #expect(background.skillProficiencies.skillNames == ["Insight", "Religion"], "Skill names should match")
         #expect(background.toolProficiency == "Calligrapher's Supplies", "Tool proficiency should match")
         #expect(background.equipment.count == 2, "Should have 2 equipment choices")
         #expect(background.equipment[0] == ["Holy Symbol", "Prayer Book", "Vestments", "10 GP"], "First equipment choice should match")
@@ -57,19 +62,20 @@ struct BackgroundsTests {
         }
         """.data(using: .utf8)!
         
-        let background = try decoder.decode(BackgroundTraits.self, from: jsonData)
+        let background = try decoder.decode(BackgroundTraits.self, from: jsonData, configuration: configuration)
+        
         // When: Encoding the background back to JSON
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
-        let encodedData = try encoder.encode(background)
+        let encodedData = try encoder.encode(background, configuration: configuration)
         
         // Then: The encoded data should be decodable and match the original
-        let decodedBackground = try decoder.decode(BackgroundTraits.self, from: encodedData)
+        let decodedBackground = try decoder.decode(BackgroundTraits.self, from: encodedData, configuration: configuration)
         
         #expect(decodedBackground.name == background.name, "Name should match after round-trip")
         #expect(decodedBackground.abilityScores == background.abilityScores, "Ability scores should match after round-trip")
         #expect(decodedBackground.feat == background.feat, "Feat should match after round-trip")
-        #expect(decodedBackground.skillProficiencies == background.skillProficiencies, "Skills should match after round-trip")
+        #expect(decodedBackground.skillProficiencies.skillNames == background.skillProficiencies.skillNames, "Skills should match after round-trip")
         #expect(decodedBackground.toolProficiency == background.toolProficiency, "Tool proficiency should match after round-trip")
         #expect(decodedBackground.equipment == background.equipment, "Equipment should match after round-trip")
     }
@@ -108,8 +114,8 @@ struct BackgroundsTests {
         }
         """.data(using: .utf8)!
         
-        // When: Decoding the JSON data into a Backgrounds collection
-        let backgrounds = try decoder.decode(Backgrounds.self, from: jsonData)
+        // When: Decoding the JSON data into a Backgrounds collection with configuration
+        let backgrounds = try decoder.decode(Backgrounds.self, from: jsonData, configuration: configuration)
         
         // Then: The collection should have the correct count
         #expect(backgrounds.count == 3, "Should have 3 backgrounds")
@@ -120,7 +126,7 @@ struct BackgroundsTests {
         #expect(acolyte.feat == "Magic Initiate", "Acolyte feat should match")
         
         let criminal = try #require(backgrounds.find("Criminal"))
-        #expect(criminal.skillProficiencies == ["Deception", "Stealth"], "Criminal skills should match")
+        #expect(criminal.skillProficiencies.skillNames == ["Deception", "Stealth"], "Criminal skills should match")
         
         // Then: The find method should return nil for non-existent backgrounds
         let nonExistent = backgrounds.find("Wizard")
@@ -136,8 +142,8 @@ struct BackgroundsTests {
         // Then: Round-trip encoding should preserve data
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.sortedKeys]
-        let encodedData = try encoder.encode(backgrounds)
-        let decodedBackgrounds = try decoder.decode(Backgrounds.self, from: encodedData)
+        let encodedData = try encoder.encode(backgrounds, configuration: configuration)
+        let decodedBackgrounds = try decoder.decode(Backgrounds.self, from: encodedData, configuration: configuration)
         
         #expect(decodedBackgrounds.count == backgrounds.count, "Count should match after round-trip")
         #expect(decodedBackgrounds.find("Criminal")?.name == "Criminal", "Should find Criminal after round-trip")

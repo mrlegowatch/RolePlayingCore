@@ -21,7 +21,7 @@ public struct ClassTraits {
     public var savingThrows: [Ability]
     public var experiencePoints: [Int]?
     public var startingSkillCount: Int
-    public var skillProficiencies: [String]
+    public var skillProficiencies: [Skill]
     public var weaponProficiencies: [String]
     public var toolProficiencies: [String]
     public var armorTraining: [String]
@@ -61,7 +61,7 @@ public struct ClassTraits {
                 alternatePrimaryAbility: [Ability]? = nil,
                 savingThrows: [Ability] = [],
                 startingSkillCount: Int = 2,
-                skillProficiencies: [String] = [],
+                skillProficiencies: [Skill] = [],
                 weaponProficiencies: [String] = [],
                 toolProficiencies: [String] = [],
                 armorTraining: [String] = [],
@@ -86,7 +86,7 @@ public struct ClassTraits {
     }
 }
 
-extension ClassTraits: Codable {
+extension ClassTraits: CodableWithConfiguration {
     
     private enum CodingKeys: String, CodingKey {
         case name
@@ -106,7 +106,7 @@ extension ClassTraits: Codable {
         case experiencePoints = "experience points"
     }
     
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder, configuration: Configuration) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         
         // Try decoding properties
@@ -120,7 +120,11 @@ extension ClassTraits: Codable {
         let alternatePrimaryAbility = try values.decodeIfPresent([Ability].self, forKey: .alternatePrimaryAbility)
         let savingThrows = try values.decodeIfPresent([Ability].self, forKey: .savingThrows)
         let startingSkillCount: Int? = try values.decodeIfPresent(Int.self, forKey: .startingSkillCount)
-        let skillProficiencies = try values.decodeIfPresent([String].self, forKey: .skillProficiencies)
+        
+        // Decode skill proficiency names and resolve them using configuration
+        let skillNames = try values.decodeIfPresent([String].self, forKey: .skillProficiencies) ?? []
+        let resolvedSkills: [Skill] = try skillNames.skills(from: configuration.skills)
+        
         let weaponProficiencies = try values.decodeIfPresent([String].self, forKey: .weaponProficiencies)
         let toolProficiencies = try values.decodeIfPresent([String].self, forKey: .toolProficiencies)
         let armorTraining: [String]? = try values.decodeIfPresent([String].self, forKey: .armorTraining)
@@ -139,7 +143,7 @@ extension ClassTraits: Codable {
         self.alternatePrimaryAbility = alternatePrimaryAbility
         self.savingThrows = savingThrows ?? []
         self.startingSkillCount = startingSkillCount ?? 2
-        self.skillProficiencies = skillProficiencies ?? []
+        self.skillProficiencies = resolvedSkills
         self.weaponProficiencies = weaponProficiencies ?? []
         self.toolProficiencies = toolProficiencies ?? []
         self.armorTraining = armorTraining ?? []
@@ -148,7 +152,7 @@ extension ClassTraits: Codable {
         self.experiencePoints = experiencePoints
     }
         
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: Encoder, configuration: Configuration) throws {
         var values = encoder.container(keyedBy: CodingKeys.self)
         
         try values.encode(name, forKey: .name)
@@ -161,7 +165,7 @@ extension ClassTraits: Codable {
         try values.encodeIfPresent(alternatePrimaryAbility, forKey: .alternatePrimaryAbility)
         try values.encode(savingThrows, forKey: .savingThrows)
         try values.encode(startingSkillCount, forKey: .startingSkillCount)
-        try values.encode(skillProficiencies, forKey: .skillProficiencies)
+        try values.encode(skillProficiencies.skillNames, forKey: .skillProficiencies)
         try values.encode(weaponProficiencies, forKey: .weaponProficiencies)
         try values.encode(toolProficiencies, forKey: .toolProficiencies)
         try values.encode(armorTraining, forKey: .armorTraining)
@@ -174,16 +178,8 @@ extension ClassTraits: Codable {
 extension ClassTraits {
     
     /// Returns a random array of skill proficiencies, of a count matching startingSkillCount.
-    public func randomSkillProficiencies() -> [String] {
-        var selected: [String] = []
-        var remaining: [String] = skillProficiencies
-        
-        for _ in 0..<startingSkillCount where !remaining.isEmpty {
-            let index = Int.random(in: 0..<remaining.count)
-            selected.append(remaining.remove(at: index))
-        }
-        
-        return selected
+    public func randomSkillProficiencies() -> [Skill] {
+        return skillProficiencies.randomSkills(count: startingSkillCount)
     }
 
 }

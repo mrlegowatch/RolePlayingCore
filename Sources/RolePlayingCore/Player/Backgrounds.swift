@@ -6,13 +6,15 @@
 //  Copyright © 2025 Brian Arnold. All rights reserved.
 //
 
-/// A collection of background traits.
-public struct Backgrounds: Codable {
+import Foundation
+
+/// A collection of backgrounds.
+public struct Backgrounds: CodableWithConfiguration {
     
-    public var backgrounds = [BackgroundTraits]()
+    public var backgrounds: [BackgroundTraits]
     
-    private enum CodingKeys: String, CodingKey {
-        case backgrounds
+    public init(_ backgrounds: [BackgroundTraits] = []) {
+        self.backgrounds = backgrounds
     }
     
     public func find(_ backgroundName: String?) -> BackgroundTraits? {
@@ -23,11 +25,28 @@ public struct Backgrounds: Codable {
     
     public subscript(index: Int) -> BackgroundTraits? {
         get {
+            guard index >= 0 && index < backgrounds.count else { return nil }
             return backgrounds[index]
         }
     }
     
     public func randomElementByIndex<G: RandomIndexGenerator>(using generator: inout G) -> BackgroundTraits {
         return backgrounds.randomElementByIndex(using: &generator)!
+    }
+
+    // MARK: Codable conformance
+    
+    private enum CodingKeys: String, CodingKey {
+        case backgrounds
+    }
+    
+    public init(from decoder: Decoder, configuration: Configuration) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        self.backgrounds = try values.decode([BackgroundTraits].self, forKey: .backgrounds, configuration: configuration)
+    }
+    
+    public func encode(to encoder: Encoder, configuration: Configuration) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(backgrounds, forKey: .backgrounds, configuration: configuration)
     }
 }

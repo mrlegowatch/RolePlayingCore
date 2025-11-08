@@ -68,7 +68,7 @@ public struct Configuration {
 
         for backgroundsFile in configurationFiles.backgrounds {
             let jsonData = try bundle.loadJSON(backgroundsFile)
-            let backgrounds = try jsonDecoder.decode(Backgrounds.self, from: jsonData)
+            let backgrounds = try jsonDecoder.decode(Backgrounds.self, from: jsonData, configuration: self)
             self.backgrounds.backgrounds += backgrounds.backgrounds
         }
         
@@ -80,7 +80,7 @@ public struct Configuration {
         
         for classFile in configurationFiles.classes {
             let jsonData = try bundle.loadJSON(classFile)
-            let classes = try jsonDecoder.decode(Classes.self, from: jsonData)
+            let classes = try jsonDecoder.decode(Classes.self, from: jsonData, configuration: self)
             self.classes.classes += classes.classes
             
             // Update the shared classes experience points table, then

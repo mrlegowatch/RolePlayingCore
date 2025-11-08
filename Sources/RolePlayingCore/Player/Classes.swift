@@ -6,11 +6,17 @@
 //  Copyright © 2016 Brian Arnold. All rights reserved.
 //
 
+import Foundation
+
 /// A collection of class traits.
-public struct Classes: Codable {
+public struct Classes: CodableWithConfiguration {
     
-    public var classes = [ClassTraits]()
+    public var classes: [ClassTraits]
     public var experiencePoints: [Int]?
+    
+    public init(_ classes: [ClassTraits] = []) {
+        self.classes = classes
+    }
     
     private enum CodingKeys: String, CodingKey {
         case classes
@@ -27,5 +33,19 @@ public struct Classes: Codable {
         get {
             return classes[index]
         }
+    }
+    
+    // MARK: CodableWithConfiguration conformance
+    
+    public init(from decoder: Decoder, configuration: Configuration) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        self.classes = try values.decode([ClassTraits].self, forKey: .classes, configuration: configuration)
+        self.experiencePoints = try values.decodeIfPresent([Int].self, forKey: .experiencePoints)
+    }
+    
+    public func encode(to encoder: Encoder, configuration: Configuration) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(classes, forKey: .classes, configuration: configuration)
+        try container.encodeIfPresent(experiencePoints, forKey: .experiencePoints)
     }
 }

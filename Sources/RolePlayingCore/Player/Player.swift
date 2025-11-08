@@ -48,7 +48,7 @@ public class Player: CodableWithConfiguration {
         return classTraits?.name ?? ""
     }
     
-    public private(set) var skillProficiencies: [String]
+    public private(set) var skillProficiencies: [Skill]
     
     public var backgroundTraits: BackgroundTraits!
     public var speciesTraits: SpeciesTraits!
@@ -146,7 +146,17 @@ public class Player: CodableWithConfiguration {
         let height = try values.decode(Height.self, forKey: .height)
         let baseAbilities = try values.decode(AbilityScores.self, forKey: .baseAbilities)
         let backgroundAbilities = try values.decode([String].self, forKey: .backgroundAbilities)
-        let skillProficiencies = try values.decode([String].self, forKey: .skillProficiencies)
+        
+        // Decode skill proficiency names and resolve them using configuration
+        let skillNames = try values.decode([String].self, forKey: .skillProficiencies)
+        var resolvedSkills: [Skill] = []
+        for skillName in skillNames {
+            guard let skill = configuration.skills.find(skillName) else {
+                throw missingTypeError("skill", skillName)
+            }
+            resolvedSkills.append(skill)
+        }
+        
         let maximumHitPoints = try values.decode(Int.self, forKey: .maximumHitPoints)
         let currentHitPoints = try values.decodeIfPresent(Int.self, forKey: .currentHitPoints)
         let experiencePoints = try values.decodeIfPresent(Int.self, forKey: .experiencePoints)
@@ -176,7 +186,7 @@ public class Player: CodableWithConfiguration {
         self.height = height
         self.baseAbilities = baseAbilities
         self.backgroundAbilities = backgroundAbilities.map { Ability($0) }
-        self.skillProficiencies = skillProficiencies
+        self.skillProficiencies = resolvedSkills
         self.maximumHitPoints = maximumHitPoints
         self.currentHitPoints = currentHitPoints ?? maximumHitPoints
         self.experiencePoints = experiencePoints ?? 0
@@ -201,7 +211,7 @@ public class Player: CodableWithConfiguration {
         try values.encode("\(height)", forKey: .height)
         try values.encode(baseAbilities, forKey: .baseAbilities)
         try values.encode(backgroundAbilities.map({ $0.name }), forKey: .backgroundAbilities)
-        try values.encode(skillProficiencies, forKey: .skillProficiencies)
+        try values.encode(skillProficiencies.skillNames, forKey: .skillProficiencies)
         try values.encode(maximumHitPoints, forKey: .maximumHitPoints)
         try values.encodeIfPresent(currentHitPoints, forKey: .currentHitPoints)
         try values.encodeIfPresent(experiencePoints, forKey: .experiencePoints)
@@ -229,7 +239,9 @@ public class Player: CodableWithConfiguration {
         // TODO: roll for 2 or 3 background abilities, and if 2, add one random ability score twice
         self.backgroundAbilities = backgroundTraits.abilityScores.map { Ability($0) }
         
-        self.skillProficiencies = classTraits.randomSkillProficiencies() + backgroundTraits.skillProficiencies
+        var allSkills = classTraits.randomSkillProficiencies()
+        allSkills.append(backgroundTraits.skillProficiencies)
+        self.skillProficiencies = allSkills
 
         self.maximumHitPoints = Player.rollHitPoints(classTraits: classTraits, speciesTraits: speciesTraits)
         self.currentHitPoints = self.maximumHitPoints

@@ -15,6 +15,11 @@ struct ClassTraitsTests {
     
     let decoder = JSONDecoder()
     let bundle = Bundle.module
+    let configuration: Configuration
+    
+    init() throws {
+        configuration = try Configuration("TestClassesConfiguration", from: .module)
+    }
     
     @Test("Decoding class traits with nominal required traits")
     func decodingNominalClassTraits() throws {
@@ -30,7 +35,7 @@ struct ClassTraitsTests {
         }
         """.data(using: .utf8)!
         
-        let classTraits = try decoder.decode(ClassTraits.self, from: traits)
+        let classTraits = try decoder.decode(ClassTraits.self, from: traits, configuration: configuration)
         
         #expect(classTraits.name == "Fighter", "name")
         #expect(classTraits.plural == "Fighters", "plural")
@@ -62,7 +67,7 @@ struct ClassTraitsTests {
         }
         """.data(using: .utf8)!
         
-        let classTraits = try decoder.decode(ClassTraits.self, from: traits)
+        let classTraits = try decoder.decode(ClassTraits.self, from: traits, configuration: configuration)
         
         #expect(classTraits.name == "Fighter", "name")
         #expect(classTraits.plural == "Fighters", "plural")
@@ -98,7 +103,7 @@ struct ClassTraitsTests {
             }
             """.data(using: .utf8)!
         
-        let classTraits = try decoder.decode(ClassTraits.self, from: traits)
+        let classTraits = try decoder.decode(ClassTraits.self, from: traits, configuration: configuration)
         
         let experiencePoints: [Int] = classTraits.experiencePoints ?? []
         #expect(experiencePoints == [300, 900, 2700], "experience points")
@@ -113,7 +118,7 @@ struct ClassTraitsTests {
                                       hitDice: SimpleDice(.d10),
                                       startingWealth: CompoundDice(.d4, times: 5, modifier: 10, mathOperator: "x"))
         
-        let encoded = try encoder.encode(classTraits)
+        let encoded = try encoder.encode(classTraits, configuration: configuration)
         let dictionary = try JSONSerialization.jsonObject(with: encoded, options: []) as? [String: Any]
         #expect(dictionary?["name"] as? String == "Fighter", "name")
         #expect(dictionary?["plural"] as? String == "Fighters", "plural")
@@ -126,7 +131,7 @@ struct ClassTraitsTests {
         // Test that each missing trait results in nil
         do {
             let traits = "{}".data(using: .utf8)!
-            let classTraits = try? decoder.decode(ClassTraits.self, from: traits)
+            let classTraits = try? decoder.decode(ClassTraits.self, from: traits, configuration: configuration)
             #expect(classTraits == nil)
         }
         
@@ -136,7 +141,7 @@ struct ClassTraitsTests {
                     "name": "Fighter"
                 }
                 """.data(using: .utf8)!
-            let classTraits = try? decoder.decode(ClassTraits.self, from: traits)
+            let classTraits = try? decoder.decode(ClassTraits.self, from: traits, configuration: configuration)
             #expect(classTraits == nil)
         }
         
@@ -147,7 +152,7 @@ struct ClassTraitsTests {
                     "plural": "Fighters"
                 }
                 """.data(using: .utf8)!
-            let classTraits = try? decoder.decode(ClassTraits.self, from: traits)
+            let classTraits = try? decoder.decode(ClassTraits.self, from: traits, configuration: configuration)
             #expect(classTraits == nil)
         }
         
@@ -159,7 +164,7 @@ struct ClassTraitsTests {
                     "hit dice": "d10"
                 }
                 """.data(using: .utf8)!
-            let classTraits = try? decoder.decode(ClassTraits.self, from: traits)
+            let classTraits = try? decoder.decode(ClassTraits.self, from: traits, configuration: configuration)
             #expect(classTraits == nil)
         }
     }
@@ -178,7 +183,7 @@ struct ClassTraitsTests {
         }
         """.data(using: .utf8)!
         
-        let classTraits = try decoder.decode(ClassTraits.self, from: traits)
+        let classTraits = try decoder.decode(ClassTraits.self, from: traits, configuration: configuration)
         #expect(classTraits.experiencePoints != nil, "Should decode empty array")
         #expect(classTraits.experiencePoints?.count == 0, "Should have 0 experience points")
         #expect(classTraits.maxLevel == 0, "Max level should be 0 for empty array")
@@ -198,7 +203,7 @@ struct ClassTraitsTests {
         }
         """.data(using: .utf8)!
         
-        let classTraits = try decoder.decode(ClassTraits.self, from: traits)
+        let classTraits = try decoder.decode(ClassTraits.self, from: traits, configuration: configuration)
         #expect(classTraits.maxLevel == 1, "Max level should be 1")
         #expect(classTraits.minExperiencePoints(at: 1) == 0, "Min XP at level 1 should be 0")
         #expect(classTraits.minExperiencePoints(at: 2) == 0, "Beyond max level should return last value")
@@ -254,7 +259,7 @@ struct ClassTraitsTests {
         }
         """.data(using: .utf8)!
         
-        let classTraits = try decoder.decode(ClassTraits.self, from: traits)
+        let classTraits = try decoder.decode(ClassTraits.self, from: traits, configuration: configuration)
         
         #expect(classTraits.descriptiveTraits.count == 0, "Descriptive traits should be empty")
         #expect(classTraits.primaryAbility.count == 0, "Primary ability should be empty")
@@ -282,7 +287,7 @@ struct ClassTraitsTests {
         }
         """.data(using: .utf8)!
         
-        let classTraits = try decoder.decode(ClassTraits.self, from: traits)
+        let classTraits = try decoder.decode(ClassTraits.self, from: traits, configuration: configuration)
         
         #expect(classTraits.primaryAbility.count == 2, "Should have 2 primary abilities")
         #expect(classTraits.primaryAbility == [Ability("Strength"), Ability("Dexterity")])
@@ -308,7 +313,7 @@ struct ClassTraitsTests {
         }
         """.data(using: .utf8)!
         
-        let classTraits = try decoder.decode(ClassTraits.self, from: traits)
+        let classTraits = try decoder.decode(ClassTraits.self, from: traits, configuration: configuration)
         
         #expect(classTraits.startingEquipment.count == 5, "Should have 5 equipment choices")
         #expect(classTraits.startingEquipment[0] == ["Longsword", "Shield"])
@@ -319,13 +324,9 @@ struct ClassTraitsTests {
     @Test("Round-trip encoding with all fields")
     func roundTripEncodingWithAllFields() throws {
         let encoder = JSONEncoder()
-        let skillsData = try! bundle.loadJSON("TestSkills")
-        let allSkills = try! decoder.decode(Skills.self, from: skillsData)
-        var classSkills: [Skill] = []
-        for skillName in ["Acrobatics", "Performance", "Persuasion"] {
-            classSkills.append(allSkills.find(skillName)!)
-        }
         
+        let skillProficiencyNames = ["Athletics", "Acrobatics", "Performance", "Persuasion"]
+        let skillProficiencies = try skillProficiencyNames.skills(from: configuration.skills)
         let original = ClassTraits(
             name: "Bard",
             plural: "Bards",
@@ -336,7 +337,7 @@ struct ClassTraitsTests {
             alternatePrimaryAbility: [Ability("Dexterity")],
             savingThrows: [Ability("Dexterity"), Ability("Charisma")],
             startingSkillCount: 3,
-            skillProficiencies: ["Atheletics", "Acrobatics", "Performance", "Persuasion"],
+            skillProficiencies: skillProficiencies,
             weaponProficiencies: ["Simple Weapons", "Hand Crossbows", "Longswords", "Rapiers", "Shortswords"],
             toolProficiencies: ["Three Musical Instruments"],
             armorTraining: ["Light Armor"],
@@ -344,8 +345,8 @@ struct ClassTraitsTests {
             experiencePoints: [0, 300, 900, 2700, 6500, 14000]
         )
         
-        let encoded = try encoder.encode(original)
-        let decoded = try decoder.decode(ClassTraits.self, from: encoded)
+        let encoded = try encoder.encode(original, configuration: configuration)
+        let decoded = try decoder.decode(ClassTraits.self, from: encoded, configuration: configuration)
         
         #expect(decoded.name == original.name, "Name should match after round-trip")
         #expect(decoded.plural == original.plural, "Plural should match")

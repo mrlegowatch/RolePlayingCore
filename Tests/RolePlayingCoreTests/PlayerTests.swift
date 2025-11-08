@@ -117,7 +117,7 @@ struct PlayerTests {
             "equipment": [["Spear", "Shortbow", "20 Arrows", "Gaming Set", "Healer's Kit", "Quiver", "Traveler's Clothes", "14 GP"], ["50 GP"]]
         }
         """.data(using: .utf8)!
-        self.soldier = try! decoder.decode(BackgroundTraits.self, from: self.soldierTraits)
+        self.soldier = try! decoder.decode(BackgroundTraits.self, from: self.soldierTraits, configuration: configuration)
         
         self.fighterTraits = """
         {
@@ -131,7 +131,7 @@ struct PlayerTests {
             "experience points": [0, 300, 900, 2700]
         }
         """.data(using: .utf8)!
-        self.fighter = try! decoder.decode(ClassTraits.self, from: self.fighterTraits)
+        self.fighter = try! decoder.decode(ClassTraits.self, from: self.fighterTraits, configuration: configuration)
         
         self.humanTraits = """
         {

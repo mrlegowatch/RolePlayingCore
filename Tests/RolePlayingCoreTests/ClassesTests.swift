@@ -15,11 +15,16 @@ struct ClassesTests {
     
     let bundle = Bundle.module
     let decoder = JSONDecoder()
+    let configuration: Configuration
+    
+    init() throws {
+        configuration = try Configuration("TestClassesConfiguration", from: .module)
+    }
     
     @Test("Default classes")
     func defaultClasses() throws {
         let jsonData = try bundle.loadJSON("TestClasses")
-        let classes = try decoder.decode(Classes.self, from: jsonData)
+        let classes = try decoder.decode(Classes.self, from: jsonData, configuration: configuration)
         #expect(classes.classes.count == 4, "classes count failed")
         #expect(classes.count == 4, "classes count failed")
         #expect(classes[0] != nil, "class by index failed")
@@ -35,7 +40,7 @@ struct ClassesTests {
     @Test("Uncommon classes")
     func uncommonClasses() throws {
         let jsonData = try bundle.loadJSON("TestMoreClasses")
-        let classes = try decoder.decode(Classes.self, from: jsonData)
+        let classes = try decoder.decode(Classes.self, from: jsonData, configuration: configuration)
         
         #expect(classes.classes.count == 8, "classes count failed")
     }

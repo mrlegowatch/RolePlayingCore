@@ -38,6 +38,19 @@ public struct Skills: Codable {
     }
 }
 
+extension Sequence where Element == String {
+    
+    /// Returns an array of skills from this array of skill names, using the skills argument.
+    public func skills(from skills: Skills) throws -> [Skill] {
+        try self.map { skillName in
+            guard let skill = skills.find(skillName) else {
+                throw missingTypeError("skill", skillName)
+            }
+            return skill
+        }
+    }
+}
+
 extension Sequence where Element == Skill {
     
     /// Returns a random array of skills with the specified skill count.
