@@ -161,12 +161,12 @@ public class Player: CodableWithConfiguration {
         }
         
         // Resolve speciesTraits from configuration
-        guard let speciesTraits = configuration.species.find(speciesName) else {
+        guard let speciesTraits = configuration.species[speciesName] else {
             throw missingTypeError("species", speciesName)
         }
         
         // Resolve classTraits from configuration
-        guard let classTraits = configuration.classes.find(className) else {
+        guard let classTraits = configuration.classes[className] else {
             throw missingTypeError("class", className)
         }
         

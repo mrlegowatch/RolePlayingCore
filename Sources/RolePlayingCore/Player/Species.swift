@@ -11,49 +11,56 @@ import Foundation
 /// A collection of species traits, including subspecies.
 public class Species: CodableWithConfiguration {
     
+    /// All of the species and subspecies traits as a flattened dictionary, indexed by species name.
+    private var allSpecies: [String: SpeciesTraits] = [:]
+    
     /// Accesses all of the species and subspecies that have been loaded.
-    public var species = [SpeciesTraits]()
-    
-    public var creatureTypes = [CreatureType]()
-    
-    public var defaultCreatureType: CreatureType {
-        creatureTypes.first(where: { $0.isDefault != nil && $0.isDefault! }) ?? CreatureType("Humanoid")
-    }
+    public var all: [SpeciesTraits] { Array(allSpecies.values) }
     
     /// Creates a Species instance.
-    public init() { }
+    public init(_ species: [SpeciesTraits] = []) {
+        add(species)
+    }
+    
+    public func add(_ species: [SpeciesTraits]) {
+        let mappedSpecies = Dictionary(species.map { ($0.name, $0) }, uniquingKeysWith: { _, last in last })
+        allSpecies.merge(mappedSpecies, uniquingKeysWith: { _, last in last })
+    }
+    
+    public func add(_ species: Species) {
+        add(species.all)
+    }
     
     /// Returns all of the leaf species (species that contain no subspecies).
     public var leafSpecies: [SpeciesTraits] {
-        return species.filter { $0.subspecies.isEmpty }
+        return all.filter { $0.subspecies.isEmpty }
     }
     
     /// Returns the species matching the specified name, or nil if not present.
-    public func find(_ speciesName: String) -> SpeciesTraits? {
-        return species.first(where: { $0.name == speciesName })
+    public subscript(speciesName: String) -> SpeciesTraits? {
+        return allSpecies[speciesName]
     }
 
-    public var count: Int { species.count }
+    public var count: Int { allSpecies.count }
     
     public subscript(index: Int) -> SpeciesTraits? {
-        guard index >= 0 && index < species.count else { return nil }
-        return species[index]
+        guard index >= 0 && index < count else { return nil }
+        return all[index]
     }
     
     public func randomElementByIndex<G: RandomIndexGenerator>(using generator: inout G) -> SpeciesTraits {
-        return species.randomElementByIndex(using: &generator)!
+        return all.randomElementByIndex(using: &generator)!
     }
+    
+    // MARK: CodableWithConfiguration support
     
     enum CodingKeys: String, CodingKey {
         case species
-        case creatureTypes = "creature types"
     }
     
     /// Overridden to stitch together subspecies embedded in species.
     public required init(from decoder: Decoder, configuration: Configuration) throws {
         let root = try decoder.container(keyedBy: CodingKeys.self)
-        let creatureTypes = try root.decodeIfPresent([CreatureType].self, forKey: .creatureTypes)
-        self.creatureTypes = creatureTypes ?? []
         
         var leaf = try root.nestedUnkeyedContainer(forKey: .species)
         
@@ -68,17 +75,14 @@ public class Species: CodableWithConfiguration {
             }
         }
         
-        self.species = species
+        add(species)
     }
     
     public func encode(to encoder: any Encoder, configuration: Configuration) throws {
         var root = encoder.container(keyedBy: CodingKeys.self)
-        if !creatureTypes.isEmpty {
-            try root.encode(creatureTypes, forKey: .creatureTypes)
-        }
         
         var leaf = root.nestedUnkeyedContainer(forKey: .species)
-        let rootSpecies = self.species.filter { $0.parentName == nil }
+        let rootSpecies = all.filter { $0.parentName == nil }
         for speciesTraits in rootSpecies {
             try leaf.encode(speciesTraits, configuration: configuration)
         }

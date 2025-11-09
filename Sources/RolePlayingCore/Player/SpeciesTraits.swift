@@ -80,7 +80,7 @@ extension SpeciesTraits: CodableWithConfiguration {
         self.name = name
         self.plural = plural
         self.aliases = aliases ?? []
-        self.creatureType = creatureType != nil ? CreatureType(creatureType!) : configuration.species.defaultCreatureType
+        self.creatureType = creatureType != nil ? CreatureType(creatureType!) : configuration.creatureTypes.defaultCreatureType
         self.descriptiveTraits = descriptiveTraits ?? [:]
         self.lifespan = lifespan
         self.baseSizes = baseSizes ?? ["4-7"]

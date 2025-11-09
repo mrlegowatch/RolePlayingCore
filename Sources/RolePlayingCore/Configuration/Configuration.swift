@@ -14,6 +14,7 @@ public struct ConfigurationFiles: Decodable {
     let currencies: [String]
     let skills: [String]
     let backgrounds: [String]
+    let creatureTypes: [String]
     let species: [String]
     let classes: [String]
     let players: [String]?
@@ -23,6 +24,7 @@ public struct ConfigurationFiles: Decodable {
         case currencies
         case skills
         case backgrounds
+        case creatureTypes = "creature types"
         case species
         case classes
         case players
@@ -37,8 +39,9 @@ public struct Configuration {
     public var configurationFiles: ConfigurationFiles
     
     public var currencies = Currencies()
-    public var backgrounds = Backgrounds()
     public var skills = Skills()
+    public var backgrounds = Backgrounds()
+    public var creatureTypes = CreatureTypes()
     public var species = Species()
     public var classes = Classes()
     public var players = Players()
@@ -72,25 +75,22 @@ public struct Configuration {
             self.backgrounds.add(backgrounds.all)
         }
         
+        for creatureTypesFile in configurationFiles.creatureTypes {
+            let jsonData = try bundle.loadJSON(creatureTypesFile)
+            let creatureTypes = try jsonDecoder.decode(CreatureTypes.self, from: jsonData)
+            self.creatureTypes.add(creatureTypes.all)
+        }
+
         for speciesFile in configurationFiles.species {
             let jsonData = try bundle.loadJSON(speciesFile)
             let species = try jsonDecoder.decode(Species.self, from: jsonData, configuration: self)
-            self.species.species += species.species
+            self.species.add(species)
         }
         
         for classFile in configurationFiles.classes {
             let jsonData = try bundle.loadJSON(classFile)
             let classes = try jsonDecoder.decode(Classes.self, from: jsonData, configuration: self)
-            self.classes.classes += classes.classes
-            
-            // Update the shared classes experience points table, then
-            // update all of the classes to point to it. TODO: improve this.
-            if let experiencePoints = classes.experiencePoints {
-                self.classes.experiencePoints = experiencePoints
-                for (index, _) in self.classes.classes.enumerated() {
-                    self.classes.classes[index].experiencePoints = experiencePoints
-                }
-            }
+            self.classes.add(classes)
         }
         
         if let playersFiles = configurationFiles.players {

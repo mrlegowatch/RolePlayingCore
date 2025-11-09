@@ -25,16 +25,15 @@ struct ClassesTests {
     func defaultClasses() throws {
         let jsonData = try bundle.loadJSON("TestClasses")
         let classes = try decoder.decode(Classes.self, from: jsonData, configuration: configuration)
-        #expect(classes.classes.count == 4, "classes count failed")
+        #expect(classes.all.count == 4, "classes count failed")
         #expect(classes.count == 4, "classes count failed")
         #expect(classes[0] != nil, "class by index failed")
         
         #expect(classes.experiencePoints?.count == 20, "array of experience points failed")
         
         // Test finding a class by name
-        #expect(classes.find("Fighter") != nil, "Fighter should be non-nil")
-        #expect(classes.find("Foo") == nil, "Foo should be nil")
-        #expect(classes.find(nil) == nil, "nil class name should find nil")
+        #expect(classes["Fighter"] != nil, "Fighter should be non-nil")
+        #expect(classes["Foo"] == nil, "Foo should be nil")
     }
     
     @Test("Uncommon classes")
@@ -42,7 +41,7 @@ struct ClassesTests {
         let jsonData = try bundle.loadJSON("TestMoreClasses")
         let classes = try decoder.decode(Classes.self, from: jsonData, configuration: configuration)
         
-        #expect(classes.classes.count == 8, "classes count failed")
+        #expect(classes.count == 8, "classes count failed")
     }
     
 }
