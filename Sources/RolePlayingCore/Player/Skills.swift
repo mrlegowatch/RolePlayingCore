@@ -19,31 +19,59 @@ extension Skill: Hashable { }
 /// A collection of skills.
 public struct Skills: Codable {
     
-    public var skills = [Skill]()
+    /// A dictionary of skills indexed by name.
+    private var allSkills: [String: Skill] = [:]
+    
+    /// An array of skills.
+    public var all: [Skill] { Array(allSkills.values) }
+    
+    /// Returns a skills instance that can access a skill by name.
+    public init(_ skills: [Skill] = []) {
+        add(skills)
+    }
+    
+    /// Adds the array of skills to the collection.
+    mutating func add(_ skills: [Skill]) {
+        allSkills = Dictionary(skills.map { ($0.name, $0) }, uniquingKeysWith: { _, last in last })
+    }
+
+    /// Accesses a skill by name.
+    public subscript(skillName: String) -> Skill? {
+        return allSkills[skillName]
+    }
+    
+    /// Returns the number of skills in the collection.
+    public var count: Int { return allSkills.count }
+    
+    /// Accesses a skill by index.
+    public subscript(index: Int) -> Skill? {
+        return all[index]
+    }
+    
+    // MARK: Codable conformance
     
     private enum CodingKeys: String, CodingKey {
         case skills
     }
-    
-    public func find(_ skillName: String?) -> Skill? {
-        return skills.first(where: { $0.name == skillName })
+ 
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let skills = try container.decode([Skill].self, forKey: .skills)
+        add(skills)
     }
     
-    public var count: Int { return skills.count }
-    
-    public subscript(index: Int) -> Skill? {
-        get {
-            return skills[index]
-        }
+    public func encode(to encoder: any Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(all, forKey: .skills)
     }
 }
 
 extension Sequence where Element == String {
     
-    /// Returns an array of skills from this array of skill names, using the skills argument.
+    /// Returns an array of skills from this array of skill names, using the specified skills collection.
     public func skills(from skills: Skills) throws -> [Skill] {
         try self.map { skillName in
-            guard let skill = skills.find(skillName) else {
+            guard let skill = skills[skillName] else {
                 throw missingTypeError("skill", skillName)
             }
             return skill
@@ -66,8 +94,10 @@ extension Sequence where Element == Skill {
         return selected
     }
     
+    /// Returns an array of skill names corresponding to this array of skills.
     public var skillNames: [String] { self.map(\.name) }
     
+    /// Appends an array of skills to this array of skills.
     public mutating func append(_ other: Self) {
         let selfSet = Set(self)
         let otherSet = Set(other)

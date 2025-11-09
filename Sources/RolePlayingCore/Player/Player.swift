@@ -143,7 +143,7 @@ public class Player: CodableWithConfiguration {
         let skillNames = try values.decode([String].self, forKey: .skillProficiencies)
         var resolvedSkills: [Skill] = []
         for skillName in skillNames {
-            guard let skill = configuration.skills.find(skillName) else {
+            guard let skill = configuration.skills[skillName] else {
                 throw missingTypeError("skill", skillName)
             }
             resolvedSkills.append(skill)
@@ -156,7 +156,7 @@ public class Player: CodableWithConfiguration {
         let money = try values.decode(Money.self, forKey: .money, configuration: configuration.currencies)
         
         // Resolve backgroundTraits from configuration
-        guard let backgroundTraits = configuration.backgrounds.find(backgroundName) else {
+        guard let backgroundTraits = configuration.backgrounds[backgroundName] else {
             throw missingTypeError("background", backgroundName)
         }
         
