@@ -13,6 +13,12 @@ import Foundation
 @Suite("Species Names")
 struct SpeciesNamesTests {
     
+    let configuration: Configuration
+    
+    init() throws {
+        configuration = try Configuration("TestConfiguration", from: .module)
+    }
+    
     @Test("Loading and generating species names")
     func speciesNames() async throws {
         let bundle = Bundle.module
@@ -25,9 +31,9 @@ struct SpeciesNamesTests {
         // TODO: find a way to test just the minimum functionality.
         // In the meantime, use the test species.
         let jsonData = try bundle.loadJSON("TestSpecies")
-        let species = try decoder.decode(Species.self, from: jsonData)
+        let species = try decoder.decode(Species.self, from: jsonData, configuration: configuration)
         let moreJsonData = try bundle.loadJSON("TestMoreSpecies")
-        let moreSpecies = try decoder.decode(Species.self, from: moreJsonData)
+        let moreSpecies = try decoder.decode(Species.self, from: moreJsonData, configuration: configuration)
         
         let allSpecies = Species()
         allSpecies.species = species.species + moreSpecies.species

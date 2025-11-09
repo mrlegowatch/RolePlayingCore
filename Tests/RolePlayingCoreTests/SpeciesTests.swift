@@ -15,6 +15,11 @@ struct SpeciesTests {
     
     let bundle = Bundle.module
     let decoder = JSONDecoder()
+    let configuration: Configuration
+    
+    init() throws {
+        configuration = try Configuration("TestConfiguration", from: .module)
+    }
     
     @Test("Default initialization creates empty species")
     func defaultInit() async throws {
@@ -25,7 +30,7 @@ struct SpeciesTests {
     @Test("Load and parse species from JSON file")
     func species() async throws {
         let jsonData = try bundle.loadJSON("TestSpecies")
-        let species = try decoder.decode(Species.self, from: jsonData)
+        let species = try decoder.decode(Species.self, from: jsonData, configuration: configuration)
         
         #expect(species.leafSpecies.count == 8, "all species")
         #expect(species.count == 11, "all species")
@@ -34,13 +39,12 @@ struct SpeciesTests {
         // Test finding a species by name
         #expect(species.find("Human") != nil, "Fighter should be non-nil")
         #expect(species.find("Foo") == nil, "Foo should be nil")
-        #expect(species.find(nil) == nil, "nil species name should find nil")
     }
     
     @Test("Load uncommon species from JSON file")
     func uncommonSpecies() async throws {
         let jsonData = try bundle.loadJSON("TestMoreSpecies")
-        let species = try decoder.decode(Species.self, from: jsonData)
+        let species = try decoder.decode(Species.self, from: jsonData, configuration: configuration)
         
         // There should be 5 species plus 2 subspecies
         #expect(species.species.count == 5, "all species")

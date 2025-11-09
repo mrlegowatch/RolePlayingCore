@@ -1,4 +1,20 @@
 {
+    "creature types": [
+        { "name": "Aberration" },
+        { "name": "Beast" },
+        { "name": "Celestial" },
+        { "name": "Construct" },
+        { "name": "Dragon" },
+        { "name": "Elemental" },
+        { "name": "Fey" },
+        { "name": "Fiend" },
+        { "name": "Giant" },
+        { "name": "Humanoid", "is default": true },
+        { "name": "Monstrosity" },
+        { "name": "Ooze" },
+        { "name": "Plant" },
+        { "name": "Undead" }
+    ],
     "species": [
         {
             "name": "Dwarf",
@@ -63,5 +79,5 @@
             "base sizes": ["4-7 ft", "2-4 ft"],
             "speed": 30
         }
-              ]
+    ]
 }

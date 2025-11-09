@@ -27,12 +27,11 @@ public struct Classes: CodableWithConfiguration {
         return classes.first(where: { $0.name == className })
     }
     
-    public var count: Int { return classes.count }
+    public var count: Int { classes.count }
     
     public subscript(index: Int) -> ClassTraits? {
-        get {
-            return classes[index]
-        }
+        guard index >= 0 && index < classes.count else { return nil }
+        return classes[index]
     }
     
     // MARK: CodableWithConfiguration conformance

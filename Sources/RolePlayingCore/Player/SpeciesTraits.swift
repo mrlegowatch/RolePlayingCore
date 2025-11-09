@@ -11,24 +11,6 @@ import Foundation
 /// Traits representing a species.
 public struct SpeciesTraits {
     
-    public struct CreatureType: Sendable {
-        public let name: String
-        
-        public static let aberration = CreatureType(name: "Aberration")
-        public static let beast = CreatureType(name: "Beast")
-        public static let celestial = CreatureType(name: "Celestial")
-        public static let construct = CreatureType(name: "Construct")
-        public static let dragon = CreatureType(name: "Dragon")
-        public static let elemental = CreatureType(name: "Elemental")
-        public static let fey = CreatureType(name: "Fey")
-        public static let fiend = CreatureType(name: "Fiend")
-        public static let giant = CreatureType(name: "Giant")
-        public static let humanoid = CreatureType(name: "Humanoid")
-        public static let monstrosity = CreatureType(name: "Monstrosity")
-        public static let ooze = CreatureType(name: "Ooze")
-        public static let plant = CreatureType(name: "Plant")
-        public static let undead = CreatureType(name: "Undead")
-    }
     public var name: String
     public var plural: String
     public var aliases: [String]
@@ -47,7 +29,7 @@ public struct SpeciesTraits {
     public init(name: String,
                 plural: String,
                 aliases: [String] = [],
-                creatureType: CreatureType = .humanoid,
+                creatureType: CreatureType,
                 descriptiveTraits: [String: String] = [:],
                 lifespan: Int,
                 baseSizes: [String] = ["4-7"],
@@ -65,7 +47,7 @@ public struct SpeciesTraits {
     }
 }
 
-extension SpeciesTraits: Codable {
+extension SpeciesTraits: CodableWithConfiguration {
     
     private enum CodingKeys: String, CodingKey {
         case name
@@ -80,7 +62,7 @@ extension SpeciesTraits: Codable {
         case subspecies
     }
     
-    public init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder, configuration: Configuration) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         
         // Try decoding properties
@@ -98,7 +80,7 @@ extension SpeciesTraits: Codable {
         self.name = name
         self.plural = plural
         self.aliases = aliases ?? []
-        self.creatureType = CreatureType(name: creatureType ?? CreatureType.humanoid.name)
+        self.creatureType = creatureType != nil ? CreatureType(creatureType!) : configuration.species.defaultCreatureType
         self.descriptiveTraits = descriptiveTraits ?? [:]
         self.lifespan = lifespan
         self.baseSizes = baseSizes ?? ["4-7"]
@@ -108,7 +90,7 @@ extension SpeciesTraits: Codable {
         // Decode subspecies
         if var subspecies = try? values.nestedUnkeyedContainer(forKey: .subspecies) {
             while (!subspecies.isAtEnd) {
-                var subspeciesTraits = try subspecies.decode(SpeciesTraits.self)
+                var subspeciesTraits = try subspecies.decode(SpeciesTraits.self, configuration: configuration)
                 subspeciesTraits.blendTraits(from: self)
                 self.subspecies.append(subspeciesTraits)
             }
@@ -138,7 +120,7 @@ extension SpeciesTraits: Codable {
         }
     }
     
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: Encoder, configuration: Configuration) throws {
         var values = encoder.container(keyedBy: CodingKeys.self)
         
         try values.encode(name, forKey: .name)

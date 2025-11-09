@@ -39,7 +39,6 @@ extension Ethics: CustomStringConvertible {
 
 /// A measure of goodness vs. evil.
 public enum Morals: String, CaseIterable {
-    
     case good = "Good"
     case neutral = "Neutral"
     case evil = "Evil"
@@ -100,7 +99,6 @@ public struct Alignment {
     
     /// A combination of ethics and morals enumerations.
     public struct Kind {
-        
         public let ethics: Ethics
         public let morals: Morals
         
@@ -115,7 +113,6 @@ public struct Alignment {
             self.ethics = ethics
             self.morals = morals
         }
-        
     }
     
     internal let valueRange = -1.0...1.0

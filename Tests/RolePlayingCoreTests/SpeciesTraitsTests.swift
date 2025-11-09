@@ -14,6 +14,11 @@ import Foundation
 struct SpeciesTraitsTests {
     
     let decoder = JSONDecoder()
+    let configuration: Configuration
+    
+    init() throws {
+        configuration = try Configuration("TestConfiguration", from: .module)
+    }
     
     @Test("Decode basic species traits")
     func speciesTraits() async throws {
@@ -28,7 +33,7 @@ struct SpeciesTraitsTests {
             }
             """.data(using: .utf8)!
         
-        let speciesTraits = try decoder.decode(SpeciesTraits.self, from: traits)
+        let speciesTraits = try decoder.decode(SpeciesTraits.self, from: traits, configuration: configuration)
         
         #expect(speciesTraits.name == "Human", "name")
         #expect(speciesTraits.plural == "Humans", "plural")
@@ -48,7 +53,7 @@ struct SpeciesTraitsTests {
             }
             """.data(using: .utf8)!
         
-        let speciesTraits = try decoder.decode(SpeciesTraits.self, from: traits)
+        let speciesTraits = try decoder.decode(SpeciesTraits.self, from: traits, configuration: configuration)
         
         #expect(speciesTraits.name == "Giant Human", "name")
         #expect(speciesTraits.plural == "Giant Humans", "plural")
@@ -69,7 +74,7 @@ struct SpeciesTraitsTests {
             }
             """.data(using: .utf8)!
         
-        let speciesTraits = try decoder.decode(SpeciesTraits.self, from: traits)
+        let speciesTraits = try decoder.decode(SpeciesTraits.self, from: traits, configuration: configuration)
         
         #expect(speciesTraits.aliases.count == 1, "aliases count")
     }
@@ -89,7 +94,7 @@ struct SpeciesTraitsTests {
         let traits = json.data(using: .utf8)!
         
         #expect(throws: (any Error).self) {
-            _ = try decoder.decode(SpeciesTraits.self, from: traits)
+            _ = try decoder.decode(SpeciesTraits.self, from: traits, configuration: configuration)
         }
     }
     
@@ -112,7 +117,7 @@ struct SpeciesTraitsTests {
         }
         """.data(using: .utf8)!
         
-        let speciesTraits = try decoder.decode(SpeciesTraits.self, from: traits)
+        let speciesTraits = try decoder.decode(SpeciesTraits.self, from: traits, configuration: configuration)
         let subspeciesTraits = try #require(speciesTraits.subspecies.first)
         
         #expect(subspeciesTraits.name == "Subhuman", "name")
@@ -141,7 +146,7 @@ struct SpeciesTraitsTests {
         }
         """.data(using: .utf8)!
         
-        let speciesTraits = try decoder.decode(SpeciesTraits.self, from: traits)
+        let speciesTraits = try decoder.decode(SpeciesTraits.self, from: traits, configuration: configuration)
         let subspeciesTraits = try #require(speciesTraits.subspecies.first)
         
         #expect(subspeciesTraits.name == "Folk", "name")
@@ -154,18 +159,18 @@ struct SpeciesTraitsTests {
     
     @Test("Encode subspecies traits with blending")
     func encodingSubspeciesTraits() async throws {
-        let speciesTraits = SpeciesTraits(name: "Human", plural: "Humans", aliases: [], descriptiveTraits: [:], lifespan: 90, darkVision: 0, speed: 45)
+        let speciesTraits = SpeciesTraits(name: "Human", plural: "Humans", aliases: [], creatureType: configuration.species.defaultCreatureType, descriptiveTraits: [:], lifespan: 90, darkVision: 0, speed: 45)
         
         let encoder = JSONEncoder()
         
         // Test 1: Subspecies with blended traits
         do {
             var copyOfSpeciesTraits = speciesTraits
-            var subspeciesTraits = SpeciesTraits(name: "Subhuman", plural: "Subhumans", lifespan: 45, darkVision: 0, speed: 30)
+            var subspeciesTraits = SpeciesTraits(name: "Subhuman", plural: "Subhumans", creatureType: configuration.species.defaultCreatureType, lifespan: 45, darkVision: 0, speed: 30)
             subspeciesTraits.blendTraits(from: copyOfSpeciesTraits)
             copyOfSpeciesTraits.subspecies.append(subspeciesTraits)
             
-            let encoded = try encoder.encode(copyOfSpeciesTraits)
+            let encoded = try encoder.encode(copyOfSpeciesTraits, configuration: configuration)
             let dictionary = try JSONSerialization.jsonObject(with: encoded, options: []) as! [String: Any]
             
             // Confirm species traits
@@ -188,10 +193,10 @@ struct SpeciesTraitsTests {
         // Test 2: Subspecies with different overrides
         do {
             var copyOfSpeciesTraits = speciesTraits
-            let subspeciesTraits = SpeciesTraits(name: "Subhuman", plural: "Subhumans", aliases: ["Minions"], descriptiveTraits: ["background": "Something"], lifespan: 45, darkVision: 10, speed: 45)
+            let subspeciesTraits = SpeciesTraits(name: "Subhuman", plural: "Subhumans", aliases: ["Minions"], creatureType: configuration.species.defaultCreatureType, descriptiveTraits: ["background": "Something"], lifespan: 45, darkVision: 10, speed: 45)
             copyOfSpeciesTraits.subspecies.append(subspeciesTraits)
             
-            let encoded = try encoder.encode(copyOfSpeciesTraits)
+            let encoded = try encoder.encode(copyOfSpeciesTraits, configuration: configuration)
             let dictionary = try JSONSerialization.jsonObject(with: encoded, options: []) as! [String: Any]
             
             // Confirm subspecies traits

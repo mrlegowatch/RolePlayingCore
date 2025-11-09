@@ -147,7 +147,7 @@ struct PlayerTests {
             "extra languages": 1
         }
         """.data(using: .utf8)!
-        self.human = try! decoder.decode(SpeciesTraits.self, from: self.humanTraits)
+        self.human = try! decoder.decode(SpeciesTraits.self, from: self.humanTraits, configuration: configuration)
     }
     
     @Test("Create player with basic traits")

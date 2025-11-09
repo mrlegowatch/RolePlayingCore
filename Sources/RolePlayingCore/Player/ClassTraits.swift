@@ -181,5 +181,4 @@ extension ClassTraits {
     public func randomSkillProficiencies() -> [Skill] {
         return skillProficiencies.randomSkills(count: startingSkillCount)
     }
-
 }

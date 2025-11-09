@@ -74,7 +74,7 @@ public struct Configuration {
         
         for speciesFile in configurationFiles.species {
             let jsonData = try bundle.loadJSON(speciesFile)
-            let species = try jsonDecoder.decode(Species.self, from: jsonData)
+            let species = try jsonDecoder.decode(Species.self, from: jsonData, configuration: self)
             self.species.species += species.species
         }
         

@@ -17,17 +17,15 @@ public struct Backgrounds: CodableWithConfiguration {
         self.backgrounds = backgrounds
     }
     
-    public func find(_ backgroundName: String?) -> BackgroundTraits? {
+    public func find(_ backgroundName: String) -> BackgroundTraits? {
         return backgrounds.first(where: { $0.name == backgroundName })
     }
     
-    public var count: Int { return backgrounds.count }
+    public var count: Int { backgrounds.count }
     
     public subscript(index: Int) -> BackgroundTraits? {
-        get {
-            guard index >= 0 && index < backgrounds.count else { return nil }
-            return backgrounds[index]
-        }
+        guard index >= 0 && index < backgrounds.count else { return nil }
+        return backgrounds[index]
     }
     
     public func randomElementByIndex<G: RandomIndexGenerator>(using generator: inout G) -> BackgroundTraits {
