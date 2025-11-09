@@ -19,4 +19,10 @@ jobs:
     - name: Build
       run: swift build -v
     - name: Run tests
-      run: swift test -v
+      run: swift test --enable-code-coverage
+    - name: Generate coverage report
+      run: |
+        xcrun llvm-cov export -format="lcov" \
+          .build/debug/RolePlayingCorePackageTests.xctest/Contents/MacOS/RolePlayingCorePackageTests \
+          -instr-profile .build/debug/codecov/default.profdata > coverage.lcov
+
