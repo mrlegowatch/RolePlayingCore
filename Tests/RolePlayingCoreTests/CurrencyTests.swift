@@ -40,20 +40,20 @@ struct UnitCurrencyTests {
     
     @Test("Unit currency calculations")
     func unitCurrency() async throws {
-        #expect(UnitCurrency.baseUnit() == currencies.find("gp"), "base unit should be goldPieces")
+        #expect(UnitCurrency.baseUnit() == currencies["gp"], "base unit should be goldPieces")
         
-        let goldPieces = Money(value: 25, unit: currencies.find("gp")!)
-        let silverPieces = Money(value: 12, unit: currencies.find("sp")!)
-        let copperPieces = Money(value: 1, unit: currencies.find("cp")!)
-        let electrumPieces = Money(value: 2, unit: currencies.find("ep")!)
-        let platinumPieces = Money(value: 2, unit: currencies.find("pp")!)
+        let goldPieces = Money(value: 25, unit: currencies["gp"]!)
+        let silverPieces = Money(value: 12, unit: currencies["sp"]!)
+        let copperPieces = Money(value: 1, unit: currencies["cp"]!)
+        let electrumPieces = Money(value: 2, unit: currencies["ep"]!)
+        let platinumPieces = Money(value: 2, unit: currencies["pp"]!)
         
         let totalPieces = goldPieces + silverPieces - copperPieces + electrumPieces - platinumPieces
         
         // Should be 25 + 1.2 - 0.01 + 1 - 20
         #expect(abs(totalPieces.value - 7.19) < 0.0001, "adding coins should equal 7.19")
         
-        let totalPiecesInCopper = totalPieces.converted(to: currencies.find("cp")!)
+        let totalPiecesInCopper = totalPieces.converted(to: currencies["cp"]!)
         #expect(abs(totalPiecesInCopper.value - 719) < 0.01, "adding coins converted to copper should equal 719")
     }
     
@@ -72,11 +72,11 @@ struct UnitCurrencyTests {
         let gpDefault = formatter.string(from: goldPieces)
         #expect(gpDefault == "13.7 gp", "gold pieces")
         
-        let silverPieces = goldPieces.converted(to: currencies.find("sp")!)
+        let silverPieces = goldPieces.converted(to: currencies["sp"]!)
         let sp = formatter.string(from: silverPieces)
         #expect(sp == "137 sp", "silver pieces")
         
-        let platinumPieces = goldPieces.converted(to: currencies.find("pp")!)
+        let platinumPieces = goldPieces.converted(to: currencies["pp"]!)
         let ppProvided = formatter.string(from: platinumPieces)
         #expect(ppProvided == "1.37 pp", "platinum pieces")
         
@@ -109,8 +109,8 @@ struct UnitCurrencyTests {
         let cp = "3.2 cp".parseMoney(currencies)
         let unwrappedCp = try #require(cp, "coinage as cp should not be nil")
         #expect(abs(unwrappedCp.value - 3.2) < 0.0001, "coinage as string cp should be 3.2")
-        #expect(unwrappedCp.unit == currencies.find("cp"), "coinage as string cp should be copper pieces")
-        #expect(unwrappedCp.unit != currencies.find("pp"), "coinage as string cp should not be platinum pieces")
+        #expect(unwrappedCp.unit == currencies["cp"], "coinage as string cp should be copper pieces")
+        #expect(unwrappedCp.unit != currencies["pp"], "coinage as string cp should not be platinum pieces")
         
         let invalid = "hello".parseMoney(currencies)
         #expect(invalid == nil, "coinage as string with hello should be nil")
@@ -182,7 +182,7 @@ struct UnitCurrencyTests {
             }
         }
         
-        let moneyContainer = MoneyContainer(money: Money(value: 48.93, unit: currencies.find("sp")!))
+        let moneyContainer = MoneyContainer(money: Money(value: 48.93, unit: currencies["sp"]!))
         let encoder = JSONEncoder()
         let encoded = try encoder.encode(moneyContainer)
         let deserialized = try JSONSerialization.jsonObject(with: encoded, options: []) as? [String: String]

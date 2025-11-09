@@ -9,22 +9,25 @@
 import Foundation
 
 /// A collection of currencies.
-public struct Currencies {
+public struct Currencies: Codable {
             
-    /// A dictionary of all currently loaded currencies.
+    /// A dictionary of currencies indexed by currency symbol.
     private var allCurrencies: [String: UnitCurrency] = [:]
     
-    /// Returns a currencies instance that can access a currency by name, and a base unit currency (if one is specified).
-    init(_ currencies: [UnitCurrency] = []) {
+    /// A read-only array of currencies.
+    var all: [UnitCurrency] { Array(allCurrencies.values) }
+
+    /// Returns a currencies instance that can access a currency by symbol, and a base unit currency if specified.
+    public init(_ currencies: [UnitCurrency] = []) {
         add(currencies)
     }
- 
-    /// Returns the currency with the specified name.
-    ///
-    /// - parameter symbol: The shorthand name of the currency.
-    public func find(_ symbol: String) -> UnitCurrency? { allCurrencies[symbol] }
     
-    /// Adds the array of currencies to the collection.
+    /// Accesses the currency with the specified symbol.
+    public subscript(symbol: String) -> UnitCurrency? {
+        return allCurrencies[symbol]
+    }
+    
+    /// Adds the array of currencies to the collection. Updates the default or base unit currency if specified.
     mutating func add(_ currencies: [UnitCurrency]) {
         allCurrencies = Dictionary(currencies.map { ($0.symbol, $0) }, uniquingKeysWith: { _, last in last })
         
@@ -32,18 +35,14 @@ public struct Currencies {
             UnitCurrency.setBaseUnit(baseCurrency.value)
         }
     }
-    
-    /// Returns a read-only array of all currencies.
-    var all: [UnitCurrency] { Array(allCurrencies.values) }
-}
 
-extension Currencies: Codable {
+    // MARK: Codable conformance
     
     private enum CodingKeys: String, CodingKey {
         case currencies
     }
     
-    /// Decodes an array of currencies, setting the default currency if specified.
+    /// Decodes an array of currencies, updating the default or base unit currency if specified.
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         

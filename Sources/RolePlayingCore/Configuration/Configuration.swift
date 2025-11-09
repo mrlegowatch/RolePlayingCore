@@ -63,13 +63,13 @@ public struct Configuration {
         for skillsFile in configurationFiles.skills {
             let jsonData = try bundle.loadJSON(skillsFile)
             let skills = try jsonDecoder.decode(Skills.self, from: jsonData)
-            self.skills.skills += skills.skills
+            self.skills.add(skills.all)
         }
 
         for backgroundsFile in configurationFiles.backgrounds {
             let jsonData = try bundle.loadJSON(backgroundsFile)
             let backgrounds = try jsonDecoder.decode(Backgrounds.self, from: jsonData, configuration: self)
-            self.backgrounds.backgrounds += backgrounds.backgrounds
+            self.backgrounds.add(backgrounds.all)
         }
         
         for speciesFile in configurationFiles.species {

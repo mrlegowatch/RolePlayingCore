@@ -121,23 +121,20 @@ struct BackgroundsTests {
         #expect(backgrounds.count == 3, "Should have 3 backgrounds")
         
         // Then: The find method should locate backgrounds by name
-        let acolyte = try #require(backgrounds.find("Acolyte"))
+        let acolyte = try #require(backgrounds["Acolyte"])
         #expect(acolyte.name == "Acolyte", "Found background should be Acolyte")
         #expect(acolyte.feat == "Magic Initiate", "Acolyte feat should match")
         
-        let criminal = try #require(backgrounds.find("Criminal"))
+        let criminal = try #require(backgrounds["Criminal"])
         #expect(criminal.skillProficiencies.skillNames == ["Deception", "Stealth"], "Criminal skills should match")
         
         // Then: The find method should return nil for non-existent backgrounds
-        let nonExistent = backgrounds.find("Wizard")
+        let nonExistent = backgrounds["Wizard"]
         #expect(nonExistent == nil, "Should not find non-existent background")
         
         // Then: Subscript access should work correctly
-        let firstBackground = try #require(backgrounds[0])
-        #expect(firstBackground.name == "Acolyte", "First background should be Acolyte")
-        
-        let thirdBackground = try #require(backgrounds[2])
-        #expect(thirdBackground.name == "Soldier", "Third background should be Soldier")
+        _ = try #require(backgrounds[0])
+        _ = try #require(backgrounds[2])
         
         // Then: Round-trip encoding should preserve data
         let encoder = JSONEncoder()
@@ -146,7 +143,7 @@ struct BackgroundsTests {
         let decodedBackgrounds = try decoder.decode(Backgrounds.self, from: encodedData, configuration: configuration)
         
         #expect(decodedBackgrounds.count == backgrounds.count, "Count should match after round-trip")
-        #expect(decodedBackgrounds.find("Criminal")?.name == "Criminal", "Should find Criminal after round-trip")
-        #expect(decodedBackgrounds[1]?.toolProficiency == backgrounds[1]?.toolProficiency, "Tool proficiency should match after round-trip")
+        let decodedCriminal = try #require(decodedBackgrounds["Criminal"])
+        #expect(decodedCriminal.toolProficiency == backgrounds["Criminal"]?.toolProficiency, "Should find Criminal with matching tool proficiency after round-trip")
     }
 }
