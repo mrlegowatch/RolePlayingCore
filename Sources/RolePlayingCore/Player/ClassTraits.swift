@@ -119,16 +119,16 @@ extension ClassTraits: CodableWithConfiguration {
         let primaryAbility = try values.decodeIfPresent([Ability].self, forKey: .primaryAbility)
         let alternatePrimaryAbility = try values.decodeIfPresent([Ability].self, forKey: .alternatePrimaryAbility)
         let savingThrows = try values.decodeIfPresent([Ability].self, forKey: .savingThrows)
-        let startingSkillCount: Int? = try values.decodeIfPresent(Int.self, forKey: .startingSkillCount)
+        let startingSkillCount = try values.decodeIfPresent(Int.self, forKey: .startingSkillCount)
         
         // Decode skill proficiency names and resolve them using configuration
         let skillNames = try values.decodeIfPresent([String].self, forKey: .skillProficiencies) ?? []
-        let resolvedSkills: [Skill] = try skillNames.skills(from: configuration.skills)
+        let resolvedSkills = try skillNames.skills(from: configuration.skills)
         
         let weaponProficiencies = try values.decodeIfPresent([String].self, forKey: .weaponProficiencies)
         let toolProficiencies = try values.decodeIfPresent([String].self, forKey: .toolProficiencies)
-        let armorTraining: [String]? = try values.decodeIfPresent([String].self, forKey: .armorTraining)
-        let startingEquipment: [[String]]? = try values.decodeIfPresent([[String]].self, forKey: .startingEquipment)
+        let armorTraining = try values.decodeIfPresent([String].self, forKey: .armorTraining)
+        let startingEquipment = try values.decodeIfPresent([[String]].self, forKey: .startingEquipment)
         
         let experiencePoints = try values.decodeIfPresent([Int].self, forKey: .experiencePoints)
         

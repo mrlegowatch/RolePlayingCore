@@ -36,25 +36,25 @@ struct SpeciesNamesTests {
         let moreSpecies = try decoder.decode(Species.self, from: moreJsonData, configuration: configuration)
         
         let allSpecies = Species()
-        allSpecies.species = species.species + moreSpecies.species
+        allSpecies.add(species.all + moreSpecies.all)
         
         // TODO: random names are hard; for now, get code coverage.
-        let human = try #require(allSpecies.find("Human"))
+        let human = try #require(allSpecies["Human"])
         _ = speciesNames.randomName(speciesTraits: human, gender: .female)
         
-        let elf = try #require(allSpecies.find("Elf"))
+        let elf = try #require(allSpecies["Elf"])
         _ = speciesNames.randomName(speciesTraits: elf, gender: .male)
         
-        let mountainDwarf = try #require(allSpecies.find("Mountain Dwarf"))
+        let mountainDwarf = try #require(allSpecies["Mountain Dwarf"])
         _ = speciesNames.randomName(speciesTraits: mountainDwarf, gender: nil)
         
-        let stout = try #require(allSpecies.find("Stout"))
+        let stout = try #require(allSpecies["Stout"])
         _ = speciesNames.randomName(speciesTraits: stout, gender: nil)
         
-        let dragonborn = try #require(allSpecies.find("Dragonborn"))
+        let dragonborn = try #require(allSpecies["Dragonborn"])
         _ = speciesNames.randomName(speciesTraits: dragonborn, gender: nil)
         
-        let tiefling = try #require(allSpecies.find("Tiefling"))
+        let tiefling = try #require(allSpecies["Tiefling"])
         _ = speciesNames.randomName(speciesTraits: tiefling, gender: nil)
         
         let encoder = JSONEncoder()

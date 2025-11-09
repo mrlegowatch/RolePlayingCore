@@ -24,7 +24,8 @@ public struct Backgrounds: CodableWithConfiguration {
     
     /// Adds the array of background traits to the collection.
     mutating func add(_ backgrounds: [BackgroundTraits]) {
-        allBackgrounds = Dictionary(backgrounds.map { ($0.name, $0) }, uniquingKeysWith: { _, last in last })
+        let mappedBackgrounds = Dictionary(backgrounds.map { ($0.name, $0) }, uniquingKeysWith: { _, last in last })
+        allBackgrounds.merge(mappedBackgrounds, uniquingKeysWith: { _, last in last })
     }
     
     /// Accesses a background traits instance by name.

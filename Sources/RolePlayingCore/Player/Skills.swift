@@ -32,7 +32,8 @@ public struct Skills: Codable {
     
     /// Adds the array of skills to the collection.
     mutating func add(_ skills: [Skill]) {
-        allSkills = Dictionary(skills.map { ($0.name, $0) }, uniquingKeysWith: { _, last in last })
+        let mappedSkills = Dictionary(skills.map { ($0.name, $0) }, uniquingKeysWith: { _, last in last })
+        allSkills.merge(mappedSkills, uniquingKeysWith: { _, last in last })
     }
 
     /// Accesses a skill by name.

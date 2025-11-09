@@ -25,7 +25,7 @@ struct ConfigurationTests {
         for ability in abilities {
             var importantFor = [String]()
             
-            for classTraits in configuration.classes.classes {
+            for classTraits in configuration.classes.all {
                 if classTraits.primaryAbility.contains(ability) {
                     importantFor.append(classTraits.name)
                 }
