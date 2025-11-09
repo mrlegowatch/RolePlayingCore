@@ -1,14 +1,14 @@
-# RolePlayingCore  [![Build Status](https://travis-ci.org/mrlegowatch/RolePlayingCore.svg?branch=master)](https://travis-ci.org/mrlegowatch/RolePlayingCore) [![codecov.io](https://codecov.io/gh/mrlegowatch/RolePlayingCore/branch/master/graphs/badge.svg)](https://codecov.io/gh/mrlegowatch/RolePlayingCore/branch/master)
+# RolePlayingCore  ![Build Status](https://github.com/mrlegowatch/RolePlayingCore/workflows/Swift/badge.svg)
+![Code Coverage](https://codecov.io/gh/mrlegowatch/RolePlayingCore/branch/main/graph/badge.svg)
+![Swift Version](https://img.shields.io/badge/Swift-5.0-orange.svg)
+![Platform](https://img.shields.io/badge/platform-iOS%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)
+[![License](https://img.shields.io/github/license/mrlegowatch/RolePlayingCore)](LICENSE)
 
 This framework provides reusable role playing game core logic in the Swift language. It is a work-in-progress. Capabilities will be provided incrementally over time.
 
 The short-term goal for this project is to provide core logic for implementing a role playing game on macOS, iOS, and Linux. The architecture is intended to be flexible enough to support Open Game Content in addition to similar kinds of games, and nimble enough to minimize upstream dependencies. 
 
 The library is built as a generic Swift Package, and the Example character generator app uses the iOS SDK with SwiftUI. The longer-term goal is to leverage this as a framework or library for implementing role playing games and utilities on the desktop and web.
-
-## Requirements
-
-Xcode 26 or Swift 6 are required.
 
 ## Organization
 
