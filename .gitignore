@@ -1,2 +1,14 @@
 .DS_Store
 xcuserdata
+DerivedData
+.swiftpm/xcode/package.xcworkspace/
+.swiftpm/xcode/xcuserdata/
+
+# Build artifacts
+.build/
+
+# Other common ignores
+*.swp
+*.bak
+*.orig
+*.lock

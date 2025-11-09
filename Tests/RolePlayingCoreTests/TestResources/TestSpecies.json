@@ -1,0 +1,83 @@
+{
+    "creature types": [
+        { "name": "Aberration" },
+        { "name": "Beast" },
+        { "name": "Celestial" },
+        { "name": "Construct" },
+        { "name": "Dragon" },
+        { "name": "Elemental" },
+        { "name": "Fey" },
+        { "name": "Fiend" },
+        { "name": "Giant" },
+        { "name": "Humanoid", "is default": true },
+        { "name": "Monstrosity" },
+        { "name": "Ooze" },
+        { "name": "Plant" },
+        { "name": "Undead" }
+    ],
+    "species": [
+        {
+            "name": "Dwarf",
+            "plural": "Dwarves",
+            "lifespan": 350,
+            "base sizes": ["4-5 ft"],
+            "speed": 30,
+            "darkvision": 120,
+            "subspecies": [{
+                "name": "Hill Dwarf",
+                "plural": "Hill Dwarves",
+            },
+                {
+                    "name": "Mountain Dwarf",
+                    "plural": "Mountain Dwarves",
+                }]
+        },
+        {
+            "name": "Elf",
+            "plural": "Elves",
+            "lifespan": 750,
+            "base sizes": ["5-6 ft"],
+            "speed": 30,
+            "darkvision": 60,
+            "subspecies": [{
+                "name": "High Elf",
+                "plural": "High Elves"
+            },
+                {
+                    "name": "Wood Elf",
+                    "plural": "Wood Elves"
+                },
+                {
+                    "name": "Drow",
+                    "plural": "Drow",
+                    "aliases": ["Dark Elf"],
+                    "darkvision": 120
+                }]
+        },
+        {
+            "name": "Halfling",
+            "plural": "Halflings",
+            "lifespan": 150,
+            "base sizes": ["2-3 ft"],
+            "speed": 30,
+            "subspecies": [{
+                "name": "Lightfoot",
+                "plural": "Lightfoots",
+                "aliases": ["Tallfellow"]
+            },
+                {
+                    "name": "Stout",
+                    "plural": "Stouts",
+                    "aliases": ["Strongheart"]
+                }]
+            
+        },
+        {
+            "name": "Human",
+            "plural": "Humans",
+            "lifespan": 80,
+            "base sizes": ["4-7 ft", "2-4 ft"],
+            "speed": 30
+        }
+    ]
+}

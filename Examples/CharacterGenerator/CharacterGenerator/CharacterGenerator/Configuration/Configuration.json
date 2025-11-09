@@ -1,0 +1,8 @@
+{
+    "currencies": ["Currencies"],
+    "skills": ["Skills"],
+    "backgrounds": ["Backgrounds"],
+    "classes": ["Classes"],
+    "species": ["Species"],
+    "species names": "SpeciesNames"
+}

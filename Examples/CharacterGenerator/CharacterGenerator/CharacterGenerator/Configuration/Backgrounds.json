@@ -1,0 +1,132 @@
+{
+    "backgrounds": [
+        {
+        "name": "Acolyte",
+        "ability scores": ["Intelligence", "Wisdom", "Charisma"],
+        "feat": "Magic Initiate (Cleric)",
+        "skill proficiencies" : ["Insight", "Religion"],
+        "tool proficiency": "Calligrapher's Supplies",
+        "equipment": [["Calligrapher's Supplies", "Book (prayers)", "Holy Symbol", "Parchment (10 sheets)", "Robe", "8 GP"], ["50 GP"]]
+        },
+        {
+        "name": "Artisan",
+        "ability scores": ["Strength", "Dexterity", "Intelligence"],
+        "feat": "Crafter",
+        "skill proficiencies" : ["Investigation", "Persuasion"],
+        "tool proficiency": "Artisan's Tools",
+        "equipment": [["Artisan's Tools", "2 Pouches", "Traveler's Clothes", "32 GP"], ["50 GP"]]
+        },
+        {
+        "name": "Charlatan",
+        "ability scores": ["Dexterity", "Constitution", "Charisma"],
+        "feat": "Skilled",
+        "skill proficiencies" : ["Deception", "Sleight of Hand"],
+        "tool proficiency": "Forgery Kit",
+        "equipment": [["Forgery Kit", "Costume", "Fine Clothes", "15 GP"], ["50 GP"]]
+        },
+        {
+        "name": "Criminal",
+        "ability scores": ["Dexterity", "Constitution", "Intelligence"],
+        "feat": "Alert",
+        "skill proficiencies" : ["Sleight of Hand", "Stealth"],
+        "tool proficiency": "Thieves' Tools",
+        "equipment": [["2 Daggers", "Thieves' Tools", "Crowbar", "2 Pouches", "Traveler's Clothes", "16 GP"], ["50 GP"]]
+        },
+        {
+        "name": "Entertainer",
+        "ability scores": ["Strength", "Dexterity", "Charisma"],
+        "feat": "Musician",
+        "skill proficiencies" : ["Acrobatics", "Performance"],
+        "tool proficiency": "Musical Instrument",
+        "equipment": [["Musical Instrument", "2 Costumes", "Mirror", "Perfume", "Traveler's Clothes", "11 GP"], ["50 GP"]]
+        },
+        {
+        "name": "Farmer",
+        "ability scores": ["Strength", "Constitution", "Wisdom"],
+        "feat": "Tough",
+        "skill proficiencies" : ["Animal Handling", "Nature"],
+        "tool proficiency": "Carpenter's Tools",
+        "equipment": [["Sickle", "Carpenter's Tools", "Healer's Kit", "Iron Pot", "Shovel", "Traveler's Clothes", "30 GP"], ["50 GP"]]
+        },
+        {
+        "name": "Guard",
+        "ability scores": ["Strength", "Intelligence", "Wisdom"],
+        "feat": "Alert",
+        "skill proficiencies" : ["Athletics", "Perception"],
+        "tool proficiency": "Gaming Set",
+        "equipment": [["Spear", "Light Crossbow", "20 Bolts", "Gaming Set", "Hooded Lantern", "Manacles", "Quiver", "Traveler's Clothes", "12 GP"], ["50 GP"]]
+        },
+        {
+        "name": "Guide",
+        "ability scores": ["Dexterity", "Constitution", "Wisdom"],
+        "feat": "Magic Initiate (Druid)",
+        "skill proficiencies" : ["Stealth", "Survival"],
+        "tool proficiency": "Cartographer's Tools",
+        "equipment": [["Shortbow", "20 Arrows", "Cartographer's Tools", "Bedroll", "Quiver", "Tent", "Traveler's Clothes", "3 GP"], ["50 GP"]]
+        },
+        {
+        "name": "Hermit",
+        "ability scores": ["Constitution", "Wisdom", "Charisma"],
+        "feat": "Healer",
+        "skill proficiencies" : ["Medicine", "Religion"],
+        "tool proficiency": "Herbalism Kit",
+        "equipment": [["Quarterstaff", "Herbalism Kit", "Bedroll", "Book (philosophy)", "Lamp", "Oil (3 flasks)", "Traveler's Clothes", "16 GP"], ["50 GP"]]
+        },
+        {
+        "name": "Merchant",
+        "ability scores": ["Constitution", "Intelligence", "Charisma"],
+        "feat": "Lucky",
+        "skill proficiencies" : ["Animal Handling", "Persuasion"],
+        "tool proficiency": "Navigator's Tools",
+        "equipment": [["Navigator's Tools", "2 Pouches", "Traveler's Clothes", "22 GP"], ["50 GP"]]
+        },
+        {
+        "name": "Noble",
+        "ability scores": ["Strength", "Intelligence", "Charisma"],
+        "feat": "Skilled",
+        "skill proficiencies" : ["History", "Persuasion"],
+        "tool proficiency": "Gaming Set",
+        "equipment": [["Gaming Set", "Fine Clothes", "Perfume", "29 GP"], ["50 GP"]]
+        },
+        {
+        "name": "Sage",
+        "ability scores": ["Constitution", "Intelligence", "Wisdom"],
+        "feat": "Magic Initiate (Wizard)",
+        "skill proficiencies" : ["Arcana", "History"],
+        "tool proficiency": "Calligrapher's Supplies",
+        "equipment": [["Quarterstaff", "Calligrapher's Supplies", "Book (history)", "Parchment (8 sheets)", "Robe", "8 GP"], ["50 GP"]]
+        },
+        {
+        "name": "Sailor",
+        "ability scores": ["Strength", "Dexterity", "Wisdom"],
+        "feat": "Tavern Brawler",
+        "skill proficiencies" : ["Acrobatics", "Perception"],
+        "tool proficiency": "Navigator's Tools",
+        "equipment": [["Dagger", "Navigator's Tools", "Rope", "Traveler's Clothes", "20 GP"], ["50 GP"]]
+        },
+        {
+        "name": "Scribe",
+        "ability scores": ["Dexterity", "Intelligence", "Wisdom"],
+        "feat": "Skilled",
+        "skill proficiencies" : ["Investigation", "Perception"],
+        "tool proficiency": "Calligrapher's Supplies",
+        "equipment": [["Calligrapher's Supplies", "Fine Clothes", "Lamp", "Oil (3 flasks)", "Parchment (12 sheets)", "23 GP"], ["50 GP"]]
+        },
+        {
+        "name": "Soldier",
+        "ability scores": ["Strength", "Dexterity", "Constitution"],
+        "feat": "Savage Attacker",
+        "skill proficiencies" : ["Athletics", "Intimidation"],
+        "tool proficiency": "Gaming Set",
+        "equipment": [["Spear", "Shortbow", "20 Arrows", "Gaming Set", "Healer's Kit", "Quiver", "Traveler's Clothes", "14 GP"], ["50 GP"]]
+        },
+        {
+        "name": "Wayfarer",
+        "ability scores": ["Dexterity", "Wisdom", "Charisma"],
+        "feat": "Lucky",
+        "skill proficiencies" : ["Insight", "Stealth"],
+        "tool proficiency": "Thieves' Tools",
+        "equipment": [["2 Daggers", "Thieves' Tools", "Gaming Set", "Bedroll", "2 Pouches", "Traveler's Clothes", "16 GP"], ["50 GP"]]
+        }
+    ]
+}

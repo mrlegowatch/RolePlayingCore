@@ -1,0 +1,10 @@
+{
+    "currencies": ["TestCurrencies"],
+    "skills": ["TestSkills"],
+    "backgrounds": ["TestBackgrounds"],
+    "classes": ["TestClasses", "TestMoreClasses"],
+    "species": ["TestSpecies", "TestMoreSpecies"],
+    "players": ["TestPlayers"],
+    "species names": "TestSpeciesNames"
+}
+

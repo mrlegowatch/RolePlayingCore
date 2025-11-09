@@ -1,0 +1,41 @@
+{
+    "species": [
+              {
+              "name": "Dragonborn",
+              "plural": "Dragonborn",
+              "minimum age": 15,
+              "lifespan": 80,
+              "speed": 30,
+              "skill proficiencies": ["draconic ancestry", "breath weapon", "damage"],
+              "languages": ["Common", "Draconic"]
+              },
+              {
+              "name": "Gnome",
+              "plural": "Gnomes",
+              "lifespan": 425,
+              "speed": 25,
+              "darkvision": 60,
+              "skill proficiencies": ["gnome cunning"],
+              "languages": ["Common", "Gnomish"],
+              "subspecies": [{
+                           "name": "Forest Gnome",
+                           "plural": "Forest Gnomes",
+                           "skill proficiencies": ["natural illusionist", "speak with small beasts"]
+                           },
+                           {
+                           "name": "Rock Gnome",
+                           "plural": "Rock Gnomes",
+                           "skill proficiencies": ["artificers lore", "tinker"]
+                           }]
+              },
+              {
+              "name": "Tiefling",
+              "plural": "Tieflings",
+              "lifespan": 100,
+              "speed": 30,
+              "darkvision": 60,
+              "skill proficiencies": ["hellish resistance", "infernal legacy"],
+              "languages": ["Common", "Infernal"]
+              }
+              ]
+}

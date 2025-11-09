@@ -1,6 +1,0 @@
-{
-    "currencies": ["TestCurrencies"],
-    "classes": ["TestClasses", "TestMoreClasses"],
-    "species": ["TestSpecies", "TestMoreSpecies"],
-    "players": ["TestPlayers"]
-}

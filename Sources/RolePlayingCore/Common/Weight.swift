@@ -1,0 +1,101 @@
+//
+//  WeightParser.swift
+//  RolePlayingCore
+//
+//  Created by Brian Arnold on 2/5/17.
+//  Copyright © 2017 Brian Arnold. All rights reserved.
+//
+
+import Foundation
+
+/// Weight is a measurement of mass.
+public typealias Weight = Measurement<UnitMass>
+
+extension String {
+    
+    /// Parses "lb" or "kg" into a measurement of mass.
+    public var parseWeight: Weight? {
+        let trimmed = self.trimmingCharacters(in: .whitespaces)
+        
+        // Try parsing with unit markers
+        if let weight = parseWeightWithUnit(from: trimmed) {
+            return weight
+        }
+        
+        // Try parsing as a plain number (default to pounds)
+        if let value = Double(trimmed) {
+            return Weight(value: value, unit: .pounds)
+        }
+        
+        return nil
+    }
+    
+    private func parseWeightWithUnit(from string: String) -> Weight? {
+        let weightUnits: [(marker: String, unit: UnitMass)] = [
+            ("lb", .pounds),
+            ("kg", .kilograms)
+        ]
+        
+        for (marker, unit) in weightUnits {
+            if let range = string.range(of: marker) {
+                let valueString = string[..<range.lowerBound].trimmingCharacters(in: .whitespaces)
+                guard let value = Double(valueString) else { continue }
+                return Weight(value: value, unit: unit)
+            }
+        }
+        
+        return nil
+    }
+}
+
+public extension KeyedDecodingContainer  {
+    
+    /// Decodes either a number or a string into a Weight.
+    ///
+    /// - throws `DecodingError.dataCorrupted` if the weight could not be decoded.
+    func decode(_ type: Weight.Type, forKey key: K) throws -> Weight {
+        let weight: Weight?
+        
+        if let double = try? self.decode(Double.self, forKey: key) {
+            weight = Weight(value: double, unit: .pounds)
+        } else {
+            weight = try self.decode(String.self, forKey: key).parseWeight
+        }
+        
+        // Throw if we were unsuccessful parsing.
+        guard let weight else {
+            let context = DecodingError.Context(codingPath: self.codingPath, debugDescription: "Missing string or number for Weight value")
+            throw DecodingError.dataCorrupted(context)
+        }
+        
+        return weight
+    }
+    
+    /// Decodes either a number or a string into a Weight, if present.
+    ///
+    /// - throws `DecodingError.dataCorrupted` if the weight could not be decoded.
+    func decodeIfPresent(_ type: Weight.Type, forKey key: K) throws -> Weight? {
+        let weight: Weight?
+        
+        if let double = try? self.decode(Double.self, forKey: key) {
+            weight = Weight(value: double, unit: .pounds)
+        } else if let string = try self.decodeIfPresent(String.self, forKey: key) {
+            weight = string.parseWeight
+        } else {
+            weight = nil
+        }
+        
+        return weight
+    }
+}
+
+extension Weight {
+    
+    /// Returns a string representation of the weight suitable for display.
+    public var displayString: String {
+        let formatter = MeasurementFormatter()
+        formatter.unitStyle = .medium
+        formatter.unitOptions = .providedUnit
+        return formatter.string(from: self)
+    }
+}
