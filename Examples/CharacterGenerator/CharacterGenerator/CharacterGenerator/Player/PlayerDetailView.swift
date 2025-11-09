@@ -24,12 +24,11 @@ struct PlayerDetailView: View {
                 ForEach(0..<characterSheet.numberOfSections, id: \.self) { section in
                     HStack(spacing: 6) {
                         ForEach(0..<characterSheet.numberOfItems(in: section), id: \.self) { item in
-                            let indexPath = IndexPath(item: item, section: section)
-                            traitView(for: indexPath)
+                            traitView(for: section, item: item)
                         }
                     }
                     .padding()
-                    .background(Color(.secondarySystemBackground))
+                    .background(.background.secondary)
                     .cornerRadius(12)
                 }
             }
@@ -40,10 +39,10 @@ struct PlayerDetailView: View {
     }
     
     @ViewBuilder
-    private func traitView(for indexPath: IndexPath) -> some View {
-        let cellIdentifier = characterSheet.cellIdentifiers[indexPath.section][indexPath.item]
-        let keys = characterSheet.keys[indexPath.section][indexPath.item]
-        let label = characterSheet.labelKeys[indexPath.section][indexPath.item]
+    private func traitView(for section: Int, item: Int) -> some View {
+        let cellIdentifier = characterSheet.cellIdentifiers[section][item]
+        let keys = characterSheet.keys[section][item]
+        let label = characterSheet.labelKeys[section][item]
         
         switch cellIdentifier {
         case "labeledText":
@@ -198,7 +197,7 @@ struct AbilityItemView: View {
         }
         .padding(8)
         .frame(maxWidth: .infinity)
-        .background(Color(.tertiarySystemBackground))
+        .background(.background.tertiary)
         .cornerRadius(8)
     }
 }

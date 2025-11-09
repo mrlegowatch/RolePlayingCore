@@ -43,8 +43,12 @@ public final class UnitCurrency : Dimension, @unchecked Sendable {
         super.init(symbol: symbol, converter: converter)
     }
     
-    // TODO: In order to provide the other init method, I was required to implement
-    // this one as well. However, I don't know how to reconcile NSCoder with Codable.
+    // MARK: NSCoding Support
+    
+    /// Required initializer for NSCoding support, because `Dimension` conforms to `NSSecureCoding`.
+    /// Since this class has a custom initializer, Swift requires all designated initializers from the superclass.
+    ///
+    /// This library actually uses `Codable` for serialization (see below).
     public required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }

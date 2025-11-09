@@ -32,11 +32,11 @@ struct PlayerListView: View {
         }
         .navigationTitle("Characters")
         .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
+            ToolbarItem(placement: .topBarLeading) {
                 EditButton()
             }
             
-            ToolbarItem(placement: .navigationBarTrailing) {
+            ToolbarItem(placement: .topBarTrailing) {
                 Button {
                     appState.addNewCharacter()
                     if let newPlayer = appState.players[0] {
