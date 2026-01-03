@@ -1,5 +1,5 @@
 //
-//  JSONFile.swift
+//  Bundle+JSONFile.swift
 //  RolePlayingCore
 //
 //  Created by Brian Arnold on 2/15/17.
