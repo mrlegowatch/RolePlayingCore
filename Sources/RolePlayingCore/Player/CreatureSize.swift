@@ -84,6 +84,7 @@ extension Height {
             range = (4 * 12)..<(7 * 12)
         }
        
-        return Height(value: Double(range.randomElement()!) / 12.0, unit: .feet)
+        let randomInches = range.randomElement() ?? range.lowerBound
+        return Height(value: Double(randomInches) / 12.0, unit: .feet)
     }
 }

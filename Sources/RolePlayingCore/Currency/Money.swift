@@ -48,7 +48,10 @@ public extension String {
         let allCurrencies = configuration.all
         for currency in allCurrencies {
             if let range = self.range(of: currency.symbol), range.upperBound == self.endIndex {
-                value = Double(self[..<range.lowerBound].trimmingCharacters(in: .whitespaces))!
+                guard let parsed = Double(self[..<range.lowerBound].trimmingCharacters(in: .whitespaces)) else {
+                    continue
+                }
+                value = parsed
                 unit = currency
                 break
             }
@@ -72,11 +75,16 @@ extension MeasurementFormatter {
     /// long name; otherwise, the default formatting (naturalScale) will return an empty string.
     public func string<UnitType: UnitCurrency>(from measurement: Measurement<UnitType>) -> String {
         let unitToUse = unitOptions == .naturalScale ? UnitCurrency.baseUnit() : measurement.unit
-        let value = unitOptions == .naturalScale ? measurement.converted(to: UnitCurrency.baseUnit() as! UnitType).value : measurement.value
+        let value: Double
+        if unitOptions == .naturalScale, let baseUnit = UnitCurrency.baseUnit() as? UnitType {
+            value = measurement.converted(to: baseUnit).value
+        } else {
+            value = measurement.value
+        }
         let unitsString = unitStyle == .short || unitStyle == .medium ? unitToUse.symbol : value == 1.0 ? unitToUse.name : unitToUse.plural
         
-        let valueString = numberFormatter.string(from: NSNumber(value: value))!
+        let valueString = numberFormatter.string(from: NSNumber(value: value)) ?? "\(value)"
         let formatString = unitStyle == .short ? "%@%@" : "%@ %@"
-        return String(format: formatString, valueString, unitsString!)
+        return String(format: formatString, valueString, unitsString ?? unitToUse.symbol)
     }
 }

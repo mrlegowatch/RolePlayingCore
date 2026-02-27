@@ -23,7 +23,10 @@ public extension Dice {
     
     /// Returns a dice with a number of rolls corresponding to level.
     func hitDice(level: Int) -> Dice {
-        return SimpleDice(Die(rawValue: self.sides)!, times: level)
+        guard let die = Die(rawValue: self.sides) else {
+            fatalError("hitDice sides must be a valid Die, \(self.sides) is not")
+        }
+        return SimpleDice(die, times: level)
     }
 }
 
@@ -70,7 +73,8 @@ public class Player: CodableWithConfiguration {
     public var backgroundAbilityIncrease: AbilityScores {
         var scores = AbilityScores()
         for ability in backgroundAbilities {
-            scores[ability]! += 1
+            let current = scores[ability] ?? 0
+            scores[ability] = current + 1
         }
         return scores
     }

@@ -31,7 +31,10 @@ public struct CreatureTypes: Codable, Sendable {
     public var all: [CreatureType] { Array(allCreatureTypes.values) }
     
     public var defaultCreatureType: CreatureType {
-        all.first(where: { $0.isDefault != nil && $0.isDefault! })! //?? CreatureType("Humanoid")
+        guard let creatureType = all.first(where: { $0.isDefault == true }) else {
+            fatalError("No default creature type found.")
+        }
+        return creatureType
     }
     
     public init (_ creatureTypes: [CreatureType] = []) {

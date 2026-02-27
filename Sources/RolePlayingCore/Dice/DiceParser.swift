@@ -209,8 +209,10 @@ private struct DiceParserState {
         guard lastMathOperator == "-" else {
             throw DiceParseError.missingMinus
         }
+        guard let diceDrop = DroppingDice.Drop(rawValue: drop) else {
+            throw DiceParseError.invalidCharacter(drop)
+        }
         
-        let diceDrop = DroppingDice.Drop(rawValue: drop)!
         lastDice = DroppingDice(simpleDice, drop: diceDrop)
         lastMathOperator = nil
     }
