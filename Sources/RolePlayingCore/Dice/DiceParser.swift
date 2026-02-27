@@ -11,7 +11,7 @@ import Foundation
 // MARK: - Parse Errors
 
 /// Types of errors handled by this parser.
-enum DiceParseError: Error, LocalizedError {
+enum DiceParseError: Error, LocalizedError, Sendable {
     case invalidCharacter(String)
     case invalidDieSides(Int)
     case missingMinus

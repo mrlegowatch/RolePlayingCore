@@ -9,7 +9,7 @@
 import Foundation
 
 /// Traits representing a species.
-public struct SpeciesTraits {
+public struct SpeciesTraits: Sendable {
     
     public var name: String
     public var plural: String

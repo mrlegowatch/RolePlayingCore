@@ -7,7 +7,7 @@
 //
 
 /// Encapsulates a result with its intermediate values.
-public struct DiceRoll: CustomStringConvertible {
+public struct DiceRoll: CustomStringConvertible, Sendable {
 
     /// The result of the roll.
     public let result: Int

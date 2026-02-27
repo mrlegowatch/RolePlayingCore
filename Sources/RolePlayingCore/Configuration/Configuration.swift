@@ -12,7 +12,7 @@ import Foundation
 
 /// Represents a collection of JSON file names that belong to a bundle.
 /// Used by the `Configuration` to determine which files to load.
-public struct ConfigurationFiles: Decodable {
+public struct ConfigurationFiles: Decodable, Sendable {
     let currencies: [String]
     let skills: [String]
     let backgrounds: [String]

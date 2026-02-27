@@ -7,7 +7,7 @@
 //
 
 /// A skill proficiency associated with an ability.
-public struct Skill {
+public struct Skill: Sendable {
     public let name: String
     public let ability: Ability
 }
@@ -17,7 +17,7 @@ extension Skill: Codable { }
 extension Skill: Hashable { }
 
 /// A collection of skills.
-public struct Skills: Codable {
+public struct Skills: Codable, Sendable {
     
     /// A dictionary of skills indexed by name.
     private var allSkills: [String: Skill] = [:]

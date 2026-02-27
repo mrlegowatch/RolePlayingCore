@@ -8,7 +8,7 @@
 
 
 /// An enumeration of die sizes, from d4 to d%.
-public enum Die: Int {
+public enum Die: Int, Sendable {
     case d4 = 4
     case d6 = 6
     case d8 = 8

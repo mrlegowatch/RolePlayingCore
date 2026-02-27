@@ -9,7 +9,7 @@
 import Foundation
 
 /// A collection of class traits.
-public struct Classes: CodableWithConfiguration {
+public struct Classes: CodableWithConfiguration, Sendable {
     
     /// A dictionary of class traits indexed by name.
     private var allClasses: [String: ClassTraits] = [:]

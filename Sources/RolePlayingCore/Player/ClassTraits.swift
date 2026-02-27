@@ -9,7 +9,7 @@
 import Foundation
 
 /// Traits representing a class.
-public struct ClassTraits {
+public struct ClassTraits: Sendable {
     public var name: String
     public var plural: String
     public var hitDice: Dice

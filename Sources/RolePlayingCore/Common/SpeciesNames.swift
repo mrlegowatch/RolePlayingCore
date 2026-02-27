@@ -9,9 +9,9 @@
 import Foundation
 
 /// Collections of species names, for use in generating random names.
-public struct SpeciesNames: Codable {
+public struct SpeciesNames: Codable, Sendable {
     
-    struct FamilyNames: Codable {
+    struct FamilyNames: Codable, Sendable {
         let familyType: String
         let maleNames: [String]
         let femaleNames: [String]

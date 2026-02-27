@@ -6,7 +6,7 @@
 //
 
 /// Configuration errors that may be detected at runtime.
-public enum ConfigurationError: Error {
+public enum ConfigurationError: Error, Sendable {
     
     /// File is not found.
     case missingFile(String, String, String)

@@ -36,10 +36,10 @@ public struct CompoundDice: Dice {
     }
 
     /// Function signature for a math operator or function.
-    internal typealias MathOperator = (Int, Int) -> Int
+    internal typealias MathOperator = @Sendable (Int, Int) -> Int
     
     /// Mapping of strings to function signatures.
-    internal let mathOperators: [String: MathOperator] = ["+": (+), "-": (-), "x": (*), "*": (*), "/": (/)]
+    internal static let mathOperators: [String: MathOperator] = ["+": (+), "-": (-), "x": (*), "*": (*), "/": (/)]
     
     /// Rolls the dice on both sides and combines them with the math operator,
     /// returning the result.
@@ -47,7 +47,7 @@ public struct CompoundDice: Dice {
         let lhsRoll = lhs.roll()
         let rhsRoll = rhs.roll()
         
-        guard let operation = mathOperators[mathOperator] else {
+        guard let operation = Self.mathOperators[mathOperator] else {
             // Fallback if operator is unknown (shouldn't happen if properly constructed)
             return DiceRoll(lhsRoll.result, "\(lhsRoll.description) ? \(rhsRoll.description)")
         }

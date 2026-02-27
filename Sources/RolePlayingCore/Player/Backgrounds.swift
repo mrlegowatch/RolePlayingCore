@@ -9,7 +9,7 @@
 import Foundation
 
 /// A collection of backgrounds.
-public struct Backgrounds: CodableWithConfiguration {
+public struct Backgrounds: CodableWithConfiguration, Sendable {
     
     /// A dictionary of background traits indexed by name.
     private var allBackgrounds: [String: BackgroundTraits] = [:]

@@ -13,7 +13,7 @@ public struct DroppingDice: Dice {
     public let dice: SimpleDice
     
     /// Options to drop the lowest or highest roll.
-    public enum Drop: String, CaseIterable {
+    public enum Drop: String, CaseIterable, Sendable {
         case lowest = "L"
         case highest = "H"
     }
