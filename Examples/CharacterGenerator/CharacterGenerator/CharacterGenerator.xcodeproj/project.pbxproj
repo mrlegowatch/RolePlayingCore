@@ -202,7 +202,7 @@
 			mainGroup = B6E1AD742EB3BC2C00000512;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				B6E1ADA92EB3BC5B00000512 /* XCLocalSwiftPackageReference "../../../../RolePlayingCore" */,
+				B6DAAC342F520E9600B22F9B /* XCLocalSwiftPackageReference "../../../../RolePlayingCore" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = B6E1AD7E2EB3BC2C00000512 /* Products */;
@@ -638,7 +638,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		B6E1ADA92EB3BC5B00000512 /* XCLocalSwiftPackageReference "../../../../RolePlayingCore" */ = {
+		B6DAAC342F520E9600B22F9B /* XCLocalSwiftPackageReference "../../../../RolePlayingCore" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../../../RolePlayingCore;
 		};
