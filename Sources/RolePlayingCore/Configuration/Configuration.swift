@@ -43,15 +43,15 @@ public struct ConfigurationFiles: Decodable {
 public struct Configuration {
     let bundle: Bundle
     let decoder = JSONDecoder()
-    public var configurationFiles: ConfigurationFiles
+    public private(set) var configurationFiles: ConfigurationFiles
     
-    public var currencies = Currencies()
-    public var skills = Skills()
-    public var backgrounds = Backgrounds()
-    public var creatureTypes = CreatureTypes()
-    public var species = Species()
-    public var classes = Classes()
-    public var players = Players()
+    public private(set) var currencies = Currencies()
+    public private(set) var skills = Skills()
+    public private(set) var backgrounds = Backgrounds()
+    public private(set) var creatureTypes = CreatureTypes()
+    public private(set) var species = Species()
+    public private(set) var classes = Classes()
+    public private(set) var players = Players()
     
     // MARK: - Initialization
     
@@ -74,7 +74,7 @@ public struct Configuration {
     ///
     /// - Parameter configurationFiles: The configuration files structure containing file names.
     /// - Throws: An error if any file cannot be loaded or decoded.
-    public mutating func load(_ configurationFiles: ConfigurationFiles) throws {
+    mutating func load(_ configurationFiles: ConfigurationFiles) throws {
         try loadCurrencies(from: configurationFiles.currencies)
         try loadSkills(from: configurationFiles.skills)
         try loadBackgrounds(from: configurationFiles.backgrounds)
