@@ -40,17 +40,15 @@ struct ClassTraitsTests {
         
         #expect(classTraits.name == "Fighter", "name")
         #expect(classTraits.plural == "Fighters", "plural")
-        let hitDice = classTraits.hitDice as? Dice
-        #expect(hitDice != nil, "hit dice")
-        #expect(hitDice?.sides == 10, "hit dice sides")
-        #expect(hitDice?.times == 1, "hit dice times")
-        
+        #expect(classTraits.hitDice.sides == 10, "hit dice sides")
+        #expect(classTraits.hitDice.times == 1, "hit dice times")
+
         let primaryAbility: [Ability] = classTraits.primaryAbility
         #expect(primaryAbility == [Ability("Strength")], "primary ability")
-        
+
         let savingThrows: [Ability] = classTraits.savingThrows
         #expect(savingThrows == [Ability("Strength"), Ability("Constitution")], "saving throws")
-        
+
         let startingWealth = classTraits.startingWealth as? CompoundDice
         #expect(startingWealth != nil, "starting wealth")
         
@@ -72,11 +70,9 @@ struct ClassTraitsTests {
         
         #expect(classTraits.name == "Fighter", "name")
         #expect(classTraits.plural == "Fighters", "plural")
-        let hitDice = classTraits.hitDice as? Dice
-        #expect(hitDice != nil, "hit dice")
-        #expect(hitDice?.sides == 10, "hit dice sides")
-        #expect(hitDice?.times == 1, "hit dice times")
-        
+        #expect(classTraits.hitDice.sides == 10, "hit dice sides")
+        #expect(classTraits.hitDice.times == 1, "hit dice times")
+
         let primaryAbility: [Ability] = classTraits.primaryAbility
         #expect(primaryAbility.count == 0, "primary ability")
         
@@ -117,7 +113,7 @@ struct ClassTraitsTests {
         let classTraits = ClassTraits(name: "Fighter",
                                       plural: "Fighters",
                                       hitDice: Dice(.d10),
-                                      startingWealth: CompoundDice(.d4, times: 5, modifier: 10, mathOperator: "x"))
+                                      startingWealth: CompoundDice(.d4, times: 5, modifier: 10, mathOperator: .multiply))
         
         let encoded = try encoder.encode(classTraits, configuration: configuration)
         let dictionary = try JSONSerialization.jsonObject(with: encoded, options: []) as? [String: Any]
@@ -332,7 +328,7 @@ struct ClassTraitsTests {
             name: "Bard",
             plural: "Bards",
             hitDice: Dice(.d8),
-            startingWealth: CompoundDice(.d4, times: 5, modifier: 10, mathOperator: "x"),
+            startingWealth: CompoundDice(.d4, times: 5, modifier: 10, mathOperator: .multiply),
             descriptiveTraits: ["Spellcasting": "Can cast spells", "Bardic Inspiration": "Can inspire others"],
             primaryAbility: [Ability("Charisma")],
             alternatePrimaryAbility: [Ability("Dexterity")],

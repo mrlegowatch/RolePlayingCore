@@ -20,13 +20,10 @@ public extension AbilityScores {
     }
 }
 
-public extension Rollable {
+public extension Dice {
 
     /// Returns a dice with a number of rolls corresponding to level.
     func hitDice(level: Int) -> Rollable {
-        guard let die = Die(rawValue: self.sides) else {
-            fatalError("hitDice sides must be a valid Die, \(self.sides) is not")
-        }
         return Dice(die, times: level)
     }
 }

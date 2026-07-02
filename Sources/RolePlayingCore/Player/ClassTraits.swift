@@ -13,7 +13,7 @@ import SwiftDice
 public struct ClassTraits: Sendable {
     public var name: String
     public var plural: String
-    public var hitDice: Rollable
+    public var hitDice: Dice
     public var startingWealth: Rollable
     
     public var descriptiveTraits: [String: String]
@@ -55,7 +55,7 @@ public struct ClassTraits: Sendable {
     
     public init(name: String,
                 plural: String,
-                hitDice: Rollable,
+                hitDice: Dice,
                 startingWealth: Rollable,
                 descriptiveTraits: [String: String] = [:],
                 primaryAbility: [Ability] = [],
@@ -113,7 +113,14 @@ extension ClassTraits: CodableWithConfiguration {
         // Try decoding properties
         let name = try values.decode(String.self, forKey: .name)
         let plural = try values.decode(String.self, forKey: .plural)
-        let hitDice = try values.decode(Rollable.self, forKey: .hitDice)
+        let hitDiceRollable = try values.decode(Rollable.self, forKey: .hitDice)
+        guard let hitDice = hitDiceRollable as? Dice else {
+            let context = DecodingError.Context(
+                codingPath: values.codingPath + [CodingKeys.hitDice],
+                debugDescription: "Hit dice must be a simple die expression (e.g. \"d10\"), got \"\(hitDiceRollable)\""
+            )
+            throw DecodingError.dataCorrupted(context)
+        }
         let startingWealth = try values.decode(Rollable.self, forKey: .startingWealth)
         
         let descriptiveTraits = try values.decodeIfPresent([String:String].self, forKey: .descriptiveTraits)
