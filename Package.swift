@@ -16,6 +16,7 @@ let package = Package(
             targets: ["RolePlayingCore"]),
     ],
     dependencies: [
+        .package(url: "https://github.com/mrlegowatch/SwiftDice.git", branch: "main"),
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
