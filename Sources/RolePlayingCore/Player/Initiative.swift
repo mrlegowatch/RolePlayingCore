@@ -6,6 +6,8 @@
 //  Copyright © 2025 Brian Arnold. All rights reserved.
 //
 
+import SwiftDice
+
 // TODO: Make this public, add tests, etc.
 struct Initiative {
     let player: Player

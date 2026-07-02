@@ -7,13 +7,14 @@
 //
 
 import Foundation
+import SwiftDice
 
 /// Traits representing a class.
 public struct ClassTraits: Sendable {
     public var name: String
     public var plural: String
-    public var hitDice: Dice
-    public var startingWealth: Dice
+    public var hitDice: Rollable
+    public var startingWealth: Rollable
     
     public var descriptiveTraits: [String: String]
     public var primaryAbility: [Ability]
@@ -54,8 +55,8 @@ public struct ClassTraits: Sendable {
     
     public init(name: String,
                 plural: String,
-                hitDice: Dice,
-                startingWealth: Dice,
+                hitDice: Rollable,
+                startingWealth: Rollable,
                 descriptiveTraits: [String: String] = [:],
                 primaryAbility: [Ability] = [],
                 alternatePrimaryAbility: [Ability]? = nil,
@@ -112,8 +113,8 @@ extension ClassTraits: CodableWithConfiguration {
         // Try decoding properties
         let name = try values.decode(String.self, forKey: .name)
         let plural = try values.decode(String.self, forKey: .plural)
-        let hitDice = try values.decode(Dice.self, forKey: .hitDice)
-        let startingWealth = try values.decode(Dice.self, forKey: .startingWealth)
+        let hitDice = try values.decode(Rollable.self, forKey: .hitDice)
+        let startingWealth = try values.decode(Rollable.self, forKey: .startingWealth)
         
         let descriptiveTraits = try values.decodeIfPresent([String:String].self, forKey: .descriptiveTraits)
         let primaryAbility = try values.decodeIfPresent([Ability].self, forKey: .primaryAbility)

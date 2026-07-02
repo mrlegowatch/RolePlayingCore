@@ -8,6 +8,7 @@
 
 import Testing
 import RolePlayingCore
+import SwiftDice
 import Foundation
 
 @Suite("ClassTraits Tests")
@@ -39,7 +40,7 @@ struct ClassTraitsTests {
         
         #expect(classTraits.name == "Fighter", "name")
         #expect(classTraits.plural == "Fighters", "plural")
-        let hitDice = classTraits.hitDice as? SimpleDice
+        let hitDice = classTraits.hitDice as? Dice
         #expect(hitDice != nil, "hit dice")
         #expect(hitDice?.sides == 10, "hit dice sides")
         #expect(hitDice?.times == 1, "hit dice times")
@@ -71,7 +72,7 @@ struct ClassTraitsTests {
         
         #expect(classTraits.name == "Fighter", "name")
         #expect(classTraits.plural == "Fighters", "plural")
-        let hitDice = classTraits.hitDice as? SimpleDice
+        let hitDice = classTraits.hitDice as? Dice
         #expect(hitDice != nil, "hit dice")
         #expect(hitDice?.sides == 10, "hit dice sides")
         #expect(hitDice?.times == 1, "hit dice times")
@@ -115,7 +116,7 @@ struct ClassTraitsTests {
         
         let classTraits = ClassTraits(name: "Fighter",
                                       plural: "Fighters",
-                                      hitDice: SimpleDice(.d10),
+                                      hitDice: Dice(.d10),
                                       startingWealth: CompoundDice(.d4, times: 5, modifier: 10, mathOperator: "x"))
         
         let encoded = try encoder.encode(classTraits, configuration: configuration)
@@ -214,8 +215,8 @@ struct ClassTraitsTests {
         let classTraits = ClassTraits(
             name: "Test",
             plural: "Tests",
-            hitDice: SimpleDice(.d8),
-            startingWealth: SimpleDice(.d4),
+            hitDice: Dice(.d8),
+            startingWealth: Dice(.d4),
             experiencePoints: [0, 300, 900, 2700]
         )
         
@@ -229,8 +230,8 @@ struct ClassTraitsTests {
         let classTraits = ClassTraits(
             name: "Test",
             plural: "Tests",
-            hitDice: SimpleDice(.d8),
-            startingWealth: SimpleDice(.d4),
+            hitDice: Dice(.d8),
+            startingWealth: Dice(.d4),
             experiencePoints: [0, 300, 900]
         )
         
@@ -330,7 +331,7 @@ struct ClassTraitsTests {
         let original = ClassTraits(
             name: "Bard",
             plural: "Bards",
-            hitDice: SimpleDice(.d8),
+            hitDice: Dice(.d8),
             startingWealth: CompoundDice(.d4, times: 5, modifier: 10, mathOperator: "x"),
             descriptiveTraits: ["Spellcasting": "Can cast spells", "Bardic Inspiration": "Can inspire others"],
             primaryAbility: [Ability("Charisma")],

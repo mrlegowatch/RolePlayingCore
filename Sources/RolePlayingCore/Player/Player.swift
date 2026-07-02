@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import SwiftDice
 
 public extension AbilityScores {
     
@@ -19,14 +20,14 @@ public extension AbilityScores {
     }
 }
 
-public extension Dice {
-    
+public extension Rollable {
+
     /// Returns a dice with a number of rolls corresponding to level.
-    func hitDice(level: Int) -> Dice {
+    func hitDice(level: Int) -> Rollable {
         guard let die = Die(rawValue: self.sides) else {
             fatalError("hitDice sides must be a valid Die, \(self.sides) is not")
         }
-        return SimpleDice(die, times: level)
+        return Dice(die, times: level)
     }
 }
 
@@ -93,7 +94,7 @@ public class Player: CodableWithConfiguration {
     public var speed: Int { speciesTraits.speed }
     public var size: CreatureSize { CreatureSize(from: height) }
     
-    public var hitDice: Dice { classTraits.hitDice.hitDice(level: level) }
+    public var hitDice: Rollable { classTraits.hitDice.hitDice(level: level) }
     
     public var proficiencyBonus: Int { 2 + (level - 1) / 4 }
     public var passivePerception: Int { 10 + modifiers[.wisdom] }

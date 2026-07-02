@@ -8,6 +8,7 @@
 
 import Testing
 @testable import RolePlayingCore
+import SwiftDice
 import Foundation
 
 @Suite("Player Tests")
@@ -506,7 +507,7 @@ struct PlayerTests {
     @Test("Verify dice hit dice extension")
     func diceHitDiceExtension() async throws {
         // Test the hitDice extension on Dice
-        let d6 = SimpleDice(.d6)
+        let d6 = Dice(.d6)
         
         let level1HitDice = d6.hitDice(level: 1)
         #expect("\(level1HitDice)" == "d6")

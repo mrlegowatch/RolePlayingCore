@@ -15,15 +15,25 @@ let package = Package(
             name: "RolePlayingCore",
             targets: ["RolePlayingCore"]),
     ],
+    dependencies: [
+//        .package(url: "https://github.com/mrlegowatch/SwiftDice.git", branch: "main"),
+        .package(path: "../SwiftDice"),
+    ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
             name: "RolePlayingCore",
+            dependencies: [
+                .product(name: "SwiftDice", package: "SwiftDice"),
+            ],
             path: "Sources/RolePlayingCore"),
         .testTarget(
             name: "RolePlayingCoreTests",
-            dependencies: ["RolePlayingCore"],
+            dependencies: [
+                "RolePlayingCore",
+                .product(name: "SwiftDice", package: "SwiftDice"),
+            ],
             path: "Tests/RolePlayingCoreTests",
             resources: [
                 .process("TestResources")
