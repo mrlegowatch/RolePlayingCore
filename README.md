@@ -1,4 +1,4 @@
-# RolePlayingCore  ![Build Status](https://github.com/mrlegowatch/RolePlayingCore/workflows/Swift/badge.svg)
+# RolePlayingCore  [![Build Status](https://github.com/mrlegowatch/RolePlayingCore/workflows/Build/badge.svg)](https://github.com/mrlegowatch/RolePlayingCore/workflows/swift.yml)
 ![Code Coverage](https://codecov.io/gh/mrlegowatch/RolePlayingCore/branch/development/graph/badge.svg)
 ![Swift Version](https://img.shields.io/badge/Swift-6.0-orange.svg)
 ![Platform](https://img.shields.io/badge/platform-iOS%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)
