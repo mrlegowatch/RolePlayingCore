@@ -1,13 +1,13 @@
 {
-  "originHash" : "78d5ea74dc2681f1546c44a016394645814e561d4a9fb06ee5dc90299e296c68",
+  "originHash" : "d4ef13a725daffe1a5a355ea2f749c3a689b7060f38a4af9ce267eef68a06d44",
   "pins" : [
     {
       "identity" : "swiftdice",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/mrlegowatch/SwiftDice.git",
       "state" : {
-        "branch" : "development",
-        "revision" : "70b5d9ff1e14fa86f4feb6fd40157096e41bc031"
+        "branch" : "main",
+        "revision" : "b7009cc58c5b84a7da121bcb1c1b748ad9dd8c15"
       }
     }
   ],
