@@ -165,8 +165,8 @@ extension ClassTraits: CodableWithConfiguration {
         
         try values.encode(name, forKey: .name)
         try values.encode(plural, forKey: .plural)
-        try values.encode("\(hitDice)", forKey: .hitDice)
-        try values.encode("\(startingWealth)", forKey: .startingWealth)
+        try values.encode(hitDice, forKey: .hitDice)
+        try values.encode(startingWealth, forKey: .startingWealth)
         
         try values.encode(descriptiveTraits, forKey: .descriptiveTraits)
         try values.encode(primaryAbility, forKey: .primaryAbility)

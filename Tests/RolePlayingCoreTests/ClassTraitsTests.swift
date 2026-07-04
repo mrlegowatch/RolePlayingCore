@@ -112,8 +112,8 @@ struct ClassTraitsTests {
         
         let classTraits = ClassTraits(name: "Fighter",
                                       plural: "Fighters",
-                                      hitDice: Dice(.d10),
-                                      startingWealth: CompoundDice(.d4, times: 5, modifier: 10, mathOperator: .multiply))
+                                      hitDice: .d10,
+                                      startingWealth: 5 * .d4 * 10)
         
         let encoded = try encoder.encode(classTraits, configuration: configuration)
         let dictionary = try JSONSerialization.jsonObject(with: encoded, options: []) as? [String: Any]
@@ -211,8 +211,8 @@ struct ClassTraitsTests {
         let classTraits = ClassTraits(
             name: "Test",
             plural: "Tests",
-            hitDice: Dice(.d8),
-            startingWealth: Dice(.d4),
+            hitDice: .d8,
+            startingWealth: Dice.d4,
             experiencePoints: [0, 300, 900, 2700]
         )
         
@@ -226,8 +226,8 @@ struct ClassTraitsTests {
         let classTraits = ClassTraits(
             name: "Test",
             plural: "Tests",
-            hitDice: Dice(.d8),
-            startingWealth: Dice(.d4),
+            hitDice: .d8,
+            startingWealth: Dice.d4,
             experiencePoints: [0, 300, 900]
         )
         
@@ -327,8 +327,8 @@ struct ClassTraitsTests {
         let original = ClassTraits(
             name: "Bard",
             plural: "Bards",
-            hitDice: Dice(.d8),
-            startingWealth: CompoundDice(.d4, times: 5, modifier: 10, mathOperator: .multiply),
+            hitDice: .d8,
+            startingWealth: 5 * .d4 * 10,
             descriptiveTraits: ["Spellcasting": "Can cast spells", "Bardic Inspiration": "Can inspire others"],
             primaryAbility: [Ability("Charisma")],
             alternatePrimaryAbility: [Ability("Dexterity")],
