@@ -103,18 +103,18 @@ public extension KeyedDecodingContainer  {
     ///
     /// - throws `DecodingError.dataCorrupted` if the height could not be decoded.
     func decode(_ type: Height.Type, forKey key: K) throws -> Height {
-        let height: Height?
+        let height: Height
         
         if let double = try? self.decode(Double.self, forKey: key) {
             height = Height(value: double, unit: .feet)
         } else {
-            height = try self.decode(String.self, forKey: key).parseHeight
-        }
-        
-        // Throw if we were unsuccessful parsing.
-        guard let height else {
-            let context = DecodingError.Context(codingPath: self.codingPath, debugDescription: "Missing string or number for Height value")
-            throw DecodingError.dataCorrupted(context)
+            let heightString = try self.decode(String.self, forKey: key)
+            if let parsedHeight = heightString.parseHeight {
+                height = parsedHeight
+            } else {
+                let context = DecodingError.Context(codingPath: self.codingPath, debugDescription: "Malformed string for Height: \(heightString)")
+                throw DecodingError.dataCorrupted(context)
+            }
         }
         
         return height
@@ -126,10 +126,15 @@ public extension KeyedDecodingContainer  {
     func decodeIfPresent(_ type: Height.Type, forKey key: K) throws -> Height? {
         let height: Height?
         
-        if let double = try? self.decode(Double.self, forKey: key) {
+        if let double = try? self.decodeIfPresent(Double.self, forKey: key) {
             height = Height(value: double, unit: .feet)
-        } else if let string = try self.decodeIfPresent(String.self, forKey: key) {
-            height = string.parseHeight
+        } else if let heightString = try self.decodeIfPresent(String.self, forKey: key) {
+            if let parsedHeight = heightString.parseHeight {
+                height = parsedHeight
+            } else {
+                let context = DecodingError.Context(codingPath: self.codingPath, debugDescription: "Malformed string for Height: \(heightString)")
+                throw DecodingError.dataCorrupted(context)
+            }
         } else {
             height = nil
         }

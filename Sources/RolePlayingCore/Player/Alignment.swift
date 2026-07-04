@@ -7,7 +7,7 @@
 //
 
 /// A measure of order, obedience, and following rules vs. disorder, and disobedience.
-public enum Ethics: String, CaseIterable {
+public enum Ethics: String, CaseIterable, Sendable {
     case lawful = "Lawful"
     case neutral = "Neutral"
     case chaotic = "Chaotic"
@@ -38,7 +38,7 @@ extension Ethics: CustomStringConvertible {
 }
 
 /// A measure of goodness vs. evil.
-public enum Morals: String, CaseIterable {
+public enum Morals: String, CaseIterable, Sendable {
     case good = "Good"
     case neutral = "Neutral"
     case evil = "Evil"
@@ -95,10 +95,10 @@ extension String {
 }
 
 /// A combined measure of ethics and morals.
-public struct Alignment {
+public struct Alignment: Sendable {
     
     /// A combination of ethics and morals enumerations.
-    public struct Kind {
+    public struct Kind: Sendable {
         public let ethics: Ethics
         public let morals: Morals
         

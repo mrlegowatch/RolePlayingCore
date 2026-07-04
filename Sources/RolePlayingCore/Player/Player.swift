@@ -7,23 +7,16 @@
 //
 
 import Foundation
+import SwiftDice
 
 public extension AbilityScores {
     
     /// Sets the ability scores to random values using '4d6-L'.
     mutating func roll() {
-        let dice = DroppingDice(.d6, times: 4, drop: .lowest)
+        let dice = (4 * .d6).dropping(.lowest)
         for ability in abilities {
             scores[ability] = dice.roll().result
         }
-    }
-}
-
-public extension Dice {
-    
-    /// Returns a dice with a number of rolls corresponding to level.
-    func hitDice(level: Int) -> Dice {
-        return SimpleDice(Die(rawValue: self.sides)!, times: level)
     }
 }
 
@@ -70,7 +63,8 @@ public class Player: CodableWithConfiguration {
     public var backgroundAbilityIncrease: AbilityScores {
         var scores = AbilityScores()
         for ability in backgroundAbilities {
-            scores[ability]! += 1
+            let current = scores[ability] ?? 0
+            scores[ability] = current + 1
         }
         return scores
     }
@@ -89,7 +83,7 @@ public class Player: CodableWithConfiguration {
     public var speed: Int { speciesTraits.speed }
     public var size: CreatureSize { CreatureSize(from: height) }
     
-    public var hitDice: Dice { classTraits.hitDice.hitDice(level: level) }
+    public var hitDice: Rollable { level * classTraits.hitDice }
     
     public var proficiencyBonus: Int { 2 + (level - 1) / 4 }
     public var passivePerception: Int { 10 + modifiers[.wisdom] }
@@ -161,12 +155,12 @@ public class Player: CodableWithConfiguration {
         }
         
         // Resolve speciesTraits from configuration
-        guard let speciesTraits = configuration.species.find(speciesName) else {
+        guard let speciesTraits = configuration.species[speciesName] else {
             throw missingTypeError("species", speciesName)
         }
         
         // Resolve classTraits from configuration
-        guard let classTraits = configuration.classes.find(className) else {
+        guard let classTraits = configuration.classes[className] else {
             throw missingTypeError("class", className)
         }
         

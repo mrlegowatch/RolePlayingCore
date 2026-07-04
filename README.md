@@ -10,13 +10,16 @@ The short-term goal for this project is to provide core logic for implementing a
 
 The library is built as a generic Swift Package, and the Example character generator app uses the iOS SDK with SwiftUI. The longer-term goal is to leverage this as a framework or library for implementing role playing games and utilities on the desktop and web.
 
+## Dependencies
+
+RolePlayingCore depends on [SwiftDice](https://github.com/mrlegowatch/SwiftDice), a separate package providing the `Rollable` protocol, dice types, and dice notation parser.
+
 ## Organization
 
 The current organizational groupings include:
 
 * **Common**: common utilities such as height and weight, and a runtime error type
 * **Currency**: currency types, conversion, and parsing
-* **Dice**: dice types and parsing
 * **Player**: the player, species, classes, and related types
 
 ### Coming Soon...
@@ -40,8 +43,8 @@ The following types have an initial implementation with unit tests and full code
 * **Species**: A factory for managing SpeciesTraits.
 * **UnitCurrency**: A subclass of Foundation.Dimension that can convert between different types of currency (e.g., gp, cp, pp). A DefaultCurrencies.json file is provided.
 * **Money**: A Foundation.Measurement for UnitCurrency.
-* **Dice**: Includes a Dice protocol, a Die type, and several implementations of the Dice protocol for simple dice rolls, modifiers, dropping and composition of dice rolls.
-* **DiceParser**: Free functions and extensions for converting from string representations of dice rolls into Dice types.
+* **Dice**: Provided by the [SwiftDice](https://github.com/mrlegowatch/SwiftDice) package. Includes a `Rollable` protocol, a `Die` type, and several implementations for simple dice rolls, modifiers, dropping, and composition of dice rolls.
+* **DiceParser**: Provided by the [SwiftDice](https://github.com/mrlegowatch/SwiftDice) package. Free functions and extensions for converting from string representations of dice rolls into `Rollable` types.
 * **RandomNumberGenerator**: An open class for use by the Die type. Can be modified as required.
 * **Height** and **Weight**: Typealiases and free functions for parsing strings representing height and weight into Foundation.Measurement of types Foundation.UnitLength and Foundation.UnitMass.
 

@@ -51,7 +51,7 @@ extension Ability: Codable {
 }
 
 /// A dictionary of ability scores.
-public struct AbilityScores {
+public struct AbilityScores: Sendable {
     var scores: [Ability: Int]
     
     public init(_ scores: [Ability: Int]) {

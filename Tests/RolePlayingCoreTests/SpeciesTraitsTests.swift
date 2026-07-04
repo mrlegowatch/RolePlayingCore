@@ -159,14 +159,14 @@ struct SpeciesTraitsTests {
     
     @Test("Encode subspecies traits with blending")
     func encodingSubspeciesTraits() async throws {
-        let speciesTraits = SpeciesTraits(name: "Human", plural: "Humans", aliases: [], creatureType: configuration.species.defaultCreatureType, descriptiveTraits: [:], lifespan: 90, darkVision: 0, speed: 45)
+        let speciesTraits = SpeciesTraits(name: "Human", plural: "Humans", aliases: [], creatureType: configuration.creatureTypes.defaultCreatureType, descriptiveTraits: [:], lifespan: 90, darkVision: 0, speed: 45)
         
         let encoder = JSONEncoder()
         
         // Test 1: Subspecies with blended traits
         do {
             var copyOfSpeciesTraits = speciesTraits
-            var subspeciesTraits = SpeciesTraits(name: "Subhuman", plural: "Subhumans", creatureType: configuration.species.defaultCreatureType, lifespan: 45, darkVision: 0, speed: 30)
+            var subspeciesTraits = SpeciesTraits(name: "Subhuman", plural: "Subhumans", creatureType: configuration.creatureTypes.defaultCreatureType, lifespan: 45, darkVision: 0, speed: 30)
             subspeciesTraits.blendTraits(from: copyOfSpeciesTraits)
             copyOfSpeciesTraits.subspecies.append(subspeciesTraits)
             
@@ -193,7 +193,7 @@ struct SpeciesTraitsTests {
         // Test 2: Subspecies with different overrides
         do {
             var copyOfSpeciesTraits = speciesTraits
-            let subspeciesTraits = SpeciesTraits(name: "Subhuman", plural: "Subhumans", aliases: ["Minions"], creatureType: configuration.species.defaultCreatureType, descriptiveTraits: ["background": "Something"], lifespan: 45, darkVision: 10, speed: 45)
+            let subspeciesTraits = SpeciesTraits(name: "Subhuman", plural: "Subhumans", aliases: ["Minions"], creatureType: configuration.creatureTypes.defaultCreatureType, descriptiveTraits: ["background": "Something"], lifespan: 45, darkVision: 10, speed: 45)
             copyOfSpeciesTraits.subspecies.append(subspeciesTraits)
             
             let encoded = try encoder.encode(copyOfSpeciesTraits, configuration: configuration)

@@ -9,7 +9,7 @@
 import Foundation
 
 /// Traits associated with a player character's background.
-public struct BackgroundTraits {
+public struct BackgroundTraits: Sendable {
     public var name: String
     public var abilityScores: [String]
     public var feat: String

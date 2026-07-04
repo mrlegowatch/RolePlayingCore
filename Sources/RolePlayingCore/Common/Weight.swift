@@ -54,18 +54,18 @@ public extension KeyedDecodingContainer  {
     ///
     /// - throws `DecodingError.dataCorrupted` if the weight could not be decoded.
     func decode(_ type: Weight.Type, forKey key: K) throws -> Weight {
-        let weight: Weight?
+        let weight: Weight
         
         if let double = try? self.decode(Double.self, forKey: key) {
             weight = Weight(value: double, unit: .pounds)
         } else {
-            weight = try self.decode(String.self, forKey: key).parseWeight
-        }
-        
-        // Throw if we were unsuccessful parsing.
-        guard let weight else {
-            let context = DecodingError.Context(codingPath: self.codingPath, debugDescription: "Missing string or number for Weight value")
-            throw DecodingError.dataCorrupted(context)
+            let weightString = try self.decode(String.self, forKey: key)
+            if let parsedWeight = weightString.parseWeight {
+                weight = parsedWeight
+            } else {
+                let context = DecodingError.Context(codingPath: self.codingPath, debugDescription: "Malformed string for Weight: \(weightString)")
+                throw DecodingError.dataCorrupted(context)
+            }
         }
         
         return weight
@@ -77,10 +77,15 @@ public extension KeyedDecodingContainer  {
     func decodeIfPresent(_ type: Weight.Type, forKey key: K) throws -> Weight? {
         let weight: Weight?
         
-        if let double = try? self.decode(Double.self, forKey: key) {
+        if let double = try? self.decodeIfPresent(Double.self, forKey: key) {
             weight = Weight(value: double, unit: .pounds)
-        } else if let string = try self.decodeIfPresent(String.self, forKey: key) {
-            weight = string.parseWeight
+        } else if let weightString = try self.decodeIfPresent(String.self, forKey: key) {
+            if let parsedWeight = weightString.parseWeight {
+                weight = parsedWeight
+            } else {
+                let context = DecodingError.Context(codingPath: self.codingPath, debugDescription: "Malformed string for Weight: \(weightString)")
+                throw DecodingError.dataCorrupted(context)
+            }
         } else {
             weight = nil
         }

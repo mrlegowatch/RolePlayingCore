@@ -6,6 +6,8 @@
 //  Copyright © 2025 Brian Arnold. All rights reserved.
 //
 
+import SwiftDice
+
 // TODO: Make this public, add tests, etc.
 struct Initiative {
     let player: Player
@@ -18,7 +20,8 @@ struct Initiative {
 
     init(_ player: Player, roll: Bool = false, surprise: Surprise = .normal) {
         self.player = player
-        value = (roll ? Die.d20.roll() : 10) + player.initiativeModifier + surprise.bonus
+        let diceRoll = (roll ? Dice.d20.roll().result : 10)
+        value = diceRoll + player.initiativeModifier + surprise.bonus
     }
 }
 

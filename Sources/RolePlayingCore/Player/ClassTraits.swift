@@ -7,13 +7,14 @@
 //
 
 import Foundation
+import SwiftDice
 
 /// Traits representing a class.
-public struct ClassTraits {
+public struct ClassTraits: Sendable {
     public var name: String
     public var plural: String
     public var hitDice: Dice
-    public var startingWealth: Dice
+    public var startingWealth: Rollable
     
     public var descriptiveTraits: [String: String]
     public var primaryAbility: [Ability]
@@ -55,7 +56,7 @@ public struct ClassTraits {
     public init(name: String,
                 plural: String,
                 hitDice: Dice,
-                startingWealth: Dice,
+                startingWealth: Rollable,
                 descriptiveTraits: [String: String] = [:],
                 primaryAbility: [Ability] = [],
                 alternatePrimaryAbility: [Ability]? = nil,
@@ -112,23 +113,30 @@ extension ClassTraits: CodableWithConfiguration {
         // Try decoding properties
         let name = try values.decode(String.self, forKey: .name)
         let plural = try values.decode(String.self, forKey: .plural)
-        let hitDice = try values.decode(Dice.self, forKey: .hitDice)
-        let startingWealth = try values.decode(Dice.self, forKey: .startingWealth)
+        let hitDiceRollable = try values.decode(Rollable.self, forKey: .hitDice)
+        guard let hitDice = hitDiceRollable as? Dice else {
+            let context = DecodingError.Context(
+                codingPath: values.codingPath + [CodingKeys.hitDice],
+                debugDescription: "Hit dice must be a simple die expression (e.g. \"d10\"), got \"\(hitDiceRollable)\""
+            )
+            throw DecodingError.dataCorrupted(context)
+        }
+        let startingWealth = try values.decode(Rollable.self, forKey: .startingWealth)
         
         let descriptiveTraits = try values.decodeIfPresent([String:String].self, forKey: .descriptiveTraits)
         let primaryAbility = try values.decodeIfPresent([Ability].self, forKey: .primaryAbility)
         let alternatePrimaryAbility = try values.decodeIfPresent([Ability].self, forKey: .alternatePrimaryAbility)
         let savingThrows = try values.decodeIfPresent([Ability].self, forKey: .savingThrows)
-        let startingSkillCount: Int? = try values.decodeIfPresent(Int.self, forKey: .startingSkillCount)
+        let startingSkillCount = try values.decodeIfPresent(Int.self, forKey: .startingSkillCount)
         
         // Decode skill proficiency names and resolve them using configuration
         let skillNames = try values.decodeIfPresent([String].self, forKey: .skillProficiencies) ?? []
-        let resolvedSkills: [Skill] = try skillNames.skills(from: configuration.skills)
+        let resolvedSkills = try skillNames.skills(from: configuration.skills)
         
         let weaponProficiencies = try values.decodeIfPresent([String].self, forKey: .weaponProficiencies)
         let toolProficiencies = try values.decodeIfPresent([String].self, forKey: .toolProficiencies)
-        let armorTraining: [String]? = try values.decodeIfPresent([String].self, forKey: .armorTraining)
-        let startingEquipment: [[String]]? = try values.decodeIfPresent([[String]].self, forKey: .startingEquipment)
+        let armorTraining = try values.decodeIfPresent([String].self, forKey: .armorTraining)
+        let startingEquipment = try values.decodeIfPresent([[String]].self, forKey: .startingEquipment)
         
         let experiencePoints = try values.decodeIfPresent([Int].self, forKey: .experiencePoints)
         
@@ -157,8 +165,8 @@ extension ClassTraits: CodableWithConfiguration {
         
         try values.encode(name, forKey: .name)
         try values.encode(plural, forKey: .plural)
-        try values.encode("\(hitDice)", forKey: .hitDice)
-        try values.encode("\(startingWealth)", forKey: .startingWealth)
+        try values.encode(hitDice, forKey: .hitDice)
+        try values.encode(startingWealth, forKey: .startingWealth)
         
         try values.encode(descriptiveTraits, forKey: .descriptiveTraits)
         try values.encode(primaryAbility, forKey: .primaryAbility)

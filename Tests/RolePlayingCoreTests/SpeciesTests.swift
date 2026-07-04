@@ -24,7 +24,7 @@ struct SpeciesTests {
     @Test("Default initialization creates empty species")
     func defaultInit() async throws {
         let species = Species()
-        #expect(species.species.count == 0, "default init")
+        #expect(species.count == 0, "default init")
     }
     
     @Test("Load and parse species from JSON file")
@@ -37,8 +37,8 @@ struct SpeciesTests {
         #expect(species[0] != nil, "species by index")
         
         // Test finding a species by name
-        #expect(species.find("Human") != nil, "Fighter should be non-nil")
-        #expect(species.find("Foo") == nil, "Foo should be nil")
+        #expect(species["Human"] != nil, "Fighter should be non-nil")
+        #expect(species["Foo"] == nil, "Foo should be nil")
     }
     
     @Test("Load uncommon species from JSON file")
@@ -47,6 +47,6 @@ struct SpeciesTests {
         let species = try decoder.decode(Species.self, from: jsonData, configuration: configuration)
         
         // There should be 5 species plus 2 subspecies
-        #expect(species.species.count == 5, "all species")
+        #expect(species.count == 5, "all species")
     }
 }

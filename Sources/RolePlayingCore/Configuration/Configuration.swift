@@ -8,12 +8,15 @@
 
 import Foundation
 
+// MARK: - Configuration Files
+
 /// Represents a collection of JSON file names that belong to a bundle.
-/// Used by the `Configuration`.
-public struct ConfigurationFiles: Decodable {
+/// Used by the `Configuration` to determine which files to load.
+public struct ConfigurationFiles: Decodable, Sendable {
     let currencies: [String]
     let skills: [String]
     let backgrounds: [String]
+    let creatureTypes: [String]
     let species: [String]
     let classes: [String]
     let players: [String]?
@@ -23,6 +26,7 @@ public struct ConfigurationFiles: Decodable {
         case currencies
         case skills
         case backgrounds
+        case creatureTypes = "creature types"
         case species
         case classes
         case players
@@ -30,75 +34,120 @@ public struct ConfigurationFiles: Decodable {
     }
 }
 
+// MARK: - Configuration
+
 /// Configure a client's data from a framework or application bundle.
+///
+/// This type manages the loading and organization of game data including currencies,
+/// skills, backgrounds, creature types, species, classes, and players from JSON files.
 public struct Configuration {
     let bundle: Bundle
+    let decoder = JSONDecoder()
+    public private(set) var configurationFiles: ConfigurationFiles
     
-    public var configurationFiles: ConfigurationFiles
+    public private(set) var currencies = Currencies()
+    public private(set) var skills = Skills()
+    public private(set) var backgrounds = Backgrounds()
+    public private(set) var creatureTypes = CreatureTypes()
+    public private(set) var species = Species()
+    public private(set) var classes = Classes()
+    public private(set) var players = Players()
     
-    public var currencies = Currencies()
-    public var backgrounds = Backgrounds()
-    public var skills = Skills()
-    public var species = Species()
-    public var classes = Classes()
-    public var players = Players()
+    // MARK: - Initialization
     
+    /// Creates a new configuration by loading data from the specified configuration file.
+    ///
+    /// - Parameters:
+    ///   - configurationFile: The name of the main configuration JSON file.
+    ///   - bundle: The bundle containing the configuration files. Defaults to `.main`.
+    /// - Throws: An error if the configuration file cannot be loaded or decoded.
     public init(_ configurationFile: String, from bundle: Bundle = .main) throws {
         self.bundle = bundle
         let data = try bundle.loadJSON(configurationFile)
-        let decoder = JSONDecoder()
         self.configurationFiles = try decoder.decode(ConfigurationFiles.self, from: data)
         try self.load(configurationFiles)
     }
     
-    public mutating func load(_ configurationFiles: ConfigurationFiles) throws {
-        let jsonDecoder = JSONDecoder()
-        
-        for currenciesFile in configurationFiles.currencies {
-            let jsonData = try bundle.loadJSON(currenciesFile)
-            let currencies = try jsonDecoder.decode(Currencies.self, from: jsonData)
+    // MARK: - Loading Methods
+    
+    /// Loads all configuration data from the specified configuration files.
+    ///
+    /// - Parameter configurationFiles: The configuration files structure containing file names.
+    /// - Throws: An error if any file cannot be loaded or decoded.
+    mutating func load(_ configurationFiles: ConfigurationFiles) throws {
+        try loadCurrencies(from: configurationFiles.currencies)
+        try loadSkills(from: configurationFiles.skills)
+        try loadBackgrounds(from: configurationFiles.backgrounds)
+        try loadCreatureTypes(from: configurationFiles.creatureTypes)
+        try loadSpecies(from: configurationFiles.species)
+        try loadClasses(from: configurationFiles.classes)
+        try loadPlayers(from: configurationFiles.players)
+    }
+    
+    // MARK: - Private Loading Helpers
+    
+    /// Loads currencies from the specified file names.
+    private mutating func loadCurrencies(from fileNames: [String]) throws {
+        for fileName in fileNames {
+            let jsonData = try bundle.loadJSON(fileName)
+            let currencies = try decoder.decode(Currencies.self, from: jsonData)
             self.currencies.add(currencies.all)
         }
-
-        for skillsFile in configurationFiles.skills {
-            let jsonData = try bundle.loadJSON(skillsFile)
-            let skills = try jsonDecoder.decode(Skills.self, from: jsonData)
+    }
+    
+    /// Loads skills from the specified file names.
+    private mutating func loadSkills(from fileNames: [String]) throws {
+        for fileName in fileNames {
+            let jsonData = try bundle.loadJSON(fileName)
+            let skills = try decoder.decode(Skills.self, from: jsonData)
             self.skills.add(skills.all)
         }
-
-        for backgroundsFile in configurationFiles.backgrounds {
-            let jsonData = try bundle.loadJSON(backgroundsFile)
-            let backgrounds = try jsonDecoder.decode(Backgrounds.self, from: jsonData, configuration: self)
+    }
+    
+    /// Loads backgrounds from the specified file names.
+    private mutating func loadBackgrounds(from fileNames: [String]) throws {
+        for fileName in fileNames {
+            let jsonData = try bundle.loadJSON(fileName)
+            let backgrounds = try decoder.decode(Backgrounds.self, from: jsonData, configuration: self)
             self.backgrounds.add(backgrounds.all)
         }
-        
-        for speciesFile in configurationFiles.species {
-            let jsonData = try bundle.loadJSON(speciesFile)
-            let species = try jsonDecoder.decode(Species.self, from: jsonData, configuration: self)
-            self.species.species += species.species
+    }
+    
+    /// Loads creature types from the specified file names.
+    private mutating func loadCreatureTypes(from fileNames: [String]) throws {
+        for fileName in fileNames {
+            let jsonData = try bundle.loadJSON(fileName)
+            let creatureTypes = try decoder.decode(CreatureTypes.self, from: jsonData)
+            self.creatureTypes.add(creatureTypes.all)
         }
-        
-        for classFile in configurationFiles.classes {
-            let jsonData = try bundle.loadJSON(classFile)
-            let classes = try jsonDecoder.decode(Classes.self, from: jsonData, configuration: self)
-            self.classes.classes += classes.classes
-            
-            // Update the shared classes experience points table, then
-            // update all of the classes to point to it. TODO: improve this.
-            if let experiencePoints = classes.experiencePoints {
-                self.classes.experiencePoints = experiencePoints
-                for (index, _) in self.classes.classes.enumerated() {
-                    self.classes.classes[index].experiencePoints = experiencePoints
-                }
-            }
+    }
+    
+    /// Loads species from the specified file names.
+    private mutating func loadSpecies(from fileNames: [String]) throws {
+        for fileName in fileNames {
+            let jsonData = try bundle.loadJSON(fileName)
+            let species = try decoder.decode(Species.self, from: jsonData, configuration: self)
+            self.species.add(species)
         }
+    }
+    
+    /// Loads classes from the specified file names.
+    private mutating func loadClasses(from fileNames: [String]) throws {
+        for fileName in fileNames {
+            let jsonData = try bundle.loadJSON(fileName)
+            let classes = try decoder.decode(Classes.self, from: jsonData, configuration: self)
+            self.classes.add(classes)
+        }
+    }
+    
+    /// Loads players from the specified file names, if provided.
+    private mutating func loadPlayers(from fileNames: [String]?) throws {
+        guard let fileNames else { return }
         
-        if let playersFiles = configurationFiles.players {
-            for playersFile in playersFiles {
-                let jsonData = try bundle.loadJSON(playersFile)
-                let players = try jsonDecoder.decode(Players.self, from: jsonData, configuration: self)
-                self.players.players += players.players
-            }
+        for fileName in fileNames {
+            let jsonData = try bundle.loadJSON(fileName)
+            let players = try decoder.decode(Players.self, from: jsonData, configuration: self)
+            self.players.players += players.players
         }
     }
 }

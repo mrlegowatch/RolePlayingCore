@@ -9,7 +9,7 @@
 import Foundation
 
 /// A collection of currencies.
-public struct Currencies: Codable {
+public struct Currencies: Codable, Sendable {
             
     /// A dictionary of currencies indexed by currency symbol.
     private var allCurrencies: [String: UnitCurrency] = [:]

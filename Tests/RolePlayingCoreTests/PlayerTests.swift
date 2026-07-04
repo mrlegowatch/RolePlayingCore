@@ -8,6 +8,7 @@
 
 import Testing
 @testable import RolePlayingCore
+import SwiftDice
 import Foundation
 
 @Suite("Player Tests")
@@ -501,21 +502,6 @@ struct PlayerTests {
         
         // Verify all six abilities are set
         #expect(abilities.abilities.count == 6, "should have 6 abilities")
-    }
-    
-    @Test("Verify dice hit dice extension")
-    func diceHitDiceExtension() async throws {
-        // Test the hitDice extension on Dice
-        let d6 = SimpleDice(.d6)
-        
-        let level1HitDice = d6.hitDice(level: 1)
-        #expect("\(level1HitDice)" == "d6")
-        
-        let level5HitDice = d6.hitDice(level: 5)
-        #expect("\(level5HitDice)" == "5d6")
-        
-        let level10HitDice = d6.hitDice(level: 10)
-        #expect("\(level10HitDice)" == "10d6")
     }
     
     @Test("Verify species and class traits didSet")

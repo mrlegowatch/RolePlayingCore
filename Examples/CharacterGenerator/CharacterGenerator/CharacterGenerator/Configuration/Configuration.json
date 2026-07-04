@@ -2,6 +2,7 @@
     "currencies": ["Currencies"],
     "skills": ["Skills"],
     "backgrounds": ["Backgrounds"],
+    "creature types": ["CreatureTypes"],
     "classes": ["Classes"],
     "species": ["Species"],
     "species names": "SpeciesNames"

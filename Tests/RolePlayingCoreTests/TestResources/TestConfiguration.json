@@ -2,6 +2,7 @@
     "currencies": ["TestCurrencies"],
     "skills": ["TestSkills"],
     "backgrounds": ["TestBackgrounds"],
+    "creature types": ["TestCreatureTypes"],
     "classes": ["TestClasses", "TestMoreClasses"],
     "species": ["TestSpecies", "TestMoreSpecies"],
     "players": ["TestPlayers"]
