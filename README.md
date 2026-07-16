@@ -2,7 +2,7 @@
 ![Code Coverage](https://codecov.io/gh/mrlegowatch/RolePlayingCore/branch/development/graph/badge.svg)
 ![Swift Version](https://img.shields.io/badge/Swift-6.0-orange.svg)
 ![Platform](https://img.shields.io/badge/platform-iOS%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)
-[![License](https://img.shields.io/github/license/mrlegowatch/RolePlayingCore)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 This framework provides reusable role playing game core logic in the Swift language. It is a work-in-progress. Capabilities will be provided incrementally over time.
 
