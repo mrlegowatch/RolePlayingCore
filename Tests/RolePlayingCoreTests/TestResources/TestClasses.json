@@ -30,6 +30,7 @@
                 "starting wealth": "5d4x10",
                 "armor training": ["light", "medium", "shield"],
                 "weapon proficiencies": ["simple"],
+                "starting equipment": [["Chain Shirt", "Shield", "Mace", "Holy Symbol", "Priest's Pack", "7 GP"], ["110 GP"]]
                 },
                 {
                 "name": "Fighter",
@@ -39,8 +40,9 @@
                 "alternate primary ability": ["Dexterity"],
                 "saving throws": ["Strength", "Constitution"],
                 "starting wealth": "5d4x10",
-                "armor training": ["all"],
+                "armor training": ["light", "medium", "heavy", "shield"],
                 "weapon proficiencies": ["simple", "martial"],
+                "starting equipment": [["Chain Mail", "Greatsword", "Dungeoneer's Pack", "4 GP"], ["155 GP"]]
                 },
                 {
                 "name": "Rogue",
@@ -51,7 +53,9 @@
                 "saving throws": ["Dexterity", "Intelligence"],
                 "starting wealth": "4d4x10",
                 "armor training": ["light"],
-                "weapon proficiencies": ["simple", "hand crossbow", "longsword", "rapier", "shortsword"],
+                "weapon proficiencies": ["simple", "Longsword", "Shortsword", "Scimitar", "martial (finesse, light)"],
+                "tool proficiencies": ["Thieves' Tools"],
+                "starting equipment": [["Leather Armor", "2 Dagger", "Shortsword", "Thieves' Tools", "25 GP"], ["100 GP"]]
                 },
                 {
                 "name": "Wizard",
@@ -61,7 +65,8 @@
                 "saving throws": ["Intelligence", "Wisdom"],
                 "starting wealth": "4d4x10",
                 "armor training": [],
-                "weapon proficiencies": ["dagger", "dart", "sling", "quarterstaff", "light crossbow"],
+                "weapon proficiencies": ["Dagger", "Quarterstaff"],
+                "starting equipment": [["2 Dagger", "Quarterstaff", "Scholar's Pack", "5 GP"], ["55 GP"]]
                 }
                 ]
 }

@@ -2,9 +2,8 @@
     "currencies": ["TestCurrencies"],
     "skills": ["TestSkills"],
     "items": ["TestItems"],
-    "backgrounds": [],
+    "backgrounds": ["TestBackgrounds"],
     "creature types": [],
     "classes": [],
-    "species": [],
-    "players": []
+    "species": []
 }

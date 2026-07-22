@@ -1,6 +1,6 @@
 {
     "currencies": ["TestCurrencies"],
-    "skills": ["TestSkills"],
+    "skills": [],
     "items": ["TestItems"],
     "backgrounds": [],
     "creature types": [],

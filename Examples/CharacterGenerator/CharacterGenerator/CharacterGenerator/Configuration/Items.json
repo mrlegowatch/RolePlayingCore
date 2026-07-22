@@ -1,0 +1,392 @@
+{
+    "weapons": [
+        {
+            "name": "Dagger",
+            "category": "simple",
+            "damage": "1d4 piercing",
+            "properties": ["finesse", "light", "thrown"],
+            "range": "20/60",
+            "weight": "1 lb",
+            "cost": "2 GP"
+        },
+        {
+            "name": "Mace",
+            "category": "simple",
+            "damage": "1d6 bludgeoning",
+            "weight": "4 lb",
+            "cost": "5 GP"
+        },
+        {
+            "name": "Quarterstaff",
+            "category": "simple",
+            "damage": "1d6 bludgeoning",
+            "versatile damage": "1d8 bludgeoning",
+            "properties": ["versatile"],
+            "weight": "4 lb",
+            "cost": "2 SP"
+        },
+        {
+            "name": "Handaxe",
+            "category": "simple",
+            "damage": "1d6 slashing",
+            "properties": ["light", "thrown"],
+            "range": "20/60",
+            "weight": "2 lb",
+            "cost": "5 GP"
+        },
+        {
+            "name": "Javelin",
+            "category": "simple",
+            "damage": "1d6 piercing",
+            "properties": ["thrown"],
+            "range": "30/120",
+            "weight": "2 lb",
+            "cost": "5 SP"
+        },
+        {
+            "name": "Spear",
+            "category": "simple",
+            "damage": "1d6 piercing",
+            "versatile damage": "1d8 piercing",
+            "properties": ["thrown", "versatile"],
+            "range": "20/60",
+            "weight": "3 lb",
+            "cost": "1 GP"
+        },
+        {
+            "name": "Sickle",
+            "category": "simple",
+            "damage": "1d4 slashing",
+            "properties": ["light"],
+            "weight": "2 lb",
+            "cost": "1 GP"
+        },
+        {
+            "name": "Light Crossbow",
+            "plural": "Light Crossbows",
+            "category": "simple",
+            "damage": "1d8 piercing",
+            "properties": ["ammunition", "loading", "two-handed"],
+            "range": "80/320",
+            "weight": "5 lb",
+            "cost": "25 GP"
+        },
+        {
+            "name": "Shortbow",
+            "category": "simple",
+            "damage": "1d6 piercing",
+            "properties": ["ammunition", "two-handed"],
+            "range": "80/320",
+            "weight": "2 lb",
+            "cost": "25 GP"
+        },
+        {
+            "name": "Shortsword",
+            "category": "martial",
+            "damage": "1d6 piercing",
+            "properties": ["finesse", "light"],
+            "weight": "2 lb",
+            "cost": "10 GP"
+        },
+        {
+            "name": "Scimitar",
+            "category": "martial",
+            "damage": "1d6 slashing",
+            "properties": ["finesse", "light"],
+            "weight": "3 lb",
+            "cost": "25 GP"
+        },
+        {
+            "name": "Longsword",
+            "category": "martial",
+            "damage": "1d8 slashing",
+            "versatile damage": "1d10 slashing",
+            "properties": ["versatile"],
+            "weight": "3 lb",
+            "cost": "15 GP"
+        },
+        {
+            "name": "Flail",
+            "category": "martial",
+            "damage": "1d8 bludgeoning",
+            "weight": "2 lb",
+            "cost": "10 GP"
+        },
+        {
+            "name": "Greatsword",
+            "category": "martial",
+            "damage": "2d6 slashing",
+            "properties": ["heavy", "two-handed"],
+            "weight": "6 lb",
+            "cost": "50 GP"
+        },
+        {
+            "name": "Greataxe",
+            "category": "martial",
+            "damage": "1d12 slashing",
+            "properties": ["heavy", "two-handed"],
+            "weight": "7 lb",
+            "cost": "30 GP"
+        },
+        {
+            "name": "Longbow",
+            "category": "martial",
+            "damage": "1d8 piercing",
+            "properties": ["ammunition", "heavy", "two-handed"],
+            "range": "150/600",
+            "weight": "2 lb",
+            "cost": "50 GP"
+        }
+    ],
+    "armors": [
+        {
+            "name": "Leather Armor",
+            "plural": "Leather Armors",
+            "category": "light",
+            "base ac": 11,
+            "dexterity modifier": "full",
+            "weight": "10 lb",
+            "cost": "10 GP"
+        },
+        {
+            "name": "Studded Leather Armor",
+            "plural": "Studded Leather Armors",
+            "category": "light",
+            "base ac": 12,
+            "dexterity modifier": "full",
+            "weight": "13 lb",
+            "cost": "45 GP"
+        },
+        {
+            "name": "Chain Shirt",
+            "plural": "Chain Shirts",
+            "category": "medium",
+            "base ac": 13,
+            "dexterity modifier": "capped 2",
+            "weight": "20 lb",
+            "cost": "50 GP"
+        },
+        {
+            "name": "Scale Mail",
+            "plural": "Scale Mails",
+            "category": "medium",
+            "base ac": 14,
+            "dexterity modifier": "capped 2",
+            "stealth disadvantage": true,
+            "weight": "45 lb",
+            "cost": "50 GP"
+        },
+        {
+            "name": "Chain Mail",
+            "plural": "Chain Mails",
+            "category": "heavy",
+            "base ac": 16,
+            "dexterity modifier": "excluded",
+            "strength requirement": 13,
+            "stealth disadvantage": true,
+            "weight": "55 lb",
+            "cost": "75 GP"
+        },
+        {
+            "name": "Plate",
+            "plural": "Plate Armors",
+            "category": "heavy",
+            "base ac": 18,
+            "dexterity modifier": "excluded",
+            "strength requirement": 15,
+            "stealth disadvantage": true,
+            "weight": "65 lb",
+            "cost": "1500 GP"
+        },
+        {
+            "name": "Shield",
+            "category": "shield",
+            "base ac": 2,
+            "dexterity modifier": "bonus",
+            "weight": "6 lb",
+            "cost": "10 GP"
+        }
+    ],
+    "gear": [
+        {
+            "name": "Arrow",
+            "plural": "Arrows",
+            "category": "ammunition",
+            "weight": "0.05 lb",
+            "cost": "0.05 GP"
+        },
+        {
+            "name": "Bolt",
+            "plural": "Bolts",
+            "category": "ammunition",
+            "weight": "0.075 lb",
+            "cost": "0.05 GP"
+        },
+        {
+            "name": "Holy Symbol",
+            "plural": "Holy Symbols",
+            "category": "holy symbol",
+            "weight": "1 lb",
+            "cost": "5 GP"
+        },
+        {
+            "name": "Arcane Focus",
+            "plural": "Arcane Focuses",
+            "category": "arcane focus",
+            "weight": "1 lb",
+            "cost": "10 GP"
+        },
+        {
+            "name": "Rope",
+            "category": "general",
+            "weight": "10 lb",
+            "cost": "1 GP"
+        },
+        {
+            "name": "Healer's Kit",
+            "plural": "Healer's Kits",
+            "category": "general",
+            "weight": "3 lb",
+            "cost": "5 GP"
+        },
+        {
+            "name": "Bedroll",
+            "category": "general",
+            "weight": "7 lb",
+            "cost": "1 GP"
+        },
+        {
+            "name": "Traveler's Clothes",
+            "plural": "Traveler's Clothes",
+            "category": "clothing",
+            "weight": "4 lb",
+            "cost": "2 GP"
+        },
+        {
+            "name": "Quiver",
+            "category": "general",
+            "weight": "1 lb",
+            "cost": "1 GP"
+        },
+        {
+            "name": "Dungeoneer's Pack",
+            "plural": "Dungeoneer's Packs",
+            "category": "pack",
+            "weight": "61.5 lb",
+            "cost": "12 GP",
+            "contents": ["Backpack", "Crowbar", "10 Arrows", "Rope", "Bedroll", "Tinderbox", "10 Torches", "Waterskin", "10 Rations"]
+        },
+        {
+            "name": "Explorer's Pack",
+            "plural": "Explorer's Packs",
+            "category": "pack",
+            "weight": "55 lb",
+            "cost": "10 GP",
+            "contents": ["Backpack", "Bedroll", "Mess Kit", "Rope", "Tinderbox", "10 Torches", "10 Rations", "Waterskin"]
+        },
+        {
+            "name": "Priest's Pack",
+            "plural": "Priest's Packs",
+            "category": "pack",
+            "weight": "29 lb",
+            "cost": "19 GP",
+            "contents": ["Backpack", "Blanket", "10 Candles", "Tinderbox", "Alms Box", "2 Incense", "Vestments", "2 Rations", "Waterskin"]
+        },
+        {
+            "name": "Scholar's Pack",
+            "plural": "Scholar's Packs",
+            "category": "pack",
+            "weight": "10 lb",
+            "cost": "40 GP",
+            "contents": ["Backpack", "Book", "Bottle of Ink", "Ink Pen", "10 Parchment", "Sand Pouch", "Small Knife"]
+        },
+        {
+            "name": "Burglar's Pack",
+            "plural": "Burglar's Packs",
+            "category": "pack",
+            "weight": "47.5 lb",
+            "cost": "16 GP",
+            "contents": ["Backpack", "1000 Ball Bearings", "Bell", "5 Candles", "Crowbar", "Hammer", "10 Pitons", "Rope", "Tinderbox", "5 Torches", "Waterskin", "5 Rations"]
+        },
+        {
+            "name": "Entertainer's Pack",
+            "plural": "Entertainer's Packs",
+            "category": "pack",
+            "weight": "38.5 lb",
+            "cost": "40 GP",
+            "contents": ["Backpack", "Bedroll", "2 Costumes", "5 Candles", "5 Rations", "Waterskin", "Disguise Kit"]
+        }
+    ],
+    "tools": [
+        {
+            "name": "Thieves' Tools",
+            "plural": "Thieves' Tools",
+            "tool type": "thieves' tools",
+            "weight": "1 lb",
+            "cost": "25 GP"
+        },
+        {
+            "name": "Herbalism Kit",
+            "plural": "Herbalism Kits",
+            "tool type": "herbalism kit",
+            "weight": "3 lb",
+            "cost": "5 GP"
+        },
+        {
+            "name": "Navigator's Tools",
+            "plural": "Navigator's Tools",
+            "tool type": "navigator's tools",
+            "weight": "2 lb",
+            "cost": "25 GP"
+        },
+        {
+            "name": "Cartographer's Tools",
+            "plural": "Cartographer's Tools",
+            "tool type": "cartographer's tools",
+            "weight": "6 lb",
+            "cost": "15 GP"
+        },
+        {
+            "name": "Carpenter's Tools",
+            "plural": "Carpenter's Tools",
+            "tool type": "artisan's tools",
+            "weight": "6 lb",
+            "cost": "8 GP"
+        },
+        {
+            "name": "Calligrapher's Supplies",
+            "plural": "Calligrapher's Supplies",
+            "tool type": "artisan's tools",
+            "weight": "5 lb",
+            "cost": "10 GP"
+        },
+        {
+            "name": "Gaming Set",
+            "plural": "Gaming Sets",
+            "tool type": "gaming set",
+            "weight": "0.5 lb",
+            "cost": "1 GP"
+        },
+        {
+            "name": "Musical Instrument",
+            "plural": "Musical Instruments",
+            "tool type": "musical instrument",
+            "weight": "2 lb",
+            "cost": "25 GP"
+        },
+        {
+            "name": "Forgery Kit",
+            "plural": "Forgery Kits",
+            "tool type": "forgery kit",
+            "weight": "5 lb",
+            "cost": "15 GP"
+        },
+        {
+            "name": "Disguise Kit",
+            "plural": "Disguise Kits",
+            "tool type": "disguise kit",
+            "weight": "3 lb",
+            "cost": "25 GP"
+        }
+    ]
+}

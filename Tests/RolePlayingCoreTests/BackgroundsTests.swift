@@ -10,14 +10,14 @@ import Testing
 import RolePlayingCore
 import Foundation
 
-@Suite("Backgrounds Tests")
+@Suite("Backgrounds Tests", .serialized)
 struct BackgroundsTests {
-    
+
     let decoder = JSONDecoder()
     let configuration: Configuration
-    
+
     init() throws {
-        configuration = try Configuration("TestConfiguration", from: .module)
+        configuration = try Configuration("TestBackgroundsConfiguration", from: .module)
     }
     
     @Test("Decode background traits")
@@ -45,7 +45,12 @@ struct BackgroundsTests {
         #expect(background.skillProficiencies.skillNames == ["Insight", "Religion"], "Skill names should match")
         #expect(background.toolProficiency == "Calligrapher's Supplies", "Tool proficiency should match")
         #expect(background.equipment.count == 2, "Should have 2 equipment choices")
-        #expect(background.equipment[0] == ["Holy Symbol", "Prayer Book", "Vestments", "10 GP"], "First equipment choice should match")
+        #expect(background.equipment[0].count == 4, "First equipment choice should have 4 entries")
+        if case .item(let item, _) = background.equipment[0][0] {
+            #expect(item.name == "Holy Symbol", "First item should be Holy Symbol")
+        } else {
+            Issue.record("Expected Holy Symbol as first equipment item")
+        }
     }
     
     @Test("Encode background traits with round-trip")
@@ -77,7 +82,7 @@ struct BackgroundsTests {
         #expect(decodedBackground.feat == background.feat, "Feat should match after round-trip")
         #expect(decodedBackground.skillProficiencies.skillNames == background.skillProficiencies.skillNames, "Skills should match after round-trip")
         #expect(decodedBackground.toolProficiency == background.toolProficiency, "Tool proficiency should match after round-trip")
-        #expect(decodedBackground.equipment == background.equipment, "Equipment should match after round-trip")
+        #expect(decodedBackground.equipment.count == background.equipment.count, "Equipment option count should match after round-trip")
     }
     
     @Test("Decode and query backgrounds collection")

@@ -15,7 +15,7 @@ public struct BackgroundTraits: Sendable {
     public var feat: String
     public var skillProficiencies: [Skill]
     public var toolProficiency: String
-    public var equipment: [[String]]
+    public var equipment: [[EquipmentEntry]]
 }
 
 extension BackgroundTraits: CodableWithConfiguration {
@@ -39,7 +39,10 @@ extension BackgroundTraits: CodableWithConfiguration {
         self.skillProficiencies = try skillNames.skills(from: configuration.skills)
         
         self.toolProficiency = try values.decode(String.self, forKey: .toolProficiency)
-        self.equipment = try values.decode([[String]].self, forKey: .equipment)
+        let equipmentStrings = try values.decode([[String]].self, forKey: .equipment)
+        self.equipment = equipmentStrings.map {
+            EquipmentEntry.parseOption($0, items: configuration.items, currencies: configuration.currencies)
+        }
     }
     
     public func encode(to encoder: Encoder, configuration: Configuration) throws {
@@ -49,6 +52,9 @@ extension BackgroundTraits: CodableWithConfiguration {
         try container.encode(feat, forKey: .feat)
         try container.encode(skillProficiencies.skillNames, forKey: .skillProficiencies)
         try container.encode(toolProficiency, forKey: .toolProficiency)
-        try container.encode(equipment, forKey: .equipment)
+        let equipmentStrings = equipment.map { option -> [String] in
+            option.map { $0.description }
+        }
+        try container.encode(equipmentStrings, forKey: .equipment)
     }
 }

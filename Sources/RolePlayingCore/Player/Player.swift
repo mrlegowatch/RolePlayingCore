@@ -94,10 +94,46 @@ public class Player: CodableWithConfiguration {
     public var initiativeScore: Int { 10 + initiativeModifier }
 
     // Equipment and money
-    
+
     public var money: Money
-    public var armorClass: Int = 0 // TODO: compute armor class
-    // TODO: equipment, weapons, armor, skills, etc.
+    /// All items carried by this player. Equipped state is tracked per entry.
+    public var inventory: [InventoryEntry]
+
+    /// The worn armor piece, if any (excludes shields).
+    public var equippedArmor: Armor? {
+        inventory.first(where: { $0.isEquipped && ($0.item as? Armor)?.category != .shield })?.item as? Armor
+    }
+
+    /// The held shield, if any.
+    public var equippedShield: Armor? {
+        inventory.first(where: { $0.isEquipped && ($0.item as? Armor)?.category == .shield })?.item as? Armor
+    }
+
+    /// Computed Armor Class.
+    /// Without armor, falls back to the class's unarmored defense feature, or base 10 + DEX.
+    /// Override by equipping armor or a shield via `inventory`.
+    public var armorClass: Int {
+        let dexterityModifier: Int = modifiers[.dexterity]
+        let shieldBonus = equippedShield?.baseAC ?? 0
+
+        if let armor = equippedArmor {
+            switch armor.dexterityModifierRule {
+            case .full: return armor.baseAC + dexterityModifier + shieldBonus
+            case .capped(let cap): return armor.baseAC + min(dexterityModifier, cap) + shieldBonus
+            case .excluded: return armor.baseAC + shieldBonus
+            case .bonus: return armor.baseAC + shieldBonus
+            }
+        }
+
+        // Unarmored: apply class feature if present, otherwise 10 + DEX
+        let unarmoredBase = classTraits.unarmoredDefense.map { defense in
+            defense.additionalAbilities.reduce(10 + dexterityModifier) { ac, ability in
+                ac + (modifiers[ability] ?? 0)
+            }
+        } ?? (10 + dexterityModifier)
+
+        return unarmoredBase + shieldBonus
+    }
     
     private enum CodingKeys: String, CodingKey {
         case name
@@ -116,6 +152,27 @@ public class Player: CodableWithConfiguration {
         case experiencePoints = "experience points"
         case level
         case money
+        case inventory
+    }
+
+    /// A lightweight, Codable representation of an inventory entry (item name + metadata).
+    /// The full item is resolved from the `Items` registry during decode.
+    private struct InventoryEntryJSON: Decodable {
+        let name: String
+        let quantity: Int
+        let isEquipped: Bool
+
+        enum CodingKeys: String, CodingKey {
+            case name, quantity
+            case isEquipped = "equipped"
+        }
+
+        init(from decoder: Decoder) throws {
+            let values = try decoder.container(keyedBy: CodingKeys.self)
+            name       = try values.decode(String.self, forKey: .name)
+            quantity   = try values.decodeIfPresent(Int.self, forKey: .quantity) ?? 1
+            isEquipped = try values.decodeIfPresent(Bool.self, forKey: .isEquipped) ?? false
+        }
     }
     
     public required init(from decoder: Decoder, configuration: Configuration) throws {
@@ -148,7 +205,17 @@ public class Player: CodableWithConfiguration {
         let experiencePoints = try values.decodeIfPresent(Int.self, forKey: .experiencePoints)
         let level = try values.decodeIfPresent(Int.self, forKey: .level)
         let money = try values.decode(Money.self, forKey: .money, configuration: configuration.currencies)
-        
+
+        // Resolve inventory entries from the items registry
+        let inventoryJSON = try values.decodeIfPresent([InventoryEntryJSON].self, forKey: .inventory) ?? []
+        var resolvedInventory: [InventoryEntry] = []
+        for entry in inventoryJSON {
+            guard let item = configuration.items[entry.name] else {
+                throw missingTypeError("item", entry.name)
+            }
+            resolvedInventory.append(InventoryEntry(item: item, quantity: entry.quantity, isEquipped: entry.isEquipped))
+        }
+
         // Resolve backgroundTraits from configuration
         guard let backgroundTraits = configuration.backgrounds[backgroundName] else {
             throw missingTypeError("background", backgroundName)
@@ -178,6 +245,7 @@ public class Player: CodableWithConfiguration {
         self.experiencePoints = experiencePoints ?? 0
         self.level = level ?? 1
         self.money = money
+        self.inventory = resolvedInventory
         self.backgroundTraits = backgroundTraits
         self.speciesTraits = speciesTraits
         self.classTraits = classTraits
@@ -203,6 +271,19 @@ public class Player: CodableWithConfiguration {
         try values.encodeIfPresent(experiencePoints, forKey: .experiencePoints)
         try values.encodeIfPresent(level, forKey: .level)
         try values.encode(money, forKey: .money, configuration: configuration.currencies)
+        if !inventory.isEmpty {
+            var inventoryContainer = values.nestedUnkeyedContainer(forKey: .inventory)
+            for entry in inventory {
+                var entryContainer = inventoryContainer.nestedContainer(keyedBy: InventoryEncodingKey.self)
+                try entryContainer.encode(entry.item.name, forKey: .name)
+                if entry.quantity != 1 { try entryContainer.encode(entry.quantity, forKey: .quantity) }
+                if entry.isEquipped    { try entryContainer.encode(entry.isEquipped, forKey: .equipped) }
+            }
+        }
+    }
+
+    private enum InventoryEncodingKey: String, CodingKey {
+        case name, quantity, equipped
     }
     
     // Creates a player character.
@@ -234,7 +315,20 @@ public class Player: CodableWithConfiguration {
         
         let startingWealth = classTraits.startingWealth.roll().result
         self.money = Money(value: Double(startingWealth), unit: .baseUnit())
-        
+
+        // Populate inventory from the first starting equipment option.
+        // Money entries within equipment options are not added to inventory.
+        // Pack items are added as a single entry — expand contents when the player selects equipment.
+        let firstOption = classTraits.startingEquipment.first ?? []
+        let bgFirstOption = backgroundTraits.equipment.first ?? []
+        var inventoryEntries: [InventoryEntry] = []
+        for entry in firstOption + bgFirstOption {
+            if case .item(let item, let qty) = entry {
+                inventoryEntries.append(InventoryEntry(item: item, quantity: qty))
+            }
+        }
+        self.inventory = inventoryEntries
+
         self.experiencePoints = 0
         self.level = 1
     }
@@ -280,7 +374,8 @@ extension Player: Hashable {
                lhs.currentHitPoints == rhs.currentHitPoints &&
                lhs.experiencePoints == rhs.experiencePoints &&
                lhs.level == rhs.level &&
-               lhs.money == rhs.money
+               lhs.money == rhs.money &&
+               lhs.inventory.map(\.item.name) == rhs.inventory.map(\.item.name)
     }
     
     public func hash(into hasher: inout Hasher) {
@@ -297,5 +392,6 @@ extension Player: Hashable {
         hasher.combine(experiencePoints)
         hasher.combine(level)
         hasher.combine(money)
+        hasher.combine(inventory.map(\.item.name))
     }
 }

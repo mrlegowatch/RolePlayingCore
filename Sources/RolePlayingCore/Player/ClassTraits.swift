@@ -9,6 +9,9 @@
 import Foundation
 import SwiftDice
 
+/// The armor category a character class is trained to use.
+public typealias ArmorProficiency = Armor.WeightCategory
+
 /// Traits representing a class.
 public struct ClassTraits: Sendable {
     public var name: String
@@ -23,10 +26,11 @@ public struct ClassTraits: Sendable {
     public var experiencePoints: [Int]?
     public var startingSkillCount: Int
     public var skillProficiencies: [Skill]
-    public var weaponProficiencies: [String]
+    public var weaponProficiencies: [WeaponProficiency]
     public var toolProficiencies: [String]
-    public var armorTraining: [String]
-    public var startingEquipment: [[String]]
+    public var armorTraining: [ArmorProficiency]
+    public var startingEquipment: [[EquipmentEntry]]
+    public var unarmoredDefense: UnarmoredDefense?
         
     /// Accesses the experiencePoints array for the specified 1-based level.
     public func minExperiencePoints(at level: Int) -> Int {
@@ -63,10 +67,11 @@ public struct ClassTraits: Sendable {
                 savingThrows: [Ability] = [],
                 startingSkillCount: Int = 2,
                 skillProficiencies: [Skill] = [],
-                weaponProficiencies: [String] = [],
+                weaponProficiencies: [WeaponProficiency] = [],
                 toolProficiencies: [String] = [],
-                armorTraining: [String] = [],
-                startingEquipment: [[String]] = [],
+                armorTraining: [ArmorProficiency] = [],
+                startingEquipment: [[EquipmentEntry]] = [],
+                unarmoredDefense: UnarmoredDefense? = nil,
                 experiencePoints: [Int]? = nil) {
         self.name = name
         self.plural = plural
@@ -83,6 +88,7 @@ public struct ClassTraits: Sendable {
         self.toolProficiencies = toolProficiencies
         self.armorTraining = armorTraining
         self.startingEquipment = startingEquipment
+        self.unarmoredDefense = unarmoredDefense
         self.experiencePoints = experiencePoints
     }
 }
@@ -104,6 +110,7 @@ extension ClassTraits: CodableWithConfiguration {
         case toolProficiencies = "tool proficiencies"
         case armorTraining = "armor training"
         case startingEquipment = "starting equipment"
+        case unarmoredDefense = "unarmored defense"
         case experiencePoints = "experience points"
     }
     
@@ -133,11 +140,29 @@ extension ClassTraits: CodableWithConfiguration {
         let skillNames = try values.decodeIfPresent([String].self, forKey: .skillProficiencies) ?? []
         let resolvedSkills = try skillNames.skills(from: configuration.skills)
         
-        let weaponProficiencies = try values.decodeIfPresent([String].self, forKey: .weaponProficiencies)
+        let weaponProficiencyStrings = try values.decodeIfPresent([String].self, forKey: .weaponProficiencies) ?? []
+        let weaponProficiencies = weaponProficiencyStrings.map { WeaponProficiency(parsing: $0) }
+
         let toolProficiencies = try values.decodeIfPresent([String].self, forKey: .toolProficiencies)
-        let armorTraining = try values.decodeIfPresent([String].self, forKey: .armorTraining)
-        let startingEquipment = try values.decodeIfPresent([[String]].self, forKey: .startingEquipment)
-        
+
+        let armorStrings = try values.decodeIfPresent([String].self, forKey: .armorTraining) ?? []
+        var armorTraining: [ArmorProficiency] = []
+        for string in armorStrings {
+            if string == "all" {
+                armorTraining = ArmorProficiency.allCases
+                break
+            } else if let prof = ArmorProficiency(rawValue: string) {
+                armorTraining.append(prof)
+            }
+        }
+
+        let equipmentStrings = try values.decodeIfPresent([[String]].self, forKey: .startingEquipment) ?? []
+        let startingEquipment = equipmentStrings.map {
+            EquipmentEntry.parseOption($0, items: configuration.items, currencies: configuration.currencies)
+        }
+
+        let unarmoredDefense = try values.decodeIfPresent(UnarmoredDefense.self, forKey: .unarmoredDefense)
+
         let experiencePoints = try values.decodeIfPresent([Int].self, forKey: .experiencePoints)
         
         // Safely set properties
@@ -152,11 +177,12 @@ extension ClassTraits: CodableWithConfiguration {
         self.savingThrows = savingThrows ?? []
         self.startingSkillCount = startingSkillCount ?? 2
         self.skillProficiencies = resolvedSkills
-        self.weaponProficiencies = weaponProficiencies ?? []
+        self.weaponProficiencies = weaponProficiencies
         self.toolProficiencies = toolProficiencies ?? []
-        self.armorTraining = armorTraining ?? []
-        self.startingEquipment = startingEquipment ?? []
-        
+        self.armorTraining = armorTraining
+        self.startingEquipment = startingEquipment
+        self.unarmoredDefense = unarmoredDefense
+
         self.experiencePoints = experiencePoints
     }
         
@@ -174,11 +200,17 @@ extension ClassTraits: CodableWithConfiguration {
         try values.encode(savingThrows, forKey: .savingThrows)
         try values.encode(startingSkillCount, forKey: .startingSkillCount)
         try values.encode(skillProficiencies.skillNames, forKey: .skillProficiencies)
-        try values.encode(weaponProficiencies, forKey: .weaponProficiencies)
+        try values.encode(weaponProficiencies.map(\.description), forKey: .weaponProficiencies)
         try values.encode(toolProficiencies, forKey: .toolProficiencies)
-        try values.encode(armorTraining, forKey: .armorTraining)
-        try values.encode(startingEquipment, forKey: .startingEquipment)
-        
+        try values.encode(armorTraining.map(\.rawValue), forKey: .armorTraining)
+        // Encode starting equipment as the original string representation (notes and money as strings,
+        // items as "quantity name"). Full round-trip fidelity requires the items registry at decode time.
+        let equipmentStrings = startingEquipment.map { option -> [String] in
+            option.map { $0.description }
+        }
+        try values.encode(equipmentStrings, forKey: .startingEquipment)
+        try values.encodeIfPresent(unarmoredDefense, forKey: .unarmoredDefense)
+
         try values.encodeIfPresent(experiencePoints, forKey: .experiencePoints)
     }
 }
