@@ -155,26 +155,6 @@ public class Player: CodableWithConfiguration {
         case inventory
     }
 
-    /// A lightweight, Codable representation of an inventory entry (item name + metadata).
-    /// The full item is resolved from the `Items` registry during decode.
-    private struct InventoryEntryJSON: Decodable {
-        let name: String
-        let quantity: Int
-        let isEquipped: Bool
-
-        enum CodingKeys: String, CodingKey {
-            case name, quantity
-            case isEquipped = "equipped"
-        }
-
-        init(from decoder: Decoder) throws {
-            let values = try decoder.container(keyedBy: CodingKeys.self)
-            name       = try values.decode(String.self, forKey: .name)
-            quantity   = try values.decodeIfPresent(Int.self, forKey: .quantity) ?? 1
-            isEquipped = try values.decodeIfPresent(Bool.self, forKey: .isEquipped) ?? false
-        }
-    }
-    
     public required init(from decoder: Decoder, configuration: Configuration) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         
@@ -206,15 +186,7 @@ public class Player: CodableWithConfiguration {
         let level = try values.decodeIfPresent(Int.self, forKey: .level)
         let money = try values.decode(Money.self, forKey: .money, configuration: configuration.currencies)
 
-        // Resolve inventory entries from the items registry
-        let inventoryJSON = try values.decodeIfPresent([InventoryEntryJSON].self, forKey: .inventory) ?? []
-        var resolvedInventory: [InventoryEntry] = []
-        for entry in inventoryJSON {
-            guard let item = configuration.items[entry.name] else {
-                throw missingTypeError("item", entry.name)
-            }
-            resolvedInventory.append(InventoryEntry(item: item, quantity: entry.quantity, isEquipped: entry.isEquipped))
-        }
+        let resolvedInventory = try values.decodeIfPresent([InventoryEntry].self, forKey: .inventory, configuration: configuration.items) ?? []
 
         // Resolve backgroundTraits from configuration
         guard let backgroundTraits = configuration.backgrounds[backgroundName] else {
@@ -272,18 +244,8 @@ public class Player: CodableWithConfiguration {
         try values.encodeIfPresent(level, forKey: .level)
         try values.encode(money, forKey: .money, configuration: configuration.currencies)
         if !inventory.isEmpty {
-            var inventoryContainer = values.nestedUnkeyedContainer(forKey: .inventory)
-            for entry in inventory {
-                var entryContainer = inventoryContainer.nestedContainer(keyedBy: InventoryEncodingKey.self)
-                try entryContainer.encode(entry.item.name, forKey: .name)
-                if entry.quantity != 1 { try entryContainer.encode(entry.quantity, forKey: .quantity) }
-                if entry.isEquipped    { try entryContainer.encode(entry.isEquipped, forKey: .equipped) }
-            }
+            try values.encode(inventory, forKey: .inventory, configuration: configuration.items)
         }
-    }
-
-    private enum InventoryEncodingKey: String, CodingKey {
-        case name, quantity, equipped
     }
     
     // Creates a player character.
@@ -304,7 +266,7 @@ public class Player: CodableWithConfiguration {
         self.baseAbilities.roll()
         
         // TODO: roll for 2 or 3 background abilities, and if 2, add one random ability score twice
-        self.backgroundAbilities = backgroundTraits.abilityScores.map { Ability($0) }
+        self.backgroundAbilities = backgroundTraits.abilityScores
         
         var allSkills = classTraits.randomSkillProficiencies()
         allSkills.append(backgroundTraits.skillProficiencies)

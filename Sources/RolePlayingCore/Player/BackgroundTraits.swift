@@ -11,11 +11,11 @@ import Foundation
 /// Traits associated with a player character's background.
 public struct BackgroundTraits: Sendable {
     public var name: String
-    public var abilityScores: [String]
+    public var abilityScores: [Ability]
     public var feat: String
     public var skillProficiencies: [Skill]
     public var toolProficiency: String
-    public var equipment: [[EquipmentEntry]]
+    public var equipment: EquipmentOptions
 }
 
 extension BackgroundTraits: CodableWithConfiguration {
@@ -31,7 +31,7 @@ extension BackgroundTraits: CodableWithConfiguration {
     public init(from decoder: Decoder, configuration: Configuration) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         self.name = try values.decode(String.self, forKey: .name)
-        self.abilityScores = try values.decode([String].self, forKey: .abilityScores)
+        self.abilityScores = try values.decode([Ability].self, forKey: .abilityScores)
         self.feat = try values.decode(String.self, forKey: .feat)
         
         // Decode skill proficiency names and resolve them using configuration
@@ -39,10 +39,7 @@ extension BackgroundTraits: CodableWithConfiguration {
         self.skillProficiencies = try skillNames.skills(from: configuration.skills)
         
         self.toolProficiency = try values.decode(String.self, forKey: .toolProficiency)
-        let equipmentStrings = try values.decode([[String]].self, forKey: .equipment)
-        self.equipment = equipmentStrings.map {
-            EquipmentEntry.parseOption($0, items: configuration.items, currencies: configuration.currencies)
-        }
+        self.equipment = try values.decode(EquipmentOptions.self, forKey: .equipment, configuration: configuration)
     }
     
     public func encode(to encoder: Encoder, configuration: Configuration) throws {
@@ -52,9 +49,6 @@ extension BackgroundTraits: CodableWithConfiguration {
         try container.encode(feat, forKey: .feat)
         try container.encode(skillProficiencies.skillNames, forKey: .skillProficiencies)
         try container.encode(toolProficiency, forKey: .toolProficiency)
-        let equipmentStrings = equipment.map { option -> [String] in
-            option.map { $0.description }
-        }
-        try container.encode(equipmentStrings, forKey: .equipment)
+        try container.encode(equipment, forKey: .equipment, configuration: configuration)
     }
 }

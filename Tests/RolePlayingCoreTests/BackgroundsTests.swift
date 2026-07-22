@@ -39,7 +39,7 @@ struct BackgroundsTests {
         
         // Then: The properties should match the input
         #expect(background.name == "Acolyte", "Name should match")
-        #expect(background.abilityScores == ["Intelligence", "Wisdom"], "Ability scores should match")
+        #expect(background.abilityScores == [Ability("Intelligence"), Ability("Wisdom")], "Ability scores should match")
         #expect(background.feat == "Magic Initiate", "Feat should match")
         #expect(background.skillProficiencies.count == 2, "Should have 2 skill proficiencies")
         #expect(background.skillProficiencies.skillNames == ["Insight", "Religion"], "Skill names should match")

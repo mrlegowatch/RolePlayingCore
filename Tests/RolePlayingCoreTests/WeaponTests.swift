@@ -175,15 +175,3 @@ struct WeaponTests {
         #expect(agile == WeaponProperty("agile"))
     }
 }
-
-// WeaponProficiency needs Equatable for the round-trip test.
-extension WeaponProficiency: Equatable {
-    public static func == (lhs: WeaponProficiency, rhs: WeaponProficiency) -> Bool {
-        switch (lhs, rhs) {
-        case (.category(let a), .category(let b)):             return a == b
-        case (.restricted(let a, let ap), .restricted(let b, let bp)): return a == b && ap == bp
-        case (.specific(let a), .specific(let b)):             return a == b
-        default: return false
-        }
-    }
-}

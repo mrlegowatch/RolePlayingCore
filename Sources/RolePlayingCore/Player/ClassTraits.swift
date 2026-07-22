@@ -29,7 +29,7 @@ public struct ClassTraits: Sendable {
     public var weaponProficiencies: [WeaponProficiency]
     public var toolProficiencies: [String]
     public var armorTraining: [ArmorProficiency]
-    public var startingEquipment: [[EquipmentEntry]]
+    public var startingEquipment: EquipmentOptions
     public var unarmoredDefense: UnarmoredDefense?
         
     /// Accesses the experiencePoints array for the specified 1-based level.
@@ -70,7 +70,7 @@ public struct ClassTraits: Sendable {
                 weaponProficiencies: [WeaponProficiency] = [],
                 toolProficiencies: [String] = [],
                 armorTraining: [ArmorProficiency] = [],
-                startingEquipment: [[EquipmentEntry]] = [],
+                startingEquipment: EquipmentOptions = [],
                 unarmoredDefense: UnarmoredDefense? = nil,
                 experiencePoints: [Int]? = nil) {
         self.name = name
@@ -156,10 +156,7 @@ extension ClassTraits: CodableWithConfiguration {
             }
         }
 
-        let equipmentStrings = try values.decodeIfPresent([[String]].self, forKey: .startingEquipment) ?? []
-        let startingEquipment = equipmentStrings.map {
-            EquipmentEntry.parseOption($0, items: configuration.items, currencies: configuration.currencies)
-        }
+        let startingEquipment = try values.decodeIfPresent(EquipmentOptions.self, forKey: .startingEquipment, configuration: configuration) ?? []
 
         let unarmoredDefense = try values.decodeIfPresent(UnarmoredDefense.self, forKey: .unarmoredDefense)
 
@@ -203,12 +200,7 @@ extension ClassTraits: CodableWithConfiguration {
         try values.encode(weaponProficiencies.map(\.description), forKey: .weaponProficiencies)
         try values.encode(toolProficiencies, forKey: .toolProficiencies)
         try values.encode(armorTraining.map(\.rawValue), forKey: .armorTraining)
-        // Encode starting equipment as the original string representation (notes and money as strings,
-        // items as "quantity name"). Full round-trip fidelity requires the items registry at decode time.
-        let equipmentStrings = startingEquipment.map { option -> [String] in
-            option.map { $0.description }
-        }
-        try values.encode(equipmentStrings, forKey: .startingEquipment)
+        try values.encode(startingEquipment, forKey: .startingEquipment, configuration: configuration)
         try values.encodeIfPresent(unarmoredDefense, forKey: .unarmoredDefense)
 
         try values.encodeIfPresent(experiencePoints, forKey: .experiencePoints)

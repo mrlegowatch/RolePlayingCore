@@ -1,10 +1,12 @@
 //
-//  EquipmentEntry.swift
+//  EquipmentOptions.swift
 //  RolePlayingCore
 //
 //  Created by Brian Arnold on 7/21/26.
 //  Copyright © 2026 Brian Arnold. All rights reserved.
 //
+
+import Foundation
 
 /// A single entry within a starting equipment option.
 public enum EquipmentEntry: Sendable {
@@ -18,7 +20,7 @@ public enum EquipmentEntry: Sendable {
 }
 
 extension EquipmentEntry: CustomStringConvertible {
-    
+
     /// For an item, indicates the number of items and uses plural. For money, uses money formatting.
     public var description: String {
         switch self {
@@ -79,5 +81,54 @@ extension EquipmentEntry {
         currencies: Currencies
     ) -> [EquipmentEntry] {
         strings.map { parse($0, items: items, currencies: currencies) }
+    }
+}
+
+// MARK: - Equipment Options
+
+/// A set of starting equipment choices: each element is one option — a bundle of items you receive
+/// as a set — and the collection represents the options to choose from.
+///
+/// For example, a Fighter's starting equipment might be:
+///
+/// - Option 1: chain mail, a martial weapon, a shield
+/// - Option 2: leather armor, two martial weapons, longbow, 20 arrows
+public struct EquipmentOptions: Sendable {
+    private var options: [[EquipmentEntry]]
+
+    public init(_ options: [[EquipmentEntry]] = []) {
+        self.options = options
+    }
+}
+
+extension EquipmentOptions: ExpressibleByArrayLiteral {
+    public typealias ArrayLiteralElement = [EquipmentEntry]
+
+    public init(arrayLiteral elements: [EquipmentEntry]...) {
+        self.init(elements)
+    }
+}
+
+extension EquipmentOptions: RandomAccessCollection {
+    public typealias Element = [EquipmentEntry]
+    public typealias Index = Int
+
+    public var startIndex: Int { options.startIndex }
+    public var endIndex: Int { options.endIndex }
+
+    public subscript(index: Int) -> [EquipmentEntry] { options[index] }
+}
+
+extension EquipmentOptions: CodableWithConfiguration {
+    public typealias EncodingConfiguration = Configuration
+    public typealias DecodingConfiguration = Configuration
+
+    public init(from decoder: any Decoder, configuration: Configuration) throws {
+        let strings = try [[String]](from: decoder)
+        self.init(strings.map { EquipmentEntry.parseOption($0, items: configuration.items, currencies: configuration.currencies) })
+    }
+
+    public func encode(to encoder: any Encoder, configuration: Configuration) throws {
+        try options.map { $0.map(\.description) }.encode(to: encoder)
     }
 }

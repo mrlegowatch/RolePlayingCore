@@ -36,3 +36,41 @@ public struct InventoryEntry: Sendable, Identifiable {
         self.isEquipped = isEquipped
     }
 }
+
+extension InventoryEntry: CodableWithConfiguration {
+    public typealias EncodingConfiguration = Items
+    public typealias DecodingConfiguration = Items
+
+    private enum CodingKeys: String, CodingKey {
+        case name
+        case quantity
+        case isEquipped = "equipped"
+    }
+
+    public init(from decoder: Decoder, configuration: Items) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let name = try container.decode(String.self, forKey: .name)
+        guard let item = configuration[name] else {
+            throw DecodingError.dataCorruptedError(
+                forKey: .name,
+                in: container,
+                debugDescription: "Unknown item '\(name)'"
+            )
+        }
+        self.id = UUID()
+        self.item = item
+        self.quantity = try container.decodeIfPresent(Int.self, forKey: .quantity) ?? 1
+        self.isEquipped = try container.decodeIfPresent(Bool.self, forKey: .isEquipped) ?? false
+    }
+
+    public func encode(to encoder: Encoder, configuration: Items) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(item.name, forKey: .name)
+        if quantity != 1 {
+            try container.encode(quantity, forKey: .quantity)
+        }
+        if isEquipped {
+            try container.encode(isEquipped, forKey: .isEquipped)
+        }
+    }
+}

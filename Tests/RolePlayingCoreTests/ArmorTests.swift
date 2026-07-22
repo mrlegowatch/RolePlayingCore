@@ -51,7 +51,7 @@ struct ArmorTests {
         let backgroundTraits = configuration.backgrounds["Sailor"]!
         let speciesTraits = configuration.species["Human"]!
 
-        var player = Player(
+        let player = Player(
             "Test",
             backgroundTraits: backgroundTraits,
             speciesTraits: speciesTraits,
@@ -75,7 +75,7 @@ struct ArmorTests {
 
     @Test("Light armor: base AC + full DEX modifier")
     func lightArmorAC() {
-        var player = makePlayer(baseAbilities: ["Dexterity": 16])  // DEX mod +3
+        let player = makePlayer(baseAbilities: ["Dexterity": 16])  // DEX mod +3
         let leather = configuration.items["Leather Armor"] as! Armor  // base 11
         player.inventory.append(InventoryEntry(item: leather, isEquipped: true))
         #expect(player.armorClass == 14)  // 11 + 3
@@ -83,7 +83,7 @@ struct ArmorTests {
 
     @Test("Medium armor: base AC + DEX capped at +2")
     func mediumArmorAC() {
-        var player = makePlayer(baseAbilities: ["Dexterity": 18])  // DEX mod +4, capped at +2
+        let player = makePlayer(baseAbilities: ["Dexterity": 18])  // DEX mod +4, capped at +2
         let chainShirt = configuration.items["Chain Shirt"] as! Armor  // base 13, capped 2
         player.inventory.append(InventoryEntry(item: chainShirt, isEquipped: true))
         #expect(player.armorClass == 15)  // 13 + 2
@@ -91,7 +91,7 @@ struct ArmorTests {
 
     @Test("Heavy armor: fixed base AC, no DEX modifier")
     func heavyArmorAC() {
-        var player = makePlayer(baseAbilities: ["Dexterity": 18])  // DEX mod +4, ignored
+        let player = makePlayer(baseAbilities: ["Dexterity": 18])  // DEX mod +4, ignored
         let chainMail = configuration.items["Chain Mail"] as! Armor  // base 16, excluded
         player.inventory.append(InventoryEntry(item: chainMail, isEquipped: true))
         #expect(player.armorClass == 16)
@@ -99,7 +99,7 @@ struct ArmorTests {
 
     @Test("Shield adds flat bonus to unarmored AC")
     func shieldBonus() {
-        var player = makePlayer(baseAbilities: ["Dexterity": 14])  // unarmored AC 12
+        let player = makePlayer(baseAbilities: ["Dexterity": 14])  // unarmored AC 12
         let shield = configuration.items["Shield"] as! Armor        // +2 bonus
         player.inventory.append(InventoryEntry(item: shield, isEquipped: true))
         #expect(player.armorClass == 14)  // 12 + 2
@@ -107,7 +107,7 @@ struct ArmorTests {
 
     @Test("Light armor + shield stack correctly")
     func armorAndShield() {
-        var player = makePlayer(baseAbilities: ["Dexterity": 14])  // DEX mod +2
+        let player = makePlayer(baseAbilities: ["Dexterity": 14])  // DEX mod +2
         let leather = configuration.items["Leather Armor"] as! Armor  // base 11 + dex = 13
         let shield  = configuration.items["Shield"] as! Armor          // +2
         player.inventory.append(InventoryEntry(item: leather, isEquipped: true))
