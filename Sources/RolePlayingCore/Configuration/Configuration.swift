@@ -15,6 +15,7 @@ import Foundation
 public struct ConfigurationFiles: Decodable, Sendable {
     let currencies: [String]
     let skills: [String]
+    let feats: [String]?
     let items: [String]?
     let backgrounds: [String]
     let creatureTypes: [String]
@@ -26,6 +27,7 @@ public struct ConfigurationFiles: Decodable, Sendable {
     private enum CodingKeys: String, CodingKey {
         case currencies
         case skills
+        case feats
         case items
         case backgrounds
         case creatureTypes = "creature types"
@@ -49,6 +51,7 @@ public struct Configuration {
     
     public private(set) var currencies = Currencies()
     public private(set) var skills = Skills()
+    public private(set) var feats = Feats()
     public private(set) var items = Items()
     public private(set) var backgrounds = Backgrounds()
     public private(set) var creatureTypes = CreatureTypes()
@@ -80,6 +83,7 @@ public struct Configuration {
     mutating func load(_ configurationFiles: ConfigurationFiles) throws {
         try loadCurrencies(from: configurationFiles.currencies)
         try loadSkills(from: configurationFiles.skills)
+        try loadFeats(from: configurationFiles.feats)
         try loadItems(from: configurationFiles.items)
         try loadBackgrounds(from: configurationFiles.backgrounds)
         try loadCreatureTypes(from: configurationFiles.creatureTypes)
@@ -105,6 +109,16 @@ public struct Configuration {
             let jsonData = try bundle.loadJSON(fileName)
             let skills = try decoder.decode(Skills.self, from: jsonData)
             self.skills.add(skills.all)
+        }
+    }
+
+    /// Loads feats from the specified file names, if provided.
+    private mutating func loadFeats(from fileNames: [String]?) throws {
+        guard let fileNames else { return }
+        for fileName in fileNames {
+            let jsonData = try bundle.loadJSON(fileName)
+            let feats = try decoder.decode(Feats.self, from: jsonData)
+            self.feats.add(feats.all)
         }
     }
 

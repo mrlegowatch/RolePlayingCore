@@ -6,8 +6,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/mrlegowatch/SwiftDice.git",
       "state" : {
-        "branch" : "development",
-        "revision" : "7cc441ecb84913a242cc10df904f36ad4ab29b82"
+        "branch" : "main",
+        "revision" : "1df91d4339702fd5e4fc971646c2405db41b1a1a"
       }
     }
   ],

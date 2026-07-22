@@ -31,6 +31,9 @@ public struct ClassTraits: Sendable {
     public var armorTraining: [ArmorProficiency]
     public var startingEquipment: EquipmentOptions
     public var unarmoredDefense: UnarmoredDefense?
+    public var subclassTitle: String
+    public var subclassChoiceLevel: Int
+    public var subclasses: [SubclassTraits]
         
     /// Accesses the experiencePoints array for the specified 1-based level.
     public func minExperiencePoints(at level: Int) -> Int {
@@ -72,6 +75,9 @@ public struct ClassTraits: Sendable {
                 armorTraining: [ArmorProficiency] = [],
                 startingEquipment: EquipmentOptions = [],
                 unarmoredDefense: UnarmoredDefense? = nil,
+                subclassTitle: String = "Subclass",
+                subclassChoiceLevel: Int = 3,
+                subclasses: [SubclassTraits] = [],
                 experiencePoints: [Int]? = nil) {
         self.name = name
         self.plural = plural
@@ -89,6 +95,9 @@ public struct ClassTraits: Sendable {
         self.armorTraining = armorTraining
         self.startingEquipment = startingEquipment
         self.unarmoredDefense = unarmoredDefense
+        self.subclassTitle = subclassTitle
+        self.subclassChoiceLevel = subclassChoiceLevel
+        self.subclasses = subclasses
         self.experiencePoints = experiencePoints
     }
 }
@@ -111,6 +120,9 @@ extension ClassTraits: CodableWithConfiguration {
         case armorTraining = "armor training"
         case startingEquipment = "starting equipment"
         case unarmoredDefense = "unarmored defense"
+        case subclassTitle = "subclass title"
+        case subclassChoiceLevel = "subclass choice level"
+        case subclasses
         case experiencePoints = "experience points"
     }
     
@@ -160,6 +172,10 @@ extension ClassTraits: CodableWithConfiguration {
 
         let unarmoredDefense = try values.decodeIfPresent(UnarmoredDefense.self, forKey: .unarmoredDefense)
 
+        let subclassTitle = try values.decodeIfPresent(String.self, forKey: .subclassTitle) ?? "Subclass"
+        let subclassChoiceLevel = try values.decodeIfPresent(Int.self, forKey: .subclassChoiceLevel) ?? 3
+        let subclasses = try values.decodeIfPresent([SubclassTraits].self, forKey: .subclasses) ?? []
+
         let experiencePoints = try values.decodeIfPresent([Int].self, forKey: .experiencePoints)
         
         // Safely set properties
@@ -179,6 +195,9 @@ extension ClassTraits: CodableWithConfiguration {
         self.armorTraining = armorTraining
         self.startingEquipment = startingEquipment
         self.unarmoredDefense = unarmoredDefense
+        self.subclassTitle = subclassTitle
+        self.subclassChoiceLevel = subclassChoiceLevel
+        self.subclasses = subclasses
 
         self.experiencePoints = experiencePoints
     }
@@ -202,6 +221,11 @@ extension ClassTraits: CodableWithConfiguration {
         try values.encode(armorTraining.map(\.rawValue), forKey: .armorTraining)
         try values.encode(startingEquipment, forKey: .startingEquipment, configuration: configuration)
         try values.encodeIfPresent(unarmoredDefense, forKey: .unarmoredDefense)
+        if !subclasses.isEmpty {
+            try values.encode(subclassTitle, forKey: .subclassTitle)
+            try values.encode(subclassChoiceLevel, forKey: .subclassChoiceLevel)
+            try values.encode(subclasses, forKey: .subclasses)
+        }
 
         try values.encodeIfPresent(experiencePoints, forKey: .experiencePoints)
     }

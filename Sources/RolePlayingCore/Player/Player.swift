@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Observation
 import SwiftDice
 
 public extension AbilityScores {
@@ -21,18 +22,23 @@ public extension AbilityScores {
 }
 
 /// The base class for a player character, including its background, species, class, abilities, skills, hit points, and so on.
+@Observable
 public class Player: CodableWithConfiguration {
     
     /// The player's name.
     public var name: String
     
-    public var backgroundTraits: BackgroundTraits!
-    public var speciesTraits: SpeciesTraits!
-    public var classTraits: ClassTraits!
+    public var backgroundTraits: BackgroundTraits
+    public var speciesTraits: SpeciesTraits
+    public var classTraits: ClassTraits
+    public var subclassTraits: SubclassTraits?
 
-    public var backgroundName: String { backgroundTraits?.name ?? "" }
-    public var speciesName: String { speciesTraits?.name ?? "" }
-    public var className: String { classTraits?.name ?? "" }
+    public var backgroundName: String { backgroundTraits.name }
+    public var speciesName: String { speciesTraits.name }
+    public var className: String { classTraits.name }
+    public var subclassName: String { subclassTraits?.name ?? "" }
+
+    public var feats: [FeatTraits]
 
     public private(set) var skillProficiencies: [Skill]
 
@@ -140,6 +146,8 @@ public class Player: CodableWithConfiguration {
         case backgroundName = "background"
         case speciesName = "species"
         case className = "class"
+        case subclassName = "subclass"
+        case feats
         case descriptiveTraits = "descriptive traits"
         case gender
         case alignment
@@ -179,6 +187,18 @@ public class Player: CodableWithConfiguration {
             }
             resolvedSkills.append(skill)
         }
+
+        // Decode feat names and resolve them using configuration; fall back to background feat if absent
+        let featNames = try values.decodeIfPresent([String].self, forKey: .feats)
+        var resolvedFeats: [FeatTraits] = []
+        if let featNames {
+            for featName in featNames {
+                guard let feat = configuration.feats[featName] else {
+                    throw missingTypeError("feat", featName)
+                }
+                resolvedFeats.append(feat)
+            }
+        }
         
         let maximumHitPoints = try values.decode(Int.self, forKey: .maximumHitPoints)
         let currentHitPoints = try values.decodeIfPresent(Int.self, forKey: .currentHitPoints)
@@ -202,7 +222,14 @@ public class Player: CodableWithConfiguration {
         guard let classTraits = configuration.classes[className] else {
             throw missingTypeError("class", className)
         }
-        
+
+        let subclassTraits: SubclassTraits?
+        if let subclassName = try values.decodeIfPresent(String.self, forKey: .subclassName) {
+            subclassTraits = classTraits.subclasses.first(where: { $0.name == subclassName })
+        } else {
+            subclassTraits = nil
+        }
+
         // Safely set properties
         self.name = name
         self.descriptiveTraits = descriptiveTraits ?? [:]
@@ -212,6 +239,7 @@ public class Player: CodableWithConfiguration {
         self.baseAbilities = baseAbilities
         self.backgroundAbilities = backgroundAbilities.map { Ability($0) }
         self.skillProficiencies = resolvedSkills
+        self.feats = resolvedFeats.isEmpty ? [backgroundTraits.feat] : resolvedFeats
         self.maximumHitPoints = maximumHitPoints
         self.currentHitPoints = currentHitPoints ?? maximumHitPoints
         self.experiencePoints = experiencePoints ?? 0
@@ -221,6 +249,7 @@ public class Player: CodableWithConfiguration {
         self.backgroundTraits = backgroundTraits
         self.speciesTraits = speciesTraits
         self.classTraits = classTraits
+        self.subclassTraits = subclassTraits
     }
     
     public func encode(to encoder: Encoder, configuration: Configuration) throws {
@@ -231,6 +260,9 @@ public class Player: CodableWithConfiguration {
         try values.encode(backgroundName, forKey: .backgroundName)
         try values.encode(speciesName, forKey: .speciesName)
         try values.encode(className, forKey: .className)
+        if let subclassTraits {
+            try values.encode(subclassTraits.name, forKey: .subclassName)
+        }
         try values.encodeIfPresent(descriptiveTraits, forKey: .descriptiveTraits)
         try values.encodeIfPresent(gender, forKey: .gender)
         try values.encodeIfPresent(alignment, forKey: .alignment)
@@ -238,6 +270,7 @@ public class Player: CodableWithConfiguration {
         try values.encode(baseAbilities, forKey: .baseAbilities)
         try values.encode(backgroundAbilities.map({ $0.name }), forKey: .backgroundAbilities)
         try values.encode(skillProficiencies.skillNames, forKey: .skillProficiencies)
+        try values.encode(feats.map(\.name), forKey: .feats)
         try values.encode(maximumHitPoints, forKey: .maximumHitPoints)
         try values.encodeIfPresent(currentHitPoints, forKey: .currentHitPoints)
         try values.encodeIfPresent(experiencePoints, forKey: .experiencePoints)
@@ -246,37 +279,27 @@ public class Player: CodableWithConfiguration {
         if !inventory.isEmpty {
             try values.encode(inventory, forKey: .inventory, configuration: configuration.items)
         }
-    }
+     }
     
-    // Creates a player character.
-    public init(_ name: String, backgroundTraits: BackgroundTraits, speciesTraits: SpeciesTraits, classTraits: ClassTraits, gender: Gender? = nil, alignment: Alignment? = nil) {
-        self.name = name
-        self.descriptiveTraits = [:]
-        self.backgroundTraits = backgroundTraits
-        self.speciesTraits = speciesTraits
-        self.classTraits = classTraits
-        self.gender = gender
-        self.alignment = alignment
-        
+    // Creates a player character with explicit ability scores and skill proficiencies.
+    public init(_ name: String, backgroundTraits: BackgroundTraits, speciesTraits: SpeciesTraits, classTraits: ClassTraits, baseAbilities: AbilityScores, skillProficiencies: [Skill], gender: Gender? = nil, alignment: Alignment? = nil) {
+        // @Observable turns stored properties into computed properties backed by _property.
+        // The observation getter captures `self`, so read-modify-write operations and reads
+        // of self properties require all stored properties to be initialized first (phase 2).
+        // Compute all intermediate values from parameters, then assign all stored properties
+        // in one block to satisfy Swift's two-phase init rules.
+
         // TODO: More heavily weight the first base size (primary vs. secondary)
         let baseSize = speciesTraits.baseSizes.randomElement()!
-        self.height = Height.randomHeight(from: baseSize)
-        
-        self.baseAbilities = AbilityScores()
-        self.baseAbilities.roll()
-        
-        // TODO: roll for 2 or 3 background abilities, and if 2, add one random ability score twice
-        self.backgroundAbilities = backgroundTraits.abilityScores
-        
-        var allSkills = classTraits.randomSkillProficiencies()
-        allSkills.append(backgroundTraits.skillProficiencies)
-        self.skillProficiencies = allSkills
+        let height = Height.randomHeight(from: baseSize)
 
-        self.maximumHitPoints = Player.rollHitPoints(classTraits: classTraits, speciesTraits: speciesTraits)
-        self.currentHitPoints = self.maximumHitPoints
-        
+        // TODO: roll for 2 or 3 background abilities, and if 2, add one random ability score twice
+        let backgroundAbilities = backgroundTraits.abilityScores
+
+        let maxHP = Player.rollHitPoints(classTraits: classTraits, speciesTraits: speciesTraits)
+
         let startingWealth = classTraits.startingWealth.roll().result
-        self.money = Money(value: Double(startingWealth), unit: .baseUnit())
+        let money = Money(value: Double(startingWealth), unit: .baseUnit())
 
         // Populate inventory from the first starting equipment option.
         // Money entries within equipment options are not added to inventory.
@@ -289,10 +312,37 @@ public class Player: CodableWithConfiguration {
                 inventoryEntries.append(InventoryEntry(item: item, quantity: qty))
             }
         }
-        self.inventory = inventoryEntries
 
+        self.name = name
+        self.descriptiveTraits = [:]
+        self.backgroundTraits = backgroundTraits
+        self.speciesTraits = speciesTraits
+        self.classTraits = classTraits
+        self.subclassTraits = nil
+        self.gender = gender
+        self.alignment = alignment
+        self.height = height
+        self.baseAbilities = baseAbilities
+        self.backgroundAbilities = backgroundAbilities
+        self.skillProficiencies = skillProficiencies
+        self.feats = [backgroundTraits.feat]
+        self.maximumHitPoints = maxHP
+        self.currentHitPoints = maxHP
+        self.money = money
+        self.inventory = inventoryEntries
         self.experiencePoints = 0
         self.level = 1
+    }
+
+    // Creates a player character by rolling random ability scores and selecting random skill proficiencies.
+    public convenience init(_ name: String, backgroundTraits: BackgroundTraits, speciesTraits: SpeciesTraits, classTraits: ClassTraits, gender: Gender? = nil, alignment: Alignment? = nil) {
+        var baseAbilities = AbilityScores()
+        baseAbilities.roll()
+
+        var skillProficiencies = classTraits.randomSkillProficiencies()
+        skillProficiencies.append(backgroundTraits.skillProficiencies)
+
+        self.init(name, backgroundTraits: backgroundTraits, speciesTraits: speciesTraits, classTraits: classTraits, baseAbilities: baseAbilities, skillProficiencies: skillProficiencies, gender: gender, alignment: alignment)
     }
     
     // MARK: Implementation

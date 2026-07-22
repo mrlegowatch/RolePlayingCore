@@ -33,14 +33,14 @@ struct BackgroundsTests {
             "equipment": [["Holy Symbol", "Prayer Book", "Vestments", "10 GP"], ["15 GP"]]
         }
         """.data(using: .utf8)!
-        
+
         // When: Decoding the JSON data with configuration
         let background = try decoder.decode(BackgroundTraits.self, from: jsonData, configuration: configuration)
         
         // Then: The properties should match the input
         #expect(background.name == "Acolyte", "Name should match")
         #expect(background.abilityScores == [Ability("Intelligence"), Ability("Wisdom")], "Ability scores should match")
-        #expect(background.feat == "Magic Initiate", "Feat should match")
+        #expect(background.feat.name == "Magic Initiate", "Feat should match")
         #expect(background.skillProficiencies.count == 2, "Should have 2 skill proficiencies")
         #expect(background.skillProficiencies.skillNames == ["Insight", "Religion"], "Skill names should match")
         #expect(background.toolProficiency == "Calligrapher's Supplies", "Tool proficiency should match")
@@ -66,7 +66,7 @@ struct BackgroundsTests {
             "equipment": [["Crowbar", "Dark Clothes", "Thieves' Tools", "16 GP"]]
         }
         """.data(using: .utf8)!
-        
+
         let background = try decoder.decode(BackgroundTraits.self, from: jsonData, configuration: configuration)
         
         // When: Encoding the background back to JSON
@@ -128,7 +128,7 @@ struct BackgroundsTests {
         // Then: The find method should locate backgrounds by name
         let acolyte = try #require(backgrounds["Acolyte"])
         #expect(acolyte.name == "Acolyte", "Found background should be Acolyte")
-        #expect(acolyte.feat == "Magic Initiate", "Acolyte feat should match")
+        #expect(acolyte.feat.name == "Magic Initiate", "Acolyte feat should match")
         
         let criminal = try #require(backgrounds["Criminal"])
         #expect(criminal.skillProficiencies.skillNames == ["Deception", "Stealth"], "Criminal skills should match")
