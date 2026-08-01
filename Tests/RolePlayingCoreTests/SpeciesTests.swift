@@ -45,8 +45,19 @@ struct SpeciesTests {
     func uncommonSpecies() async throws {
         let jsonData = try bundle.loadJSON("TestMoreSpecies")
         let species = try decoder.decode(Species.self, from: jsonData, configuration: configuration)
-        
+
         // There should be 5 species plus 2 subspecies
         #expect(species.count == 5, "all species")
+    }
+
+    @Test("Encode round-trip preserves species count")
+    func encodeRoundTrip() async throws {
+        let jsonData = try bundle.loadJSON("TestSpecies")
+        let original = try decoder.decode(Species.self, from: jsonData, configuration: configuration)
+        let encoder = JSONEncoder()
+        let data = try encoder.encode(original, configuration: configuration)
+        let decoded = try decoder.decode(Species.self, from: data, configuration: configuration)
+        #expect(decoded.count == original.count)
+        #expect(decoded["Human"] != nil)
     }
 }

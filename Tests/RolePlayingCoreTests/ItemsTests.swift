@@ -142,4 +142,17 @@ struct ItemsTests {
             Issue.record("Expected .note entry, got \(entry)")
         }
     }
+
+    @Test("Encode round-trip preserves all item counts")
+    func encodeRoundTrip() throws {
+        let original = configuration.items
+        let encoder = JSONEncoder()
+        let data = try encoder.encode(original, configuration: configuration)
+        let decoded = try JSONDecoder().decode(Items.self, from: data, configuration: configuration)
+        #expect(decoded.weapons.count == original.weapons.count)
+        #expect(decoded.armors.count == original.armors.count)
+        #expect(decoded.gear.count == original.gear.count)
+        #expect(decoded.tools.count == original.tools.count)
+        #expect(decoded.count == original.count)
+    }
 }

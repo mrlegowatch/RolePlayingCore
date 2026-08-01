@@ -38,6 +38,16 @@ struct PlayersTests {
         #expect(players[1]! === removedPlayer, "players count")
     }
     
+    @Test("Encode round-trip preserves player count")
+    func encodeRoundTrip() async throws {
+        let playersData = try bundle.loadJSON("TestPlayers")
+        let original = try decoder.decode(Players.self, from: playersData, configuration: configuration)
+        let encoder = JSONEncoder()
+        let data = try encoder.encode(original, configuration: configuration)
+        let decoded = try decoder.decode(Players.self, from: data, configuration: configuration)
+        #expect(decoded.count == original.count)
+    }
+
     @Test("Verify missing or invalid traits cause resolution failure", arguments: [
         "InvalidClassPlayers",
         "InvalidSpeciesPlayers",

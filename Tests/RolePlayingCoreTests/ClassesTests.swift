@@ -40,8 +40,19 @@ struct ClassesTests {
     func uncommonClasses() throws {
         let jsonData = try bundle.loadJSON("TestMoreClasses")
         let classes = try decoder.decode(Classes.self, from: jsonData, configuration: configuration)
-        
+
         #expect(classes.count == 8, "classes count failed")
     }
-    
+
+    @Test("Encode round-trip preserves class count and names")
+    func encodeRoundTrip() throws {
+        let jsonData = try bundle.loadJSON("TestClasses")
+        let original = try decoder.decode(Classes.self, from: jsonData, configuration: configuration)
+        let encoder = JSONEncoder()
+        let data = try encoder.encode(original, configuration: configuration)
+        let decoded = try decoder.decode(Classes.self, from: data, configuration: configuration)
+        #expect(decoded.count == original.count)
+        #expect(decoded["Fighter"] != nil)
+    }
+
 }

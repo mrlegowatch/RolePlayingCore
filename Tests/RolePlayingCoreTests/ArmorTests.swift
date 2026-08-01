@@ -172,4 +172,90 @@ struct ArmorTests {
         let decoded = try JSONDecoder().decode(UnarmoredDefense.self, from: data)
         #expect(decoded.additionalAbilities.map(\.name) == ["Constitution"])
     }
+
+    // MARK: - Armor programmatic init
+
+    @Test("Armor programmatic init stores all properties")
+    func initAllProperties() {
+        let zeroCost = Money(value: 0, unit: UnitCurrency.baseUnit())
+        let armor = Armor(
+            name: "Plate",
+            cost: zeroCost,
+            weight: Weight(value: 65, unit: .pounds),
+            category: .heavy,
+            baseAC: 18,
+            dexterityModifierRule: .excluded,
+            strengthRequirement: 15,
+            stealthDisadvantage: true
+        )
+        #expect(armor.name == "Plate")
+        #expect(armor.plural == "Plates")
+        #expect(armor.category == .heavy)
+        #expect(armor.baseAC == 18)
+        #expect(armor.dexterityModifierRule == .excluded)
+        #expect(armor.strengthRequirement == 15)
+        #expect(armor.stealthDisadvantage == true)
+    }
+
+    @Test("Armor init defaults plural to name + 's' and stealthDisadvantage to false")
+    func initDefaults() {
+        let zeroCost = Money(value: 0, unit: UnitCurrency.baseUnit())
+        let armor = Armor(
+            name: "Buckler",
+            cost: zeroCost,
+            weight: Weight(value: 3, unit: .pounds),
+            category: .shield,
+            baseAC: 1,
+            dexterityModifierRule: .bonus
+        )
+        #expect(armor.plural == "Bucklers")
+        #expect(armor.strengthRequirement == nil)
+        #expect(armor.stealthDisadvantage == false)
+    }
+
+    // MARK: - Armor decode with missing optional fields
+
+    @Test("Decode armor with missing plural defaults to name + 's'")
+    func decodeMissingPlural() throws {
+        let json = """
+        {"name": "Buckler", "category": "shield", "base ac": 1, "dexterity modifier": "bonus"}
+        """.data(using: .utf8)!
+        let armor = try JSONDecoder().decode(Armor.self, from: json, configuration: configuration)
+        #expect(armor.plural == "Bucklers")
+    }
+
+    @Test("Decode armor with missing weight defaults to zero pounds")
+    func decodeMissingWeight() throws {
+        let json = """
+        {"name": "Buckler", "category": "shield", "base ac": 1, "dexterity modifier": "bonus"}
+        """.data(using: .utf8)!
+        let armor = try JSONDecoder().decode(Armor.self, from: json, configuration: configuration)
+        #expect(armor.weight.value == 0)
+        #expect(armor.weight.unit == .pounds)
+    }
+
+    @Test("Decode armor with missing strengthRequirement and stealthDisadvantage defaults")
+    func decodeMissingOptionalFields() throws {
+        let json = """
+        {"name": "Buckler", "category": "shield", "base ac": 1, "dexterity modifier": "bonus"}
+        """.data(using: .utf8)!
+        let armor = try JSONDecoder().decode(Armor.self, from: json, configuration: configuration)
+        #expect(armor.strengthRequirement == nil)
+        #expect(armor.stealthDisadvantage == false)
+    }
+
+    // MARK: - Armor encode round-trip
+
+    @Test("Armor encode round-trip preserves all properties")
+    func armorEncodeRoundTrip() throws {
+        let original = configuration.items["Chain Mail"] as! Armor
+        let data = try JSONEncoder().encode(original, configuration: configuration)
+        let decoded = try JSONDecoder().decode(Armor.self, from: data, configuration: configuration)
+        #expect(decoded.name == original.name)
+        #expect(decoded.category == original.category)
+        #expect(decoded.baseAC == original.baseAC)
+        #expect(decoded.dexterityModifierRule == original.dexterityModifierRule)
+        #expect(decoded.strengthRequirement == original.strengthRequirement)
+        #expect(decoded.stealthDisadvantage == original.stealthDisadvantage)
+    }
 }

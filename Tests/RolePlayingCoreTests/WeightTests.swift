@@ -123,31 +123,72 @@ struct UnitWeightTests {
         struct WeightContainer: Decodable {
             let weight: Weight? // The ? will trigger decodeIfPresent in the decoder
         }
-        
+
         do {
             let traits = """
             {
                 "weight": "220 lb"
             }
             """.data(using: .utf8)!
-            
+
             let decoder = JSONDecoder()
             let decoded = try decoder.decode(WeightContainer.self, from: traits)
-            
+
             #expect(decoded.weight?.value == 220.0, "Decoded weight should be 220 lb")
         }
-        
+
         do {
             let traits = """
             {
                 "weight": 6.5
             }
             """.data(using: .utf8)!
-            
+
             let decoder = JSONDecoder()
             let decoded = try decoder.decode(WeightContainer.self, from: traits)
-            
+
             #expect(decoded.weight?.value == 6.5, "Decoded weight should be 6.5")
         }
+    }
+
+    @Test("Decode optional weight throws for malformed string")
+    func decodingWeightIfPresentMalformed() async throws {
+        struct WeightContainer: Decodable {
+            let weight: Weight?
+        }
+
+        let traits = """
+        {
+            "weight": "not a weight"
+        }
+        """.data(using: .utf8)!
+
+        let decoder = JSONDecoder()
+        #expect(throws: (any Error).self) {
+            _ = try decoder.decode(WeightContainer.self, from: traits)
+        }
+    }
+
+    @Test("displayString returns formatted measurement string")
+    func displayString() {
+        let pounds = Weight(value: 10, unit: .pounds)
+        #expect(!pounds.displayString.isEmpty)
+        #expect(pounds.displayString.contains("10"))
+
+        let kilograms = Weight(value: 2.5, unit: .kilograms)
+        #expect(!kilograms.displayString.isEmpty)
+        #expect(kilograms.displayString.contains("2.5") || kilograms.displayString.contains("kg"))
+    }
+
+    @Test("parseWeight returns nil for empty string")
+    func parseWeightEmptyString() {
+        let result = "".parseWeight
+        #expect(result == nil)
+    }
+
+    @Test("parseWeight handles whitespace-only string")
+    func parseWeightWhitespaceOnly() {
+        let result = "   ".parseWeight
+        #expect(result == nil)
     }
 }
