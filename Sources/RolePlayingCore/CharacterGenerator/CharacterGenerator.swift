@@ -28,10 +28,10 @@ public struct CharacterGenerator {
     
     // TODO: support non-uniform distributions for different traits (e.g., some species and classes tend to have specific alignments)
     
-    func randomAlignment<G: RandomIndexGenerator>(using generator: inout G) -> Alignment {
+    func randomAlignment<G: RandomIndexGenerator>(using generator: inout G) -> CharacterAlignment {
         let ethics = Ethics.allCases.randomElementByIndex(using: &generator)!
         let morals = Morals.allCases.randomElementByIndex(using: &generator)!
-        return Alignment(ethics, morals)
+        return CharacterAlignment(ethics, morals)
     }
     
     public func makeCharacter<G: RandomIndexGenerator>(using generator: inout G) -> Player {

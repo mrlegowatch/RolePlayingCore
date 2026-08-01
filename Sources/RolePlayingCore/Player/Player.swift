@@ -54,7 +54,7 @@ public class Player: CodableWithConfiguration {
     public var gender: Gender?
     
     /// An "unaligned" alignment is represented as nil.
-    public var alignment: Alignment?
+    public var alignment: CharacterAlignment?
 
     public var height: Height
 
@@ -173,7 +173,7 @@ public class Player: CodableWithConfiguration {
         let className = try values.decode(String.self, forKey: .className)
         let descriptiveTraits = try values.decodeIfPresent([String:String].self, forKey: .descriptiveTraits)
         let gender = try values.decodeIfPresent(Gender.self, forKey: .gender)
-        let alignment = try values.decodeIfPresent(Alignment.self, forKey: .alignment)
+        let alignment = try values.decodeIfPresent(CharacterAlignment.self, forKey: .alignment)
         let height = try values.decode(Height.self, forKey: .height)
         let baseAbilities = try values.decode(AbilityScores.self, forKey: .baseAbilities)
         let backgroundAbilities = try values.decode([String].self, forKey: .backgroundAbilities)
@@ -282,7 +282,7 @@ public class Player: CodableWithConfiguration {
      }
     
     // Creates a player character with explicit ability scores and skill proficiencies.
-    public init(_ name: String, backgroundTraits: BackgroundTraits, speciesTraits: SpeciesTraits, classTraits: ClassTraits, baseAbilities: AbilityScores, skillProficiencies: [Skill], gender: Gender? = nil, alignment: Alignment? = nil) {
+    public init(_ name: String, backgroundTraits: BackgroundTraits, speciesTraits: SpeciesTraits, classTraits: ClassTraits, baseAbilities: AbilityScores, skillProficiencies: [Skill], gender: Gender? = nil, alignment: CharacterAlignment? = nil) {
         // @Observable turns stored properties into computed properties backed by _property.
         // The observation getter captures `self`, so read-modify-write operations and reads
         // of self properties require all stored properties to be initialized first (phase 2).
@@ -335,7 +335,7 @@ public class Player: CodableWithConfiguration {
     }
 
     // Creates a player character by rolling random ability scores and selecting random skill proficiencies.
-    public convenience init(_ name: String, backgroundTraits: BackgroundTraits, speciesTraits: SpeciesTraits, classTraits: ClassTraits, gender: Gender? = nil, alignment: Alignment? = nil) {
+    public convenience init(_ name: String, backgroundTraits: BackgroundTraits, speciesTraits: SpeciesTraits, classTraits: ClassTraits, gender: Gender? = nil, alignment: CharacterAlignment? = nil) {
         var baseAbilities = AbilityScores()
         baseAbilities.roll()
 
