@@ -61,7 +61,7 @@
                 "starting wealth": "4d4x10",
                 "starting equipment": [["Leather Armor", "2 Daggers", "Shortsword", "Shortbow", "20 Arrows", "Quiver", "Thieves' Tools", "Burglar's Pack", "8 GP"], ["100 GP"]],
                 "armor training": ["light"],
-                "weapon proficiencies": ["simple", "martial (finesse or light)"],
+                "weapon proficiencies": ["simple", "martial (finesse, light)"],
                 },
                 {
                 "name": "Wizard",
@@ -88,6 +88,7 @@
                 "starting equipment": [["Greataxe", "4 Handaxes", "Explorer's Pack", "15 GP"], ["75 GP"]],
                 "armor training": ["light", "medium", "shield"],
                 "weapon proficiencies": ["simple", "martial"],
+                "unarmored defense": ["Constitution"],
                 },
                 {
                 "name": "Bard",
@@ -115,7 +116,7 @@
                 "tool proficiencies": ["Herbalism Kit"],
                 "starting wealth": "2d4x10",
                 "starting equipment": [["Leather Armor", "Shield", "Sickle", "Druidic Focus (Quarterstaff)", "Explorer's Pack", "Herbalism Kit", "9 GP"], ["50 GP"]],
-                "armor training": ["light", "shields"],
+                "armor training": ["light", "shield"],
                 "weapon proficiencies": ["simple"],
                 },
                 {
@@ -132,6 +133,7 @@
                 "starting equipment": [["Spear", "5 Daggers", "Any Tool", "Explorer's Pack", "11 GP"], ["50 GP"]],
                 "armor training": [],
                 "weapon proficiencies": ["simple", "martial (light)"],
+                "unarmored defense": ["Wisdom"],
                 },
                 {
                 "name": "Paladin",

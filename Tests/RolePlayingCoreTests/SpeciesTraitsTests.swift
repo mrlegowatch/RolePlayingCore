@@ -157,17 +157,16 @@ struct SpeciesTraitsTests {
         #expect(subspeciesTraits.baseSizes == speciesTraits.baseSizes, "size")
     }
     
-    @Test("Encode subspecies traits with blending")
+    @Test("Encode subspecies traits with delta encoding")
     func encodingSubspeciesTraits() async throws {
         let speciesTraits = SpeciesTraits(name: "Human", plural: "Humans", aliases: [], creatureType: configuration.creatureTypes.defaultCreatureType, descriptiveTraits: [:], lifespan: 90, darkVision: 0, speed: 45)
-        
+
         let encoder = JSONEncoder()
-        
-        // Test 1: Subspecies with blended traits
+
+        // Test 1: Subspecies whose traits differ from parent are encoded; matching traits are omitted
         do {
             var copyOfSpeciesTraits = speciesTraits
-            var subspeciesTraits = SpeciesTraits(name: "Subhuman", plural: "Subhumans", creatureType: configuration.creatureTypes.defaultCreatureType, lifespan: 45, darkVision: 0, speed: 30)
-            subspeciesTraits.blendTraits(from: copyOfSpeciesTraits)
+            let subspeciesTraits = SpeciesTraits(name: "Subhuman", plural: "Subhumans", creatureType: configuration.creatureTypes.defaultCreatureType, lifespan: 45, darkVision: 0, speed: 30)
             copyOfSpeciesTraits.subspecies.append(subspeciesTraits)
             
             let encoded = try encoder.encode(copyOfSpeciesTraits, configuration: configuration)

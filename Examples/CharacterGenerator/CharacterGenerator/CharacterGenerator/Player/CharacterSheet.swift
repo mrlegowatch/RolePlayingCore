@@ -32,9 +32,10 @@ class CharacterSheet {
         [\.armorClass, \.proficiencyBonus, \.passivePerception],
         [\.maximumHitPoints, \.hitDice],
         [\.height, \.size],
-        [\.money]
+        [\.money],
+        [\.inventory]
     ]
-    
+
     // Mapping of properties to label keys.
     var labelKeys: [[String]] = [
         ["Experience Points"],
@@ -45,9 +46,10 @@ class CharacterSheet {
         ["Armor Class", "Proficiency Bonus", "Passive Perception"],
         ["Hit Points", "Hit Dice"],
         ["Height", "Size"],
-        ["Money"]
+        ["Money"],
+        ["Inventory"]
     ]
-    
+
     // Mapping of properties to view types.
     var cellIdentifiers: [[String]] = [
         ["experiencePoints"],
@@ -58,6 +60,7 @@ class CharacterSheet {
         ["labeledNumber", "labeledNumber", "labeledNumber"],
         ["labeledNumber", "labeledText"],
         ["labeledText", "labeledText"],
+        ["labeledText"],
         ["labeledText"]
     ]
     
@@ -105,4 +108,12 @@ class CharacterSheet {
     }
     var size: String { "\(player.size)".capitalized }
     var passivePerception: String { "\(player.passivePerception)" }
+    var inventory: String {
+        guard !player.inventory.isEmpty else { return "None" }
+        return player.inventory.map { entry in
+            let qty = entry.quantity > 1 ? "\(entry.quantity)x " : ""
+            let equipped = entry.isEquipped ? " ✓" : ""
+            return "\(qty)\(entry.item.name)\(equipped)"
+        }.joined(separator: "\n")
+    }
 }

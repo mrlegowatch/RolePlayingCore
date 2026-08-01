@@ -11,7 +11,7 @@ import Synchronization
 
 /// Units of currency or coinage.
 ///
-/// Use `Measurement<UnitCurrency>` to hold values of currency.
+/// Use `Money` to hold values of currency.
 public final class UnitCurrency : Dimension, @unchecked Sendable {
     
     /// The singular unit name used when the unitStyle is long.

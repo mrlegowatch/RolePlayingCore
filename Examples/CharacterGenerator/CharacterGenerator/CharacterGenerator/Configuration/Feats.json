@@ -1,0 +1,16 @@
+{
+    "feats": [
+        { "name": "Alert", "category": "origin" },
+        { "name": "Crafter", "category": "origin" },
+        { "name": "Healer", "category": "origin" },
+        { "name": "Lucky", "category": "origin" },
+        { "name": "Magic Initiate (Cleric)", "category": "origin" },
+        { "name": "Magic Initiate (Druid)", "category": "origin" },
+        { "name": "Magic Initiate (Wizard)", "category": "origin" },
+        { "name": "Musician", "category": "origin" },
+        { "name": "Savage Attacker", "category": "origin" },
+        { "name": "Skilled", "category": "origin" },
+        { "name": "Tavern Brawler", "category": "origin" },
+        { "name": "Tough", "category": "origin" }
+    ]
+}
