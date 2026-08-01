@@ -153,7 +153,7 @@ struct PlayerTests {
     
     @Test("Create player with basic traits")
     func player() async throws {
-        let player = Player("Frodo", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter, gender: .female, alignment: Alignment(.lawful, .neutral))
+        let player = Player("Frodo", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter, gender: .female, alignment: CharacterAlignment(.lawful, .neutral))
         #expect(player.name == "Frodo", "player name")
         #expect(player.className == "Fighter", "class name")
         #expect(player.speciesName == "Human", "species name")
@@ -161,7 +161,7 @@ struct PlayerTests {
         #expect(player.descriptiveTraits.count == 0, "descriptiveTraits")
         
         #expect(player.gender == Player.Gender.female, "gender")
-        #expect(player.alignment == Alignment(.lawful, .neutral), "alignment")
+        #expect(player.alignment == CharacterAlignment(.lawful, .neutral), "alignment")
         
         // Abilities is scores plus species modifiers, so + 1
         for key in player.abilities.abilities {
@@ -251,7 +251,7 @@ struct PlayerTests {
         player.classTraits = fighter
         
         #expect(player.gender == nil, "gender")
-        #expect(player.alignment == Alignment(.lawful, .evil), "alignment")
+        #expect(player.alignment == CharacterAlignment(.lawful, .evil), "alignment")
         
         #expect(player.canLevelUp == true, "level up")
         #expect("\(player.hitDice)" == "2d10", "hit dice")
@@ -357,7 +357,7 @@ struct PlayerTests {
     
     @Test("Verify computed properties")
     func computedProperties() async throws {
-        let player = Player("Gandalf", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter, gender: .male, alignment: Alignment(.neutral, .good))
+        let player = Player("Gandalf", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter, gender: .male, alignment: CharacterAlignment(.neutral, .good))
         
         // Test speed (from species traits)
         #expect(player.speed == 30, "speed should match species speed")
@@ -405,10 +405,10 @@ struct PlayerTests {
     
     @Test("Verify Hashable conformance")
     func hashableConformance() async throws {
-        let player1 = Player("Gimli", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter, gender: .male, alignment: Alignment(.lawful, .good))
+        let player1 = Player("Gimli", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter, gender: .male, alignment: CharacterAlignment(.lawful, .good))
         player1.descriptiveTraits = ["ideal": "Honor", "bond": "My axe"]
         
-        let player2 = Player("Gimli", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter, gender: .male, alignment: Alignment(.lawful, .good))
+        let player2 = Player("Gimli", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter, gender: .male, alignment: CharacterAlignment(.lawful, .good))
         player2.speciesTraits = human
         player2.classTraits = fighter
         player2.baseAbilities = player1.baseAbilities

@@ -75,36 +75,36 @@ struct AlignmentTests {
     
     @Test("Alignment by type")
     func alignmentByType() {
-        let neutralGood = Alignment.Kind(.neutral, .good)
+        let neutralGood = CharacterAlignment.Kind(.neutral, .good)
         #expect(neutralGood.description == "Neutral Good", "description")
         
-        let neutralEvil = Alignment.Kind(.neutral, .evil)
+        let neutralEvil = CharacterAlignment.Kind(.neutral, .evil)
         #expect(neutralEvil.description == "Neutral Evil", "description")
         
-        let chaoticNeutral = Alignment.Kind(.chaotic, .neutral)
+        let chaoticNeutral = CharacterAlignment.Kind(.chaotic, .neutral)
         #expect(chaoticNeutral.description == "Chaotic Neutral", "description")
         
-        #expect(neutralGood == Alignment.Kind(.neutral, .good), "equatable")
+        #expect(neutralGood == CharacterAlignment.Kind(.neutral, .good), "equatable")
         #expect(neutralGood != neutralEvil, "equatable")
         #expect(neutralEvil != chaoticNeutral, "equatable")
     }
     
     @Test("Alignment by value")
     func alignmentByValue() {
-        let lawfulNeutral = Alignment(ethics: 0.7, morals: 0.0)
+        let lawfulNeutral = CharacterAlignment(ethics: 0.7, morals: 0.0)
         #expect(lawfulNeutral.description == "Lawful Neutral", "description")
         
-        let neutral = Alignment(ethics: 0.1, morals: -0.2)
+        let neutral = CharacterAlignment(ethics: 0.1, morals: -0.2)
         #expect(neutral.description == "Neutral", "description")
         
-        let chaoticGood = Alignment(ethics: -1, morals: 1)
+        let chaoticGood = CharacterAlignment(ethics: -1, morals: 1)
         #expect(chaoticGood.description == "Chaotic Good", "description")
     }
     
     @Test("Changing alignment")
-    func changingAlignment() {
+    func changingCharacterAlignment() {
         // Test changing alignment
-        var alignment = Alignment(.neutral, .evil)
+        var alignment = CharacterAlignment(.neutral, .evil)
         #expect(alignment.ethics == 0, "ethics value")
         #expect(alignment.morals == -1, "morals value")
         #expect(alignment.kind.ethics == Ethics.neutral, "ethics enumeration")
@@ -177,7 +177,7 @@ struct AlignmentTests {
                     "morals": 0.2
                 }
                 """.data(using: .utf8)!
-            let lawfulNeutral = try? decoder.decode(Alignment.self, from: lawfulNeutralTraits)
+            let lawfulNeutral = try? decoder.decode(CharacterAlignment.self, from: lawfulNeutralTraits)
             let unwrappedLawfulNeutral = try #require(lawfulNeutral, "alignment should be non-nil")
             #expect(unwrappedLawfulNeutral.kind.ethics == Ethics.lawful, "ethics enumeration")
             #expect(unwrappedLawfulNeutral.kind.morals == Morals.neutral, "morals enumeration")
@@ -191,7 +191,7 @@ struct AlignmentTests {
                     "morals": "Neutral"
                 }
                 """.data(using: .utf8)!
-            let chaoticNeutral = try? decoder.decode(Alignment.self, from: chaoticNeutralTraits)
+            let chaoticNeutral = try? decoder.decode(CharacterAlignment.self, from: chaoticNeutralTraits)
             let unwrappedChaoticNeutral = try #require(chaoticNeutral, "alignment should be non-nil")
             #expect(unwrappedChaoticNeutral.kind.ethics == Ethics.chaotic, "ethics enumeration")
             #expect(unwrappedChaoticNeutral.kind.morals == Morals.neutral, "morals enumeration")
@@ -205,7 +205,7 @@ struct AlignmentTests {
                     "Doody": "Evil"
                 }
                 """.data(using: .utf8)!
-            let badTrait = try? decoder.decode(Alignment.self, from: badTraitKeys)
+            let badTrait = try? decoder.decode(CharacterAlignment.self, from: badTraitKeys)
             #expect(badTrait == nil, "bad trait keys should be nil")
         }
         
@@ -217,7 +217,7 @@ struct AlignmentTests {
                     "morals": ["Neutral"]
                 }
                 """.data(using: .utf8)!
-            let notString = try? decoder.decode(Alignment.self, from: notStringTraits)
+            let notString = try? decoder.decode(CharacterAlignment.self, from: notStringTraits)
             #expect(notString == nil, "non-string traits should be nil")
 
             let notValidTraits = """
@@ -226,7 +226,7 @@ struct AlignmentTests {
                     "morals": "Eliv"
                 }
                 """.data(using: .utf8)!
-            let notValid = try? decoder.decode(Alignment.self, from: notValidTraits)
+            let notValid = try? decoder.decode(CharacterAlignment.self, from: notValidTraits)
             #expect(notValid == nil, "non-valid traits should be nil")
         }
     }
@@ -236,7 +236,7 @@ struct AlignmentTests {
         let decoder = JSONDecoder()
         
         struct AlignmentContainer: Decodable {
-            let alignment: Alignment
+            let alignment: CharacterAlignment
         }
         
         // Test string values
@@ -266,9 +266,9 @@ struct AlignmentTests {
         let encoder = JSONEncoder()
         
         struct AlignmentContainer: Encodable {
-            let alignment: Alignment
+            let alignment: CharacterAlignment
         }
-        let container = AlignmentContainer(alignment: Alignment(.chaotic, .good))
+        let container = AlignmentContainer(alignment: CharacterAlignment(.chaotic, .good))
         let encoded = try encoder.encode(container)
         let deserialized = try JSONSerialization.jsonObject(with: encoded, options: [])
         
@@ -283,7 +283,7 @@ struct AlignmentTests {
         let encoder = JSONEncoder()
 
         struct AlignmentContainer: Encodable {
-            let alignment: Alignment
+            let alignment: CharacterAlignment
             
             enum CodingKeys: String, CodingKey {
                 case alignment
@@ -296,7 +296,7 @@ struct AlignmentTests {
             }
         }
         
-        let container = AlignmentContainer(alignment: Alignment(.chaotic, .good))
+        let container = AlignmentContainer(alignment: CharacterAlignment(.chaotic, .good))
         let encoded = try encoder.encode(container)
         let deserialized = try #require(try? JSONSerialization.jsonObject(with: encoded, options: []), "player traits round trip")
         
