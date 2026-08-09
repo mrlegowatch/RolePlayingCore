@@ -232,9 +232,18 @@ extension ClassTraits: CodableWithConfiguration {
 }
 
 extension ClassTraits {
-    
+
     /// Returns a random array of skill proficiencies, of a count matching startingSkillCount.
     public func randomSkillProficiencies() -> [Skill] {
         return skillProficiencies.randomSkills(count: startingSkillCount)
+    }
+
+    /// Returns the skills in the class skill pool that are not already in `excluded`.
+    ///
+    /// Use this in a character builder to show which class skills a player can still
+    /// choose, after background-granted skills have already been applied.
+    public func availableSkillChoices(excluding excluded: [Skill]) -> [Skill] {
+        let excludedNames = Set(excluded.map { $0.name })
+        return skillProficiencies.filter { !excludedNames.contains($0.name) }
     }
 }

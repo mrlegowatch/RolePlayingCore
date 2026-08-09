@@ -952,4 +952,160 @@ struct PlayerTests {
         player.selectSubclass(champion)
         #expect(player.subclassTraits == nil, "subclass selection should be ignored below required level")
     }
+
+    // MARK: - Inventory Mutation
+
+    @Test("addToInventory creates new entry for unknown item")
+    func addToInventoryNewEntry() {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        let countBefore = player.inventory.count
+        let longsword = configuration.items["Longsword"]!
+        player.addToInventory(longsword)
+        #expect(player.inventory.count == countBefore + 1)
+        #expect(player.inventory.last?.item.name == "Longsword")
+        #expect(player.inventory.last?.quantity == 1)
+    }
+
+    @Test("addToInventory stacks quantity with existing entry for same item")
+    func addToInventoryStacksExisting() {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        let arrow = configuration.items["Arrow"]!
+        let arrowEntry = player.inventory.first(where: { $0.item.name == "Arrow" })
+        let originalQuantity = arrowEntry?.quantity ?? 0
+        let countBefore = player.inventory.count
+
+        player.addToInventory(arrow, quantity: 5)
+        #expect(player.inventory.count == countBefore, "no new entry should be created")
+        let updated = player.inventory.first(where: { $0.item.name == "Arrow" })
+        #expect(updated?.quantity == originalQuantity + 5)
+    }
+
+    @Test("addToInventory with quantity 1 is the default")
+    func addToInventoryDefaultQuantity() {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        let dagger = configuration.items["Dagger"]!
+        player.addToInventory(dagger)
+        #expect(player.inventory.first(where: { $0.item.name == "Dagger" })?.quantity == 1)
+    }
+
+    @Test("addToInventory ignores zero or negative quantity")
+    func addToInventoryIgnoresNonPositive() {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        let countBefore = player.inventory.count
+        let longsword = configuration.items["Longsword"]!
+        player.addToInventory(longsword, quantity: 0)
+        player.addToInventory(longsword, quantity: -3)
+        #expect(player.inventory.count == countBefore)
+    }
+
+    @Test("removeFromInventory removes entry by ID")
+    func removeFromInventory() {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        let longsword = configuration.items["Longsword"]!
+        player.addToInventory(longsword)
+        let id = player.inventory.first(where: { $0.item.name == "Longsword" })!.id
+        let countBefore = player.inventory.count
+
+        player.removeFromInventory(id: id)
+        #expect(player.inventory.count == countBefore - 1)
+        #expect(player.inventory.first(where: { $0.item.name == "Longsword" }) == nil)
+    }
+
+    @Test("removeFromInventory ignores unknown ID")
+    func removeFromInventoryUnknownID() {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        let countBefore = player.inventory.count
+        player.removeFromInventory(id: UUID())
+        #expect(player.inventory.count == countBefore)
+    }
+
+    @Test("equipItem sets isEquipped on the entry")
+    func equipItem() {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        let leatherArmor = configuration.items["Leather Armor"]!
+        player.addToInventory(leatherArmor)
+        let id = player.inventory.first(where: { $0.item.name == "Leather Armor" })!.id
+
+        player.equipItem(id: id)
+        #expect(player.inventory.first(where: { $0.item.name == "Leather Armor" })?.isEquipped == true)
+    }
+
+    @Test("equipItem auto-unequips conflicting non-shield armor")
+    func equipItemUnequipsConflictingArmor() {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        let chainMail = configuration.items["Chain Mail"]!
+        let leatherArmor = configuration.items["Leather Armor"]!
+        player.addToInventory(chainMail)
+        player.addToInventory(leatherArmor)
+
+        let chainID = player.inventory.first(where: { $0.item.name == "Chain Mail" })!.id
+        let leatherID = player.inventory.first(where: { $0.item.name == "Leather Armor" })!.id
+
+        player.equipItem(id: chainID)
+        #expect(player.equippedArmor?.name == "Chain Mail")
+
+        player.equipItem(id: leatherID)
+        #expect(player.equippedArmor?.name == "Leather Armor", "leather should now be equipped")
+        #expect(player.inventory.first(where: { $0.item.name == "Chain Mail" })?.isEquipped == false, "chain mail should be auto-unequipped")
+    }
+
+    @Test("equipItem auto-unequips conflicting shield")
+    func equipItemUnequipsConflictingShield() {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        let shield1 = configuration.items["Shield"]!
+        player.addToInventory(shield1, quantity: 2)
+        // Two separate entries wouldn't happen with stacking, so add via two different paths:
+        // Re-add after removing to get a second distinct entry
+        let firstShieldID = player.inventory.first(where: { $0.item.name == "Shield" })!.id
+        player.equipItem(id: firstShieldID)
+        #expect(player.equippedShield != nil)
+
+        // Remove equipped shield and add a fresh one to get a new ID
+        player.removeFromInventory(id: firstShieldID)
+        player.addToInventory(shield1)
+        let secondShieldID = player.inventory.first(where: { $0.item.name == "Shield" })!.id
+        player.equipItem(id: secondShieldID)
+        #expect(player.equippedShield?.name == "Shield")
+        let equippedCount = player.inventory.filter { $0.isEquipped && ($0.item as? Armor)?.category == .shield }.count
+        #expect(equippedCount == 1, "only one shield should be equipped at a time")
+    }
+
+    @Test("unequipItem clears isEquipped")
+    func unequipItem() {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        let leatherArmor = configuration.items["Leather Armor"]!
+        player.addToInventory(leatherArmor)
+        let id = player.inventory.first(where: { $0.item.name == "Leather Armor" })!.id
+        player.equipItem(id: id)
+        #expect(player.equippedArmor != nil)
+
+        player.unequipItem(id: id)
+        #expect(player.equippedArmor == nil)
+    }
+
+    @Test("adjustQuantity updates the quantity of an entry")
+    func adjustQuantity() {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        let arrowEntry = player.inventory.first(where: { $0.item.name == "Arrow" })!
+        player.adjustQuantity(50, for: arrowEntry.id)
+        #expect(player.inventory.first(where: { $0.item.name == "Arrow" })?.quantity == 50)
+    }
+
+    @Test("adjustQuantity removes entry when quantity is zero")
+    func adjustQuantityRemovesAtZero() {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        let countBefore = player.inventory.count
+        let spearID = player.inventory.first(where: { $0.item.name == "Spear" })!.id
+        player.adjustQuantity(0, for: spearID)
+        #expect(player.inventory.count == countBefore - 1)
+        #expect(player.inventory.first(where: { $0.item.name == "Spear" }) == nil)
+    }
+
+    @Test("adjustQuantity ignores unknown ID")
+    func adjustQuantityUnknownID() {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        let countBefore = player.inventory.count
+        player.adjustQuantity(99, for: UUID())
+        #expect(player.inventory.count == countBefore)
+    }
 }

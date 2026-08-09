@@ -16,6 +16,9 @@ public struct Classes: CodableWithConfiguration, Sendable {
     
     /// An array of class traits.
     public var all: [ClassTraits] { Array(allClasses.values) }
+
+    /// An array of class traits sorted by name.
+    public var allSorted: [ClassTraits] { all.sorted { $0.name < $1.name } }
     
     /// An optional table of the minimum experience points required to reach the next level.
     public var experiencePoints: [Int]?

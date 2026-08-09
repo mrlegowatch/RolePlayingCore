@@ -362,4 +362,36 @@ struct ClassTraitsTests {
         #expect(decoded.descriptiveTraits.count == original.descriptiveTraits.count, "Descriptive traits count should match")
         #expect(decoded.maxLevel == 6, "Max level should be 6")
     }
+
+    // MARK: - availableSkillChoices
+
+    @Test("availableSkillChoices returns all pool skills when excluded list is empty")
+    func availableSkillChoicesNoExclusions() throws {
+        let pool = try ["Athletics", "Acrobatics", "Stealth", "Perception"].skills(from: configuration.skills)
+        let classTraits = ClassTraits(name: "Rogue", plural: "Rogues", hitDice: .d8,
+                                      startingWealth: 4 * .d4 * 10, skillProficiencies: pool)
+        #expect(classTraits.availableSkillChoices(excluding: []).count == 4)
+    }
+
+    @Test("availableSkillChoices filters out excluded skills")
+    func availableSkillChoicesWithExclusions() throws {
+        let pool = try ["Athletics", "Acrobatics", "Stealth", "Perception"].skills(from: configuration.skills)
+        let excluded = try ["Athletics", "Stealth"].skills(from: configuration.skills)
+        let classTraits = ClassTraits(name: "Rogue", plural: "Rogues", hitDice: .d8,
+                                      startingWealth: 4 * .d4 * 10, skillProficiencies: pool)
+        let available = classTraits.availableSkillChoices(excluding: excluded)
+        #expect(available.count == 2)
+        let names = available.map(\.name)
+        #expect(names.contains("Acrobatics"))
+        #expect(names.contains("Perception"))
+    }
+
+    @Test("availableSkillChoices ignores excluded skills not in the class pool")
+    func availableSkillChoicesExcludesNotInPool() throws {
+        let pool = try ["Athletics", "Acrobatics"].skills(from: configuration.skills)
+        let excluded = try ["Persuasion"].skills(from: configuration.skills)
+        let classTraits = ClassTraits(name: "Fighter", plural: "Fighters", hitDice: .d10,
+                                      startingWealth: 5 * .d4 * 10, skillProficiencies: pool)
+        #expect(classTraits.availableSkillChoices(excluding: excluded).count == 2)
+    }
 }

@@ -34,6 +34,11 @@ public struct Feats: Codable, Sendable {
     /// Returns the number of feats in the collection.
     public var count: Int { return allFeats.count }
 
+    /// Returns all feats of the given category, sorted by name.
+    public func feats(ofCategory category: FeatTraits.Category) -> [FeatTraits] {
+        all.filter { $0.category == category }.sorted { $0.name < $1.name }
+    }
+
     // MARK: Codable conformance
 
     private enum CodingKeys: String, CodingKey {

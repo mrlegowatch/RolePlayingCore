@@ -16,6 +16,9 @@ public struct Backgrounds: CodableWithConfiguration, Sendable {
     
     /// An array of background traits.
     public var all: [BackgroundTraits] { Array(allBackgrounds.values) }
+
+    /// An array of background traits sorted by name.
+    public var allSorted: [BackgroundTraits] { all.sorted { $0.name < $1.name } }
     
     /// Returns an instance of a collection of background traits.
     public init(_ backgrounds: [BackgroundTraits] = []) {

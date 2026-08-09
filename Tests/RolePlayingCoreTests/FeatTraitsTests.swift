@@ -310,6 +310,26 @@ struct FeatTraitsTests {
         #expect(feats["Tough"]?.description == "Version 2")
     }
 
+    @Test("feats(ofCategory:) returns only matching feats sorted by name")
+    func featsOfCategory() {
+        let alert = FeatTraits(name: "Alert", category: .general)
+        let lucky = FeatTraits(name: "Lucky", category: .general)
+        let tough = FeatTraits(name: "Tough", category: .general)
+        let magicInitiate = FeatTraits(name: "Magic Initiate", category: .origin)
+        let epicBoon = FeatTraits(name: "Epic Boon of Combat", category: .epicBoon)
+        let feats = Feats([alert, lucky, tough, magicInitiate, epicBoon])
+
+        let generals = feats.feats(ofCategory: .general)
+        #expect(generals.count == 3)
+        #expect(generals.map(\.name) == ["Alert", "Lucky", "Tough"])
+
+        let origins = feats.feats(ofCategory: .origin)
+        #expect(origins.count == 1)
+        #expect(origins[0].name == "Magic Initiate")
+
+        #expect(feats.feats(ofCategory: .fightingStyle).isEmpty)
+    }
+
     @Test("Feats Codable round-trip")
     func featsRoundTrip() throws {
         let json = """

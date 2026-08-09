@@ -486,6 +486,71 @@ public class Player: CodableWithConfiguration {
         currentHitPoints = maximumHitPoints
         usedHitDice = 0
     }
+
+    // MARK: - Inventory
+
+    /// Adds `quantity` of `item` to inventory.
+    ///
+    /// If an entry for this item already exists (matched by name) its quantity is increased;
+    /// otherwise a new entry is appended. Calls with `quantity` ≤ 0 are ignored.
+    public func addToInventory(_ item: any Item, quantity: Int = 1) {
+        guard quantity > 0 else { return }
+        if let index = inventory.firstIndex(where: { $0.item.name == item.name }) {
+            inventory[index].quantity += quantity
+        } else {
+            inventory.append(InventoryEntry(item: item, quantity: quantity))
+        }
+    }
+
+    /// Removes the inventory entry with the given ID. Ignored if no matching entry exists.
+    public func removeFromInventory(id: UUID) {
+        inventory.removeAll { $0.id == id }
+    }
+
+    /// Equips the inventory entry with the given ID.
+    ///
+    /// When equipping a non-shield armor, any other equipped non-shield armor is automatically
+    /// unequipped first. When equipping a shield, any other equipped shield is unequipped first.
+    /// Non-armor items are equipped without exclusivity enforcement.
+    /// Ignored if no entry with the given ID exists.
+    public func equipItem(id: UUID) {
+        guard let index = inventory.firstIndex(where: { $0.id == id }) else { return }
+        if let armor = inventory[index].item as? Armor {
+            if armor.category == .shield {
+                for i in inventory.indices where inventory[i].isEquipped {
+                    if (inventory[i].item as? Armor)?.category == .shield {
+                        inventory[i].isEquipped = false
+                    }
+                }
+            } else {
+                for i in inventory.indices where inventory[i].isEquipped {
+                    if let a = inventory[i].item as? Armor, a.category != .shield {
+                        inventory[i].isEquipped = false
+                    }
+                }
+            }
+        }
+        inventory[index].isEquipped = true
+    }
+
+    /// Unequips the inventory entry with the given ID. Ignored if no matching entry exists.
+    public func unequipItem(id: UUID) {
+        guard let index = inventory.firstIndex(where: { $0.id == id }) else { return }
+        inventory[index].isEquipped = false
+    }
+
+    /// Sets the quantity of the inventory entry with the given ID.
+    ///
+    /// If `quantity` is 0 or less, the entry is removed from inventory.
+    /// Ignored if no entry with the given ID exists.
+    public func adjustQuantity(_ quantity: Int, for id: UUID) {
+        guard let index = inventory.firstIndex(where: { $0.id == id }) else { return }
+        if quantity <= 0 {
+            inventory.remove(at: index)
+        } else {
+            inventory[index].quantity = quantity
+        }
+    }
 }
 
 extension Player: Hashable {

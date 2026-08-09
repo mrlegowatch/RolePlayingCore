@@ -151,4 +151,44 @@ struct BackgroundsTests {
         let decodedCriminal = try #require(decodedBackgrounds["Criminal"])
         #expect(decodedCriminal.toolProficiency == backgrounds["Criminal"]?.toolProficiency, "Should find Criminal with matching tool proficiency after round-trip")
     }
+
+    @Test("allSorted returns backgrounds in alphabetical order")
+    func allSorted() async throws {
+        let jsonData = """
+        {
+            "backgrounds": [
+                {
+                    "name": "Soldier",
+                    "ability scores": ["Strength", "Constitution"],
+                    "feat": "Savage Attacker",
+                    "skill proficiencies": ["Athletics", "Intimidation"],
+                    "tool proficiency": "Gaming Set",
+                    "equipment": [["Spear", "Shortbow", "16 GP"]]
+                },
+                {
+                    "name": "Acolyte",
+                    "ability scores": ["Intelligence", "Wisdom"],
+                    "feat": "Magic Initiate",
+                    "skill proficiencies": ["Insight", "Religion"],
+                    "tool proficiency": "Calligrapher's Supplies",
+                    "equipment": [["Holy Symbol", "10 GP"]]
+                },
+                {
+                    "name": "Criminal",
+                    "ability scores": ["Dexterity", "Intelligence"],
+                    "feat": "Alert",
+                    "skill proficiencies": ["Deception", "Stealth"],
+                    "tool proficiency": "Thieves' Tools",
+                    "equipment": [["Crowbar", "16 GP"]]
+                }
+            ]
+        }
+        """.data(using: .utf8)!
+        let backgrounds = try decoder.decode(Backgrounds.self, from: jsonData, configuration: configuration)
+        let sorted = backgrounds.allSorted
+        #expect(sorted.count == 3)
+        #expect(sorted[0].name == "Acolyte")
+        #expect(sorted[1].name == "Criminal")
+        #expect(sorted[2].name == "Soldier")
+    }
 }
