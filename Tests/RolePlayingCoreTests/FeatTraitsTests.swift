@@ -57,6 +57,28 @@ struct FeatTraitsTests {
         #expect(feat.category == .origin)
     }
 
+    @Test("Init defaults: empty mechanical effect fields")
+    func initDefaultMechanicalFields() {
+        let feat = FeatTraits(name: "Alert")
+        #expect(feat.abilityScoreIncreases.isEmpty)
+        #expect(feat.weaponProficiencies.isEmpty)
+        #expect(feat.armorTraining.isEmpty)
+    }
+
+    @Test("Init with mechanical effects")
+    func initWithMechanicalEffects() {
+        let feat = FeatTraits(
+            name: "Lightly Armored",
+            category: .general,
+            abilityScoreIncreases: [.strength: 1],
+            weaponProficiencies: [.category(WeaponCategory("simple"))],
+            armorTraining: [.light]
+        )
+        #expect(feat.abilityScoreIncreases[.strength] == 1)
+        #expect(feat.weaponProficiencies.count == 1)
+        #expect(feat.armorTraining == [.light])
+    }
+
     // MARK: - Equatable
 
     @Test("Equatable: identical instances are equal")
@@ -96,6 +118,50 @@ struct FeatTraitsTests {
         #expect(feat.name == "Savage Attacker")
         #expect(feat.description == "Reroll damage dice once per turn.")
         #expect(feat.category == .origin)
+        #expect(feat.abilityScoreIncreases.isEmpty)
+        #expect(feat.weaponProficiencies.isEmpty)
+        #expect(feat.armorTraining.isEmpty)
+    }
+
+    @Test("Decode ability score increases")
+    func decodeAbilityScoreIncreases() throws {
+        let json = """
+        {
+            "name": "Athlete",
+            "ability score increases": { "Strength": 1, "Dexterity": 1 }
+        }
+        """.data(using: .utf8)!
+
+        let feat = try decoder.decode(FeatTraits.self, from: json)
+        #expect(feat.abilityScoreIncreases[.strength] == 1)
+        #expect(feat.abilityScoreIncreases[.dexterity] == 1)
+        #expect(feat.abilityScoreIncreases.count == 2)
+    }
+
+    @Test("Decode weapon proficiencies")
+    func decodeWeaponProficiencies() throws {
+        let json = """
+        {
+            "name": "Weapon Master",
+            "weapon proficiencies": ["simple", "Longsword"]
+        }
+        """.data(using: .utf8)!
+
+        let feat = try decoder.decode(FeatTraits.self, from: json)
+        #expect(feat.weaponProficiencies.count == 2)
+    }
+
+    @Test("Decode armor training")
+    func decodeArmorTraining() throws {
+        let json = """
+        {
+            "name": "Lightly Armored",
+            "armor training": ["light"]
+        }
+        """.data(using: .utf8)!
+
+        let feat = try decoder.decode(FeatTraits.self, from: json)
+        #expect(feat.armorTraining == [.light])
     }
 
     @Test("Decode with only name defaults description and category")
@@ -164,9 +230,51 @@ struct FeatTraitsTests {
         #expect(dict["description"] as? String == "Gain extra HP.")
     }
 
+    @Test("Encode omits empty mechanical fields")
+    func encodeOmitsMechanicalFieldsWhenEmpty() throws {
+        let feat = FeatTraits(name: "Alert")
+        let data = try encoder.encode(feat)
+        let dict = try #require(try? JSONSerialization.jsonObject(with: data) as? [String: Any])
+        #expect(dict["ability score increases"] == nil)
+        #expect(dict["weapon proficiencies"] == nil)
+        #expect(dict["armor training"] == nil)
+    }
+
+    @Test("Encode includes ability score increases")
+    func encodeAbilityScoreIncreases() throws {
+        let feat = FeatTraits(name: "Athlete", abilityScoreIncreases: [.strength: 1])
+        let data = try encoder.encode(feat)
+        let dict = try #require(try? JSONSerialization.jsonObject(with: data) as? [String: Any])
+        let increases = try #require(dict["ability score increases"] as? [String: Int])
+        #expect(increases["Strength"] == 1)
+    }
+
+    @Test("Encode includes armor training")
+    func encodeArmorTraining() throws {
+        let feat = FeatTraits(name: "Lightly Armored", armorTraining: [.light])
+        let data = try encoder.encode(feat)
+        let dict = try #require(try? JSONSerialization.jsonObject(with: data) as? [String: Any])
+        let training = try #require(dict["armor training"] as? [String])
+        #expect(training == ["light"])
+    }
+
     @Test("Codable round-trip")
     func codableRoundTrip() throws {
         let original = FeatTraits(name: "Magic Initiate", description: "Learn spells.", category: .origin)
+        let data = try encoder.encode(original)
+        let decoded = try decoder.decode(FeatTraits.self, from: data)
+        #expect(decoded == original)
+    }
+
+    @Test("Codable round-trip with mechanical effects")
+    func codableRoundTripMechanicalEffects() throws {
+        let original = FeatTraits(
+            name: "Lightly Armored",
+            category: .general,
+            abilityScoreIncreases: [.strength: 1],
+            weaponProficiencies: [.category(WeaponCategory("simple"))],
+            armorTraining: [.light]
+        )
         let data = try encoder.encode(original)
         let decoded = try decoder.decode(FeatTraits.self, from: data)
         #expect(decoded == original)

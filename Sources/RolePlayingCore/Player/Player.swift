@@ -75,8 +75,18 @@ public class Player: CodableWithConfiguration {
         return scores
     }
     
+    public var featAbilityIncrease: AbilityScores {
+        var combined: [Ability: Int] = [:]
+        for feat in feats {
+            for (ability, amount) in feat.abilityScoreIncreases {
+                combined[ability, default: 0] += amount
+            }
+        }
+        return AbilityScores(combined)
+    }
+
     // TODO: limit adding backgroundAbilityIncrease to max score of 20
-    public var abilities: AbilityScores { baseAbilities + backgroundAbilityIncrease }
+    public var abilities: AbilityScores { baseAbilities + backgroundAbilityIncrease + featAbilityIncrease }
     public var modifiers: AbilityScores { abilities.modifiers }
         
     /// Hit points, hit dice, experience points, and level
@@ -141,6 +151,16 @@ public class Player: CodableWithConfiguration {
         return unarmoredBase + shieldBonus
     }
     
+    /// All weapon proficiencies — from class and from feats.
+    public var allWeaponProficiencies: [WeaponProficiency] {
+        classTraits.weaponProficiencies + feats.flatMap(\.weaponProficiencies)
+    }
+
+    /// All armor weight categories trained in — from class and from feats.
+    public var allArmorTraining: [ArmorProficiency] {
+        classTraits.armorTraining + feats.flatMap(\.armorTraining)
+    }
+
     private enum CodingKeys: String, CodingKey {
         case name
         case backgroundName = "background"
