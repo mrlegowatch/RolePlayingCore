@@ -624,6 +624,118 @@ struct PlayerTests {
 
     // MARK: - LevelUpResult and selectSubclass
 
+    // MARK: - Rest mechanics
+
+    @Test("Short rest spends hit dice and heals HP")
+    func shortRestHealsHP() async throws {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        let initialMax = player.maximumHitPoints
+        player.currentHitPoints = 1                    // nearly dead
+
+        let result = player.shortRest(hitDiceToSpend: 1)
+
+        #expect(result.hitDiceSpent == 1)
+        #expect(result.hitPointsGained >= 0)
+        #expect(player.currentHitPoints >= 1)
+        #expect(player.currentHitPoints <= initialMax)
+        #expect(player.usedHitDice == 1)
+        #expect(player.availableHitDice == player.level - 1)
+    }
+
+    @Test("Short rest caps healing at maximum HP")
+    func shortRestCapsAtMaxHP() async throws {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        // Start at full HP — spending dice should not overheal.
+        let result = player.shortRest(hitDiceToSpend: 1)
+        #expect(result.hitDiceSpent == 1)
+        #expect(result.hitPointsGained == 0)
+        #expect(player.currentHitPoints == player.maximumHitPoints)
+    }
+
+    @Test("Short rest with zero available hit dice gains nothing")
+    func shortRestNoAvailableDice() async throws {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        player.currentHitPoints = 1
+        player.usedHitDice = player.level             // exhaust the entire pool
+
+        let result = player.shortRest(hitDiceToSpend: 1)
+
+        #expect(result.hitDiceSpent == 0)
+        #expect(result.hitPointsGained == 0)
+        #expect(player.currentHitPoints == 1)
+        #expect(player.usedHitDice == player.level)
+    }
+
+    @Test("Short rest clamps requested dice to available pool")
+    func shortRestClampsToAvailable() async throws {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        player.currentHitPoints = 1
+        // Level 1 fighter has 1 hit die total; requesting 5 should spend at most 1.
+        let result = player.shortRest(hitDiceToSpend: 5)
+        #expect(result.hitDiceSpent == 1)
+        #expect(player.usedHitDice == 1)
+    }
+
+    @Test("Long rest restores full HP")
+    func longRestRestoresHP() async throws {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        player.currentHitPoints = 1
+        player.longRest()
+        #expect(player.currentHitPoints == player.maximumHitPoints)
+    }
+
+    @Test("Long rest resets used hit dice")
+    func longRestResetsHitDice() async throws {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        player.currentHitPoints = 1
+        player.shortRest(hitDiceToSpend: 1)
+        #expect(player.usedHitDice == 1)
+
+        player.currentHitPoints = 1
+        player.longRest()
+        #expect(player.usedHitDice == 0)
+        #expect(player.availableHitDice == player.level)
+    }
+
+    @Test("Short rest result round-trips through encode/decode")
+    func usedHitDiceRoundTrip() async throws {
+        let playerTraits = """
+        {
+            "name": "Bilbo",
+            "background": "Sailor",
+            "species": "Human",
+            "class": "Fighter",
+            "height": "3'9\\"",
+            "ability scores": {"Strength": 12},
+            "background ability scores": ["Strength", "Strength", "Dexterity"],
+            "skill proficiencies": ["Athletics"],
+            "money": 130,
+            "maximum hit points": 10,
+            "current hit points": 7,
+            "used hit dice": 1,
+            "level": 2
+        }
+        """.data(using: .utf8)!
+
+        let player = try decoder.decode(Player.self, from: playerTraits, configuration: configuration)
+        #expect(player.usedHitDice == 1)
+        #expect(player.availableHitDice == 1)  // level 2, 1 used
+
+        let encoder = JSONEncoder()
+        let encoded = try encoder.encode(player, configuration: configuration)
+        let dict = try #require(try? JSONSerialization.jsonObject(with: encoded) as? [String: Any])
+        #expect(dict["used hit dice"] as? Int == 1)
+    }
+
+    @Test("Used hit dice not encoded when zero")
+    func usedHitDiceOmittedWhenZero() async throws {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        let encoder = JSONEncoder()
+        let encoded = try encoder.encode(player, configuration: configuration)
+        let dict = try #require(try? JSONSerialization.jsonObject(with: encoded) as? [String: Any])
+        #expect(dict["used hit dice"] == nil)
+    }
+
     @Test("levelUp returns nil when canLevelUp is false")
     func levelUpReturnsNilWhenBlocked() async throws {
         let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)

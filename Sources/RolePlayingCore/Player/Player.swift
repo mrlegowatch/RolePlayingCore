@@ -95,12 +95,17 @@ public class Player: CodableWithConfiguration {
     public var currentHitPoints: Int
     public var experiencePoints: Int
     public var level: Int
-    
+
+    /// Hit dice spent on short rests since the last long rest.
+    public var usedHitDice: Int
+
     public var speed: Int { speciesTraits.speed }
     public var size: CreatureSize { CreatureSize(from: height) }
-    
+
     public var hitDice: Rollable { level * classTraits.hitDice }
-    
+    /// Hit dice remaining in the pool (total pool = level; restored on long rest).
+    public var availableHitDice: Int { level - usedHitDice }
+
     public var proficiencyBonus: Int { 2 + (level - 1) / 4 }
     public var passivePerception: Int { 10 + modifiers[.wisdom] }
     
@@ -177,6 +182,7 @@ public class Player: CodableWithConfiguration {
         case skillProficiencies = "skill proficiencies"
         case maximumHitPoints = "maximum hit points"
         case currentHitPoints = "current hit points"
+        case usedHitDice = "used hit dice"
         case experiencePoints = "experience points"
         case level
         case money
@@ -222,6 +228,7 @@ public class Player: CodableWithConfiguration {
         
         let maximumHitPoints = try values.decode(Int.self, forKey: .maximumHitPoints)
         let currentHitPoints = try values.decodeIfPresent(Int.self, forKey: .currentHitPoints)
+        let usedHitDice = try values.decodeIfPresent(Int.self, forKey: .usedHitDice) ?? 0
         let experiencePoints = try values.decodeIfPresent(Int.self, forKey: .experiencePoints)
         let level = try values.decodeIfPresent(Int.self, forKey: .level)
         let money = try values.decode(Money.self, forKey: .money, configuration: configuration.currencies)
@@ -262,6 +269,7 @@ public class Player: CodableWithConfiguration {
         self.feats = resolvedFeats.isEmpty ? [backgroundTraits.feat] : resolvedFeats
         self.maximumHitPoints = maximumHitPoints
         self.currentHitPoints = currentHitPoints ?? maximumHitPoints
+        self.usedHitDice = usedHitDice
         self.experiencePoints = experiencePoints ?? 0
         self.level = level ?? 1
         self.money = money
@@ -293,6 +301,9 @@ public class Player: CodableWithConfiguration {
         try values.encode(feats.map(\.name), forKey: .feats)
         try values.encode(maximumHitPoints, forKey: .maximumHitPoints)
         try values.encodeIfPresent(currentHitPoints, forKey: .currentHitPoints)
+        if usedHitDice > 0 {
+            try values.encode(usedHitDice, forKey: .usedHitDice)
+        }
         try values.encodeIfPresent(experiencePoints, forKey: .experiencePoints)
         try values.encodeIfPresent(level, forKey: .level)
         try values.encode(money, forKey: .money, configuration: configuration.currencies)
@@ -348,6 +359,7 @@ public class Player: CodableWithConfiguration {
         self.feats = [backgroundTraits.feat]
         self.maximumHitPoints = maxHP
         self.currentHitPoints = maxHP
+        self.usedHitDice = 0
         self.money = money
         self.inventory = inventoryEntries
         self.experiencePoints = 0
@@ -435,6 +447,45 @@ public class Player: CodableWithConfiguration {
               classTraits.subclasses.contains(subclass) else { return }
         subclassTraits = subclass
     }
+
+    // MARK: Rest
+
+    /// The result of a short rest: how many hit dice were spent and how much HP was restored.
+    public struct ShortRestResult: Sendable {
+        public let hitDiceSpent: Int
+        public let hitPointsGained: Int
+    }
+
+    /// Spends up to `hitDiceToSpend` hit dice from the available pool.
+    ///
+    /// Each die is rolled (using the class hit die) and the Constitution modifier is added;
+    /// the per-die contribution is floored at 0. Healed HP is capped at `maximumHitPoints`.
+    /// Requesting more dice than `availableHitDice` silently spends only what remains.
+    @discardableResult
+    public func shortRest(hitDiceToSpend: Int) -> ShortRestResult {
+        let toSpend = min(max(0, hitDiceToSpend), availableHitDice)
+        guard toSpend > 0 else {
+            return ShortRestResult(hitDiceSpent: 0, hitPointsGained: 0)
+        }
+
+        let constitutionModifier: Int = modifiers[.constitution]
+        var totalHealed = 0
+        for _ in 0..<toSpend {
+            totalHealed += max(0, classTraits.hitDice.roll().result + constitutionModifier)
+        }
+
+        let before = currentHitPoints
+        currentHitPoints = min(maximumHitPoints, currentHitPoints + totalHealed)
+        usedHitDice += toSpend
+
+        return ShortRestResult(hitDiceSpent: toSpend, hitPointsGained: currentHitPoints - before)
+    }
+
+    /// Restores all hit points and all spent hit dice (5e 2024 rules).
+    public func longRest() {
+        currentHitPoints = maximumHitPoints
+        usedHitDice = 0
+    }
 }
 
 extension Player: Hashable {
@@ -451,6 +502,7 @@ extension Player: Hashable {
                lhs.baseAbilities == rhs.baseAbilities &&
                lhs.maximumHitPoints == rhs.maximumHitPoints &&
                lhs.currentHitPoints == rhs.currentHitPoints &&
+               lhs.usedHitDice == rhs.usedHitDice &&
                lhs.experiencePoints == rhs.experiencePoints &&
                lhs.level == rhs.level &&
                lhs.money == rhs.money &&
@@ -468,6 +520,7 @@ extension Player: Hashable {
         hasher.combine(baseAbilities)
         hasher.combine(maximumHitPoints)
         hasher.combine(currentHitPoints)
+        hasher.combine(usedHitDice)
         hasher.combine(experiencePoints)
         hasher.combine(level)
         hasher.combine(money)
