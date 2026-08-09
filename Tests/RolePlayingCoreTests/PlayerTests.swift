@@ -589,36 +589,255 @@ struct PlayerTests {
             "level": 1
         }
         """.data(using: .utf8)!
-        
+
         let player = try decoder.decode(Player.self, from: playerTraits, configuration: configuration)
         player.speciesTraits = human
         player.classTraits = fighter
-        
+
         let initialHP = player.maximumHitPoints
-        
+
         // Add enough XP to level up to level 2
         player.experiencePoints = 301
         #expect(player.canLevelUp)
         player.levelUp()
         #expect(player.level == 2)
         #expect(player.maximumHitPoints > initialHP, "HP should increase on level up")
-        
+
         // Add enough XP to level up to level 3
         player.experiencePoints = 901
         #expect(player.canLevelUp)
         player.levelUp()
         #expect(player.level == 3)
-        
+
         // Add enough XP to level up to level 4
         player.experiencePoints = 2701
         #expect(player.canLevelUp)
         player.levelUp()
         #expect(player.level == 4)
-        
+
         // Without enough XP, cannot level up
         player.experiencePoints = 2701
         #expect(player.canLevelUp == false)
         player.levelUp() // Should do nothing
         #expect(player.level == 4)
+    }
+
+    // MARK: - LevelUpResult and selectSubclass
+
+    @Test("levelUp returns nil when canLevelUp is false")
+    func levelUpReturnsNilWhenBlocked() async throws {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        player.experiencePoints = 0
+        #expect(player.canLevelUp == false)
+        let result = player.levelUp()
+        #expect(result == nil)
+        #expect(player.level == 1)
+    }
+
+    @Test("levelUp returns result with correct new level and HP gained")
+    func levelUpResult() async throws {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        let initialMax = player.maximumHitPoints
+        let initialCurrent = player.currentHitPoints
+        player.experiencePoints = 301
+
+        let result = try #require(player.levelUp())
+        #expect(result.newLevel == 2)
+        #expect(result.hitPointsGained > 0)
+        #expect(player.maximumHitPoints == initialMax + result.hitPointsGained)
+        #expect(player.currentHitPoints == initialCurrent + result.hitPointsGained)
+    }
+
+    @Test("levelUp updates currentHitPoints to match HP gained")
+    func levelUpUpdatesCurrentHP() async throws {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        // Injure the player; current HP should increase by the same amount as max HP on level-up.
+        player.currentHitPoints = player.maximumHitPoints - 4
+        let injuryGap = player.maximumHitPoints - player.currentHitPoints
+        player.experiencePoints = 301
+
+        let result = try #require(player.levelUp())
+        #expect(player.maximumHitPoints - player.currentHitPoints == injuryGap, "injury gap should be preserved")
+        #expect(player.currentHitPoints == player.maximumHitPoints - injuryGap)
+        #expect(result.hitPointsGained > 0)
+    }
+
+    @Test("levelUp grants general feat at levels 4, 8, 12, 16, 19", arguments: [4, 8, 12, 16, 19])
+    func levelUpGrantsGeneralFeat(targetLevel: Int) async throws {
+        // Use a full 20-level XP table so all target levels are reachable.
+        let fullClassData = """
+        {
+            "name": "Fighter",
+            "plural": "Fighters",
+            "hit dice": "d10",
+            "primary ability": ["Strength"],
+            "saving throws": ["Strength", "Constitution"],
+            "starting wealth": "5d4x10",
+            "experience points": [0, 300, 900, 2700, 6500, 14000, 23000, 34000,
+                                   48000, 64000, 85000, 100000, 120000, 140000,
+                                   165000, 195000, 225000, 265000, 305000, 355000]
+        }
+        """.data(using: .utf8)!
+        let fullFighter = try decoder.decode(ClassTraits.self, from: fullClassData, configuration: configuration)
+
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fullFighter)
+        player.level = targetLevel - 1
+        player.experiencePoints = fullFighter.minExperiencePoints(at: targetLevel) + 1
+
+        let result = try #require(player.levelUp())
+        #expect(result.featCategoryToSelect == .general)
+        #expect(result.newLevel == targetLevel)
+    }
+
+    @Test("levelUp grants epic boon at level 20")
+    func levelUpGrantsEpicBoon() async throws {
+        let fullClassData = """
+        {
+            "name": "Fighter",
+            "plural": "Fighters",
+            "hit dice": "d10",
+            "primary ability": ["Strength"],
+            "saving throws": ["Strength", "Constitution"],
+            "starting wealth": "5d4x10",
+            "experience points": [0, 300, 900, 2700, 6500, 14000, 23000, 34000,
+                                   48000, 64000, 85000, 100000, 120000, 140000,
+                                   165000, 195000, 225000, 265000, 305000, 355000]
+        }
+        """.data(using: .utf8)!
+        let fullFighter = try decoder.decode(ClassTraits.self, from: fullClassData, configuration: configuration)
+
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fullFighter)
+        player.level = 19
+        player.experiencePoints = 355001
+
+        let result = try #require(player.levelUp())
+        #expect(result.newLevel == 20)
+        #expect(result.featCategoryToSelect == .epicBoon)
+    }
+
+    @Test("levelUp grants no feat at non-feat levels")
+    func levelUpNoFeatAtOtherLevels() async throws {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        player.experiencePoints = 301  // enough for level 2
+
+        let result = try #require(player.levelUp())
+        #expect(result.newLevel == 2)
+        #expect(result.featCategoryToSelect == nil)
+    }
+
+    @Test("levelUp signals subclass selection at subclassChoiceLevel")
+    func levelUpRequiresSubclassSelection() async throws {
+        let classWithSubclasses = """
+        {
+            "name": "Fighter",
+            "plural": "Fighters",
+            "hit dice": "d10",
+            "primary ability": ["Strength"],
+            "saving throws": ["Strength", "Constitution"],
+            "starting wealth": "5d4x10",
+            "experience points": [0, 300, 900, 2700],
+            "subclass title": "Martial Archetype",
+            "subclass choice level": 3,
+            "subclasses": [
+                { "name": "Champion" },
+                { "name": "Battle Master" }
+            ]
+        }
+        """.data(using: .utf8)!
+        let archetypeFighter = try decoder.decode(ClassTraits.self, from: classWithSubclasses, configuration: configuration)
+
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: archetypeFighter)
+        player.level = 2
+        player.experiencePoints = 901
+
+        let result = try #require(player.levelUp())
+        #expect(result.newLevel == 3)
+        #expect(result.requiresSubclassSelection == true)
+    }
+
+    @Test("levelUp does not signal subclass selection at non-triggering levels")
+    func levelUpNoSubclassSelectionOtherLevels() async throws {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        player.experiencePoints = 301
+
+        let result = try #require(player.levelUp())
+        #expect(result.requiresSubclassSelection == false)
+    }
+
+    @Test("selectSubclass assigns subclass when valid")
+    func selectSubclassValid() async throws {
+        let classWithSubclasses = """
+        {
+            "name": "Fighter",
+            "plural": "Fighters",
+            "hit dice": "d10",
+            "primary ability": ["Strength"],
+            "saving throws": ["Strength", "Constitution"],
+            "starting wealth": "5d4x10",
+            "experience points": [0, 300, 900, 2700],
+            "subclass choice level": 3,
+            "subclasses": [{ "name": "Champion" }]
+        }
+        """.data(using: .utf8)!
+        let archetypeFighter = try decoder.decode(ClassTraits.self, from: classWithSubclasses, configuration: configuration)
+        let champion = archetypeFighter.subclasses[0]
+
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: archetypeFighter)
+        player.level = 3
+        #expect(player.subclassTraits == nil)
+
+        player.selectSubclass(champion)
+        #expect(player.subclassTraits == champion)
+        #expect(player.subclassName == "Champion")
+    }
+
+    @Test("selectSubclass ignores subclass not belonging to class")
+    func selectSubclassWrongClass() async throws {
+        let classWithSubclasses = """
+        {
+            "name": "Fighter",
+            "plural": "Fighters",
+            "hit dice": "d10",
+            "primary ability": ["Strength"],
+            "saving throws": ["Strength", "Constitution"],
+            "starting wealth": "5d4x10",
+            "experience points": [0, 300, 900, 2700],
+            "subclass choice level": 3,
+            "subclasses": [{ "name": "Champion" }]
+        }
+        """.data(using: .utf8)!
+        let archetypeFighter = try decoder.decode(ClassTraits.self, from: classWithSubclasses, configuration: configuration)
+
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: archetypeFighter)
+        player.level = 3
+
+        let foreignSubclass = SubclassTraits(name: "Life Domain")
+        player.selectSubclass(foreignSubclass)
+        #expect(player.subclassTraits == nil, "subclass from another class should be rejected")
+    }
+
+    @Test("selectSubclass ignores call when level is too low")
+    func selectSubclassLevelTooLow() async throws {
+        let classWithSubclasses = """
+        {
+            "name": "Fighter",
+            "plural": "Fighters",
+            "hit dice": "d10",
+            "primary ability": ["Strength"],
+            "saving throws": ["Strength", "Constitution"],
+            "starting wealth": "5d4x10",
+            "experience points": [0, 300, 900, 2700],
+            "subclass choice level": 3,
+            "subclasses": [{ "name": "Champion" }]
+        }
+        """.data(using: .utf8)!
+        let archetypeFighter = try decoder.decode(ClassTraits.self, from: classWithSubclasses, configuration: configuration)
+        let champion = archetypeFighter.subclasses[0]
+
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: archetypeFighter)
+        player.level = 2
+
+        player.selectSubclass(champion)
+        #expect(player.subclassTraits == nil, "subclass selection should be ignored below required level")
     }
 }
