@@ -120,6 +120,13 @@ public class Player: CodableWithConfiguration {
     /// All items carried by this player. Equipped state is tracked per entry.
     public var inventory: [InventoryEntry]
 
+    // Spellcasting
+
+    /// Spells currently prepared or known.
+    public var preparedSpells: [Spell]
+    /// Slots expended at each level since the last long rest (0-indexed; index 0 = 1st-level slots).
+    public var usedSpellSlots: [Int]
+
     /// The worn armor piece, if any (excludes shields).
     public var equippedArmor: Armor? {
         inventory.first(where: { $0.isEquipped && ($0.item as? Armor)?.category != .shield })?.item as? Armor
@@ -166,6 +173,31 @@ public class Player: CodableWithConfiguration {
         classTraits.armorTraining + feats.flatMap(\.armorTraining)
     }
 
+    // Spellcasting computed properties
+
+    public var spellcastingAbility: Ability? { classTraits.spellcastingAbility }
+
+    public var spellcastingModifier: Int? {
+        guard let ability = spellcastingAbility else { return nil }
+        return modifiers[ability]
+    }
+
+    public var spellSaveDC: Int? {
+        spellcastingModifier.map { 8 + proficiencyBonus + $0 }
+    }
+
+    public var spellAttackBonus: Int? {
+        spellcastingModifier.map { proficiencyBonus + $0 }
+    }
+
+    /// Maximum spells that can be prepared: spellcasting modifier + character level, minimum 1.
+    public var maxPreparedSpells: Int? {
+        guard classTraits.spellcastingType == .prepared,
+              let modifier = spellcastingModifier,
+              classTraits.spellSlots != nil else { return nil }
+        return max(1, modifier + level)
+    }
+
     private enum CodingKeys: String, CodingKey {
         case name
         case backgroundName = "background"
@@ -187,6 +219,8 @@ public class Player: CodableWithConfiguration {
         case level
         case money
         case inventory
+        case preparedSpells = "prepared spells"
+        case usedSpellSlots = "used spell slots"
     }
 
     public required init(from decoder: Decoder, configuration: Configuration) throws {
@@ -235,6 +269,11 @@ public class Player: CodableWithConfiguration {
 
         let resolvedInventory = try values.decodeIfPresent([InventoryEntry].self, forKey: .inventory, configuration: configuration.items) ?? []
 
+        // Resolve prepared spell names; silently skip any not found in configuration
+        let preparedSpellNames = try values.decodeIfPresent([String].self, forKey: .preparedSpells) ?? []
+        let preparedSpells = preparedSpellNames.compactMap { configuration.spells[$0] }
+        let usedSpellSlots = try values.decodeIfPresent([Int].self, forKey: .usedSpellSlots) ?? []
+
         // Resolve backgroundTraits from configuration
         guard let backgroundTraits = configuration.backgrounds[backgroundName] else {
             throw missingTypeError("background", backgroundName)
@@ -274,6 +313,8 @@ public class Player: CodableWithConfiguration {
         self.level = level ?? 1
         self.money = money
         self.inventory = resolvedInventory
+        self.preparedSpells = preparedSpells
+        self.usedSpellSlots = usedSpellSlots
         self.backgroundTraits = backgroundTraits
         self.speciesTraits = speciesTraits
         self.classTraits = classTraits
@@ -309,6 +350,12 @@ public class Player: CodableWithConfiguration {
         try values.encode(money, forKey: .money, configuration: configuration.currencies)
         if !inventory.isEmpty {
             try values.encode(inventory, forKey: .inventory, configuration: configuration.items)
+        }
+        if !preparedSpells.isEmpty {
+            try values.encode(preparedSpells.map(\.name), forKey: .preparedSpells)
+        }
+        if !usedSpellSlots.isEmpty {
+            try values.encode(usedSpellSlots, forKey: .usedSpellSlots)
         }
      }
     
@@ -362,6 +409,8 @@ public class Player: CodableWithConfiguration {
         self.usedHitDice = 0
         self.money = money
         self.inventory = inventoryEntries
+        self.preparedSpells = []
+        self.usedSpellSlots = []
         self.experiencePoints = 0
         self.level = 1
     }
@@ -481,10 +530,54 @@ public class Player: CodableWithConfiguration {
         return ShortRestResult(hitDiceSpent: toSpend, hitPointsGained: currentHitPoints - before)
     }
 
-    /// Restores all hit points and all spent hit dice (5e 2024 rules).
+    /// Restores all hit points, all spent hit dice, and all expended spell slots (5e 2024 rules).
     public func longRest() {
         currentHitPoints = maximumHitPoints
         usedHitDice = 0
+        usedSpellSlots = []
+    }
+
+    // MARK: - Spellcasting
+
+    /// Returns the total spell slots at the given 1-based slot level for the character's current class level.
+    public func totalSpellSlots(at slotLevel: Int) -> Int {
+        guard slotLevel >= 1,
+              let slots = classTraits.spellSlots,
+              level >= 1, level <= slots.count else { return 0 }
+        let levelSlots = slots[level - 1]
+        guard slotLevel <= levelSlots.count else { return 0 }
+        return levelSlots[slotLevel - 1]
+    }
+
+    /// Returns the number of remaining unused spell slots at the given 1-based slot level.
+    public func availableSpellSlots(at slotLevel: Int) -> Int {
+        let total = totalSpellSlots(at: slotLevel)
+        guard slotLevel >= 1, slotLevel <= usedSpellSlots.count else { return total }
+        return max(0, total - usedSpellSlots[slotLevel - 1])
+    }
+
+    /// Adds a spell to the prepared list. Ignored if the spell is already prepared.
+    public func prepareSpell(_ spell: Spell) {
+        guard !preparedSpells.contains(spell) else { return }
+        preparedSpells.append(spell)
+    }
+
+    /// Removes a spell from the prepared list. Ignored if the spell is not prepared.
+    public func unprepareSpell(_ spell: Spell) {
+        preparedSpells.removeAll { $0 == spell }
+    }
+
+    /// Expends one spell slot at the given 1-based slot level.
+    ///
+    /// Returns `true` if a slot was available and expended, `false` if no slots remain at that level.
+    @discardableResult
+    public func castSpell(usingSlotLevel slotLevel: Int) -> Bool {
+        guard availableSpellSlots(at: slotLevel) > 0 else { return false }
+        if slotLevel > usedSpellSlots.count {
+            usedSpellSlots += Array(repeating: 0, count: slotLevel - usedSpellSlots.count)
+        }
+        usedSpellSlots[slotLevel - 1] += 1
+        return true
     }
 
     // MARK: - Inventory

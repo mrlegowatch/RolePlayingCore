@@ -34,6 +34,14 @@ public struct ClassTraits: Sendable {
     public var subclassTitle: String
     public var subclassChoiceLevel: Int
     public var subclasses: [SubclassTraits]
+    public var spellcastingAbility: Ability?
+    public var spellcastingType: SpellcastingType?
+    /// Spell slots indexed by [classLevel-1][slotLevel-1].
+    public var spellSlots: [[Int]]?
+    /// Number of cantrips known at character level 1.
+    public var cantripsKnown: Int?
+    /// Number of spells known or prepared at character level 1.
+    public var spellsKnown: Int?
         
     /// Accesses the experiencePoints array for the specified 1-based level.
     public func minExperiencePoints(at level: Int) -> Int {
@@ -78,6 +86,11 @@ public struct ClassTraits: Sendable {
                 subclassTitle: String = "Subclass",
                 subclassChoiceLevel: Int = 3,
                 subclasses: [SubclassTraits] = [],
+                spellcastingAbility: Ability? = nil,
+                spellcastingType: SpellcastingType? = nil,
+                spellSlots: [[Int]]? = nil,
+                cantripsKnown: Int? = nil,
+                spellsKnown: Int? = nil,
                 experiencePoints: [Int]? = nil) {
         self.name = name
         self.plural = plural
@@ -98,6 +111,11 @@ public struct ClassTraits: Sendable {
         self.subclassTitle = subclassTitle
         self.subclassChoiceLevel = subclassChoiceLevel
         self.subclasses = subclasses
+        self.spellcastingAbility = spellcastingAbility
+        self.spellcastingType = spellcastingType
+        self.spellSlots = spellSlots
+        self.cantripsKnown = cantripsKnown
+        self.spellsKnown = spellsKnown
         self.experiencePoints = experiencePoints
     }
 }
@@ -123,6 +141,11 @@ extension ClassTraits: CodableWithConfiguration {
         case subclassTitle = "subclass title"
         case subclassChoiceLevel = "subclass choice level"
         case subclasses
+        case spellcastingAbility = "spellcasting ability"
+        case spellcastingType = "spellcasting type"
+        case spellSlots = "spell slots"
+        case cantripsKnown = "cantrips known"
+        case spellsKnown = "spells known"
         case experiencePoints = "experience points"
     }
     
@@ -174,10 +197,16 @@ extension ClassTraits: CodableWithConfiguration {
 
         let subclassTitle = try values.decodeIfPresent(String.self, forKey: .subclassTitle) ?? "Subclass"
         let subclassChoiceLevel = try values.decodeIfPresent(Int.self, forKey: .subclassChoiceLevel) ?? 3
-        let subclasses = try values.decodeIfPresent([SubclassTraits].self, forKey: .subclasses) ?? []
+        let subclasses = try values.decodeIfPresent([SubclassTraits].self, forKey: .subclasses, configuration: configuration) ?? []
+
+        let spellcastingAbility = try values.decodeIfPresent(Ability.self, forKey: .spellcastingAbility)
+        let spellcastingType = try values.decodeIfPresent(SpellcastingType.self, forKey: .spellcastingType)
+        let spellSlots = try values.decodeIfPresent([[Int]].self, forKey: .spellSlots)
+        let cantripsKnown = try values.decodeIfPresent(Int.self, forKey: .cantripsKnown)
+        let spellsKnown = try values.decodeIfPresent(Int.self, forKey: .spellsKnown)
 
         let experiencePoints = try values.decodeIfPresent([Int].self, forKey: .experiencePoints)
-        
+
         // Safely set properties
         self.name = name
         self.plural = plural
@@ -198,10 +227,15 @@ extension ClassTraits: CodableWithConfiguration {
         self.subclassTitle = subclassTitle
         self.subclassChoiceLevel = subclassChoiceLevel
         self.subclasses = subclasses
+        self.spellcastingAbility = spellcastingAbility
+        self.spellcastingType = spellcastingType
+        self.spellSlots = spellSlots
+        self.cantripsKnown = cantripsKnown
+        self.spellsKnown = spellsKnown
 
         self.experiencePoints = experiencePoints
     }
-        
+
     public func encode(to encoder: Encoder, configuration: Configuration) throws {
         var values = encoder.container(keyedBy: CodingKeys.self)
         
@@ -224,8 +258,13 @@ extension ClassTraits: CodableWithConfiguration {
         if !subclasses.isEmpty {
             try values.encode(subclassTitle, forKey: .subclassTitle)
             try values.encode(subclassChoiceLevel, forKey: .subclassChoiceLevel)
-            try values.encode(subclasses, forKey: .subclasses)
+            try values.encode(subclasses, forKey: .subclasses, configuration: configuration)
         }
+        try values.encodeIfPresent(spellcastingAbility, forKey: .spellcastingAbility)
+        try values.encodeIfPresent(spellcastingType, forKey: .spellcastingType)
+        try values.encodeIfPresent(spellSlots, forKey: .spellSlots)
+        try values.encodeIfPresent(cantripsKnown, forKey: .cantripsKnown)
+        try values.encodeIfPresent(spellsKnown, forKey: .spellsKnown)
 
         try values.encodeIfPresent(experiencePoints, forKey: .experiencePoints)
     }

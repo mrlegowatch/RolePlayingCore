@@ -18,6 +18,11 @@ struct SubclassTraitsTests {
         e.outputFormatting = .sortedKeys
         return e
     }()
+    let configuration: Configuration
+
+    init() throws {
+        configuration = try Configuration("TestClassesConfiguration", from: .module)
+    }
 
     // MARK: - Init
 
@@ -75,7 +80,7 @@ struct SubclassTraitsTests {
         }
         """.data(using: .utf8)!
 
-        let sub = try decoder.decode(SubclassTraits.self, from: json)
+        let sub = try decoder.decode(SubclassTraits.self, from: json, configuration: configuration)
         #expect(sub.name == "Thief")
         #expect(sub.features[3]?.count == 2)
         #expect(sub.features[3]?.contains("Fast Hands") == true)
@@ -99,14 +104,14 @@ struct SubclassTraitsTests {
         }
         """.data(using: .utf8)!
 
-        let sub = try decoder.decode(SubclassTraits.self, from: json)
+        let sub = try decoder.decode(SubclassTraits.self, from: json, configuration: configuration)
         #expect(sub.descriptiveTraits["flavor"] == "Primal rage and fury")
         #expect(sub.features[3]?.first == "Frenzy")
     }
 
     // MARK: - Codable: with additionalSpells
 
-    @Test("Decode additional spells with string level keys")
+    @Test("Decode additional spells resolves spell names from configuration")
     func decodeAdditionalSpells() throws {
         let json = """
         {
@@ -116,19 +121,35 @@ struct SubclassTraitsTests {
                 "6": ["Blessed Healer"]
             },
             "additional spells": {
-                "3": ["Bless", "Cure Wounds"],
-                "5": ["Lesser Restoration", "Spiritual Weapon"]
+                "1": ["Bless", "Magic Missile"],
+                "3": ["Fireball"]
             }
         }
         """.data(using: .utf8)!
 
-        let sub = try decoder.decode(SubclassTraits.self, from: json)
+        let sub = try decoder.decode(SubclassTraits.self, from: json, configuration: configuration)
         #expect(sub.name == "Life Domain")
+        let spells1 = try #require(sub.additionalSpells?[1])
+        #expect(spells1.contains(where: { $0.name == "Bless" }))
+        #expect(spells1.contains(where: { $0.name == "Magic Missile" }))
         let spells3 = try #require(sub.additionalSpells?[3])
-        #expect(spells3.contains("Bless"))
-        #expect(spells3.contains("Cure Wounds"))
-        let spells5 = try #require(sub.additionalSpells?[5])
-        #expect(spells5.contains("Lesser Restoration"))
+        #expect(spells3.contains(where: { $0.name == "Fireball" }))
+    }
+
+    @Test("Decode with unknown spell name throws")
+    func decodeUnknownSpellThrows() {
+        let json = """
+        {
+            "name": "Mystery Domain",
+            "additional spells": {
+                "1": ["Unknown Spell XYZ"]
+            }
+        }
+        """.data(using: .utf8)!
+
+        #expect(throws: (any Error).self) {
+            _ = try decoder.decode(SubclassTraits.self, from: json, configuration: configuration)
+        }
     }
 
     // MARK: - Codable: encode / round-trip
@@ -136,7 +157,7 @@ struct SubclassTraitsTests {
     @Test("Encode omits empty descriptiveTraits")
     func encodeOmitsEmptyDescriptiveTraits() throws {
         let sub = SubclassTraits(name: "Thief", features: [3: ["Fast Hands"]])
-        let data = try encoder.encode(sub)
+        let data = try encoder.encode(sub, configuration: configuration)
         let dict = try #require(try? JSONSerialization.jsonObject(with: data) as? [String: Any])
         #expect(dict["descriptive traits"] == nil, "Empty descriptiveTraits should be omitted")
     }
@@ -144,28 +165,31 @@ struct SubclassTraitsTests {
     @Test("Encode omits empty features")
     func encodeOmitsEmptyFeatures() throws {
         let sub = SubclassTraits(name: "Placeholder")
-        let data = try encoder.encode(sub)
+        let data = try encoder.encode(sub, configuration: configuration)
         let dict = try #require(try? JSONSerialization.jsonObject(with: data) as? [String: Any])
         #expect(dict["features"] == nil, "Empty features should be omitted")
     }
 
     @Test("Codable round-trip preserves all data")
     func codableRoundTrip() throws {
+        let bless = try #require(configuration.spells["Bless"])
+        let fireball = try #require(configuration.spells["Fireball"])
         let original = SubclassTraits(
             name: "Life Domain",
             descriptiveTraits: ["role": "Healer"],
             features: [3: ["Disciple of Life"], 6: ["Blessed Healer"]],
-            additionalSpells: [3: ["Bless", "Cure Wounds"]]
+            additionalSpells: [3: [bless, fireball]]
         )
 
-        let data = try encoder.encode(original)
-        let decoded = try decoder.decode(SubclassTraits.self, from: data)
+        let data = try encoder.encode(original, configuration: configuration)
+        let decoded = try decoder.decode(SubclassTraits.self, from: data, configuration: configuration)
 
         #expect(decoded == original)
         #expect(decoded.descriptiveTraits["role"] == "Healer")
         #expect(decoded.features[3]?.contains("Disciple of Life") == true)
         let spells = try #require(decoded.additionalSpells?[3])
-        #expect(spells.contains("Bless"))
+        #expect(spells.contains(where: { $0.name == "Bless" }))
+        #expect(spells.contains(where: { $0.name == "Fireball" }))
     }
 
     @Test("Non-integer string feature keys are silently dropped")
@@ -180,7 +204,7 @@ struct SubclassTraitsTests {
         }
         """.data(using: .utf8)!
 
-        let sub = try decoder.decode(SubclassTraits.self, from: json)
+        let sub = try decoder.decode(SubclassTraits.self, from: json, configuration: configuration)
         #expect(sub.features.count == 1, "Non-integer string key should be dropped")
         #expect(sub.features[3] != nil)
     }

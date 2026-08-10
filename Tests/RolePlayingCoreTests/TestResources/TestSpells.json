@@ -1,0 +1,40 @@
+{
+    "spells": [
+        {
+            "name": "Fire Bolt",
+            "level": 0,
+            "school": "evocation",
+            "components": ["V", "S"],
+            "casting time": "1 action"
+        },
+        {
+            "name": "Sacred Flame",
+            "level": 0,
+            "school": "radiance",
+            "components": ["V", "S"],
+            "casting time": "1 action"
+        },
+        {
+            "name": "Bless",
+            "level": 1,
+            "school": "enchantment",
+            "components": ["V", "S", "M"],
+            "casting time": "1 action"
+        },
+        {
+            "name": "Magic Missile",
+            "level": 1,
+            "school": "evocation",
+            "components": ["V", "S"],
+            "casting time": "1 action"
+        },
+        {
+            "name": "Fireball",
+            "level": 3,
+            "school": "evocation",
+            "components": ["V", "S", "M"],
+            "casting time": "1 action",
+            "description": "A bright streak flashes from your pointing finger to a point you choose within range."
+        }
+    ]
+}

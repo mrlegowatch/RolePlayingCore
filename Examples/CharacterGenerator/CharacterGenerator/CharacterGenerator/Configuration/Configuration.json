@@ -7,5 +7,6 @@
     "creature types": ["CreatureTypes"],
     "classes": ["Classes"],
     "species": ["Species"],
-    "species names": "SpeciesNames"
+    "species names": "SpeciesNames",
+    "spells": ["Spells"]
 }

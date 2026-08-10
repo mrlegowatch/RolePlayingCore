@@ -6,6 +6,8 @@
 //  Copyright © 2026 Brian Arnold. All rights reserved.
 //
 
+import Foundation
+
 /// Traits describing a subclass (archetype, domain, patron, etc.) that a character
 /// selects at the level specified by their parent class.
 ///
@@ -19,14 +21,14 @@ public struct SubclassTraits: Sendable, Equatable {
     public var features: [Int: [String]]
 
     /// Bonus spells granted at specific levels, such as cleric domain spells or warlock
-    /// expanded spell lists. Keys are character levels.
-    public var additionalSpells: [Int: [String]]?
+    /// expanded spell lists. Keys are character levels; values are resolved Spell objects.
+    public var additionalSpells: [Int: [Spell]]?
 
     public init(
         name: String,
         descriptiveTraits: [String: String] = [:],
         features: [Int: [String]] = [:],
-        additionalSpells: [Int: [String]]? = nil
+        additionalSpells: [Int: [Spell]]? = nil
     ) {
         self.name = name
         self.descriptiveTraits = descriptiveTraits
@@ -35,7 +37,7 @@ public struct SubclassTraits: Sendable, Equatable {
     }
 }
 
-extension SubclassTraits: Codable {
+extension SubclassTraits: CodableWithConfiguration {
     private enum CodingKeys: String, CodingKey {
         case name
         case descriptiveTraits = "descriptive traits"
@@ -43,9 +45,9 @@ extension SubclassTraits: Codable {
         case additionalSpells = "additional spells"
     }
 
-    /// Decodes features and spells from string-keyed JSON objects (e.g., `"3": [...]`)
-    /// and converts the string level keys to Int.
-    public init(from decoder: any Decoder) throws {
+    /// Decodes features and spells from string-keyed JSON objects (e.g., `"3": [...]`),
+    /// converting string level keys to Int and resolving spell names via configuration.
+    public init(from decoder: any Decoder, configuration: Configuration) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         self.name = try values.decode(String.self, forKey: .name)
         self.descriptiveTraits = try values.decodeIfPresent([String: String].self, forKey: .descriptiveTraits) ?? [:]
@@ -56,16 +58,26 @@ extension SubclassTraits: Codable {
         })
 
         if let spellStrings = try values.decodeIfPresent([String: [String]].self, forKey: .additionalSpells) {
-            self.additionalSpells = Dictionary(uniqueKeysWithValues: spellStrings.compactMap { key, value in
-                Int(key).map { ($0, value) }
-            })
+            var resolved: [Int: [Spell]] = [:]
+            for (key, names) in spellStrings {
+                guard let level = Int(key) else { continue }
+                var spells: [Spell] = []
+                for name in names {
+                    guard let spell = configuration.spells[name] else {
+                        throw missingTypeError("spell", name)
+                    }
+                    spells.append(spell)
+                }
+                resolved[level] = spells
+            }
+            self.additionalSpells = resolved
         } else {
             self.additionalSpells = nil
         }
     }
 
     /// Encodes features and spells with string level keys for JSON compatibility.
-    public func encode(to encoder: any Encoder) throws {
+    public func encode(to encoder: any Encoder, configuration: Configuration) throws {
         var values = encoder.container(keyedBy: CodingKeys.self)
         try values.encode(name, forKey: .name)
         if !descriptiveTraits.isEmpty {
@@ -76,7 +88,9 @@ extension SubclassTraits: Codable {
             try values.encode(featureStrings, forKey: .features)
         }
         if let additionalSpells {
-            let spellStrings = Dictionary(uniqueKeysWithValues: additionalSpells.map { ("\($0.key)", $0.value) })
+            let spellStrings = Dictionary(uniqueKeysWithValues: additionalSpells.map {
+                ("\($0.key)", $0.value.map(\.name))
+            })
             try values.encode(spellStrings, forKey: .additionalSpells)
         }
     }

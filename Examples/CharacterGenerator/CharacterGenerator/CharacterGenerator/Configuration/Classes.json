@@ -33,6 +33,10 @@
                 "starting equipment": [["Chain Shirt", "Shield", "Mace", "Holy Symbol", "Priest's Pack", "7 GP"], ["110 GP"]],
                 "armor training": ["light", "medium", "shield"],
                 "weapon proficiencies": ["simple"],
+                "spellcasting ability": "Wisdom",
+                "spellcasting type": "prepared",
+                "cantrips known": 3,
+                "spells known": 2,
                 },
                 {
                 "name": "Fighter",
@@ -75,6 +79,10 @@
                 "starting equipment": [["2 Daggers", "Arcane Focus (quarterstaff)", "Robe", "Spellbook", "Scholar's Pack", "5 GP"], ["55 GP"]],
                 "armor training": [],
                 "weapon proficiencies": ["simple"],
+                "spellcasting ability": "Intelligence",
+                "spellcasting type": "prepared",
+                "cantrips known": 3,
+                "spells known": 2,
                 },
                 {
                 "name": "Barbarian",
@@ -103,6 +111,10 @@
                 "starting equipment": [["Leather Armor", "2 Daggers", "Any Tool", "Entertainer's Pack", "19 GP"], ["90 GP"]],
                 "armor training": ["light"],
                 "weapon proficiencies": ["simple"],
+                "spellcasting ability": "Charisma",
+                "spellcasting type": "known",
+                "cantrips known": 2,
+                "spells known": 4,
                 },
                 {
                 "name": "Druid",
@@ -118,6 +130,10 @@
                 "starting equipment": [["Leather Armor", "Shield", "Sickle", "Druidic Focus (Quarterstaff)", "Explorer's Pack", "Herbalism Kit", "9 GP"], ["50 GP"]],
                 "armor training": ["light", "shield"],
                 "weapon proficiencies": ["simple"],
+                "spellcasting ability": "Wisdom",
+                "spellcasting type": "prepared",
+                "cantrips known": 2,
+                "spells known": 2,
                 },
                 {
                 "name": "Monk",
@@ -147,6 +163,9 @@
                 "starting equipment": [["Chain Mail", "Shield", "Longsword", "6 Javelins", "Holy Symbol", "Priest's Pack", "9 GP"], ["150 GP"]],
                 "armor training": ["light", "medium", "heavy", "shield"],
                 "weapon proficiencies": ["simple", "martial"],
+                "spellcasting ability": "Charisma",
+                "spellcasting type": "prepared",
+                "spells known": 2,
                 },
                 {
                 "name": "Ranger",
@@ -173,6 +192,10 @@
                 "starting equipment": [["Spear", "2 Daggers", "Arcane Focus (crystal)", "Dungeoneer's Pack", "28 GP"], ["50 GP"]],
                 "armor training": [],
                 "weapon proficiencies": ["simple"],
+                "spellcasting ability": "Charisma",
+                "spellcasting type": "known",
+                "cantrips known": 4,
+                "spells known": 2,
                 },
                 {
                 "name": "Warlock",
@@ -186,6 +209,10 @@
                 "starting equipment": [["Leather Armor", "Sickle", "2 Daggers", "Arcane Focus (orb)", "Book (occult lore)", "Scholar's Pack", "15 GP"], ["100 GP"]],
                 "armor training": ["light"],
                 "weapon proficiencies": ["simple"],
+                "spellcasting ability": "Charisma",
+                "spellcasting type": "pact magic",
+                "cantrips known": 2,
+                "spells known": 2
                 }
                 ]
 }

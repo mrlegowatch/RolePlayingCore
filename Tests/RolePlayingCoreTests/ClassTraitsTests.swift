@@ -363,6 +363,102 @@ struct ClassTraitsTests {
         #expect(decoded.maxLevel == 6, "Max level should be 6")
     }
 
+    // MARK: - Spellcasting fields
+
+    @Test("Decode spellcasting class has spellcasting fields populated")
+    func decodeSpellcastingClass() throws {
+        let traits = """
+        {
+            "name": "Wizard",
+            "plural": "Wizards",
+            "hit dice": "d6",
+            "starting wealth": "4d4x10",
+            "spellcasting ability": "Intelligence",
+            "spellcasting type": "prepared",
+            "spell slots": [[2], [3], [4, 2]]
+        }
+        """.data(using: .utf8)!
+
+        let classTraits = try decoder.decode(ClassTraits.self, from: traits, configuration: configuration)
+        #expect(classTraits.spellcastingAbility == Ability("Intelligence"))
+        #expect(classTraits.spellcastingType == .prepared)
+        #expect(classTraits.spellSlots?.count == 3)
+        #expect(classTraits.spellSlots?[0] == [2])
+        #expect(classTraits.spellSlots?[2] == [4, 2])
+    }
+
+    @Test("Decode non-spellcasting class has nil spellcasting fields")
+    func decodeNonSpellcastingClass() throws {
+        let traits = """
+        {
+            "name": "Fighter",
+            "plural": "Fighters",
+            "hit dice": "d10",
+            "starting wealth": "5d4x10"
+        }
+        """.data(using: .utf8)!
+
+        let classTraits = try decoder.decode(ClassTraits.self, from: traits, configuration: configuration)
+        #expect(classTraits.spellcastingAbility == nil)
+        #expect(classTraits.spellcastingType == nil)
+        #expect(classTraits.spellSlots == nil)
+    }
+
+    @Test("Decode pact magic spellcasting type")
+    func decodePactMagicType() throws {
+        let traits = """
+        {
+            "name": "Warlock",
+            "plural": "Warlocks",
+            "hit dice": "d8",
+            "starting wealth": "4d4x10",
+            "spellcasting ability": "Charisma",
+            "spellcasting type": "pact magic"
+        }
+        """.data(using: .utf8)!
+
+        let classTraits = try decoder.decode(ClassTraits.self, from: traits, configuration: configuration)
+        #expect(classTraits.spellcastingType == .pactMagic)
+    }
+
+    @Test("Round-trip encoding preserves spellcasting fields")
+    func roundTripSpellcastingFields() throws {
+        let encoder = JSONEncoder()
+        let original = ClassTraits(
+            name: "Sorcerer",
+            plural: "Sorcerers",
+            hitDice: .d6,
+            startingWealth: 3 * .d4 * 10,
+            spellcastingAbility: Ability("Charisma"),
+            spellcastingType: .known,
+            spellSlots: [[2], [3], [4, 2], [4, 3]]
+        )
+
+        let encoded = try encoder.encode(original, configuration: configuration)
+        let decoded = try decoder.decode(ClassTraits.self, from: encoded, configuration: configuration)
+
+        #expect(decoded.spellcastingAbility == original.spellcastingAbility)
+        #expect(decoded.spellcastingType == original.spellcastingType)
+        #expect(decoded.spellSlots == original.spellSlots)
+    }
+
+    @Test("Encode omits spellcasting fields when nil")
+    func encodeOmitsNilSpellcastingFields() throws {
+        let encoder = JSONEncoder()
+        let classTraits = ClassTraits(
+            name: "Fighter",
+            plural: "Fighters",
+            hitDice: .d10,
+            startingWealth: 5 * .d4 * 10
+        )
+
+        let encoded = try encoder.encode(classTraits, configuration: configuration)
+        let dict = try #require(try? JSONSerialization.jsonObject(with: encoded) as? [String: Any])
+        #expect(dict["spellcasting ability"] == nil)
+        #expect(dict["spellcasting type"] == nil)
+        #expect(dict["spell slots"] == nil)
+    }
+
     // MARK: - availableSkillChoices
 
     @Test("availableSkillChoices returns all pool skills when excluded list is empty")

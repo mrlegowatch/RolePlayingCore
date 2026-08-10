@@ -1108,4 +1108,250 @@ struct PlayerTests {
         player.adjustQuantity(99, for: UUID())
         #expect(player.inventory.count == countBefore)
     }
+
+    // MARK: - Spellcasting
+
+    @Test("Non-spellcasting class has nil spellcasting computed properties")
+    func nonSpellcasterNilProperties() {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        #expect(player.spellcastingAbility == nil)
+        #expect(player.spellcastingModifier == nil)
+        #expect(player.spellSaveDC == nil)
+        #expect(player.spellAttackBonus == nil)
+        #expect(player.maxPreparedSpells == nil)
+    }
+
+    @Test("Spellcasting class has correct computed properties")
+    func spellcasterComputedProperties() throws {
+        let clericTraits = """
+        {
+            "name": "Cleric",
+            "plural": "Clerics",
+            "hit dice": "d8",
+            "starting wealth": "5d4x10",
+            "spellcasting ability": "Wisdom",
+            "spellcasting type": "prepared",
+            "spell slots": [[2], [3], [4, 2]]
+        }
+        """.data(using: .utf8)!
+        let cleric = try decoder.decode(ClassTraits.self, from: clericTraits, configuration: configuration)
+
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: cleric)
+        player.baseAbilities[.wisdom] = 16  // +3 modifier
+
+        #expect(player.spellcastingAbility == Ability("Wisdom"))
+        #expect(player.spellcastingModifier == 3)
+        #expect(player.spellSaveDC == 8 + player.proficiencyBonus + 3)
+        #expect(player.spellAttackBonus == player.proficiencyBonus + 3)
+        #expect(player.maxPreparedSpells == max(1, 3 + player.level))
+    }
+
+    @Test("totalSpellSlots returns correct count for class level")
+    func totalSpellSlots() throws {
+        let clericTraits = """
+        {
+            "name": "Cleric",
+            "plural": "Clerics",
+            "hit dice": "d8",
+            "starting wealth": "5d4x10",
+            "spellcasting ability": "Wisdom",
+            "spellcasting type": "prepared",
+            "spell slots": [[2], [3], [4, 2], [4, 3]]
+        }
+        """.data(using: .utf8)!
+        let cleric = try decoder.decode(ClassTraits.self, from: clericTraits, configuration: configuration)
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: cleric)
+
+        player.level = 1
+        #expect(player.totalSpellSlots(at: 1) == 2)
+        #expect(player.totalSpellSlots(at: 2) == 0)
+
+        player.level = 3
+        #expect(player.totalSpellSlots(at: 1) == 4)
+        #expect(player.totalSpellSlots(at: 2) == 2)
+
+        // Out-of-range slot levels
+        #expect(player.totalSpellSlots(at: 0) == 0)
+        #expect(player.totalSpellSlots(at: 9) == 0)
+    }
+
+    @Test("castSpell expends a slot and returns true; returns false when exhausted")
+    func castSpell() throws {
+        let clericTraits = """
+        {
+            "name": "Cleric",
+            "plural": "Clerics",
+            "hit dice": "d8",
+            "starting wealth": "5d4x10",
+            "spellcasting ability": "Wisdom",
+            "spellcasting type": "prepared",
+            "spell slots": [[2]]
+        }
+        """.data(using: .utf8)!
+        let cleric = try decoder.decode(ClassTraits.self, from: clericTraits, configuration: configuration)
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: cleric)
+
+        #expect(player.totalSpellSlots(at: 1) == 2)
+        #expect(player.availableSpellSlots(at: 1) == 2)
+
+        #expect(player.castSpell(usingSlotLevel: 1) == true)
+        #expect(player.availableSpellSlots(at: 1) == 1)
+
+        #expect(player.castSpell(usingSlotLevel: 1) == true)
+        #expect(player.availableSpellSlots(at: 1) == 0)
+
+        #expect(player.castSpell(usingSlotLevel: 1) == false, "no slots remaining")
+    }
+
+    @Test("castSpell returns false when no spell slots exist at level")
+    func castSpellNoSlots() throws {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        #expect(player.castSpell(usingSlotLevel: 1) == false)
+    }
+
+    @Test("prepareSpell adds spell; is idempotent")
+    func prepareSpell() {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        let bless = configuration.spells["Bless"]!
+        #expect(player.preparedSpells.isEmpty)
+
+        player.prepareSpell(bless)
+        #expect(player.preparedSpells.count == 1)
+
+        player.prepareSpell(bless)
+        #expect(player.preparedSpells.count == 1, "duplicate prepareSpell should be ignored")
+    }
+
+    @Test("unprepareSpell removes a prepared spell")
+    func unprepareSpell() {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        let bless = configuration.spells["Bless"]!
+        let fireball = configuration.spells["Fireball"]!
+        player.prepareSpell(bless)
+        player.prepareSpell(fireball)
+        #expect(player.preparedSpells.count == 2)
+
+        player.unprepareSpell(bless)
+        #expect(player.preparedSpells.count == 1)
+        #expect(player.preparedSpells.first?.name == "Fireball")
+
+        player.unprepareSpell(bless)  // already removed — no-op
+        #expect(player.preparedSpells.count == 1)
+    }
+
+    @Test("Long rest resets used spell slots")
+    func longRestResetSpellSlots() throws {
+        let clericTraits = """
+        {
+            "name": "Cleric",
+            "plural": "Clerics",
+            "hit dice": "d8",
+            "starting wealth": "5d4x10",
+            "spellcasting ability": "Wisdom",
+            "spellcasting type": "prepared",
+            "spell slots": [[2, 1]]
+        }
+        """.data(using: .utf8)!
+        let cleric = try decoder.decode(ClassTraits.self, from: clericTraits, configuration: configuration)
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: cleric)
+
+        player.castSpell(usingSlotLevel: 1)
+        player.castSpell(usingSlotLevel: 2)
+        #expect(!player.usedSpellSlots.isEmpty)
+
+        player.longRest()
+        #expect(player.usedSpellSlots.isEmpty)
+        #expect(player.availableSpellSlots(at: 1) == 2)
+        #expect(player.availableSpellSlots(at: 2) == 1)
+    }
+
+    @Test("Prepared spells survive encode/decode round-trip")
+    func preparedSpellsRoundTrip() async throws {
+        let playerTraits = """
+        {
+            "name": "Frodo",
+            "background": "Sailor",
+            "species": "Human",
+            "class": "Fighter",
+            "height": "3'9\\"",
+            "ability scores": {"Wisdom": 14},
+            "background ability scores": ["Strength", "Strength", "Dexterity"],
+            "skill proficiencies": ["Athletics"],
+            "money": 130,
+            "maximum hit points": 10,
+            "prepared spells": ["Bless", "Fireball"]
+        }
+        """.data(using: .utf8)!
+
+        let player = try decoder.decode(Player.self, from: playerTraits, configuration: configuration)
+        #expect(player.preparedSpells.count == 2)
+        #expect(player.preparedSpells.contains(where: { $0.name == "Bless" }))
+        #expect(player.preparedSpells.contains(where: { $0.name == "Fireball" }))
+
+        let encoder = JSONEncoder()
+        let encoded = try encoder.encode(player, configuration: configuration)
+        let dict = try #require(try? JSONSerialization.jsonObject(with: encoded) as? [String: Any])
+        let names = try #require(dict["prepared spells"] as? [String])
+        #expect(Set(names) == Set(["Bless", "Fireball"]))
+    }
+
+    @Test("Unknown prepared spell name silently skipped on decode")
+    func unknownPreparedSpellSkipped() async throws {
+        let playerTraits = """
+        {
+            "name": "Frodo",
+            "background": "Sailor",
+            "species": "Human",
+            "class": "Fighter",
+            "height": "3'9\\"",
+            "ability scores": {},
+            "background ability scores": ["Strength", "Strength", "Dexterity"],
+            "skill proficiencies": ["Athletics"],
+            "money": 130,
+            "maximum hit points": 10,
+            "prepared spells": ["Bless", "Nonexistent Spell XYZ"]
+        }
+        """.data(using: .utf8)!
+
+        let player = try decoder.decode(Player.self, from: playerTraits, configuration: configuration)
+        #expect(player.preparedSpells.count == 1)
+        #expect(player.preparedSpells.first?.name == "Bless")
+    }
+
+    @Test("Used spell slots survive encode/decode round-trip")
+    func usedSpellSlotsRoundTrip() async throws {
+        let playerTraits = """
+        {
+            "name": "Frodo",
+            "background": "Sailor",
+            "species": "Human",
+            "class": "Fighter",
+            "height": "3'9\\"",
+            "ability scores": {},
+            "background ability scores": ["Strength", "Strength", "Dexterity"],
+            "skill proficiencies": ["Athletics"],
+            "money": 130,
+            "maximum hit points": 10,
+            "used spell slots": [1, 0, 2]
+        }
+        """.data(using: .utf8)!
+
+        let player = try decoder.decode(Player.self, from: playerTraits, configuration: configuration)
+        #expect(player.usedSpellSlots == [1, 0, 2])
+
+        let encoder = JSONEncoder()
+        let encoded = try encoder.encode(player, configuration: configuration)
+        let dict = try #require(try? JSONSerialization.jsonObject(with: encoded) as? [String: Any])
+        let slots = try #require(dict["used spell slots"] as? [Int])
+        #expect(slots == [1, 0, 2])
+    }
+
+    @Test("Used spell slots not encoded when empty")
+    func usedSpellSlotsOmittedWhenEmpty() {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        let encoder = JSONEncoder()
+        let encoded = try! encoder.encode(player, configuration: configuration)
+        let dict = try! JSONSerialization.jsonObject(with: encoded) as! [String: Any]
+        #expect(dict["used spell slots"] == nil)
+    }
 }
