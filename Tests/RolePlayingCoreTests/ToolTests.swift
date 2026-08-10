@@ -16,10 +16,10 @@ struct ToolTests {
     let zeroWeight = Weight(value: 0, unit: .pounds)
     let decoder = JSONDecoder()
     let encoder = JSONEncoder()
-    let configuration: Configuration
+    let gameData: GameData
 
     init() throws {
-        configuration = try Configuration("TestItemsConfiguration", from: .module)
+        gameData = try GameData("TestItemsConfiguration", from: .module)
     }
 
     // MARK: - Init
@@ -102,7 +102,7 @@ struct ToolTests {
         let json = """
         {"name": "Hammer", "tool type": "artisan's tools"}
         """.data(using: .utf8)!
-        let tool = try decoder.decode(Tool.self, from: json, configuration: configuration)
+        let tool = try decoder.decode(Tool.self, from: json, configuration: gameData)
         #expect(tool.name == "Hammer")
         #expect(tool.plural == "Hammers")
     }
@@ -112,7 +112,7 @@ struct ToolTests {
         let json = """
         {"name": "Chisel", "tool type": "artisan's tools"}
         """.data(using: .utf8)!
-        let tool = try decoder.decode(Tool.self, from: json, configuration: configuration)
+        let tool = try decoder.decode(Tool.self, from: json, configuration: gameData)
         #expect(tool.weight.value == 0)
         #expect(tool.weight.unit == .pounds)
     }
@@ -128,8 +128,8 @@ struct ToolTests {
             weight: Weight(value: 2, unit: .pounds),
             toolType: .navigator
         )
-        let data = try encoder.encode(original, configuration: configuration)
-        let decoded = try decoder.decode(Tool.self, from: data, configuration: configuration)
+        let data = try encoder.encode(original, configuration: gameData)
+        let decoded = try decoder.decode(Tool.self, from: data, configuration: gameData)
         #expect(decoded.name == original.name)
         #expect(decoded.plural == original.plural)
         #expect(decoded.weight.value == original.weight.value)

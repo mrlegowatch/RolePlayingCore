@@ -60,7 +60,7 @@ public struct Items: CodableWithConfiguration, Sendable {
         case weapons, armors, gear, tools
     }
 
-    public init(from decoder: Decoder, configuration: Configuration) throws {
+    public init(from decoder: Decoder, configuration: GameData) throws {
         let root = try decoder.container(keyedBy: CodingKeys.self)
 
         if let weapons = try root.decodeIfPresent([Weapon].self, forKey: .weapons, configuration: configuration) {
@@ -77,7 +77,7 @@ public struct Items: CodableWithConfiguration, Sendable {
         }
     }
 
-    public func encode(to encoder: Encoder, configuration: Configuration) throws {
+    public func encode(to encoder: Encoder, configuration: GameData) throws {
         var root = encoder.container(keyedBy: CodingKeys.self)
         
         try root.encode(weapons, forKey: .weapons, configuration: configuration)

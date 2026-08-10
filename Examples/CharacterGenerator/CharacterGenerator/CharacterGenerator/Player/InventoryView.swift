@@ -2,7 +2,8 @@
 //  InventoryView.swift
 //  CharacterGenerator
 //
-//  Copyright © 2025 Brian Arnold. All rights reserved.
+//  Created by Brian Arnold on 1/3/26.
+//  Copyright © 2026 Brian Arnold. All rights reserved.
 //
 
 import SwiftUI
@@ -115,15 +116,12 @@ private struct ItemChip: View {
                 }
             }
         }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 4)
-        .background(entry.isEquipped ? Color.accentColor.opacity(0.15) : Color.accentColor.opacity(0.08))
-        .clipShape(Capsule())
+        .chipStyle(backgroundOpacity: entry.isEquipped ? 0.15 : 0.08)
     }
 }
 
 #Preview("Inventory View") {
-    if let player = try? CharacterGenerator(Configuration("Configuration")).makeCharacter() {
+    if let player = try? CharacterGenerator(GameData("Configuration")).makeCharacter() {
         InventoryView(player: player)
             .padding()
     } else {

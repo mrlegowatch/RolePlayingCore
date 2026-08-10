@@ -13,10 +13,10 @@ import Foundation
 @Suite("Armor Tests", .serialized)
 struct ArmorTests {
 
-    let configuration: Configuration
+    let gameData: GameData
 
     init() throws {
-        configuration = try Configuration("TestArmorConfiguration", from: .module)
+        gameData = try GameData("TestArmorConfiguration", from: .module)
     }
 
     // MARK: - DexterityModifierRule
@@ -43,13 +43,13 @@ struct ArmorTests {
 
     private func makePlayer(baseAbilities: [String: Int] = [:],
                             unarmoredDefense: UnarmoredDefense? = nil) -> Player {
-        var classTraits = configuration.classes["Fighter"]!
+        var classTraits = gameData.classes["Fighter"]!
         if let ud = unarmoredDefense {
             classTraits.unarmoredDefense = ud
         }
 
-        let backgroundTraits = configuration.backgrounds["Sailor"]!
-        let speciesTraits = configuration.species["Human"]!
+        let backgroundTraits = gameData.backgrounds["Sailor"]!
+        let speciesTraits = gameData.species["Human"]!
 
         let player = Player(
             "Test",
@@ -76,7 +76,7 @@ struct ArmorTests {
     @Test("Light armor: base AC + full DEX modifier")
     func lightArmorAC() {
         let player = makePlayer(baseAbilities: ["Dexterity": 16])  // DEX mod +3
-        let leather = configuration.items["Leather Armor"] as! Armor  // base 11
+        let leather = gameData.items["Leather Armor"] as! Armor  // base 11
         player.inventory.append(InventoryEntry(item: leather, isEquipped: true))
         #expect(player.armorClass == 14)  // 11 + 3
     }
@@ -84,7 +84,7 @@ struct ArmorTests {
     @Test("Medium armor: base AC + DEX capped at +2")
     func mediumArmorAC() {
         let player = makePlayer(baseAbilities: ["Dexterity": 18])  // DEX mod +4, capped at +2
-        let chainShirt = configuration.items["Chain Shirt"] as! Armor  // base 13, capped 2
+        let chainShirt = gameData.items["Chain Shirt"] as! Armor  // base 13, capped 2
         player.inventory.append(InventoryEntry(item: chainShirt, isEquipped: true))
         #expect(player.armorClass == 15)  // 13 + 2
     }
@@ -92,7 +92,7 @@ struct ArmorTests {
     @Test("Heavy armor: fixed base AC, no DEX modifier")
     func heavyArmorAC() {
         let player = makePlayer(baseAbilities: ["Dexterity": 18])  // DEX mod +4, ignored
-        let chainMail = configuration.items["Chain Mail"] as! Armor  // base 16, excluded
+        let chainMail = gameData.items["Chain Mail"] as! Armor  // base 16, excluded
         player.inventory.append(InventoryEntry(item: chainMail, isEquipped: true))
         #expect(player.armorClass == 16)
     }
@@ -100,7 +100,7 @@ struct ArmorTests {
     @Test("Shield adds flat bonus to unarmored AC")
     func shieldBonus() {
         let player = makePlayer(baseAbilities: ["Dexterity": 14])  // unarmored AC 12
-        let shield = configuration.items["Shield"] as! Armor        // +2 bonus
+        let shield = gameData.items["Shield"] as! Armor        // +2 bonus
         player.inventory.append(InventoryEntry(item: shield, isEquipped: true))
         #expect(player.armorClass == 14)  // 12 + 2
     }
@@ -108,8 +108,8 @@ struct ArmorTests {
     @Test("Light armor + shield stack correctly")
     func armorAndShield() {
         let player = makePlayer(baseAbilities: ["Dexterity": 14])  // DEX mod +2
-        let leather = configuration.items["Leather Armor"] as! Armor  // base 11 + dex = 13
-        let shield  = configuration.items["Shield"] as! Armor          // +2
+        let leather = gameData.items["Leather Armor"] as! Armor  // base 11 + dex = 13
+        let shield  = gameData.items["Shield"] as! Armor          // +2
         player.inventory.append(InventoryEntry(item: leather, isEquipped: true))
         player.inventory.append(InventoryEntry(item: shield, isEquipped: true))
         #expect(player.armorClass == 15)  // 11 + 2 + 2
@@ -149,9 +149,9 @@ struct ArmorTests {
 
     @Test("Classes have correct armor training")
     func classArmorTraining() {
-        let cleric  = configuration.classes["Cleric"]!
-        let fighter = configuration.classes["Fighter"]!
-        let wizard  = configuration.classes["Wizard"]!
+        let cleric  = gameData.classes["Cleric"]!
+        let fighter = gameData.classes["Fighter"]!
+        let wizard  = gameData.classes["Wizard"]!
 
         #expect(cleric.armorTraining.contains(.medium))
         #expect(cleric.armorTraining.contains(.shield))
@@ -220,7 +220,7 @@ struct ArmorTests {
         let json = """
         {"name": "Buckler", "category": "shield", "base ac": 1, "dexterity modifier": "bonus"}
         """.data(using: .utf8)!
-        let armor = try JSONDecoder().decode(Armor.self, from: json, configuration: configuration)
+        let armor = try JSONDecoder().decode(Armor.self, from: json, configuration: gameData)
         #expect(armor.plural == "Bucklers")
     }
 
@@ -229,7 +229,7 @@ struct ArmorTests {
         let json = """
         {"name": "Buckler", "category": "shield", "base ac": 1, "dexterity modifier": "bonus"}
         """.data(using: .utf8)!
-        let armor = try JSONDecoder().decode(Armor.self, from: json, configuration: configuration)
+        let armor = try JSONDecoder().decode(Armor.self, from: json, configuration: gameData)
         #expect(armor.weight.value == 0)
         #expect(armor.weight.unit == .pounds)
     }
@@ -239,7 +239,7 @@ struct ArmorTests {
         let json = """
         {"name": "Buckler", "category": "shield", "base ac": 1, "dexterity modifier": "bonus"}
         """.data(using: .utf8)!
-        let armor = try JSONDecoder().decode(Armor.self, from: json, configuration: configuration)
+        let armor = try JSONDecoder().decode(Armor.self, from: json, configuration: gameData)
         #expect(armor.strengthRequirement == nil)
         #expect(armor.stealthDisadvantage == false)
     }
@@ -248,9 +248,9 @@ struct ArmorTests {
 
     @Test("Armor encode round-trip preserves all properties")
     func armorEncodeRoundTrip() throws {
-        let original = configuration.items["Chain Mail"] as! Armor
-        let data = try JSONEncoder().encode(original, configuration: configuration)
-        let decoded = try JSONDecoder().decode(Armor.self, from: data, configuration: configuration)
+        let original = gameData.items["Chain Mail"] as! Armor
+        let data = try JSONEncoder().encode(original, configuration: gameData)
+        let decoded = try JSONDecoder().decode(Armor.self, from: data, configuration: gameData)
         #expect(decoded.name == original.name)
         #expect(decoded.category == original.category)
         #expect(decoded.baseAC == original.baseAC)

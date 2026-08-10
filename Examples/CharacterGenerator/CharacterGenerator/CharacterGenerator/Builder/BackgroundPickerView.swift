@@ -2,6 +2,7 @@
 //  BackgroundPickerView.swift
 //  CharacterGenerator
 //
+//  Created by Brian Arnold on 10/20/25.
 //  Copyright © 2025 Brian Arnold. All rights reserved.
 //
 
@@ -12,19 +13,8 @@ struct BackgroundPickerView: View {
     @EnvironmentObject var appState: AppState
     let builderState: CharacterBuilderState
 
-    private static let popularityOrder: [String] = [
-        "Soldier", "Criminal", "Noble", "Sage", "Acolyte", "Charlatan",
-        "Entertainer", "Hermit", "Guard", "Farmer", "Guide", "Artisan",
-        "Merchant", "Sailor", "Scribe", "Wayfarer"
-    ]
-
     private var sortedBackgrounds: [BackgroundTraits] {
-        appState.configuration.backgrounds.all.sorted { a, b in
-            let order = Self.popularityOrder
-            let ai = order.firstIndex(of: a.name) ?? order.count
-            let bi = order.firstIndex(of: b.name) ?? order.count
-            return ai == bi ? a.name < b.name : ai < bi
-        }
+        appState.gameData.backgrounds.allByDisplayOrder
     }
 
     var body: some View {

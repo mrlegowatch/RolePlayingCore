@@ -2,10 +2,33 @@
 //  FlowLayout.swift
 //  CharacterGenerator
 //
-//  Copyright © 2025 Brian Arnold. All rights reserved.
+//  Created by Brian Arnold on 1/3/26.
+//  Copyright © 2026 Brian Arnold. All rights reserved.
 //
 
 import SwiftUI
+
+// MARK: - Chip styling
+
+private struct ChipStyle: ViewModifier {
+    var backgroundOpacity: Double
+
+    func body(content: Content) -> some View {
+        content
+            .padding(.horizontal, 8)
+            .padding(.vertical, 4)
+            .background(Color.accentColor.opacity(backgroundOpacity))
+            .clipShape(Capsule())
+    }
+}
+
+extension View {
+    func chipStyle(backgroundOpacity: Double = 0.1) -> some View {
+        modifier(ChipStyle(backgroundOpacity: backgroundOpacity))
+    }
+}
+
+// MARK: - Flow layout
 
 /// A simple left-to-right wrapping layout for chip views.
 struct FlowLayout: Layout {

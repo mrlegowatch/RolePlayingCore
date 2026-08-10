@@ -2,6 +2,7 @@
 //  AbilityScoresBuilderView.swift
 //  CharacterGenerator
 //
+//  Created by Brian Arnold on 10/20/25.
 //  Copyright © 2025 Brian Arnold. All rights reserved.
 //
 
@@ -120,8 +121,8 @@ struct AbilityScoresBuilderView: View {
 
     private var actionRow: some View {
         HStack {
-            if let cls = builderState.selectedClass {
-                Button("Suggested for \(cls.name)") {
+            if let selectedClass = builderState.selectedClass {
+                Button("Suggested for \(selectedClass.name)") {
                     withAnimation { applySuggestedAssignment() }
                 }
                 .buttonStyle(.bordered)
@@ -203,9 +204,9 @@ struct AbilityScoresBuilderView: View {
 
     private func applyAssignments() {
         for ability in abilities {
-            let idx = assignments[ability.name] ?? -1
-            if idx >= 0, idx < builderState.rolledScores.count {
-                builderState.assignedAbilities[ability] = builderState.rolledScores[idx]
+            let index = assignments[ability.name] ?? -1
+            if index >= 0, index < builderState.rolledScores.count {
+                builderState.assignedAbilities[ability] = builderState.rolledScores[index]
             } else {
                 builderState.assignedAbilities[ability] = 0
             }

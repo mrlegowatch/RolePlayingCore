@@ -2,6 +2,7 @@
 //  CharacterBuilderState.swift
 //  CharacterGenerator
 //
+//  Created by Brian Arnold on 10/20/25.
 //  Copyright © 2025 Brian Arnold. All rights reserved.
 //
 
@@ -36,6 +37,10 @@ class CharacterBuilderState {
     /// True after ability scores have been auto-rolled on first appearance.
     var hasAutoRolled: Bool = false
 
+    var isSpellcaster: Bool { selectedClass?.spellcastingAbility != nil }
+
+    var totalSteps: Int { isSpellcaster ? 7 : 6 }
+
     /// Class skill options available to the user, excluding skills already granted by the selected background.
     var availableClassSkills: [Skill] {
         guard let classTraits = selectedClass else { return [] }
@@ -68,6 +73,41 @@ class CharacterBuilderState {
         temp.roll()
         rolledScores = Array(temp.values).sorted(by: >)
         assignedAbilities = AbilityScores()
+    }
+
+    func canAdvance(atStep step: Int) -> Bool {
+        switch step {
+        case 0: return selectedSpecies != nil
+        case 1: return selectedClass != nil
+        case 2: return selectedBackground != nil
+        case 3:
+            guard !rolledScores.isEmpty else { return false }
+            return Ability.defaults.allSatisfy { (assignedAbilities[$0] ?? 0) > 0 }
+        case 4:
+            return chosenSkills.count == (selectedClass?.startingSkillCount ?? 0)
+        case 5:
+            if isSpellcaster {
+                let needsCantrips = selectedClass?.cantripsKnown ?? 0
+                let needsSpells = selectedClass?.spellsKnown ?? 0
+                return chosenCantrips.count == needsCantrips && chosenSpells.count == needsSpells
+            }
+            return isComplete
+        case 6: return isComplete
+        default: return false
+        }
+    }
+
+    func classChanged(to name: String, using gameData: GameData) {
+        chosenCantrips = []
+        chosenSpells = []
+        if let bgName = gameData.classes[name]?.defaultBackground,
+           let bg = gameData.backgrounds[bgName] {
+            selectedBackground = bg
+        }
+    }
+
+    func backgroundChanged() {
+        chosenSkills = []
     }
 
     /// Creates the finished Player from the builder's current selections. Returns nil if `isComplete` is false.

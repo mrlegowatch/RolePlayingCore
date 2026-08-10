@@ -2,6 +2,7 @@
 //  SkillsView.swift
 //  CharacterGenerator
 //
+//  Created by Brian Arnold on 10/20/25.
 //  Copyright © 2025 Brian Arnold. All rights reserved.
 //
 
@@ -66,15 +67,12 @@ private struct SkillChip: View {
             Text(skill.name)
                 .font(.caption)
         }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 4)
-        .background(Color.accentColor.opacity(0.1))
-        .clipShape(Capsule())
+        .chipStyle()
     }
 }
 
 #Preview("Skills View") {
-    if let player = try? CharacterGenerator(Configuration("Configuration")).makeCharacter() {
+    if let player = try? CharacterGenerator(GameData("Configuration")).makeCharacter() {
         SkillsView(player: player)
             .padding()
     } else {

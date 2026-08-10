@@ -2,6 +2,7 @@
 //  CharacterBuilderView.swift
 //  CharacterGenerator
 //
+//  Created by Brian Arnold on 10/20/25.
 //  Copyright © 2025 Brian Arnold. All rights reserved.
 //
 
@@ -31,34 +32,7 @@ private struct BuilderStepContainer: View {
     @Bindable var builderState: CharacterBuilderState
     @State private var path: [BuilderStep] = []
 
-    private var isSpellcaster: Bool {
-        builderState.selectedClass?.spellcastingAbility != nil
-    }
-
-    private var totalSteps: Int { isSpellcaster ? 7 : 6 }
-
-    private var canAdvance: Bool {
-        switch path.count {
-        case 0: return builderState.selectedSpecies != nil
-        case 1: return builderState.selectedClass != nil
-        case 2: return builderState.selectedBackground != nil
-        case 3:
-            guard !builderState.rolledScores.isEmpty else { return false }
-            return Ability.defaults.allSatisfy { (builderState.assignedAbilities[$0] ?? 0) > 0 }
-        case 4:
-            return builderState.chosenSkills.count == (builderState.selectedClass?.startingSkillCount ?? 0)
-        case 5:
-            if isSpellcaster {
-                let needsCantrips = builderState.selectedClass?.cantripsKnown ?? 0
-                let needsSpells = builderState.selectedClass?.spellsKnown ?? 0
-                return builderState.chosenCantrips.count == needsCantrips
-                    && builderState.chosenSpells.count == needsSpells
-            }
-            return builderState.isComplete
-        case 6: return builderState.isComplete
-        default: return false
-        }
-    }
+    private var canAdvance: Bool { builderState.canAdvance(atStep: path.count) }
 
     private var isLastStep: Bool { path.last == .nameAndFinish }
 
@@ -68,8 +42,8 @@ private struct BuilderStepContainer: View {
         case 1: return .background
         case 2: return .abilityScores
         case 3: return .skills
-        case 4: return isSpellcaster ? .spells : .nameAndFinish
-        case 5 where isSpellcaster: return .nameAndFinish
+        case 4: return builderState.isSpellcaster ? .spells : .nameAndFinish
+        case 5 where builderState.isSpellcaster: return .nameAndFinish
         default: return nil
         }
     }
@@ -89,17 +63,13 @@ private struct BuilderStepContainer: View {
                 .toolbar { builderToolbar }
                 .onChange(of: builderState.selectedClass?.name) { _, newName in
                     guard let newName else { return }
-                    builderState.chosenCantrips = []
-                    builderState.chosenSpells = []
-                    let bgName = Self.defaultBackgroundName(for: newName)
-                    builderState.selectedBackground = appState.configuration.backgrounds[bgName]
+                    builderState.classChanged(to: newName, using: appState.gameData)
                     // Pop back if class changed from spellcaster to non-spellcaster.
-                    let newTotal = appState.configuration.classes[newName]?.spellcastingAbility != nil ? 7 : 6
-                    let maxDepth = newTotal - 1
+                    let maxDepth = builderState.totalSteps - 1
                     while path.count > maxDepth { path.removeLast() }
                 }
                 .onChange(of: builderState.selectedBackground?.name) { _, _ in
-                    builderState.chosenSkills = []
+                    builderState.backgroundChanged()
                 }
         }
     }
@@ -141,14 +111,13 @@ private struct BuilderStepContainer: View {
 
     private var progressView: some View {
         VStack(spacing: 3) {
-            Text("\(path.count + 1) / \(totalSteps)")
+            Text("\(path.count + 1) / \(builderState.totalSteps)")
                 .font(.caption2)
                 .foregroundStyle(.secondary)
                 .monospacedDigit()
-            ProgressView(value: Double(path.count + 1), total: Double(totalSteps))
-                .progressViewStyle(.linear)
-                .frame(width: 110)
-                .tint(.accentColor)
+            ProgressView(value: Double(path.count + 1), total: Double(builderState.totalSteps))
+                .progressViewStyle(ThickLinearProgressStyle())
+                .frame(width: 220, height: 8)
         }
     }
 
@@ -171,22 +140,19 @@ private struct BuilderStepContainer: View {
         }
     }
 
-    private static func defaultBackgroundName(for className: String) -> String {
-        let mapping: [String: String] = [
-            "Fighter": "Soldier",
-            "Wizard": "Sage",
-            "Rogue": "Criminal",
-            "Paladin": "Guard",
-            "Barbarian": "Farmer",
-            "Ranger": "Guide",
-            "Cleric": "Acolyte",
-            "Bard": "Entertainer",
-            "Druid": "Hermit",
-            "Monk": "Hermit",
-            "Sorcerer": "Sage",
-            "Warlock": "Charlatan"
-        ]
-        return mapping[className] ?? "Soldier"
+}
+
+private struct ThickLinearProgressStyle: ProgressViewStyle {
+    func makeBody(configuration ctx: Configuration) -> some View {
+        let fraction = ctx.fractionCompleted ?? 0
+        GeometryReader { geo in
+            ZStack(alignment: .leading) {
+                Capsule().fill(.quaternary)
+                Capsule()
+                    .fill(Color.accentColor)
+                    .frame(width: geo.size.width * fraction)
+            }
+        }
     }
 }
 

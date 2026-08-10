@@ -13,7 +13,7 @@ import SwiftDice
 public typealias ArmorProficiency = Armor.WeightCategory
 
 /// Traits representing a class.
-public struct ClassTraits: Sendable {
+public struct ClassTraits: Named, Sendable {
     public var name: String
     public var plural: String
     public var hitDice: Dice
@@ -42,7 +42,10 @@ public struct ClassTraits: Sendable {
     public var cantripsKnown: Int?
     /// Number of spells known or prepared at character level 1.
     public var spellsKnown: Int?
-        
+
+    /// The default background suggested for this class when starting a new character; nil means no suggestion.
+    public var defaultBackground: String?
+
     /// Accesses the experiencePoints array for the specified 1-based level.
     public func minExperiencePoints(at level: Int) -> Int {
         // Map the level to an index of the array
@@ -91,6 +94,7 @@ public struct ClassTraits: Sendable {
                 spellSlots: [[Int]]? = nil,
                 cantripsKnown: Int? = nil,
                 spellsKnown: Int? = nil,
+                defaultBackground: String? = nil,
                 experiencePoints: [Int]? = nil) {
         self.name = name
         self.plural = plural
@@ -116,6 +120,7 @@ public struct ClassTraits: Sendable {
         self.spellSlots = spellSlots
         self.cantripsKnown = cantripsKnown
         self.spellsKnown = spellsKnown
+        self.defaultBackground = defaultBackground
         self.experiencePoints = experiencePoints
     }
 }
@@ -146,10 +151,11 @@ extension ClassTraits: CodableWithConfiguration {
         case spellSlots = "spell slots"
         case cantripsKnown = "cantrips known"
         case spellsKnown = "spells known"
+        case defaultBackground = "default background"
         case experiencePoints = "experience points"
     }
     
-    public init(from decoder: Decoder, configuration: Configuration) throws {
+    public init(from decoder: Decoder, configuration: GameData) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         
         // Try decoding properties
@@ -204,6 +210,7 @@ extension ClassTraits: CodableWithConfiguration {
         let spellSlots = try values.decodeIfPresent([[Int]].self, forKey: .spellSlots)
         let cantripsKnown = try values.decodeIfPresent(Int.self, forKey: .cantripsKnown)
         let spellsKnown = try values.decodeIfPresent(Int.self, forKey: .spellsKnown)
+        let defaultBackground = try values.decodeIfPresent(String.self, forKey: .defaultBackground)
 
         let experiencePoints = try values.decodeIfPresent([Int].self, forKey: .experiencePoints)
 
@@ -232,11 +239,12 @@ extension ClassTraits: CodableWithConfiguration {
         self.spellSlots = spellSlots
         self.cantripsKnown = cantripsKnown
         self.spellsKnown = spellsKnown
+        self.defaultBackground = defaultBackground
 
         self.experiencePoints = experiencePoints
     }
 
-    public func encode(to encoder: Encoder, configuration: Configuration) throws {
+    public func encode(to encoder: Encoder, configuration: GameData) throws {
         var values = encoder.container(keyedBy: CodingKeys.self)
         
         try values.encode(name, forKey: .name)
@@ -265,6 +273,7 @@ extension ClassTraits: CodableWithConfiguration {
         try values.encodeIfPresent(spellSlots, forKey: .spellSlots)
         try values.encodeIfPresent(cantripsKnown, forKey: .cantripsKnown)
         try values.encodeIfPresent(spellsKnown, forKey: .spellsKnown)
+        try values.encodeIfPresent(defaultBackground, forKey: .defaultBackground)
 
         try values.encodeIfPresent(experiencePoints, forKey: .experiencePoints)
     }

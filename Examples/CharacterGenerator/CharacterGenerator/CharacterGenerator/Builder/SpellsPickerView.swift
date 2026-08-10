@@ -2,6 +2,7 @@
 //  SpellsPickerView.swift
 //  CharacterGenerator
 //
+//  Created by Brian Arnold on 10/20/25.
 //  Copyright © 2025 Brian Arnold. All rights reserved.
 //
 
@@ -16,11 +17,11 @@ struct SpellsPickerView: View {
     private var neededSpells: Int { builderState.selectedClass?.spellsKnown ?? 0 }
 
     private var availableCantrips: [Spell] {
-        appState.configuration.spells.spells(ofLevel: 0)
+        appState.gameData.spells.spells(ofLevel: 0)
     }
 
     private var availableSpells: [Spell] {
-        appState.configuration.spells.spells(ofLevel: 1)
+        appState.gameData.spells.spells(ofLevel: 1)
     }
 
     private var leveledSpellSectionTitle: String {

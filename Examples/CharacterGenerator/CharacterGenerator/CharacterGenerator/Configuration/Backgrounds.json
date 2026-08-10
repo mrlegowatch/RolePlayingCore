@@ -1,4 +1,5 @@
 {
+    "display order": ["Soldier", "Criminal", "Noble", "Sage", "Acolyte", "Charlatan", "Entertainer", "Hermit", "Guard", "Farmer", "Guide", "Artisan", "Merchant", "Sailor", "Scribe", "Wayfarer"],
     "backgrounds": [
         {
         "name": "Acolyte",

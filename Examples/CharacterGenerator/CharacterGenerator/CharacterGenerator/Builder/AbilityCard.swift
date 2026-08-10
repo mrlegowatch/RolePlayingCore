@@ -2,6 +2,7 @@
 //  AbilityCard.swift
 //  CharacterGenerator
 //
+//  Created by Brian Arnold on 10/20/25.
 //  Copyright © 2025 Brian Arnold. All rights reserved.
 //
 
@@ -14,14 +15,8 @@ struct AbilityCard: View {
     let priority: AbilityPriority
     var isSelected: Bool = false
 
-    private var modifier: Int? {
-        guard let score else { return nil }
-        let delta = score - 10
-        return delta >= 0 ? delta / 2 : Int((Double(delta) / 2.0).rounded(.down))
-    }
-
     private var modifierText: String? {
-        guard let modifier else { return nil }
+        guard let modifier = score?.scoreModifier else { return nil }
         return modifier >= 0 ? "+\(modifier)" : "\(modifier)"
     }
 

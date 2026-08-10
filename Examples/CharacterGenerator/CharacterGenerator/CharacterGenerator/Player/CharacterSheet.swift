@@ -15,7 +15,6 @@ extension Int {
 
 /// Character sheet provides a mapping between player properties and collection view groupings and views.
 class CharacterSheet {
-    
     let player: Player
     
     init(_ player: Player) {

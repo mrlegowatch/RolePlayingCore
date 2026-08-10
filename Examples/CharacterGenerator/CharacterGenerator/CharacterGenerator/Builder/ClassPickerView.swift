@@ -2,6 +2,7 @@
 //  ClassPickerView.swift
 //  CharacterGenerator
 //
+//  Created by Brian Arnold on 10/20/25.
 //  Copyright © 2025 Brian Arnold. All rights reserved.
 //
 
@@ -12,18 +13,8 @@ struct ClassPickerView: View {
     @EnvironmentObject var appState: AppState
     let builderState: CharacterBuilderState
 
-    private static let popularityOrder: [String] = [
-        "Fighter", "Rogue", "Wizard", "Paladin", "Barbarian", "Ranger",
-        "Cleric", "Bard", "Druid", "Monk", "Sorcerer", "Warlock"
-    ]
-
     private var sortedClasses: [ClassTraits] {
-        appState.configuration.classes.all.sorted { a, b in
-            let order = Self.popularityOrder
-            let ai = order.firstIndex(of: a.name) ?? order.count
-            let bi = order.firstIndex(of: b.name) ?? order.count
-            return ai == bi ? a.name < b.name : ai < bi
-        }
+        appState.gameData.classes.allByDisplayOrder
     }
 
     var body: some View {

@@ -2,7 +2,8 @@
 //  PlayerIdentityView.swift
 //  CharacterGenerator
 //
-//  Copyright © 2025 Brian Arnold. All rights reserved.
+//  Created by Brian Arnold on 1/3/26.
+//  Copyright © 2026 Brian Arnold. All rights reserved.
 //
 
 import SwiftUI

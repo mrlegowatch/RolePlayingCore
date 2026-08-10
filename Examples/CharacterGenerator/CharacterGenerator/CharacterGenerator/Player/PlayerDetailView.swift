@@ -108,7 +108,7 @@ struct PlayerDetailView: View {
 
 #Preview("Character Detail") {
     NavigationStack {
-        if let player = try? CharacterGenerator(Configuration("Configuration")).makeCharacter() {
+        if let player = try? CharacterGenerator(GameData("Configuration")).makeCharacter() {
             PlayerDetailView(player: player)
         } else {
             Text("Unable to generate preview")

@@ -13,15 +13,15 @@ import Foundation
 @Suite("Items Tests")
 struct ItemsTests {
 
-    let configuration: Configuration
+    let gameData: GameData
 
     init() throws {
-        configuration = try Configuration("TestItemsConfiguration", from: .module)
+        gameData = try GameData("TestItemsConfiguration", from: .module)
     }
 
     @Test("Registry loads all item categories")
     func registryCounts() {
-        let items = configuration.items
+        let items = gameData.items
         #expect(items.weapons.count == 12)
         #expect(items.armors.count == 7)
         #expect(items.gear.count == 10)
@@ -31,7 +31,7 @@ struct ItemsTests {
 
     @Test("Lookup by exact name")
     func lookupByName() {
-        let items = configuration.items
+        let items = gameData.items
         #expect(items["Longsword"] != nil)
         #expect(items["Chain Mail"] != nil)
         #expect(items["Rope"] != nil)
@@ -41,7 +41,7 @@ struct ItemsTests {
 
     @Test("Lookup by plural name")
     func lookupByPlural() {
-        let items = configuration.items
+        let items = gameData.items
         // Plurals resolve to the same item
         #expect(items["Daggers"]?.name == "Dagger")
         #expect(items["Arrows"]?.name == "Arrow")
@@ -50,7 +50,7 @@ struct ItemsTests {
 
     @Test("Weapon type resolution")
     func weaponType() {
-        let weapon = configuration.items["Longsword"] as? Weapon
+        let weapon = gameData.items["Longsword"] as? Weapon
         #expect(weapon != nil)
         #expect(weapon?.category == .martial)
         #expect(weapon?.damage.type == .slashing)
@@ -60,7 +60,7 @@ struct ItemsTests {
 
     @Test("Armor type resolution")
     func armorType() {
-        let armor = configuration.items["Chain Mail"] as? Armor
+        let armor = gameData.items["Chain Mail"] as? Armor
         #expect(armor != nil)
         #expect(armor?.category == .heavy)
         #expect(armor?.baseAC == 16)
@@ -71,7 +71,7 @@ struct ItemsTests {
 
     @Test("Shield type resolution")
     func shieldType() {
-        let shield = configuration.items["Shield"] as? Armor
+        let shield = gameData.items["Shield"] as? Armor
         #expect(shield != nil)
         #expect(shield?.category == .shield)
         #expect(shield?.baseAC == 2)
@@ -80,7 +80,7 @@ struct ItemsTests {
 
     @Test("Gear pack with contents")
     func packContents() {
-        let pack = configuration.items["Dungeoneer's Pack"] as? Gear
+        let pack = gameData.items["Dungeoneer's Pack"] as? Gear
         #expect(pack != nil)
         #expect(pack?.category == .pack)
         #expect(pack?.contents?.isEmpty == false)
@@ -88,7 +88,7 @@ struct ItemsTests {
 
     @Test("Tool type resolution")
     func toolType() {
-        let tool = configuration.items["Thieves' Tools"] as? Tool
+        let tool = gameData.items["Thieves' Tools"] as? Tool
         #expect(tool != nil)
         #expect(tool?.toolType == .thieves)
     }
@@ -96,8 +96,8 @@ struct ItemsTests {
     @Test("EquipmentEntry parsing - item by name")
     func equipmentEntryItem() {
         let entry = EquipmentEntry.parse("Longsword",
-                                        items: configuration.items,
-                                        currencies: configuration.currencies)
+                                        items: gameData.items,
+                                        currencies: gameData.currencies)
         if case .item(let item, let qty) = entry {
             #expect(item.name == "Longsword")
             #expect(qty == 1)
@@ -109,8 +109,8 @@ struct ItemsTests {
     @Test("EquipmentEntry parsing - quantity + plural name")
     func equipmentEntryQuantity() {
         let entry = EquipmentEntry.parse("2 Daggers",
-                                        items: configuration.items,
-                                        currencies: configuration.currencies)
+                                        items: gameData.items,
+                                        currencies: gameData.currencies)
         if case .item(let item, let qty) = entry {
             #expect(item.name == "Dagger")
             #expect(qty == 2)
@@ -122,8 +122,8 @@ struct ItemsTests {
     @Test("EquipmentEntry parsing - money")
     func equipmentEntryMoney() {
         let entry = EquipmentEntry.parse("15 GP",
-                                        items: configuration.items,
-                                        currencies: configuration.currencies)
+                                        items: gameData.items,
+                                        currencies: gameData.currencies)
         if case .money(let m) = entry {
             #expect(m.value > 0)
         } else {
@@ -134,8 +134,8 @@ struct ItemsTests {
     @Test("EquipmentEntry parsing - unresolved note")
     func equipmentEntryNote() {
         let entry = EquipmentEntry.parse("Any Tool",
-                                        items: configuration.items,
-                                        currencies: configuration.currencies)
+                                        items: gameData.items,
+                                        currencies: gameData.currencies)
         if case .note(let s) = entry {
             #expect(s == "Any Tool")
         } else {
@@ -145,10 +145,10 @@ struct ItemsTests {
 
     @Test("Encode round-trip preserves all item counts")
     func encodeRoundTrip() throws {
-        let original = configuration.items
+        let original = gameData.items
         let encoder = JSONEncoder()
-        let data = try encoder.encode(original, configuration: configuration)
-        let decoded = try JSONDecoder().decode(Items.self, from: data, configuration: configuration)
+        let data = try encoder.encode(original, configuration: gameData)
+        let decoded = try JSONDecoder().decode(Items.self, from: data, configuration: gameData)
         #expect(decoded.weapons.count == original.weapons.count)
         #expect(decoded.armors.count == original.armors.count)
         #expect(decoded.gear.count == original.gear.count)

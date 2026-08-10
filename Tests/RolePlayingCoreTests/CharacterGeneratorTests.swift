@@ -19,8 +19,8 @@ struct CharacterGeneratorTests {
     
     @Test("Character generation")
     func characterGenerator() async throws {
-        let configuration = try Configuration("TestCharacterGenerator", from: bundle)
-        let characterGenerator = try CharacterGenerator(configuration, from: bundle)
+        let gameData = try GameData("TestCharacterGenerator", from: bundle)
+        let characterGenerator = try CharacterGenerator(gameData, from: bundle)
         
         for _ in 0..<sampleSize {
             _ = characterGenerator.makeCharacter()
@@ -30,10 +30,10 @@ struct CharacterGeneratorTests {
     
     @Test("Character generator invalid configuration")
     func invalidConfiguration() async throws {
-        let configuration = try Configuration("TestConfiguration", from: bundle)
+        let gameData = try GameData("TestConfiguration", from: bundle)
         
         #expect(throws: Error.self) {
-            try CharacterGenerator(configuration, from: bundle)
+            try CharacterGenerator(gameData, from: bundle)
         }
     }
 }

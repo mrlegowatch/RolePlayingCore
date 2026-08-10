@@ -1,4 +1,5 @@
 {
+    "display order": ["Human", "Elf", "Dwarf", "Halfling", "Dragonborn", "Tiefling", "Gnome", "Goliath", "Orc", "Aasimar"],
     "species": [
         {
             "name": "Human",

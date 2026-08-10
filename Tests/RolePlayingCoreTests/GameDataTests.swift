@@ -17,7 +17,7 @@ struct ConfigurationTests {
     
     @Test("Default configuration loads successfully")
     func defaultConfiguration() async throws {
-        let configuration = try Configuration("TestConfiguration", from: bundle)
+        let gameData = try GameData("TestConfiguration", from: bundle)
         
         // Print an ability score summary for edification
         print("Ability Score Summary:")
@@ -25,7 +25,7 @@ struct ConfigurationTests {
         for ability in abilities {
             var importantFor = [String]()
             
-            for classTraits in configuration.classes.all {
+            for classTraits in gameData.classes.all {
                 if classTraits.primaryAbility.contains(ability) {
                     importantFor.append(classTraits.name)
                 }
@@ -41,7 +41,7 @@ struct ConfigurationTests {
     @Test("Invalid configuration throws error")
     func invalidConfiguration() async throws {
         #expect(throws: (any Error).self) {
-            _ = try Configuration("InvalidConfiguration", from: bundle)
+            _ = try GameData("InvalidConfiguration", from: bundle)
         }
     }
 }

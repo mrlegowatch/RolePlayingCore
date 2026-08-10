@@ -223,7 +223,7 @@ public class Player: CodableWithConfiguration {
         case usedSpellSlots = "used spell slots"
     }
 
-    public required init(from decoder: Decoder, configuration: Configuration) throws {
+    public required init(from decoder: Decoder, configuration: GameData) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         
         // Try decoding properties
@@ -321,7 +321,7 @@ public class Player: CodableWithConfiguration {
         self.subclassTraits = subclassTraits
     }
     
-    public func encode(to encoder: Encoder, configuration: Configuration) throws {
+    public func encode(to encoder: Encoder, configuration: GameData) throws {
         var values = encoder.container(keyedBy: CodingKeys.self)
         
         // Try decoding properties

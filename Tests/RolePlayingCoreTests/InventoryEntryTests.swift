@@ -17,8 +17,8 @@ struct InventoryEntryTests {
     let items: Items
 
     init() throws {
-        let configuration = try Configuration("TestItemsConfiguration", from: .module)
-        items = configuration.items
+        let gameData = try GameData("TestItemsConfiguration", from: .module)
+        items = gameData.items
     }
 
     // MARK: - Programmatic init

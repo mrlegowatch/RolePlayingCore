@@ -120,15 +120,15 @@ extension EquipmentOptions: RandomAccessCollection {
 }
 
 extension EquipmentOptions: CodableWithConfiguration {
-    public typealias EncodingConfiguration = Configuration
-    public typealias DecodingConfiguration = Configuration
+    public typealias EncodingConfiguration = GameData
+    public typealias DecodingConfiguration = GameData
 
-    public init(from decoder: any Decoder, configuration: Configuration) throws {
+    public init(from decoder: any Decoder, configuration: GameData) throws {
         let strings = try [[String]](from: decoder)
         self.init(strings.map { EquipmentEntry.parseOption($0, items: configuration.items, currencies: configuration.currencies) })
     }
 
-    public func encode(to encoder: any Encoder, configuration: Configuration) throws {
+    public func encode(to encoder: any Encoder, configuration: GameData) throws {
         try options.map { $0.map(\.description) }.encode(to: encoder)
     }
 }

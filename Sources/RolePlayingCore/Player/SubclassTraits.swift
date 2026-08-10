@@ -47,7 +47,7 @@ extension SubclassTraits: CodableWithConfiguration {
 
     /// Decodes features and spells from string-keyed JSON objects (e.g., `"3": [...]`),
     /// converting string level keys to Int and resolving spell names via configuration.
-    public init(from decoder: any Decoder, configuration: Configuration) throws {
+    public init(from decoder: any Decoder, configuration: GameData) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         self.name = try values.decode(String.self, forKey: .name)
         self.descriptiveTraits = try values.decodeIfPresent([String: String].self, forKey: .descriptiveTraits) ?? [:]
@@ -77,7 +77,7 @@ extension SubclassTraits: CodableWithConfiguration {
     }
 
     /// Encodes features and spells with string level keys for JSON compatibility.
-    public func encode(to encoder: any Encoder, configuration: Configuration) throws {
+    public func encode(to encoder: any Encoder, configuration: GameData) throws {
         var values = encoder.container(keyedBy: CodingKeys.self)
         try values.encode(name, forKey: .name)
         if !descriptiveTraits.isEmpty {

@@ -2,6 +2,7 @@
 //  SpeciesPickerView.swift
 //  CharacterGenerator
 //
+//  Created by Brian Arnold on 10/20/25.
 //  Copyright © 2025 Brian Arnold. All rights reserved.
 //
 
@@ -14,20 +15,8 @@ struct SpeciesPickerView: View {
 
     @State private var isDrawerExpanded = false
 
-    private static let popularityOrder: [String] = [
-        "Human", "Elf", "Dwarf", "Halfling", "Dragonborn",
-        "Tiefling", "Gnome", "Goliath", "Orc", "Aasimar"
-    ]
-
     private var rootSpecies: [SpeciesTraits] {
-        appState.configuration.species.all
-            .filter { $0.parentName == nil }
-            .sorted { a, b in
-                let order = Self.popularityOrder
-                let ai = order.firstIndex(of: a.name) ?? order.count
-                let bi = order.firstIndex(of: b.name) ?? order.count
-                return ai == bi ? a.name < b.name : ai < bi
-            }
+        appState.gameData.species.allByDisplayOrder.filter { $0.parentName == nil }
     }
 
     var body: some View {

@@ -64,7 +64,7 @@ extension Weapon: CodableWithConfiguration {
         case properties
     }
 
-    public init(from decoder: Decoder, configuration: Configuration) throws {
+    public init(from decoder: Decoder, configuration: GameData) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
 
         name = try values.decode(String.self, forKey: .name)
@@ -93,7 +93,7 @@ extension Weapon: CodableWithConfiguration {
         properties = try values.decodeIfPresent(Set<WeaponProperty>.self, forKey: .properties) ?? []
     }
 
-    public func encode(to encoder: Encoder, configuration: Configuration) throws {
+    public func encode(to encoder: Encoder, configuration: GameData) throws {
         var values = encoder.container(keyedBy: CodingKeys.self)
         try values.encode(name, forKey: .name)
         if plural != name + "s" {

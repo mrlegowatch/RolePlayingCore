@@ -9,7 +9,7 @@
 import Foundation
 
 /// Traits representing a species.
-public struct SpeciesTraits: Sendable {
+public struct SpeciesTraits: Named, Sendable {
 
     public var name: String
     public var plural: String
@@ -67,7 +67,7 @@ extension SpeciesTraits: CodableWithConfiguration {
         case subspecies
     }
 
-    public init(from decoder: Decoder, configuration: Configuration) throws {
+    public init(from decoder: Decoder, configuration: GameData) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
 
         let name = try values.decode(String.self, forKey: .name)
@@ -126,7 +126,7 @@ extension SpeciesTraits: CodableWithConfiguration {
         }
     }
 
-    public func encode(to encoder: Encoder, configuration: Configuration) throws {
+    public func encode(to encoder: Encoder, configuration: GameData) throws {
         var values = encoder.container(keyedBy: CodingKeys.self)
 
         try values.encode(name, forKey: .name)

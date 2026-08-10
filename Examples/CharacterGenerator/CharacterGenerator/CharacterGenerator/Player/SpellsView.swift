@@ -2,6 +2,7 @@
 //  SpellsView.swift
 //  CharacterGenerator
 //
+//  Created by Brian Arnold on 10/20/25.
 //  Copyright © 2025 Brian Arnold. All rights reserved.
 //
 
@@ -139,12 +140,12 @@ struct SpellsView: View {
         }
     }
 
-    private func ordinal(_ n: Int) -> String {
-        switch n {
+    private func ordinal(_ level: Int) -> String {
+        switch level {
         case 1: return "1st"
         case 2: return "2nd"
         case 3: return "3rd"
-        default: return "\(n)th"
+        default: return "\(level)th"
         }
     }
 }
@@ -165,15 +166,12 @@ private struct SpellChip: View {
             Text(spell.name)
                 .font(.caption)
         }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 4)
-        .background(Color.accentColor.opacity(0.1))
-        .clipShape(Capsule())
+        .chipStyle()
     }
 }
 
 #Preview("Spells View") {
-    if let player = try? CharacterGenerator(Configuration("Configuration")).makeCharacter() {
+    if let player = try? CharacterGenerator(GameData("Configuration")).makeCharacter() {
         SpellsView(player: player)
             .padding()
     } else {

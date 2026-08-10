@@ -8,19 +8,19 @@
 
 import Foundation
 
-/// Given a configuration of species traits and class traits,
+/// Given a gameData of species traits and class traits,
 /// provides a random character.
 public struct CharacterGenerator {
-    let configuration: Configuration
+    let gameData: GameData
     let names: SpeciesNames
     
-    /// Creates a character generator instance with a reference to the current configuration.
-    public init(_ configuration: Configuration, from bundle: Bundle = .main) throws {
-        guard let speciesNamesFile = configuration.configurationFiles.speciesNames else {
+    /// Creates a character generator instance with a reference to the current gameData.
+    public init(_ gameData: GameData, from bundle: Bundle = .main) throws {
+        guard let speciesNamesFile = gameData.gameDataFiles.speciesNames else {
             throw missingJSONError("speciesNames")
         }
         
-        self.configuration = configuration
+        self.gameData = gameData
         let data = try bundle.loadJSON(speciesNamesFile)
         let decoder = JSONDecoder()
         self.names = try decoder.decode(SpeciesNames.self, from: data)
@@ -36,13 +36,13 @@ public struct CharacterGenerator {
     
     func randomSpells<G: RandomIndexGenerator>(classTraits: ClassTraits, using generator: inout G) -> [Spell] {
         var result: [Spell] = []
-        var cantrips = configuration.spells.spells(ofLevel: 0)
+        var cantrips = gameData.spells.spells(ofLevel: 0)
         let cantripCount = min(classTraits.cantripsKnown ?? 0, cantrips.count)
         for _ in 0..<cantripCount {
             let index = generator.randomIndex(upperBound: cantrips.count)
             result.append(cantrips.remove(at: index))
         }
-        var level1Spells = configuration.spells.spells(ofLevel: 1)
+        var level1Spells = gameData.spells.spells(ofLevel: 1)
         let spellCount = min(classTraits.spellsKnown ?? 0, level1Spells.count)
         for _ in 0..<spellCount {
             let index = generator.randomIndex(upperBound: level1Spells.count)
@@ -53,12 +53,12 @@ public struct CharacterGenerator {
 
     public func makeCharacter<G: RandomIndexGenerator>(using generator: inout G) -> Player {
         // TODO: have SpeciesTraits, ClassTraits conform to whatever protocol specifies the random() function
-        let randomClass = generator.randomIndex(upperBound: configuration.classes.count)
+        let randomClass = generator.randomIndex(upperBound: gameData.classes.count)
         let gender = Player.Gender.allCases.randomElementByIndex(using: &generator)
 
-        let backgroundTraits = configuration.backgrounds.randomElementByIndex(using: &generator)
-        let speciesTraits = configuration.species.randomElementByIndex(using: &generator)
-        let classTraits = configuration.classes[randomClass]!
+        let backgroundTraits = gameData.backgrounds.randomElementByIndex(using: &generator)
+        let speciesTraits = gameData.species.randomElementByIndex(using: &generator)
+        let classTraits = gameData.classes[randomClass]!
         let name = names.randomName(speciesTraits: speciesTraits, gender: gender, using: &generator)
         let alignment = randomAlignment(using: &generator)
 

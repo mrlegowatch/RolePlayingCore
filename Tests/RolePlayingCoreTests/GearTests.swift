@@ -16,10 +16,10 @@ struct GearTests {
     let encoder = JSONEncoder()
     let zeroCost = Money(value: 0, unit: UnitCurrency.baseUnit())
     let zeroWeight = Weight(value: 0, unit: .pounds)
-    let configuration: Configuration
+    let gameData: GameData
 
     init() throws {
-        configuration = try Configuration("TestItemsConfiguration", from: .module)
+        gameData = try GameData("TestItemsConfiguration", from: .module)
     }
 
     // MARK: - Gear.Category enum
@@ -88,14 +88,14 @@ struct GearTests {
     @Test("Decode with missing plural defaults to name + 's'")
     func decodeMissingPlural() throws {
         let json = #"{"name": "Torch", "category": "general"}"#.data(using: .utf8)!
-        let gear = try decoder.decode(Gear.self, from: json, configuration: configuration)
+        let gear = try decoder.decode(Gear.self, from: json, configuration: gameData)
         #expect(gear.plural == "Torchs")
     }
 
     @Test("Decode with missing weight defaults to zero pounds")
     func decodeMissingWeight() throws {
         let json = #"{"name": "Torch", "category": "general"}"#.data(using: .utf8)!
-        let gear = try decoder.decode(Gear.self, from: json, configuration: configuration)
+        let gear = try decoder.decode(Gear.self, from: json, configuration: gameData)
         #expect(gear.weight.value == 0)
         #expect(gear.weight.unit == .pounds)
     }
@@ -103,7 +103,7 @@ struct GearTests {
     @Test("Decode with missing category defaults to .general")
     func decodeMissingCategory() throws {
         let json = #"{"name": "Torch"}"#.data(using: .utf8)!
-        let gear = try decoder.decode(Gear.self, from: json, configuration: configuration)
+        let gear = try decoder.decode(Gear.self, from: json, configuration: gameData)
         #expect(gear.category == .general)
     }
 
@@ -116,7 +116,7 @@ struct GearTests {
             "contents": ["Backpack", "10 Torches", "Rope"]
         }
         """.data(using: .utf8)!
-        let gear = try decoder.decode(Gear.self, from: json, configuration: configuration)
+        let gear = try decoder.decode(Gear.self, from: json, configuration: gameData)
         #expect(gear.category == .pack)
         #expect(gear.contents?.count == 3)
         #expect(gear.contents?.contains("Backpack") == true)
@@ -127,7 +127,7 @@ struct GearTests {
     @Test("Encode omits default plural")
     func encodeOmitsDefaultPlural() throws {
         let gear = Gear(name: "Torch", cost: zeroCost, weight: zeroWeight)
-        let data = try encoder.encode(gear, configuration: configuration)
+        let data = try encoder.encode(gear, configuration: gameData)
         let dict = try JSONSerialization.jsonObject(with: data) as? [String: Any]
         #expect(dict?["plural"] == nil, "Default plural should be omitted")
     }
@@ -135,7 +135,7 @@ struct GearTests {
     @Test("Encode includes non-default plural")
     func encodeIncludesCustomPlural() throws {
         let gear = Gear(name: "Torch", plural: "Torches", cost: zeroCost, weight: zeroWeight)
-        let data = try encoder.encode(gear, configuration: configuration)
+        let data = try encoder.encode(gear, configuration: gameData)
         let dict = try JSONSerialization.jsonObject(with: data) as? [String: Any]
         #expect(dict?["plural"] as? String == "Torches")
     }
@@ -143,7 +143,7 @@ struct GearTests {
     @Test("Encode includes description when present")
     func encodeIncludesDescription() throws {
         let gear = Gear(name: "Mirror", cost: zeroCost, weight: zeroWeight, description: "A polished steel mirror.")
-        let data = try encoder.encode(gear, configuration: configuration)
+        let data = try encoder.encode(gear, configuration: gameData)
         let dict = try JSONSerialization.jsonObject(with: data) as? [String: Any]
         #expect(dict?["description"] as? String == "A polished steel mirror.")
     }
@@ -151,7 +151,7 @@ struct GearTests {
     @Test("Encode includes contents when present")
     func encodeIncludesContents() throws {
         let gear = Gear(name: "Bundle", cost: zeroCost, weight: zeroWeight, category: .pack, contents: ["Torch", "Rope"])
-        let data = try encoder.encode(gear, configuration: configuration)
+        let data = try encoder.encode(gear, configuration: gameData)
         let dict = try JSONSerialization.jsonObject(with: data) as? [String: Any]
         let contents = dict?["contents"] as? [String]
         #expect(contents?.contains("Torch") == true)
@@ -171,8 +171,8 @@ struct GearTests {
             description: "50 feet of hempen rope.",
             contents: nil
         )
-        let data = try encoder.encode(original, configuration: configuration)
-        let decoded = try decoder.decode(Gear.self, from: data, configuration: configuration)
+        let data = try encoder.encode(original, configuration: gameData)
+        let decoded = try decoder.decode(Gear.self, from: data, configuration: gameData)
         #expect(decoded.name == original.name)
         #expect(decoded.plural == original.plural)
         #expect(decoded.category == original.category)

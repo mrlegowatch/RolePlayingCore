@@ -9,7 +9,7 @@
 import Foundation
 
 /// Traits associated with a player character's background.
-public struct BackgroundTraits: Sendable {
+public struct BackgroundTraits: Named, Sendable {
     public var name: String
     public var abilityScores: [Ability]
     public var feat: FeatTraits
@@ -28,7 +28,7 @@ extension BackgroundTraits: CodableWithConfiguration {
         case equipment = "equipment"
     }
     
-    public init(from decoder: Decoder, configuration: Configuration) throws {
+    public init(from decoder: Decoder, configuration: GameData) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         self.name = try values.decode(String.self, forKey: .name)
         self.abilityScores = try values.decode([Ability].self, forKey: .abilityScores)
@@ -46,7 +46,7 @@ extension BackgroundTraits: CodableWithConfiguration {
         self.equipment = try values.decode(EquipmentOptions.self, forKey: .equipment, configuration: configuration)
     }
     
-    public func encode(to encoder: Encoder, configuration: Configuration) throws {
+    public func encode(to encoder: Encoder, configuration: GameData) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(name, forKey: .name)
         try container.encode(abilityScores, forKey: .abilityScores)
