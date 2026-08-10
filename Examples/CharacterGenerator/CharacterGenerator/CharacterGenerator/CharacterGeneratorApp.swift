@@ -38,7 +38,8 @@ class AppState: ObservableObject {
     @Published var characterGenerator: CharacterGenerator!
     @Published var players: Players!
     @Published var selectedPlayer: Player?
-    
+    @Published var builderState: CharacterBuilderState?
+
     init() {
         do {
             configuration = try Configuration("Configuration")
@@ -48,12 +49,32 @@ class AppState: ObservableObject {
             fatalError("Failed to initialize configuration: \(error)")
         }
     }
-    
+
     func addNewCharacter() {
         let player = characterGenerator.makeCharacter()
         players.insert(player, at: 0)
+        selectedPlayer = player
     }
-    
+
+    func startBuildingCharacter() {
+        let state = CharacterBuilderState()
+        state.selectedSpecies = configuration.species["Human"]
+        state.selectedClass = configuration.classes["Fighter"]
+        state.selectedBackground = configuration.backgrounds["Soldier"]
+        builderState = state
+    }
+
+    func finalizeBuiltCharacter() {
+        guard let player = builderState?.finalize() else { return }
+        players.insert(player, at: 0)
+        selectedPlayer = player
+        builderState = nil
+    }
+
+    func cancelBuildingCharacter() {
+        builderState = nil
+    }
+
     func deleteCharacter(at indexSet: IndexSet) {
         for index in indexSet {
             players.remove(at: index)

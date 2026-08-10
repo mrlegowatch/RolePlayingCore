@@ -73,4 +73,9 @@ public struct CharacterGenerator {
         var generator = DefaultRandomIndexGenerator()
         return makeCharacter(using: &generator)
     }
+
+    /// Returns a species-appropriate name generated from the Markov chain.
+    public func randomName(speciesTraits: SpeciesTraits, gender: Player.Gender?) -> String {
+        names.randomName(speciesTraits: speciesTraits, gender: gender)
+    }
 }

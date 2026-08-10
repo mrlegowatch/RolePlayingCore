@@ -35,17 +35,26 @@ struct PlayerListView: View {
             ToolbarItem(placement: .topBarLeading) {
                 EditButton()
             }
-            
+
             ToolbarItem(placement: .topBarTrailing) {
-                Button {
-                    appState.addNewCharacter()
-                    if let newPlayer = appState.players[0] {
-                        appState.selectedPlayer = newPlayer
+                Menu {
+                    Button("Quick Character", systemImage: "bolt") {
+                        appState.addNewCharacter()
+                    }
+                    Button("Step by Step", systemImage: "list.bullet") {
+                        appState.startBuildingCharacter()
                     }
                 } label: {
                     Label("Add Character", systemImage: "plus")
                 }
             }
+        }
+        .sheet(isPresented: Binding(
+            get: { appState.builderState != nil },
+            set: { if !$0 { appState.cancelBuildingCharacter() } }
+        )) {
+            CharacterBuilderView()
+                .environmentObject(appState)
         }
         .environment(\.editMode, $editMode)
     }

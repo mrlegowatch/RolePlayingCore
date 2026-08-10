@@ -1,36 +1,12 @@
 {
     "species": [
         {
-            "name": "Aasimar",
-            "plural": "Aasimar",
-            "lifespan": 160,
+            "name": "Human",
+            "plural": "Humans",
+            "lifespan": 80,
             "base sizes": ["4-7 ft", "2-4 ft"],
             "speed": 30,
-            "darkvision": 60
-        },
-        {
-            "name": "Dragonborn",
-            "plural": "Dragonborn",
-            "lifespan": 80,
-            "base sizes": ["5-7 ft"],
-            "speed": 30,
-            "darkvision": 60,
-        },
-        {
-            "name": "Dwarf",
-            "plural": "Dwarves",
-            "lifespan": 350,
-            "base sizes": ["4-5 ft"],
-            "speed": 30,
-            "darkvision": 120,
-            "subspecies": [{
-                "name": "Hill Dwarf",
-                "plural": "Hill Dwarves",
-            },
-                {
-                    "name": "Mountain Dwarf",
-                    "plural": "Mountain Dwarves",
-                }]
+            "description": "Versatile and ambitious, humans are the most widespread people in the world, quickly adapting to any environment or culture."
         },
         {
             "name": "Elf",
@@ -39,20 +15,84 @@
             "base sizes": ["5-6 ft"],
             "speed": 30,
             "darkvision": 60,
-            "subspecies": [{
-                "name": "High Elf",
-                "plural": "High Elves"
-            },
+            "subspecies": [
+                {
+                    "name": "High Elf",
+                    "plural": "High Elves",
+                    "description": "Refined and learned, high elves blend elven grace with a natural aptitude for arcane magic."
+                },
                 {
                     "name": "Wood Elf",
-                    "plural": "Wood Elves"
+                    "plural": "Wood Elves",
+                    "description": "Reclusive forest-dwellers with preternatural swiftness and keen senses, deeply at home in the wild."
                 },
                 {
                     "name": "Drow",
                     "plural": "Drow",
                     "aliases": ["Dark Elf"],
-                    "darkvision": 120
-                }]
+                    "darkvision": 120,
+                    "description": "Exiled to the Underdark, drow wield innate shadow magic and extraordinary darkvision, often working to overcome a dark reputation."
+                }
+            ]
+        },
+        {
+            "name": "Dwarf",
+            "plural": "Dwarves",
+            "lifespan": 350,
+            "base sizes": ["4-5 ft"],
+            "speed": 30,
+            "darkvision": 120,
+            "subspecies": [
+                {
+                    "name": "Hill Dwarf",
+                    "plural": "Hill Dwarves",
+                    "description": "Perceptive and resilient, hill dwarves live among rolling highlands and are renowned for extraordinary toughness."
+                },
+                {
+                    "name": "Mountain Dwarf",
+                    "plural": "Mountain Dwarves",
+                    "description": "Born in high peaks, mountain dwarves are powerfully built warriors at home in heavy armor."
+                }
+            ]
+        },
+        {
+            "name": "Halfling",
+            "plural": "Halflings",
+            "lifespan": 150,
+            "base sizes": ["2-3 ft"],
+            "speed": 30,
+            "subspecies": [
+                {
+                    "name": "Lightfoot",
+                    "plural": "Lightfoots",
+                    "aliases": ["Tallfellow"],
+                    "description": "Nimble and sociable, lightfoot halflings blend into almost any community with natural charm and quiet luck."
+                },
+                {
+                    "name": "Stout",
+                    "plural": "Stouts",
+                    "aliases": ["Strongheart"],
+                    "description": "Sturdier than their kin, stout halflings carry a touch of dwarven blood that grants resistance to poison."
+                }
+            ]
+        },
+        {
+            "name": "Dragonborn",
+            "plural": "Dragonborn",
+            "lifespan": 80,
+            "base sizes": ["5-7 ft"],
+            "speed": 30,
+            "darkvision": 60,
+            "description": "Proud dragon-descended warriors who breathe elemental energy shaped by their draconic lineage."
+        },
+        {
+            "name": "Tiefling",
+            "plural": "Tieflings",
+            "lifespan": 80,
+            "base sizes": ["4-7 ft", "3-4 ft"],
+            "speed": 30,
+            "darkvision": 60,
+            "description": "Bearing infernal heritage in their horns and tails, tieflings wield innate dark magic and an iron will forged against prejudice."
         },
         {
             "name": "Gnome",
@@ -61,46 +101,26 @@
             "base sizes": ["3-4 ft"],
             "speed": 30,
             "darkvision": 60,
-            "subspecies": [{
-                "name": "Forest Gnome",
-                "plural": "Forest Gnomes",
-            },
+            "subspecies": [
+                {
+                    "name": "Forest Gnome",
+                    "plural": "Forest Gnomes",
+                    "description": "Nature-attuned tinkerers who speak with small animals and conjure minor illusions as easily as breathing."
+                },
                 {
                     "name": "Rock Gnome",
                     "plural": "Rock Gnomes",
-                }]
+                    "description": "Inventive artificers with an insatiable passion for clockwork gadgets and mechanical contraptions."
+                }
+            ]
         },
         {
             "name": "Goliath",
             "plural": "Goliaths",
             "lifespan": 80,
             "base sizes": ["7-8 ft"],
-            "speed": 35
-        },
-        {
-            "name": "Halfling",
-            "plural": "Halflings",
-            "lifespan": 150,
-            "base sizes": ["2-3 ft"],
-            "speed": 30,
-            "subspecies": [{
-                "name": "Lightfoot",
-                "plural": "Lightfoots",
-                "aliases": ["Tallfellow"]
-            },
-                {
-                    "name": "Stout",
-                    "plural": "Stouts",
-                    "aliases": ["Strongheart"]
-                }]
-            
-        },
-        {
-            "name": "Human",
-            "plural": "Humans",
-            "lifespan": 80,
-            "base sizes": ["4-7 ft", "2-4 ft"],
-            "speed": 30
+            "speed": 35,
+            "description": "Mountain-born giants driven by a fierce competitive spirit and an unwavering need to prove their worth."
         },
         {
             "name": "Orc",
@@ -108,15 +128,17 @@
             "lifespan": 80,
             "base sizes": ["6-7 ft"],
             "speed": 30,
-            "darkvision": 120
+            "darkvision": 120,
+            "description": "Powerful warriors whose orcish endurance lets them shrug off blows that would fell lesser combatants."
         },
         {
-            "name": "Tiefling",
-            "plural": "Tieflings",
-            "lifespan": 80,
-            "base sizes": ["4-7 ft", "3-4 ft"],
+            "name": "Aasimar",
+            "plural": "Aasimar",
+            "lifespan": 160,
+            "base sizes": ["4-7 ft", "2-4 ft"],
             "speed": 30,
-            "darkvision": 60
+            "darkvision": 60,
+            "description": "Touched by celestial radiance, aasimar carry divine light within them, drawn by destiny toward heroic deeds."
         }
     ]
 }
