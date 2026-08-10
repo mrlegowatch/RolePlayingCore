@@ -60,4 +60,15 @@ struct SpeciesTests {
         #expect(decoded.count == original.count)
         #expect(decoded["Human"] != nil)
     }
+
+    @Test("leafSpeciesSorted returns leaf species in alphabetical order")
+    func leafSpeciesSorted() async throws {
+        let jsonData = try bundle.loadJSON("TestSpecies")
+        let species = try decoder.decode(Species.self, from: jsonData, configuration: configuration)
+        let sorted = species.leafSpeciesSorted
+        #expect(sorted.count == species.leafSpecies.count)
+        for i in 0..<sorted.count - 1 {
+            #expect(sorted[i].name < sorted[i + 1].name)
+        }
+    }
 }

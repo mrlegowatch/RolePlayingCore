@@ -34,18 +34,39 @@ public struct CharacterGenerator {
         return CharacterAlignment(ethics, morals)
     }
     
+    func randomSpells<G: RandomIndexGenerator>(classTraits: ClassTraits, using generator: inout G) -> [Spell] {
+        var result: [Spell] = []
+        var cantrips = configuration.spells.spells(ofLevel: 0)
+        let cantripCount = min(classTraits.cantripsKnown ?? 0, cantrips.count)
+        for _ in 0..<cantripCount {
+            let index = generator.randomIndex(upperBound: cantrips.count)
+            result.append(cantrips.remove(at: index))
+        }
+        var level1Spells = configuration.spells.spells(ofLevel: 1)
+        let spellCount = min(classTraits.spellsKnown ?? 0, level1Spells.count)
+        for _ in 0..<spellCount {
+            let index = generator.randomIndex(upperBound: level1Spells.count)
+            result.append(level1Spells.remove(at: index))
+        }
+        return result
+    }
+
     public func makeCharacter<G: RandomIndexGenerator>(using generator: inout G) -> Player {
         // TODO: have SpeciesTraits, ClassTraits conform to whatever protocol specifies the random() function
         let randomClass = generator.randomIndex(upperBound: configuration.classes.count)
         let gender = Player.Gender.allCases.randomElementByIndex(using: &generator)
-        
+
         let backgroundTraits = configuration.backgrounds.randomElementByIndex(using: &generator)
         let speciesTraits = configuration.species.randomElementByIndex(using: &generator)
         let classTraits = configuration.classes[randomClass]!
         let name = names.randomName(speciesTraits: speciesTraits, gender: gender, using: &generator)
         let alignment = randomAlignment(using: &generator)
-        
-        return Player(name, backgroundTraits: backgroundTraits, speciesTraits: speciesTraits, classTraits: classTraits, gender: gender, alignment: alignment)
+
+        let player = Player(name, backgroundTraits: backgroundTraits, speciesTraits: speciesTraits, classTraits: classTraits, gender: gender, alignment: alignment)
+        if classTraits.spellcastingType != nil {
+            player.preparedSpells = randomSpells(classTraits: classTraits, using: &generator)
+        }
+        return player
     }
     
     public func makeCharacter() -> Player {

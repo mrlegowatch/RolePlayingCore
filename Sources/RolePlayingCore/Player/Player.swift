@@ -75,8 +75,18 @@ public class Player: CodableWithConfiguration {
         return scores
     }
     
+    public var featAbilityIncrease: AbilityScores {
+        var combined: [Ability: Int] = [:]
+        for feat in feats {
+            for (ability, amount) in feat.abilityScoreIncreases {
+                combined[ability, default: 0] += amount
+            }
+        }
+        return AbilityScores(combined)
+    }
+
     // TODO: limit adding backgroundAbilityIncrease to max score of 20
-    public var abilities: AbilityScores { baseAbilities + backgroundAbilityIncrease }
+    public var abilities: AbilityScores { baseAbilities + backgroundAbilityIncrease + featAbilityIncrease }
     public var modifiers: AbilityScores { abilities.modifiers }
         
     /// Hit points, hit dice, experience points, and level
@@ -85,12 +95,17 @@ public class Player: CodableWithConfiguration {
     public var currentHitPoints: Int
     public var experiencePoints: Int
     public var level: Int
-    
+
+    /// Hit dice spent on short rests since the last long rest.
+    public var usedHitDice: Int
+
     public var speed: Int { speciesTraits.speed }
     public var size: CreatureSize { CreatureSize(from: height) }
-    
+
     public var hitDice: Rollable { level * classTraits.hitDice }
-    
+    /// Hit dice remaining in the pool (total pool = level; restored on long rest).
+    public var availableHitDice: Int { level - usedHitDice }
+
     public var proficiencyBonus: Int { 2 + (level - 1) / 4 }
     public var passivePerception: Int { 10 + modifiers[.wisdom] }
     
@@ -104,6 +119,13 @@ public class Player: CodableWithConfiguration {
     public var money: Money
     /// All items carried by this player. Equipped state is tracked per entry.
     public var inventory: [InventoryEntry]
+
+    // Spellcasting
+
+    /// Spells currently prepared or known.
+    public var preparedSpells: [Spell]
+    /// Slots expended at each level since the last long rest (0-indexed; index 0 = 1st-level slots).
+    public var usedSpellSlots: [Int]
 
     /// The worn armor piece, if any (excludes shields).
     public var equippedArmor: Armor? {
@@ -141,6 +163,41 @@ public class Player: CodableWithConfiguration {
         return unarmoredBase + shieldBonus
     }
     
+    /// All weapon proficiencies — from class and from feats.
+    public var allWeaponProficiencies: [WeaponProficiency] {
+        classTraits.weaponProficiencies + feats.flatMap(\.weaponProficiencies)
+    }
+
+    /// All armor weight categories trained in — from class and from feats.
+    public var allArmorTraining: [ArmorProficiency] {
+        classTraits.armorTraining + feats.flatMap(\.armorTraining)
+    }
+
+    // Spellcasting computed properties
+
+    public var spellcastingAbility: Ability? { classTraits.spellcastingAbility }
+
+    public var spellcastingModifier: Int? {
+        guard let ability = spellcastingAbility else { return nil }
+        return modifiers[ability]
+    }
+
+    public var spellSaveDC: Int? {
+        spellcastingModifier.map { 8 + proficiencyBonus + $0 }
+    }
+
+    public var spellAttackBonus: Int? {
+        spellcastingModifier.map { proficiencyBonus + $0 }
+    }
+
+    /// Maximum spells that can be prepared: spellcasting modifier + character level, minimum 1.
+    public var maxPreparedSpells: Int? {
+        guard classTraits.spellcastingType == .prepared,
+              let modifier = spellcastingModifier,
+              classTraits.spellSlots != nil else { return nil }
+        return max(1, modifier + level)
+    }
+
     private enum CodingKeys: String, CodingKey {
         case name
         case backgroundName = "background"
@@ -157,10 +214,13 @@ public class Player: CodableWithConfiguration {
         case skillProficiencies = "skill proficiencies"
         case maximumHitPoints = "maximum hit points"
         case currentHitPoints = "current hit points"
+        case usedHitDice = "used hit dice"
         case experiencePoints = "experience points"
         case level
         case money
         case inventory
+        case preparedSpells = "prepared spells"
+        case usedSpellSlots = "used spell slots"
     }
 
     public required init(from decoder: Decoder, configuration: Configuration) throws {
@@ -202,11 +262,17 @@ public class Player: CodableWithConfiguration {
         
         let maximumHitPoints = try values.decode(Int.self, forKey: .maximumHitPoints)
         let currentHitPoints = try values.decodeIfPresent(Int.self, forKey: .currentHitPoints)
+        let usedHitDice = try values.decodeIfPresent(Int.self, forKey: .usedHitDice) ?? 0
         let experiencePoints = try values.decodeIfPresent(Int.self, forKey: .experiencePoints)
         let level = try values.decodeIfPresent(Int.self, forKey: .level)
         let money = try values.decode(Money.self, forKey: .money, configuration: configuration.currencies)
 
         let resolvedInventory = try values.decodeIfPresent([InventoryEntry].self, forKey: .inventory, configuration: configuration.items) ?? []
+
+        // Resolve prepared spell names; silently skip any not found in configuration
+        let preparedSpellNames = try values.decodeIfPresent([String].self, forKey: .preparedSpells) ?? []
+        let preparedSpells = preparedSpellNames.compactMap { configuration.spells[$0] }
+        let usedSpellSlots = try values.decodeIfPresent([Int].self, forKey: .usedSpellSlots) ?? []
 
         // Resolve backgroundTraits from configuration
         guard let backgroundTraits = configuration.backgrounds[backgroundName] else {
@@ -242,10 +308,13 @@ public class Player: CodableWithConfiguration {
         self.feats = resolvedFeats.isEmpty ? [backgroundTraits.feat] : resolvedFeats
         self.maximumHitPoints = maximumHitPoints
         self.currentHitPoints = currentHitPoints ?? maximumHitPoints
+        self.usedHitDice = usedHitDice
         self.experiencePoints = experiencePoints ?? 0
         self.level = level ?? 1
         self.money = money
         self.inventory = resolvedInventory
+        self.preparedSpells = preparedSpells
+        self.usedSpellSlots = usedSpellSlots
         self.backgroundTraits = backgroundTraits
         self.speciesTraits = speciesTraits
         self.classTraits = classTraits
@@ -273,11 +342,20 @@ public class Player: CodableWithConfiguration {
         try values.encode(feats.map(\.name), forKey: .feats)
         try values.encode(maximumHitPoints, forKey: .maximumHitPoints)
         try values.encodeIfPresent(currentHitPoints, forKey: .currentHitPoints)
+        if usedHitDice > 0 {
+            try values.encode(usedHitDice, forKey: .usedHitDice)
+        }
         try values.encodeIfPresent(experiencePoints, forKey: .experiencePoints)
         try values.encodeIfPresent(level, forKey: .level)
         try values.encode(money, forKey: .money, configuration: configuration.currencies)
         if !inventory.isEmpty {
             try values.encode(inventory, forKey: .inventory, configuration: configuration.items)
+        }
+        if !preparedSpells.isEmpty {
+            try values.encode(preparedSpells.map(\.name), forKey: .preparedSpells)
+        }
+        if !usedSpellSlots.isEmpty {
+            try values.encode(usedSpellSlots, forKey: .usedSpellSlots)
         }
      }
     
@@ -328,8 +406,11 @@ public class Player: CodableWithConfiguration {
         self.feats = [backgroundTraits.feat]
         self.maximumHitPoints = maxHP
         self.currentHitPoints = maxHP
+        self.usedHitDice = 0
         self.money = money
         self.inventory = inventoryEntries
+        self.preparedSpells = []
+        self.usedSpellSlots = []
         self.experiencePoints = 0
         self.level = 1
     }
@@ -359,14 +440,209 @@ public class Player: CodableWithConfiguration {
         return level < classTraits.maxLevel && experiencePoints > classTraits.maxExperiencePoints(at: level)
     }
 
-    public func levelUp() {
-        guard canLevelUp else { return }
-        
+    /// Describes what changed and what choices are pending after a level-up.
+    public struct LevelUpResult: Sendable {
+        /// The new character level.
+        public let newLevel: Int
+        /// Hit points added to both maximum and current HP.
+        public let hitPointsGained: Int
+        /// The feat category to select at this level, or nil if no feat is awarded.
+        public let featCategoryToSelect: FeatTraits.Category?
+        /// True when this level triggers subclass selection and choices are available.
+        public let requiresSubclassSelection: Bool
+    }
+
+    /// Levels up the character if the XP threshold has been reached.
+    ///
+    /// Returns a `LevelUpResult` describing HP gained and any pending choices
+    /// (feat selection, subclass selection) the UI needs to present, or `nil`
+    /// if the level-up precondition was not met.
+    @discardableResult
+    public func levelUp() -> LevelUpResult? {
+        guard canLevelUp else { return nil }
+
         level += 1
-        
-        maximumHitPoints += rollHitPoints()
-        
-        // TODO: add more details for leveling up
+
+        let hpGained = rollHitPoints()
+        maximumHitPoints += hpGained
+        currentHitPoints += hpGained
+
+        let featCategory: FeatTraits.Category?
+        switch level {
+        case 20:            featCategory = .epicBoon
+        case 4, 8, 12, 16, 19: featCategory = .general
+        default:            featCategory = nil
+        }
+
+        let requiresSubclassSelection =
+            subclassTraits == nil &&
+            level == classTraits.subclassChoiceLevel &&
+            !classTraits.subclasses.isEmpty
+
+        return LevelUpResult(
+            newLevel: level,
+            hitPointsGained: hpGained,
+            featCategoryToSelect: featCategory,
+            requiresSubclassSelection: requiresSubclassSelection
+        )
+    }
+
+    /// Assigns a subclass to this character.
+    ///
+    /// Silently ignored if the character's level is below `classTraits.subclassChoiceLevel`
+    /// or if the subclass does not belong to the character's class.
+    public func selectSubclass(_ subclass: SubclassTraits) {
+        guard level >= classTraits.subclassChoiceLevel,
+              classTraits.subclasses.contains(subclass) else { return }
+        subclassTraits = subclass
+    }
+
+    // MARK: Rest
+
+    /// The result of a short rest: how many hit dice were spent and how much HP was restored.
+    public struct ShortRestResult: Sendable {
+        public let hitDiceSpent: Int
+        public let hitPointsGained: Int
+    }
+
+    /// Spends up to `hitDiceToSpend` hit dice from the available pool.
+    ///
+    /// Each die is rolled (using the class hit die) and the Constitution modifier is added;
+    /// the per-die contribution is floored at 0. Healed HP is capped at `maximumHitPoints`.
+    /// Requesting more dice than `availableHitDice` silently spends only what remains.
+    @discardableResult
+    public func shortRest(hitDiceToSpend: Int) -> ShortRestResult {
+        let toSpend = min(max(0, hitDiceToSpend), availableHitDice)
+        guard toSpend > 0 else {
+            return ShortRestResult(hitDiceSpent: 0, hitPointsGained: 0)
+        }
+
+        let constitutionModifier: Int = modifiers[.constitution]
+        var totalHealed = 0
+        for _ in 0..<toSpend {
+            totalHealed += max(0, classTraits.hitDice.roll().result + constitutionModifier)
+        }
+
+        let before = currentHitPoints
+        currentHitPoints = min(maximumHitPoints, currentHitPoints + totalHealed)
+        usedHitDice += toSpend
+
+        return ShortRestResult(hitDiceSpent: toSpend, hitPointsGained: currentHitPoints - before)
+    }
+
+    /// Restores all hit points, all spent hit dice, and all expended spell slots (5e 2024 rules).
+    public func longRest() {
+        currentHitPoints = maximumHitPoints
+        usedHitDice = 0
+        usedSpellSlots = []
+    }
+
+    // MARK: - Spellcasting
+
+    /// Returns the total spell slots at the given 1-based slot level for the character's current class level.
+    public func totalSpellSlots(at slotLevel: Int) -> Int {
+        guard slotLevel >= 1,
+              let slots = classTraits.spellSlots,
+              level >= 1, level <= slots.count else { return 0 }
+        let levelSlots = slots[level - 1]
+        guard slotLevel <= levelSlots.count else { return 0 }
+        return levelSlots[slotLevel - 1]
+    }
+
+    /// Returns the number of remaining unused spell slots at the given 1-based slot level.
+    public func availableSpellSlots(at slotLevel: Int) -> Int {
+        let total = totalSpellSlots(at: slotLevel)
+        guard slotLevel >= 1, slotLevel <= usedSpellSlots.count else { return total }
+        return max(0, total - usedSpellSlots[slotLevel - 1])
+    }
+
+    /// Adds a spell to the prepared list. Ignored if the spell is already prepared.
+    public func prepareSpell(_ spell: Spell) {
+        guard !preparedSpells.contains(spell) else { return }
+        preparedSpells.append(spell)
+    }
+
+    /// Removes a spell from the prepared list. Ignored if the spell is not prepared.
+    public func unprepareSpell(_ spell: Spell) {
+        preparedSpells.removeAll { $0 == spell }
+    }
+
+    /// Expends one spell slot at the given 1-based slot level.
+    ///
+    /// Returns `true` if a slot was available and expended, `false` if no slots remain at that level.
+    @discardableResult
+    public func castSpell(usingSlotLevel slotLevel: Int) -> Bool {
+        guard availableSpellSlots(at: slotLevel) > 0 else { return false }
+        if slotLevel > usedSpellSlots.count {
+            usedSpellSlots += Array(repeating: 0, count: slotLevel - usedSpellSlots.count)
+        }
+        usedSpellSlots[slotLevel - 1] += 1
+        return true
+    }
+
+    // MARK: - Inventory
+
+    /// Adds `quantity` of `item` to inventory.
+    ///
+    /// If an entry for this item already exists (matched by name) its quantity is increased;
+    /// otherwise a new entry is appended. Calls with `quantity` ≤ 0 are ignored.
+    public func addToInventory(_ item: any Item, quantity: Int = 1) {
+        guard quantity > 0 else { return }
+        if let index = inventory.firstIndex(where: { $0.item.name == item.name }) {
+            inventory[index].quantity += quantity
+        } else {
+            inventory.append(InventoryEntry(item: item, quantity: quantity))
+        }
+    }
+
+    /// Removes the inventory entry with the given ID. Ignored if no matching entry exists.
+    public func removeFromInventory(id: UUID) {
+        inventory.removeAll { $0.id == id }
+    }
+
+    /// Equips the inventory entry with the given ID.
+    ///
+    /// When equipping a non-shield armor, any other equipped non-shield armor is automatically
+    /// unequipped first. When equipping a shield, any other equipped shield is unequipped first.
+    /// Non-armor items are equipped without exclusivity enforcement.
+    /// Ignored if no entry with the given ID exists.
+    public func equipItem(id: UUID) {
+        guard let index = inventory.firstIndex(where: { $0.id == id }) else { return }
+        if let armor = inventory[index].item as? Armor {
+            if armor.category == .shield {
+                for i in inventory.indices where inventory[i].isEquipped {
+                    if (inventory[i].item as? Armor)?.category == .shield {
+                        inventory[i].isEquipped = false
+                    }
+                }
+            } else {
+                for i in inventory.indices where inventory[i].isEquipped {
+                    if let a = inventory[i].item as? Armor, a.category != .shield {
+                        inventory[i].isEquipped = false
+                    }
+                }
+            }
+        }
+        inventory[index].isEquipped = true
+    }
+
+    /// Unequips the inventory entry with the given ID. Ignored if no matching entry exists.
+    public func unequipItem(id: UUID) {
+        guard let index = inventory.firstIndex(where: { $0.id == id }) else { return }
+        inventory[index].isEquipped = false
+    }
+
+    /// Sets the quantity of the inventory entry with the given ID.
+    ///
+    /// If `quantity` is 0 or less, the entry is removed from inventory.
+    /// Ignored if no entry with the given ID exists.
+    public func adjustQuantity(_ quantity: Int, for id: UUID) {
+        guard let index = inventory.firstIndex(where: { $0.id == id }) else { return }
+        if quantity <= 0 {
+            inventory.remove(at: index)
+        } else {
+            inventory[index].quantity = quantity
+        }
     }
 }
 
@@ -384,6 +660,7 @@ extension Player: Hashable {
                lhs.baseAbilities == rhs.baseAbilities &&
                lhs.maximumHitPoints == rhs.maximumHitPoints &&
                lhs.currentHitPoints == rhs.currentHitPoints &&
+               lhs.usedHitDice == rhs.usedHitDice &&
                lhs.experiencePoints == rhs.experiencePoints &&
                lhs.level == rhs.level &&
                lhs.money == rhs.money &&
@@ -401,6 +678,7 @@ extension Player: Hashable {
         hasher.combine(baseAbilities)
         hasher.combine(maximumHitPoints)
         hasher.combine(currentHitPoints)
+        hasher.combine(usedHitDice)
         hasher.combine(experiencePoints)
         hasher.combine(level)
         hasher.combine(money)

@@ -55,4 +55,15 @@ struct ClassesTests {
         #expect(decoded["Fighter"] != nil)
     }
 
+    @Test("allSorted returns classes in alphabetical order")
+    func allSorted() throws {
+        let jsonData = try bundle.loadJSON("TestClasses")
+        let classes = try decoder.decode(Classes.self, from: jsonData, configuration: configuration)
+        let sorted = classes.allSorted
+        #expect(sorted.count == classes.count)
+        for i in 0..<sorted.count - 1 {
+            #expect(sorted[i].name < sorted[i + 1].name)
+        }
+    }
+
 }

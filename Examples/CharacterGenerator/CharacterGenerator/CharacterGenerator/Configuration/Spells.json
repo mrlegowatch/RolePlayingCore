@@ -1,0 +1,172 @@
+{
+    "spells": [
+        {
+            "name": "Fire Bolt",
+            "level": 0,
+            "school": "evocation",
+            "components": ["V", "S"],
+            "casting time": "1 action"
+        },
+        {
+            "name": "Guidance",
+            "level": 0,
+            "school": "divination",
+            "components": ["V", "S"],
+            "casting time": "1 action"
+        },
+        {
+            "name": "Mage Hand",
+            "level": 0,
+            "school": "conjuration",
+            "components": ["V", "S"],
+            "casting time": "1 action"
+        },
+        {
+            "name": "Minor Illusion",
+            "level": 0,
+            "school": "illusion",
+            "components": ["S", "M"],
+            "casting time": "1 action"
+        },
+        {
+            "name": "Poison Spray",
+            "level": 0,
+            "school": "necromancy",
+            "components": ["V", "S"],
+            "casting time": "1 action"
+        },
+        {
+            "name": "Prestidigitation",
+            "level": 0,
+            "school": "transmutation",
+            "components": ["V", "S"],
+            "casting time": "1 action"
+        },
+        {
+            "name": "Resistance",
+            "level": 0,
+            "school": "abjuration",
+            "components": ["V", "S", "M"],
+            "casting time": "1 action"
+        },
+        {
+            "name": "Sacred Flame",
+            "level": 0,
+            "school": "evocation",
+            "components": ["V", "S"],
+            "casting time": "1 action"
+        },
+        {
+            "name": "Thaumaturgy",
+            "level": 0,
+            "school": "transmutation",
+            "components": ["V"],
+            "casting time": "1 action"
+        },
+        {
+            "name": "Vicious Mockery",
+            "level": 0,
+            "school": "enchantment",
+            "components": ["V"],
+            "casting time": "1 action"
+        },
+        {
+            "name": "Bless",
+            "level": 1,
+            "school": "enchantment",
+            "components": ["V", "S", "M"],
+            "casting time": "1 action"
+        },
+        {
+            "name": "Burning Hands",
+            "level": 1,
+            "school": "evocation",
+            "components": ["V", "S"],
+            "casting time": "1 action"
+        },
+        {
+            "name": "Charm Person",
+            "level": 1,
+            "school": "enchantment",
+            "components": ["V", "S"],
+            "casting time": "1 action"
+        },
+        {
+            "name": "Cure Wounds",
+            "level": 1,
+            "school": "abjuration",
+            "components": ["V", "S"],
+            "casting time": "1 action"
+        },
+        {
+            "name": "Detect Magic",
+            "level": 1,
+            "school": "divination",
+            "components": ["V", "S"],
+            "casting time": "1 action"
+        },
+        {
+            "name": "Entangle",
+            "level": 1,
+            "school": "conjuration",
+            "components": ["V", "S"],
+            "casting time": "1 action"
+        },
+        {
+            "name": "Faerie Fire",
+            "level": 1,
+            "school": "evocation",
+            "components": ["V"],
+            "casting time": "1 action"
+        },
+        {
+            "name": "Healing Word",
+            "level": 1,
+            "school": "abjuration",
+            "components": ["V"],
+            "casting time": "1 bonus action"
+        },
+        {
+            "name": "Identify",
+            "level": 1,
+            "school": "divination",
+            "components": ["V", "S", "M"],
+            "casting time": "1 minute"
+        },
+        {
+            "name": "Mage Armor",
+            "level": 1,
+            "school": "abjuration",
+            "components": ["V", "S", "M"],
+            "casting time": "1 action"
+        },
+        {
+            "name": "Magic Missile",
+            "level": 1,
+            "school": "evocation",
+            "components": ["V", "S"],
+            "casting time": "1 action"
+        },
+        {
+            "name": "Shield",
+            "level": 1,
+            "school": "abjuration",
+            "components": ["V", "S"],
+            "casting time": "1 reaction"
+        },
+        {
+            "name": "Sleep",
+            "level": 1,
+            "school": "enchantment",
+            "components": ["V", "S", "M"],
+            "casting time": "1 action"
+        },
+        {
+            "name": "Thunderwave",
+            "level": 1,
+            "school": "evocation",
+            "components": ["V", "S"],
+            "casting time": "1 action"
+        }
+    ]
+}

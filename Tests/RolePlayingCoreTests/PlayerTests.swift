@@ -589,36 +589,769 @@ struct PlayerTests {
             "level": 1
         }
         """.data(using: .utf8)!
-        
+
         let player = try decoder.decode(Player.self, from: playerTraits, configuration: configuration)
         player.speciesTraits = human
         player.classTraits = fighter
-        
+
         let initialHP = player.maximumHitPoints
-        
+
         // Add enough XP to level up to level 2
         player.experiencePoints = 301
         #expect(player.canLevelUp)
         player.levelUp()
         #expect(player.level == 2)
         #expect(player.maximumHitPoints > initialHP, "HP should increase on level up")
-        
+
         // Add enough XP to level up to level 3
         player.experiencePoints = 901
         #expect(player.canLevelUp)
         player.levelUp()
         #expect(player.level == 3)
-        
+
         // Add enough XP to level up to level 4
         player.experiencePoints = 2701
         #expect(player.canLevelUp)
         player.levelUp()
         #expect(player.level == 4)
-        
+
         // Without enough XP, cannot level up
         player.experiencePoints = 2701
         #expect(player.canLevelUp == false)
         player.levelUp() // Should do nothing
         #expect(player.level == 4)
+    }
+
+    // MARK: - LevelUpResult and selectSubclass
+
+    // MARK: - Rest mechanics
+
+    @Test("Short rest spends hit dice and heals HP")
+    func shortRestHealsHP() async throws {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        let initialMax = player.maximumHitPoints
+        player.currentHitPoints = 1                    // nearly dead
+
+        let result = player.shortRest(hitDiceToSpend: 1)
+
+        #expect(result.hitDiceSpent == 1)
+        #expect(result.hitPointsGained >= 0)
+        #expect(player.currentHitPoints >= 1)
+        #expect(player.currentHitPoints <= initialMax)
+        #expect(player.usedHitDice == 1)
+        #expect(player.availableHitDice == player.level - 1)
+    }
+
+    @Test("Short rest caps healing at maximum HP")
+    func shortRestCapsAtMaxHP() async throws {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        // Start at full HP — spending dice should not overheal.
+        let result = player.shortRest(hitDiceToSpend: 1)
+        #expect(result.hitDiceSpent == 1)
+        #expect(result.hitPointsGained == 0)
+        #expect(player.currentHitPoints == player.maximumHitPoints)
+    }
+
+    @Test("Short rest with zero available hit dice gains nothing")
+    func shortRestNoAvailableDice() async throws {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        player.currentHitPoints = 1
+        player.usedHitDice = player.level             // exhaust the entire pool
+
+        let result = player.shortRest(hitDiceToSpend: 1)
+
+        #expect(result.hitDiceSpent == 0)
+        #expect(result.hitPointsGained == 0)
+        #expect(player.currentHitPoints == 1)
+        #expect(player.usedHitDice == player.level)
+    }
+
+    @Test("Short rest clamps requested dice to available pool")
+    func shortRestClampsToAvailable() async throws {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        player.currentHitPoints = 1
+        // Level 1 fighter has 1 hit die total; requesting 5 should spend at most 1.
+        let result = player.shortRest(hitDiceToSpend: 5)
+        #expect(result.hitDiceSpent == 1)
+        #expect(player.usedHitDice == 1)
+    }
+
+    @Test("Long rest restores full HP")
+    func longRestRestoresHP() async throws {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        player.currentHitPoints = 1
+        player.longRest()
+        #expect(player.currentHitPoints == player.maximumHitPoints)
+    }
+
+    @Test("Long rest resets used hit dice")
+    func longRestResetsHitDice() async throws {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        player.currentHitPoints = 1
+        player.shortRest(hitDiceToSpend: 1)
+        #expect(player.usedHitDice == 1)
+
+        player.currentHitPoints = 1
+        player.longRest()
+        #expect(player.usedHitDice == 0)
+        #expect(player.availableHitDice == player.level)
+    }
+
+    @Test("Short rest result round-trips through encode/decode")
+    func usedHitDiceRoundTrip() async throws {
+        let playerTraits = """
+        {
+            "name": "Bilbo",
+            "background": "Sailor",
+            "species": "Human",
+            "class": "Fighter",
+            "height": "3'9\\"",
+            "ability scores": {"Strength": 12},
+            "background ability scores": ["Strength", "Strength", "Dexterity"],
+            "skill proficiencies": ["Athletics"],
+            "money": 130,
+            "maximum hit points": 10,
+            "current hit points": 7,
+            "used hit dice": 1,
+            "level": 2
+        }
+        """.data(using: .utf8)!
+
+        let player = try decoder.decode(Player.self, from: playerTraits, configuration: configuration)
+        #expect(player.usedHitDice == 1)
+        #expect(player.availableHitDice == 1)  // level 2, 1 used
+
+        let encoder = JSONEncoder()
+        let encoded = try encoder.encode(player, configuration: configuration)
+        let dict = try #require(try? JSONSerialization.jsonObject(with: encoded) as? [String: Any])
+        #expect(dict["used hit dice"] as? Int == 1)
+    }
+
+    @Test("Used hit dice not encoded when zero")
+    func usedHitDiceOmittedWhenZero() async throws {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        let encoder = JSONEncoder()
+        let encoded = try encoder.encode(player, configuration: configuration)
+        let dict = try #require(try? JSONSerialization.jsonObject(with: encoded) as? [String: Any])
+        #expect(dict["used hit dice"] == nil)
+    }
+
+    @Test("levelUp returns nil when canLevelUp is false")
+    func levelUpReturnsNilWhenBlocked() async throws {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        player.experiencePoints = 0
+        #expect(player.canLevelUp == false)
+        let result = player.levelUp()
+        #expect(result == nil)
+        #expect(player.level == 1)
+    }
+
+    @Test("levelUp returns result with correct new level and HP gained")
+    func levelUpResult() async throws {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        let initialMax = player.maximumHitPoints
+        let initialCurrent = player.currentHitPoints
+        player.experiencePoints = 301
+
+        let result = try #require(player.levelUp())
+        #expect(result.newLevel == 2)
+        #expect(result.hitPointsGained > 0)
+        #expect(player.maximumHitPoints == initialMax + result.hitPointsGained)
+        #expect(player.currentHitPoints == initialCurrent + result.hitPointsGained)
+    }
+
+    @Test("levelUp updates currentHitPoints to match HP gained")
+    func levelUpUpdatesCurrentHP() async throws {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        // Injure the player; current HP should increase by the same amount as max HP on level-up.
+        player.currentHitPoints = player.maximumHitPoints - 4
+        let injuryGap = player.maximumHitPoints - player.currentHitPoints
+        player.experiencePoints = 301
+
+        let result = try #require(player.levelUp())
+        #expect(player.maximumHitPoints - player.currentHitPoints == injuryGap, "injury gap should be preserved")
+        #expect(player.currentHitPoints == player.maximumHitPoints - injuryGap)
+        #expect(result.hitPointsGained > 0)
+    }
+
+    @Test("levelUp grants general feat at levels 4, 8, 12, 16, 19", arguments: [4, 8, 12, 16, 19])
+    func levelUpGrantsGeneralFeat(targetLevel: Int) async throws {
+        // Use a full 20-level XP table so all target levels are reachable.
+        let fullClassData = """
+        {
+            "name": "Fighter",
+            "plural": "Fighters",
+            "hit dice": "d10",
+            "primary ability": ["Strength"],
+            "saving throws": ["Strength", "Constitution"],
+            "starting wealth": "5d4x10",
+            "experience points": [0, 300, 900, 2700, 6500, 14000, 23000, 34000,
+                                   48000, 64000, 85000, 100000, 120000, 140000,
+                                   165000, 195000, 225000, 265000, 305000, 355000]
+        }
+        """.data(using: .utf8)!
+        let fullFighter = try decoder.decode(ClassTraits.self, from: fullClassData, configuration: configuration)
+
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fullFighter)
+        player.level = targetLevel - 1
+        player.experiencePoints = fullFighter.minExperiencePoints(at: targetLevel) + 1
+
+        let result = try #require(player.levelUp())
+        #expect(result.featCategoryToSelect == .general)
+        #expect(result.newLevel == targetLevel)
+    }
+
+    @Test("levelUp grants epic boon at level 20")
+    func levelUpGrantsEpicBoon() async throws {
+        let fullClassData = """
+        {
+            "name": "Fighter",
+            "plural": "Fighters",
+            "hit dice": "d10",
+            "primary ability": ["Strength"],
+            "saving throws": ["Strength", "Constitution"],
+            "starting wealth": "5d4x10",
+            "experience points": [0, 300, 900, 2700, 6500, 14000, 23000, 34000,
+                                   48000, 64000, 85000, 100000, 120000, 140000,
+                                   165000, 195000, 225000, 265000, 305000, 355000]
+        }
+        """.data(using: .utf8)!
+        let fullFighter = try decoder.decode(ClassTraits.self, from: fullClassData, configuration: configuration)
+
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fullFighter)
+        player.level = 19
+        player.experiencePoints = 355001
+
+        let result = try #require(player.levelUp())
+        #expect(result.newLevel == 20)
+        #expect(result.featCategoryToSelect == .epicBoon)
+    }
+
+    @Test("levelUp grants no feat at non-feat levels")
+    func levelUpNoFeatAtOtherLevels() async throws {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        player.experiencePoints = 301  // enough for level 2
+
+        let result = try #require(player.levelUp())
+        #expect(result.newLevel == 2)
+        #expect(result.featCategoryToSelect == nil)
+    }
+
+    @Test("levelUp signals subclass selection at subclassChoiceLevel")
+    func levelUpRequiresSubclassSelection() async throws {
+        let classWithSubclasses = """
+        {
+            "name": "Fighter",
+            "plural": "Fighters",
+            "hit dice": "d10",
+            "primary ability": ["Strength"],
+            "saving throws": ["Strength", "Constitution"],
+            "starting wealth": "5d4x10",
+            "experience points": [0, 300, 900, 2700],
+            "subclass title": "Martial Archetype",
+            "subclass choice level": 3,
+            "subclasses": [
+                { "name": "Champion" },
+                { "name": "Battle Master" }
+            ]
+        }
+        """.data(using: .utf8)!
+        let archetypeFighter = try decoder.decode(ClassTraits.self, from: classWithSubclasses, configuration: configuration)
+
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: archetypeFighter)
+        player.level = 2
+        player.experiencePoints = 901
+
+        let result = try #require(player.levelUp())
+        #expect(result.newLevel == 3)
+        #expect(result.requiresSubclassSelection == true)
+    }
+
+    @Test("levelUp does not signal subclass selection at non-triggering levels")
+    func levelUpNoSubclassSelectionOtherLevels() async throws {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        player.experiencePoints = 301
+
+        let result = try #require(player.levelUp())
+        #expect(result.requiresSubclassSelection == false)
+    }
+
+    @Test("selectSubclass assigns subclass when valid")
+    func selectSubclassValid() async throws {
+        let classWithSubclasses = """
+        {
+            "name": "Fighter",
+            "plural": "Fighters",
+            "hit dice": "d10",
+            "primary ability": ["Strength"],
+            "saving throws": ["Strength", "Constitution"],
+            "starting wealth": "5d4x10",
+            "experience points": [0, 300, 900, 2700],
+            "subclass choice level": 3,
+            "subclasses": [{ "name": "Champion" }]
+        }
+        """.data(using: .utf8)!
+        let archetypeFighter = try decoder.decode(ClassTraits.self, from: classWithSubclasses, configuration: configuration)
+        let champion = archetypeFighter.subclasses[0]
+
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: archetypeFighter)
+        player.level = 3
+        #expect(player.subclassTraits == nil)
+
+        player.selectSubclass(champion)
+        #expect(player.subclassTraits == champion)
+        #expect(player.subclassName == "Champion")
+    }
+
+    @Test("selectSubclass ignores subclass not belonging to class")
+    func selectSubclassWrongClass() async throws {
+        let classWithSubclasses = """
+        {
+            "name": "Fighter",
+            "plural": "Fighters",
+            "hit dice": "d10",
+            "primary ability": ["Strength"],
+            "saving throws": ["Strength", "Constitution"],
+            "starting wealth": "5d4x10",
+            "experience points": [0, 300, 900, 2700],
+            "subclass choice level": 3,
+            "subclasses": [{ "name": "Champion" }]
+        }
+        """.data(using: .utf8)!
+        let archetypeFighter = try decoder.decode(ClassTraits.self, from: classWithSubclasses, configuration: configuration)
+
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: archetypeFighter)
+        player.level = 3
+
+        let foreignSubclass = SubclassTraits(name: "Life Domain")
+        player.selectSubclass(foreignSubclass)
+        #expect(player.subclassTraits == nil, "subclass from another class should be rejected")
+    }
+
+    @Test("selectSubclass ignores call when level is too low")
+    func selectSubclassLevelTooLow() async throws {
+        let classWithSubclasses = """
+        {
+            "name": "Fighter",
+            "plural": "Fighters",
+            "hit dice": "d10",
+            "primary ability": ["Strength"],
+            "saving throws": ["Strength", "Constitution"],
+            "starting wealth": "5d4x10",
+            "experience points": [0, 300, 900, 2700],
+            "subclass choice level": 3,
+            "subclasses": [{ "name": "Champion" }]
+        }
+        """.data(using: .utf8)!
+        let archetypeFighter = try decoder.decode(ClassTraits.self, from: classWithSubclasses, configuration: configuration)
+        let champion = archetypeFighter.subclasses[0]
+
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: archetypeFighter)
+        player.level = 2
+
+        player.selectSubclass(champion)
+        #expect(player.subclassTraits == nil, "subclass selection should be ignored below required level")
+    }
+
+    // MARK: - Inventory Mutation
+
+    @Test("addToInventory creates new entry for unknown item")
+    func addToInventoryNewEntry() {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        let countBefore = player.inventory.count
+        let longsword = configuration.items["Longsword"]!
+        player.addToInventory(longsword)
+        #expect(player.inventory.count == countBefore + 1)
+        #expect(player.inventory.last?.item.name == "Longsword")
+        #expect(player.inventory.last?.quantity == 1)
+    }
+
+    @Test("addToInventory stacks quantity with existing entry for same item")
+    func addToInventoryStacksExisting() {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        let arrow = configuration.items["Arrow"]!
+        let arrowEntry = player.inventory.first(where: { $0.item.name == "Arrow" })
+        let originalQuantity = arrowEntry?.quantity ?? 0
+        let countBefore = player.inventory.count
+
+        player.addToInventory(arrow, quantity: 5)
+        #expect(player.inventory.count == countBefore, "no new entry should be created")
+        let updated = player.inventory.first(where: { $0.item.name == "Arrow" })
+        #expect(updated?.quantity == originalQuantity + 5)
+    }
+
+    @Test("addToInventory with quantity 1 is the default")
+    func addToInventoryDefaultQuantity() {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        let dagger = configuration.items["Dagger"]!
+        player.addToInventory(dagger)
+        #expect(player.inventory.first(where: { $0.item.name == "Dagger" })?.quantity == 1)
+    }
+
+    @Test("addToInventory ignores zero or negative quantity")
+    func addToInventoryIgnoresNonPositive() {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        let countBefore = player.inventory.count
+        let longsword = configuration.items["Longsword"]!
+        player.addToInventory(longsword, quantity: 0)
+        player.addToInventory(longsword, quantity: -3)
+        #expect(player.inventory.count == countBefore)
+    }
+
+    @Test("removeFromInventory removes entry by ID")
+    func removeFromInventory() {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        let longsword = configuration.items["Longsword"]!
+        player.addToInventory(longsword)
+        let id = player.inventory.first(where: { $0.item.name == "Longsword" })!.id
+        let countBefore = player.inventory.count
+
+        player.removeFromInventory(id: id)
+        #expect(player.inventory.count == countBefore - 1)
+        #expect(player.inventory.first(where: { $0.item.name == "Longsword" }) == nil)
+    }
+
+    @Test("removeFromInventory ignores unknown ID")
+    func removeFromInventoryUnknownID() {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        let countBefore = player.inventory.count
+        player.removeFromInventory(id: UUID())
+        #expect(player.inventory.count == countBefore)
+    }
+
+    @Test("equipItem sets isEquipped on the entry")
+    func equipItem() {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        let leatherArmor = configuration.items["Leather Armor"]!
+        player.addToInventory(leatherArmor)
+        let id = player.inventory.first(where: { $0.item.name == "Leather Armor" })!.id
+
+        player.equipItem(id: id)
+        #expect(player.inventory.first(where: { $0.item.name == "Leather Armor" })?.isEquipped == true)
+    }
+
+    @Test("equipItem auto-unequips conflicting non-shield armor")
+    func equipItemUnequipsConflictingArmor() {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        let chainMail = configuration.items["Chain Mail"]!
+        let leatherArmor = configuration.items["Leather Armor"]!
+        player.addToInventory(chainMail)
+        player.addToInventory(leatherArmor)
+
+        let chainID = player.inventory.first(where: { $0.item.name == "Chain Mail" })!.id
+        let leatherID = player.inventory.first(where: { $0.item.name == "Leather Armor" })!.id
+
+        player.equipItem(id: chainID)
+        #expect(player.equippedArmor?.name == "Chain Mail")
+
+        player.equipItem(id: leatherID)
+        #expect(player.equippedArmor?.name == "Leather Armor", "leather should now be equipped")
+        #expect(player.inventory.first(where: { $0.item.name == "Chain Mail" })?.isEquipped == false, "chain mail should be auto-unequipped")
+    }
+
+    @Test("equipItem auto-unequips conflicting shield")
+    func equipItemUnequipsConflictingShield() {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        let shield1 = configuration.items["Shield"]!
+        player.addToInventory(shield1, quantity: 2)
+        // Two separate entries wouldn't happen with stacking, so add via two different paths:
+        // Re-add after removing to get a second distinct entry
+        let firstShieldID = player.inventory.first(where: { $0.item.name == "Shield" })!.id
+        player.equipItem(id: firstShieldID)
+        #expect(player.equippedShield != nil)
+
+        // Remove equipped shield and add a fresh one to get a new ID
+        player.removeFromInventory(id: firstShieldID)
+        player.addToInventory(shield1)
+        let secondShieldID = player.inventory.first(where: { $0.item.name == "Shield" })!.id
+        player.equipItem(id: secondShieldID)
+        #expect(player.equippedShield?.name == "Shield")
+        let equippedCount = player.inventory.filter { $0.isEquipped && ($0.item as? Armor)?.category == .shield }.count
+        #expect(equippedCount == 1, "only one shield should be equipped at a time")
+    }
+
+    @Test("unequipItem clears isEquipped")
+    func unequipItem() {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        let leatherArmor = configuration.items["Leather Armor"]!
+        player.addToInventory(leatherArmor)
+        let id = player.inventory.first(where: { $0.item.name == "Leather Armor" })!.id
+        player.equipItem(id: id)
+        #expect(player.equippedArmor != nil)
+
+        player.unequipItem(id: id)
+        #expect(player.equippedArmor == nil)
+    }
+
+    @Test("adjustQuantity updates the quantity of an entry")
+    func adjustQuantity() {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        let arrowEntry = player.inventory.first(where: { $0.item.name == "Arrow" })!
+        player.adjustQuantity(50, for: arrowEntry.id)
+        #expect(player.inventory.first(where: { $0.item.name == "Arrow" })?.quantity == 50)
+    }
+
+    @Test("adjustQuantity removes entry when quantity is zero")
+    func adjustQuantityRemovesAtZero() {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        let countBefore = player.inventory.count
+        let spearID = player.inventory.first(where: { $0.item.name == "Spear" })!.id
+        player.adjustQuantity(0, for: spearID)
+        #expect(player.inventory.count == countBefore - 1)
+        #expect(player.inventory.first(where: { $0.item.name == "Spear" }) == nil)
+    }
+
+    @Test("adjustQuantity ignores unknown ID")
+    func adjustQuantityUnknownID() {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        let countBefore = player.inventory.count
+        player.adjustQuantity(99, for: UUID())
+        #expect(player.inventory.count == countBefore)
+    }
+
+    // MARK: - Spellcasting
+
+    @Test("Non-spellcasting class has nil spellcasting computed properties")
+    func nonSpellcasterNilProperties() {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        #expect(player.spellcastingAbility == nil)
+        #expect(player.spellcastingModifier == nil)
+        #expect(player.spellSaveDC == nil)
+        #expect(player.spellAttackBonus == nil)
+        #expect(player.maxPreparedSpells == nil)
+    }
+
+    @Test("Spellcasting class has correct computed properties")
+    func spellcasterComputedProperties() throws {
+        let clericTraits = """
+        {
+            "name": "Cleric",
+            "plural": "Clerics",
+            "hit dice": "d8",
+            "starting wealth": "5d4x10",
+            "spellcasting ability": "Wisdom",
+            "spellcasting type": "prepared",
+            "spell slots": [[2], [3], [4, 2]]
+        }
+        """.data(using: .utf8)!
+        let cleric = try decoder.decode(ClassTraits.self, from: clericTraits, configuration: configuration)
+
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: cleric)
+        player.baseAbilities[.wisdom] = 16  // +3 modifier
+
+        #expect(player.spellcastingAbility == Ability("Wisdom"))
+        #expect(player.spellcastingModifier == 3)
+        #expect(player.spellSaveDC == 8 + player.proficiencyBonus + 3)
+        #expect(player.spellAttackBonus == player.proficiencyBonus + 3)
+        #expect(player.maxPreparedSpells == max(1, 3 + player.level))
+    }
+
+    @Test("totalSpellSlots returns correct count for class level")
+    func totalSpellSlots() throws {
+        let clericTraits = """
+        {
+            "name": "Cleric",
+            "plural": "Clerics",
+            "hit dice": "d8",
+            "starting wealth": "5d4x10",
+            "spellcasting ability": "Wisdom",
+            "spellcasting type": "prepared",
+            "spell slots": [[2], [3], [4, 2], [4, 3]]
+        }
+        """.data(using: .utf8)!
+        let cleric = try decoder.decode(ClassTraits.self, from: clericTraits, configuration: configuration)
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: cleric)
+
+        player.level = 1
+        #expect(player.totalSpellSlots(at: 1) == 2)
+        #expect(player.totalSpellSlots(at: 2) == 0)
+
+        player.level = 3
+        #expect(player.totalSpellSlots(at: 1) == 4)
+        #expect(player.totalSpellSlots(at: 2) == 2)
+
+        // Out-of-range slot levels
+        #expect(player.totalSpellSlots(at: 0) == 0)
+        #expect(player.totalSpellSlots(at: 9) == 0)
+    }
+
+    @Test("castSpell expends a slot and returns true; returns false when exhausted")
+    func castSpell() throws {
+        let clericTraits = """
+        {
+            "name": "Cleric",
+            "plural": "Clerics",
+            "hit dice": "d8",
+            "starting wealth": "5d4x10",
+            "spellcasting ability": "Wisdom",
+            "spellcasting type": "prepared",
+            "spell slots": [[2]]
+        }
+        """.data(using: .utf8)!
+        let cleric = try decoder.decode(ClassTraits.self, from: clericTraits, configuration: configuration)
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: cleric)
+
+        #expect(player.totalSpellSlots(at: 1) == 2)
+        #expect(player.availableSpellSlots(at: 1) == 2)
+
+        #expect(player.castSpell(usingSlotLevel: 1) == true)
+        #expect(player.availableSpellSlots(at: 1) == 1)
+
+        #expect(player.castSpell(usingSlotLevel: 1) == true)
+        #expect(player.availableSpellSlots(at: 1) == 0)
+
+        #expect(player.castSpell(usingSlotLevel: 1) == false, "no slots remaining")
+    }
+
+    @Test("castSpell returns false when no spell slots exist at level")
+    func castSpellNoSlots() throws {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        #expect(player.castSpell(usingSlotLevel: 1) == false)
+    }
+
+    @Test("prepareSpell adds spell; is idempotent")
+    func prepareSpell() {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        let bless = configuration.spells["Bless"]!
+        #expect(player.preparedSpells.isEmpty)
+
+        player.prepareSpell(bless)
+        #expect(player.preparedSpells.count == 1)
+
+        player.prepareSpell(bless)
+        #expect(player.preparedSpells.count == 1, "duplicate prepareSpell should be ignored")
+    }
+
+    @Test("unprepareSpell removes a prepared spell")
+    func unprepareSpell() {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        let bless = configuration.spells["Bless"]!
+        let fireball = configuration.spells["Fireball"]!
+        player.prepareSpell(bless)
+        player.prepareSpell(fireball)
+        #expect(player.preparedSpells.count == 2)
+
+        player.unprepareSpell(bless)
+        #expect(player.preparedSpells.count == 1)
+        #expect(player.preparedSpells.first?.name == "Fireball")
+
+        player.unprepareSpell(bless)  // already removed — no-op
+        #expect(player.preparedSpells.count == 1)
+    }
+
+    @Test("Long rest resets used spell slots")
+    func longRestResetSpellSlots() throws {
+        let clericTraits = """
+        {
+            "name": "Cleric",
+            "plural": "Clerics",
+            "hit dice": "d8",
+            "starting wealth": "5d4x10",
+            "spellcasting ability": "Wisdom",
+            "spellcasting type": "prepared",
+            "spell slots": [[2, 1]]
+        }
+        """.data(using: .utf8)!
+        let cleric = try decoder.decode(ClassTraits.self, from: clericTraits, configuration: configuration)
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: cleric)
+
+        player.castSpell(usingSlotLevel: 1)
+        player.castSpell(usingSlotLevel: 2)
+        #expect(!player.usedSpellSlots.isEmpty)
+
+        player.longRest()
+        #expect(player.usedSpellSlots.isEmpty)
+        #expect(player.availableSpellSlots(at: 1) == 2)
+        #expect(player.availableSpellSlots(at: 2) == 1)
+    }
+
+    @Test("Prepared spells survive encode/decode round-trip")
+    func preparedSpellsRoundTrip() async throws {
+        let playerTraits = """
+        {
+            "name": "Frodo",
+            "background": "Sailor",
+            "species": "Human",
+            "class": "Fighter",
+            "height": "3'9\\"",
+            "ability scores": {"Wisdom": 14},
+            "background ability scores": ["Strength", "Strength", "Dexterity"],
+            "skill proficiencies": ["Athletics"],
+            "money": 130,
+            "maximum hit points": 10,
+            "prepared spells": ["Bless", "Fireball"]
+        }
+        """.data(using: .utf8)!
+
+        let player = try decoder.decode(Player.self, from: playerTraits, configuration: configuration)
+        #expect(player.preparedSpells.count == 2)
+        #expect(player.preparedSpells.contains(where: { $0.name == "Bless" }))
+        #expect(player.preparedSpells.contains(where: { $0.name == "Fireball" }))
+
+        let encoder = JSONEncoder()
+        let encoded = try encoder.encode(player, configuration: configuration)
+        let dict = try #require(try? JSONSerialization.jsonObject(with: encoded) as? [String: Any])
+        let names = try #require(dict["prepared spells"] as? [String])
+        #expect(Set(names) == Set(["Bless", "Fireball"]))
+    }
+
+    @Test("Unknown prepared spell name silently skipped on decode")
+    func unknownPreparedSpellSkipped() async throws {
+        let playerTraits = """
+        {
+            "name": "Frodo",
+            "background": "Sailor",
+            "species": "Human",
+            "class": "Fighter",
+            "height": "3'9\\"",
+            "ability scores": {},
+            "background ability scores": ["Strength", "Strength", "Dexterity"],
+            "skill proficiencies": ["Athletics"],
+            "money": 130,
+            "maximum hit points": 10,
+            "prepared spells": ["Bless", "Nonexistent Spell XYZ"]
+        }
+        """.data(using: .utf8)!
+
+        let player = try decoder.decode(Player.self, from: playerTraits, configuration: configuration)
+        #expect(player.preparedSpells.count == 1)
+        #expect(player.preparedSpells.first?.name == "Bless")
+    }
+
+    @Test("Used spell slots survive encode/decode round-trip")
+    func usedSpellSlotsRoundTrip() async throws {
+        let playerTraits = """
+        {
+            "name": "Frodo",
+            "background": "Sailor",
+            "species": "Human",
+            "class": "Fighter",
+            "height": "3'9\\"",
+            "ability scores": {},
+            "background ability scores": ["Strength", "Strength", "Dexterity"],
+            "skill proficiencies": ["Athletics"],
+            "money": 130,
+            "maximum hit points": 10,
+            "used spell slots": [1, 0, 2]
+        }
+        """.data(using: .utf8)!
+
+        let player = try decoder.decode(Player.self, from: playerTraits, configuration: configuration)
+        #expect(player.usedSpellSlots == [1, 0, 2])
+
+        let encoder = JSONEncoder()
+        let encoded = try encoder.encode(player, configuration: configuration)
+        let dict = try #require(try? JSONSerialization.jsonObject(with: encoded) as? [String: Any])
+        let slots = try #require(dict["used spell slots"] as? [Int])
+        #expect(slots == [1, 0, 2])
+    }
+
+    @Test("Used spell slots not encoded when empty")
+    func usedSpellSlotsOmittedWhenEmpty() {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        let encoder = JSONEncoder()
+        let encoded = try! encoder.encode(player, configuration: configuration)
+        let dict = try! JSONSerialization.jsonObject(with: encoded) as! [String: Any]
+        #expect(dict["used spell slots"] == nil)
     }
 }

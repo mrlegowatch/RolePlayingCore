@@ -7,8 +7,7 @@
 //
 
 /// Traits describing a feat — a special ability a character acquires at character creation
-/// or at certain levels. Feats are identified by name; mechanical effects such as ability
-/// score increases and proficiencies are available as future extensions.
+/// or at certain levels.
 public struct FeatTraits: Sendable, Equatable {
     public var name: String
     public var description: String
@@ -22,16 +21,38 @@ public struct FeatTraits: Sendable, Equatable {
         case epicBoon = "epic boon"        // Level 20 only
     }
 
-    public init(name: String, description: String = "", category: Category = .general) {
+    /// Fixed ability score increases granted by this feat (e.g., `[.strength: 2]`).
+    public var abilityScoreIncreases: [Ability: Int]
+
+    /// Weapon proficiencies granted by this feat.
+    public var weaponProficiencies: [WeaponProficiency]
+
+    /// Armor weight categories the feat grants training in.
+    public var armorTraining: [ArmorProficiency]
+
+    public init(
+        name: String,
+        description: String = "",
+        category: Category = .general,
+        abilityScoreIncreases: [Ability: Int] = [:],
+        weaponProficiencies: [WeaponProficiency] = [],
+        armorTraining: [ArmorProficiency] = []
+    ) {
         self.name = name
         self.description = description
         self.category = category
+        self.abilityScoreIncreases = abilityScoreIncreases
+        self.weaponProficiencies = weaponProficiencies
+        self.armorTraining = armorTraining
     }
 }
 
 extension FeatTraits: Codable {
     private enum CodingKeys: String, CodingKey {
         case name, description, category
+        case abilityScoreIncreases = "ability score increases"
+        case weaponProficiencies = "weapon proficiencies"
+        case armorTraining = "armor training"
     }
 
     public init(from decoder: any Decoder) throws {
@@ -39,7 +60,17 @@ extension FeatTraits: Codable {
         let name = try values.decode(String.self, forKey: .name)
         let description = try values.decodeIfPresent(String.self, forKey: .description) ?? ""
         let category = try values.decodeIfPresent(Category.self, forKey: .category) ?? .general
-        self.init(name: name, description: description, category: category)
+
+        let rawIncreases = try values.decodeIfPresent([String: Int].self, forKey: .abilityScoreIncreases) ?? [:]
+        let abilityScoreIncreases = Dictionary(uniqueKeysWithValues: rawIncreases.map { (Ability($0.key), $0.value) })
+
+        let weaponProficiencies = try values.decodeIfPresent([WeaponProficiency].self, forKey: .weaponProficiencies) ?? []
+        let armorTraining = try values.decodeIfPresent([ArmorProficiency].self, forKey: .armorTraining) ?? []
+
+        self.init(name: name, description: description, category: category,
+                  abilityScoreIncreases: abilityScoreIncreases,
+                  weaponProficiencies: weaponProficiencies,
+                  armorTraining: armorTraining)
     }
 
     public func encode(to encoder: any Encoder) throws {
@@ -50,6 +81,16 @@ extension FeatTraits: Codable {
         }
         if category != .general {
             try values.encode(category, forKey: .category)
+        }
+        if !abilityScoreIncreases.isEmpty {
+            let raw = Dictionary(uniqueKeysWithValues: abilityScoreIncreases.map { ($0.key.name, $0.value) })
+            try values.encode(raw, forKey: .abilityScoreIncreases)
+        }
+        if !weaponProficiencies.isEmpty {
+            try values.encode(weaponProficiencies, forKey: .weaponProficiencies)
+        }
+        if !armorTraining.isEmpty {
+            try values.encode(armorTraining, forKey: .armorTraining)
         }
     }
 }

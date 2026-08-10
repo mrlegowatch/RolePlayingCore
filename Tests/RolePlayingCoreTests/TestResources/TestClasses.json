@@ -30,7 +30,27 @@
                 "starting wealth": "5d4x10",
                 "armor training": ["light", "medium", "shield"],
                 "weapon proficiencies": ["simple"],
-                "starting equipment": [["Chain Shirt", "Shield", "Mace", "Holy Symbol", "Priest's Pack", "7 GP"], ["110 GP"]]
+                "starting equipment": [["Chain Shirt", "Shield", "Mace", "Holy Symbol", "Priest's Pack", "7 GP"], ["110 GP"]],
+                "spellcasting ability": "Wisdom",
+                "spellcasting type": "prepared",
+                "spell slots": [[2], [3], [4, 2], [4, 3]],
+                "cantrips known": 3,
+                "spells known": 2,
+                "subclass title": "Divine Domain",
+                "subclass choice level": 3,
+                "subclasses": [
+                    {
+                        "name": "Life Domain",
+                        "features": {
+                            "3": ["Disciple of Life"],
+                            "6": ["Blessed Healer"]
+                        },
+                        "additional spells": {
+                            "1": ["Bless"],
+                            "3": ["Sacred Flame", "Fire Bolt"]
+                        }
+                    }
+                ]
                 },
                 {
                 "name": "Fighter",
@@ -66,7 +86,12 @@
                 "starting wealth": "4d4x10",
                 "armor training": [],
                 "weapon proficiencies": ["Dagger", "Quarterstaff"],
-                "starting equipment": [["2 Dagger", "Quarterstaff", "Scholar's Pack", "5 GP"], ["55 GP"]]
+                "starting equipment": [["2 Dagger", "Quarterstaff", "Scholar's Pack", "5 GP"], ["55 GP"]],
+                "spellcasting ability": "Intelligence",
+                "spellcasting type": "prepared",
+                "spell slots": [[2], [3], [4, 2], [4, 3], [4, 3, 2]],
+                "cantrips known": 3,
+                "spells known": 2
                 }
                 ]
 }

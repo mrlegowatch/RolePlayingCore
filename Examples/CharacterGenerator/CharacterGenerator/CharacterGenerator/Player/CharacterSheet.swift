@@ -25,12 +25,12 @@ class CharacterSheet {
     // Mapping between sections/items and key paths to properties.
     var keys: [[PartialKeyPath<CharacterSheet>]] = [
         [\.experiencePoints],
-        [\.backgroundName, \.speciesName, \.className],
+        [\.backgroundName, \.speciesName, \.className, \.subclassName],
         [\.abilities],
         [\.skills],
         [\.initiative, \.speed],
         [\.armorClass, \.proficiencyBonus, \.passivePerception],
-        [\.maximumHitPoints, \.hitDice],
+        [\.currentHitPoints, \.maximumHitPoints, \.hitDice],
         [\.height, \.size],
         [\.money],
         [\.inventory]
@@ -44,7 +44,7 @@ class CharacterSheet {
         ["Skills"],
         ["Initiative", "Speed"],
         ["Armor Class", "Proficiency Bonus", "Passive Perception"],
-        ["Hit Points", "Hit Dice"],
+        ["Current HP", "Max HP", "Hit Dice"],
         ["Height", "Size"],
         ["Money"],
         ["Inventory"]
@@ -53,12 +53,12 @@ class CharacterSheet {
     // Mapping of properties to view types.
     var cellIdentifiers: [[String]] = [
         ["experiencePoints"],
-        ["labeledText", "labeledText", "labeledText"],
+        ["labeledText", "labeledText", "labeledText", "labeledText"],
         ["abilities"],
         ["labeledText"],
         ["labeledNumber", "labeledNumber"],
         ["labeledNumber", "labeledNumber", "labeledNumber"],
-        ["labeledNumber", "labeledText"],
+        ["labeledNumber", "labeledNumber", "labeledText"],
         ["labeledText", "labeledText"],
         ["labeledText"],
         ["labeledText"]
@@ -77,6 +77,7 @@ class CharacterSheet {
     var backgroundName: String { player.backgroundName }
     var className: String { player.className }
     var speciesName: String { player.speciesName }
+    var subclassName: String { player.subclassName }
     var alignment: String {
         if let alignment = player.alignment {
             return "\(alignment)"

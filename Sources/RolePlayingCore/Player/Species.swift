@@ -35,6 +35,11 @@ public class Species: CodableWithConfiguration {
     public var leafSpecies: [SpeciesTraits] {
         return all.filter { $0.subspecies.isEmpty }
     }
+
+    /// Returns all leaf species sorted by name.
+    public var leafSpeciesSorted: [SpeciesTraits] {
+        leafSpecies.sorted { $0.name < $1.name }
+    }
     
     /// Returns the species matching the specified name, or nil if not present.
     public subscript(speciesName: String) -> SpeciesTraits? {
