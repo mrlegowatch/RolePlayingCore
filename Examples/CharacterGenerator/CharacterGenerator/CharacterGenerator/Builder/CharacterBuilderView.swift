@@ -8,19 +8,20 @@
 import SwiftUI
 import RolePlayingCore
 
+// Steps beyond the root (Species). Each value is pushed onto the NavigationStack path.
+private enum BuilderStep: Hashable {
+    case `class`, background, abilityScores, skills, spells, nameAndFinish
+}
+
 struct CharacterBuilderView: View {
     @EnvironmentObject var appState: AppState
 
     var body: some View {
-        // Guard against the brief window during sheet dismissal when builderState
+        // Guard against the brief window during dismissal when builderState
         // is set to nil before the animation completes.
         if let builderState = appState.builderState {
-            NavigationStack {
-                BuilderStepContainer(builderState: builderState)
-            }
-            // .large covers iPhone full-screen; minWidth/minHeight sizes the Mac Catalyst dialog.
-            .presentationDetents([.large])
-            .frame(minWidth: 400, minHeight: 600)
+            BuilderStepContainer(builderState: builderState)
+                .frame(minWidth: 400, minHeight: 600)
         }
     }
 }
@@ -28,6 +29,7 @@ struct CharacterBuilderView: View {
 private struct BuilderStepContainer: View {
     @EnvironmentObject var appState: AppState
     @Bindable var builderState: CharacterBuilderState
+    @State private var path: [BuilderStep] = []
 
     private var isSpellcaster: Bool {
         builderState.selectedClass?.spellcastingAbility != nil
@@ -36,7 +38,7 @@ private struct BuilderStepContainer: View {
     private var totalSteps: Int { isSpellcaster ? 7 : 6 }
 
     private var canAdvance: Bool {
-        switch builderState.currentStep {
+        switch path.count {
         case 0: return builderState.selectedSpecies != nil
         case 1: return builderState.selectedClass != nil
         case 2: return builderState.selectedBackground != nil
@@ -58,62 +60,78 @@ private struct BuilderStepContainer: View {
         }
     }
 
-    private var isLastStep: Bool { builderState.currentStep == totalSteps - 1 }
+    private var isLastStep: Bool { path.last == .nameAndFinish }
+
+    private var nextStep: BuilderStep? {
+        switch path.count {
+        case 0: return .class
+        case 1: return .background
+        case 2: return .abilityScores
+        case 3: return .skills
+        case 4: return isSpellcaster ? .spells : .nameAndFinish
+        case 5 where isSpellcaster: return .nameAndFinish
+        default: return nil
+        }
+    }
 
     var body: some View {
-        stepContent
-            .navigationTitle("")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    leadingButton
+        NavigationStack(path: $path) {
+            SpeciesPickerView(builderState: builderState)
+                .navigationTitle("")
+                .navigationBarTitleDisplayMode(.inline)
+                .navigationDestination(for: BuilderStep.self) { step in
+                    stepView(for: step)
+                        .navigationTitle("")
+                        .navigationBarTitleDisplayMode(.inline)
+                        .navigationBarBackButtonHidden(true)
+                        .toolbar { builderToolbar }
                 }
-                ToolbarItem(placement: .principal) {
-                    progressView
+                .toolbar { builderToolbar }
+                .onChange(of: builderState.selectedClass?.name) { _, newName in
+                    guard let newName else { return }
+                    builderState.chosenCantrips = []
+                    builderState.chosenSpells = []
+                    let bgName = Self.defaultBackgroundName(for: newName)
+                    builderState.selectedBackground = appState.configuration.backgrounds[bgName]
+                    // Pop back if class changed from spellcaster to non-spellcaster.
+                    let newTotal = appState.configuration.classes[newName]?.spellcastingAbility != nil ? 7 : 6
+                    let maxDepth = newTotal - 1
+                    while path.count > maxDepth { path.removeLast() }
                 }
-                ToolbarItem(placement: .topBarTrailing) {
-                    trailingButton
+                .onChange(of: builderState.selectedBackground?.name) { _, _ in
+                    builderState.chosenSkills = []
                 }
-            }
-            .onChange(of: builderState.selectedClass?.name) { _, newName in
-                guard let newName else { return }
-                builderState.chosenCantrips = []
-                builderState.chosenSpells = []
-                let bgName = Self.defaultBackgroundName(for: newName)
-                builderState.selectedBackground = appState.configuration.backgrounds[bgName]
-                // Clamp step in case totalSteps shrank (spellcaster → non-spellcaster).
-                let newTotal = appState.configuration.classes[newName]?.spellcastingAbility != nil ? 7 : 6
-                if builderState.currentStep >= newTotal {
-                    builderState.currentStep = newTotal - 1
-                }
-            }
-            .onChange(of: builderState.selectedBackground?.name) { _, _ in
-                builderState.chosenSkills = []
-            }
+        }
+    }
+
+    @ToolbarContentBuilder
+    private var builderToolbar: some ToolbarContent {
+        ToolbarItem(placement: .topBarLeading) { leadingButton }
+        ToolbarItem(placement: .principal) { progressView }
+        ToolbarItem(placement: .topBarTrailing) { trailingButton }
     }
 
     @ViewBuilder
-    private var stepContent: some View {
-        switch builderState.currentStep {
-        case 0: SpeciesPickerView(builderState: builderState)
-        case 1: ClassPickerView(builderState: builderState)
-        case 2: BackgroundPickerView(builderState: builderState)
-        case 3: AbilityScoresBuilderView(builderState: builderState)
-        case 4: SkillsPickerView(builderState: builderState)
-        case 5 where isSpellcaster: SpellsPickerView(builderState: builderState)
-        default: NameAndFinishView(builderState: builderState)
+    private func stepView(for step: BuilderStep) -> some View {
+        switch step {
+        case .class:        ClassPickerView(builderState: builderState)
+        case .background:   BackgroundPickerView(builderState: builderState)
+        case .abilityScores: AbilityScoresBuilderView(builderState: builderState)
+        case .skills:       SkillsPickerView(builderState: builderState)
+        case .spells:       SpellsPickerView(builderState: builderState)
+        case .nameAndFinish: NameAndFinishView(builderState: builderState)
         }
     }
 
     @ViewBuilder
     private var leadingButton: some View {
-        if builderState.currentStep == 0 {
+        if path.isEmpty {
             Button("Cancel") {
                 appState.cancelBuildingCharacter()
             }
         } else {
             Button {
-                builderState.currentStep -= 1
+                path.removeLast()
             } label: {
                 Image(systemName: "chevron.left")
                     .fontWeight(.semibold)
@@ -123,11 +141,11 @@ private struct BuilderStepContainer: View {
 
     private var progressView: some View {
         VStack(spacing: 3) {
-            Text("\(builderState.currentStep + 1) / \(totalSteps)")
+            Text("\(path.count + 1) / \(totalSteps)")
                 .font(.caption2)
                 .foregroundStyle(.secondary)
                 .monospacedDigit()
-            ProgressView(value: Double(builderState.currentStep + 1), total: Double(totalSteps))
+            ProgressView(value: Double(path.count + 1), total: Double(totalSteps))
                 .progressViewStyle(.linear)
                 .frame(width: 110)
                 .tint(.accentColor)
@@ -142,9 +160,9 @@ private struct BuilderStepContainer: View {
             }
             .disabled(!canAdvance)
             .fontWeight(.semibold)
-        } else {
+        } else if let next = nextStep {
             Button {
-                builderState.currentStep += 1
+                path.append(next)
             } label: {
                 Image(systemName: "chevron.right")
                     .fontWeight(.semibold)

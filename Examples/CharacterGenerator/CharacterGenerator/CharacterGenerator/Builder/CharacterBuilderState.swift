@@ -33,9 +33,6 @@ class CharacterBuilderState {
     var gender: Player.Gender?
     var alignment: CharacterAlignment?
 
-    /// Current step index (0 = Species … last = Name & Finish).
-    var currentStep: Int = 0
-
     /// True after ability scores have been auto-rolled on first appearance.
     var hasAutoRolled: Bool = false
 

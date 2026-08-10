@@ -12,10 +12,7 @@ struct SpeciesPickerView: View {
     @EnvironmentObject var appState: AppState
     let builderState: CharacterBuilderState
 
-    @State private var drawerDetent: PresentationDetent = Self.collapsedDetent
-
-    private static let collapsedDetent: PresentationDetent = .fraction(0.12)
-    private static let expandedDetent: PresentationDetent = .fraction(0.45)
+    @State private var isDrawerExpanded = false
 
     private static let popularityOrder: [String] = [
         "Human", "Elf", "Dwarf", "Halfling", "Dragonborn",
@@ -49,31 +46,36 @@ struct SpeciesPickerView: View {
         }
         .navigationTitle("Choose Species")
         .navigationBarTitleDisplayMode(.large)
-        .sheet(isPresented: Binding(
-            get: { builderState.selectedSpecies != nil },
-            set: { _ in }
-        )) {
-            descriptionDrawer
-                .presentationDetents([Self.collapsedDetent, Self.expandedDetent], selection: $drawerDetent)
-                .presentationBackgroundInteraction(.enabled)
-                .interactiveDismissDisabled()
-                .presentationDragIndicator(.visible)
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            if builderState.selectedSpecies != nil {
+                descriptionDrawer
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
         }
+        .animation(.spring(response: 0.35), value: builderState.selectedSpecies?.name)
     }
 
     private var descriptionDrawer: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: 0) {
+            // Drag indicator
+            Capsule()
+                .fill(Color.secondary.opacity(0.4))
+                .frame(width: 36, height: 5)
+                .frame(maxWidth: .infinity)
+                .padding(.top, 8)
+                .padding(.bottom, 4)
+
             HStack {
                 Text(builderState.selectedSpecies?.name ?? "")
                     .font(.title3.bold())
                 Spacer()
                 if builderState.selectedSpecies?.description != nil {
                     Button {
-                        drawerDetent = drawerDetent == Self.expandedDetent
-                            ? Self.collapsedDetent
-                            : Self.expandedDetent
+                        withAnimation(.spring(response: 0.3)) {
+                            isDrawerExpanded.toggle()
+                        }
                     } label: {
-                        Image(systemName: drawerDetent == Self.expandedDetent
+                        Image(systemName: isDrawerExpanded
                               ? "chevron.down.circle.fill"
                               : "chevron.up.circle.fill")
                             .foregroundStyle(.tint)
@@ -81,23 +83,30 @@ struct SpeciesPickerView: View {
                     }
                 }
             }
-            if drawerDetent == Self.expandedDetent,
-               let desc = builderState.selectedSpecies?.description {
+            .padding(.horizontal)
+            .padding(.vertical, 10)
+
+            if isDrawerExpanded, let desc = builderState.selectedSpecies?.description {
                 Text(desc)
                     .font(.body)
                     .foregroundStyle(.secondary)
+                    .padding(.horizontal)
+                    .padding(.bottom, 16)
             }
-            Spacer()
         }
-        .padding()
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .frame(maxWidth: .infinity)
+        .background(.regularMaterial)
+        .overlay(alignment: .top) { Divider() }
     }
 
     @ViewBuilder
     private func speciesRow(_ species: SpeciesTraits) -> some View {
         let isSelected = builderState.selectedSpecies?.name == species.name
         Button {
-            builderState.selectedSpecies = species
+            withAnimation(.spring(response: 0.35)) {
+                if !isSelected { isDrawerExpanded = false }
+                builderState.selectedSpecies = species
+            }
         } label: {
             HStack {
                 SpeciesRowView(species: species)

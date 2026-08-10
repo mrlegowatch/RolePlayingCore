@@ -49,7 +49,7 @@ struct PlayerListView: View {
                 }
             }
         }
-        .sheet(isPresented: Binding(
+        .fullScreenCover(isPresented: Binding(
             get: { appState.builderState != nil },
             set: { if !$0 { appState.cancelBuildingCharacter() } }
         )) {
