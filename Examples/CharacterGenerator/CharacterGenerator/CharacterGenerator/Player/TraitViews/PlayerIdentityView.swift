@@ -41,6 +41,26 @@ struct PlayerIdentityView: View {
                             .font(.subheadline)
                     }
                 }
+                if let gender = player.gender {
+                    VStack(alignment: .leading, spacing: 1) {
+                        Text("Gender")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                            .textCase(.uppercase)
+                        Text(gender.rawValue)
+                            .font(.subheadline)
+                    }
+                }
+                if let alignment = player.alignment {
+                    VStack(alignment: .leading, spacing: 1) {
+                        Text("Alignment")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                            .textCase(.uppercase)
+                        Text(alignment.description)
+                            .font(.subheadline)
+                    }
+                }
                 Spacer()
             }
         }

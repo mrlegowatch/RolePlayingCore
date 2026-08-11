@@ -57,6 +57,13 @@ struct PlayerDetailView: View {
                         .background(.background.secondary)
                         .cornerRadius(12)
                 }
+                // Feats
+                if !player.feats.isEmpty {
+                    FeatsView(player: player)
+                        .padding()
+                        .background(.background.secondary)
+                        .cornerRadius(12)
+                }
                 // Spells
                 if player.spellcastingAbility != nil {
                     SpellsView(player: player)
