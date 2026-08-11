@@ -19,45 +19,46 @@ import Foundation
 ///   "tools": [...]
 /// }
 /// ```
-public struct Items: CodableWithConfiguration, Sendable {
-
+public struct Items: Sendable {
     private var byName: [String: any Item] = [:]
     private var byPlural: [String: any Item] = [:]
-
+    
     public var all: [any Item] { Array(byName.values) }
     public var weapons: [Weapon] { all.compactMap { $0 as? Weapon } }
     public var armors: [Armor] { all.compactMap { $0 as? Armor } }
     public var gear: [Gear] { all.compactMap { $0 as? Gear } }
     public var tools: [Tool] { all.compactMap { $0 as? Tool } }
-
+    
     public var count: Int { byName.count }
-
+    
     public init() { }
-
-    // MARK: - Registry management
-
+    
     public mutating func add(_ item: any Item) {
         byName[item.name] = item
         byPlural[item.plural] = item
     }
-
+    
     public mutating func add(_ items: [any Item]) {
         items.forEach { add($0) }
     }
-
+    
     public mutating func add(_ other: Items) {
         add(other.all)
     }
-
+    
     /// Returns the item matching the given name (exact match first, then plural).
     public subscript(name: String) -> (any Item)? {
         byName[name] ?? byPlural[name]
     }
+}
 
-    // MARK: - CodableWithConfiguration
+extension Items: CodableWithConfiguration {
 
     private enum CodingKeys: String, CodingKey {
-        case weapons, armors, gear, tools
+        case weapons
+        case armors
+        case gear
+        case tools
     }
 
     public init(from decoder: Decoder, configuration: GameData) throws {

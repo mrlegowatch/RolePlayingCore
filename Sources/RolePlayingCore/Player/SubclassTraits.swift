@@ -38,6 +38,7 @@ public struct SubclassTraits: Sendable, Equatable {
 }
 
 extension SubclassTraits: CodableWithConfiguration {
+
     private enum CodingKeys: String, CodingKey {
         case name
         case descriptiveTraits = "descriptive traits"

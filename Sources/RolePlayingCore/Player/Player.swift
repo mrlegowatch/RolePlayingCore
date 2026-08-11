@@ -24,7 +24,6 @@ public extension AbilityScores {
 /// The base class for a player character, including its background, species, class, abilities, skills, hit points, and so on.
 @Observable
 public class Player: CodableWithConfiguration {
-    
     /// The player's name.
     public var name: String
     

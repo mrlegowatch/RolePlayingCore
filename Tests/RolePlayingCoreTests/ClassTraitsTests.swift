@@ -538,4 +538,23 @@ struct ClassTraitsTests {
         let decoded = try decoder.decode(ClassTraits.self, from: encoded, configuration: gameData)
         #expect(decoded.defaultBackground == "Acolyte")
     }
+
+    // MARK: - Hit dice validation
+
+    @Test("Hit dice that is a compound expression throws dataCorrupted")
+    func hitDiceCompoundExpressionThrows() {
+        // "5d4x10" decodes as CompoundDice (a valid Rollable) but not Dice, so should fail
+        let traits = """
+        {
+            "name": "Fighter",
+            "plural": "Fighters",
+            "hit dice": "5d4x10",
+            "starting wealth": "5d4x10"
+        }
+        """.data(using: .utf8)!
+
+        #expect(throws: DecodingError.self) {
+            _ = try decoder.decode(ClassTraits.self, from: traits, configuration: gameData)
+        }
+    }
 }

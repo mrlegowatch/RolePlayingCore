@@ -10,7 +10,6 @@ import Foundation
 
 /// A piece of equipment carried or worn by a player character.
 public protocol Item: Sendable {
-
     /// The canonical singular name of the item (e.g., "Dagger").
     var name: String { get }
 

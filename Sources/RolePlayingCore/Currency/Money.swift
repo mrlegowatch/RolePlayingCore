@@ -60,8 +60,6 @@ extension Money {
 }
 
 extension Money: CodableWithConfiguration {
-    public typealias EncodingConfiguration = Currencies
-    public typealias DecodingConfiguration = Currencies
 
     public init(from decoder: any Decoder, configuration: Currencies) throws {
         let container = try decoder.singleValueContainer()

@@ -7,36 +7,36 @@
 //
 
 /// A collection of spells, indexed by name.
-public struct Spells: Codable, Sendable {
-
+public struct Spells: Sendable {
     private var allSpells: [String: Spell] = [:]
-
+    
     /// All spells in the collection (unordered).
     public var all: [Spell] { Array(allSpells.values) }
-
+    
     public init(_ spells: [Spell] = []) {
         add(spells)
     }
-
+    
     mutating func add(_ spells: [Spell]) {
         let mapped = Dictionary(spells.map { ($0.name, $0) }, uniquingKeysWith: { _, last in last })
         allSpells.merge(mapped, uniquingKeysWith: { _, last in last })
     }
-
+    
     /// Accesses a spell by name.
     public subscript(name: String) -> Spell? {
         allSpells[name]
     }
-
+    
     /// Returns the number of spells in the collection.
     public var count: Int { allSpells.count }
-
+    
     /// Returns all spells of the given level, sorted by name.
     public func spells(ofLevel level: Int) -> [Spell] {
         all.filter { $0.level == level }.sorted { $0.name < $1.name }
     }
+}
 
-    // MARK: - Codable
+extension Spells: Codable {
 
     private enum CodingKeys: String, CodingKey {
         case spells

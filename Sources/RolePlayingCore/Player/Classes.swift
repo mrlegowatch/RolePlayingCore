@@ -9,20 +9,19 @@
 import Foundation
 
 /// A collection of class traits.
-public struct Classes: CodableWithConfiguration, DisplayOrdered, Sendable {
-    
+public struct Classes: DisplayOrdered, Sendable {
     /// A dictionary of class traits indexed by name.
     private var allClasses: [String: ClassTraits] = [:]
     
     /// An array of class traits.
     public var all: [ClassTraits] { Array(allClasses.values) }
-
+    
     /// An array of class traits sorted by name.
     public var allSorted: [ClassTraits] { all.sorted { $0.name < $1.name } }
-
+    
     /// The preferred display order for classes; empty means no preference (alphabetical fallback).
     public var displayOrder: [String] = []
-
+    
     /// An optional table of the minimum experience points required to reach the next level.
     public var experiencePoints: [Int]?
     
@@ -60,12 +59,12 @@ public struct Classes: CodableWithConfiguration, DisplayOrdered, Sendable {
     
     /// Accesses a class traits instance by index.
     public subscript(index: Int) -> ClassTraits? {
-        guard index >= 0 && index < count else { return nil }
         return all[index]
     }
-    
-    // MARK: CodableWithConfiguration conformance
-    
+}
+
+extension Classes: CodableWithConfiguration {
+       
     private enum CodingKeys: String, CodingKey {
         case classes
         case experiencePoints = "experience points"

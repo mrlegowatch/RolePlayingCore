@@ -10,7 +10,6 @@ import Foundation
 
 /// Traits representing a species.
 public struct SpeciesTraits: Named, Sendable {
-
     public var name: String
     public var plural: String
     public var aliases: [String]

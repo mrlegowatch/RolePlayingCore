@@ -120,8 +120,6 @@ extension EquipmentOptions: RandomAccessCollection {
 }
 
 extension EquipmentOptions: CodableWithConfiguration {
-    public typealias EncodingConfiguration = GameData
-    public typealias DecodingConfiguration = GameData
 
     public init(from decoder: any Decoder, configuration: GameData) throws {
         let strings = try [[String]](from: decoder)

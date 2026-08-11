@@ -56,7 +56,13 @@ public struct Gear: Item {
 extension Gear: CodableWithConfiguration {
 
     private enum CodingKeys: String, CodingKey {
-        case name, plural, cost, weight, category, description, contents
+        case name
+        case plural
+        case cost
+        case weight
+        case category
+        case description
+        case contents
     }
 
     public init(from decoder: Decoder, configuration: GameData) throws {

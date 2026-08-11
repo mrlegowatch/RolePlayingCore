@@ -10,7 +10,6 @@ import Foundation
 
 /// A collection of species traits, including subspecies.
 public class Species: CodableWithConfiguration, DisplayOrdered {
-    
     /// All of the species and subspecies traits as a flattened dictionary, indexed by species name.
     private var allSpecies: [String: SpeciesTraits] = [:]
 

@@ -17,10 +17,13 @@ public struct Weapon: Item {
 
     public var category: WeaponCategory
     public var damage: DamageRoll
+    
     /// Damage when used two-handed (versatile weapons only).
     public var versatileDamage: DamageRoll?
+    
     /// Normal range in feet; `nil` for melee-only weapons.
     public var normalRange: Int?
+    
     /// Long range in feet; attacks beyond normal range are made with disadvantage.
     public var longRange: Int?
     public var properties: Set<WeaponProperty>

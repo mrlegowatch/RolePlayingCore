@@ -1354,4 +1354,53 @@ struct PlayerTests {
         let dict = try! JSONSerialization.jsonObject(with: encoded) as! [String: Any]
         #expect(dict["used spell slots"] == nil)
     }
+
+    // MARK: - Proficiency and feat properties
+
+    @Test("allWeaponProficiencies combines class and feat proficiencies")
+    func allWeaponProficiencies() {
+        let classWithProfs = ClassTraits(
+            name: "Fighter",
+            plural: "Fighters",
+            hitDice: .d10,
+            startingWealth: Dice.d4,
+            weaponProficiencies: [.category(.simple), .category(.martial)]
+        )
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: classWithProfs)
+        let featWithProf = FeatTraits(name: "Weapon Expert", weaponProficiencies: [.specific("Longsword")])
+        player.feats = [featWithProf]
+
+        // 2 from class + 1 from feat
+        #expect(player.allWeaponProficiencies.count == 3)
+    }
+
+    @Test("allArmorTraining combines class and feat training")
+    func allArmorTraining() {
+        let classWithArmor = ClassTraits(
+            name: "Fighter",
+            plural: "Fighters",
+            hitDice: .d10,
+            startingWealth: Dice.d4,
+            armorTraining: [.light, .medium]
+        )
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: classWithArmor)
+        let featWithArmor = FeatTraits(name: "Heavy Armor Master", armorTraining: [.heavy])
+        player.feats = [featWithArmor]
+
+        // 2 from class + 1 from feat
+        #expect(player.allArmorTraining.count == 3)
+    }
+
+    @Test("featAbilityIncrease sums ability score increases across all feats")
+    func featAbilityIncrease() {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        let feat1 = FeatTraits(name: "Tough", abilityScoreIncreases: [Ability("Strength"): 2])
+        let feat2 = FeatTraits(name: "Alert", abilityScoreIncreases: [Ability("Strength"): 1, Ability("Wisdom"): 1])
+        player.feats = [feat1, feat2]
+
+        let increase = player.featAbilityIncrease
+        #expect(increase[Ability("Strength")] == 3)
+        #expect(increase[Ability("Wisdom")] == 1)
+        #expect(increase[Ability("Dexterity")] == nil)
+    }
 }

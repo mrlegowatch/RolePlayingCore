@@ -11,7 +11,6 @@ import Foundation
 /// A single slot in a character's inventory: an item definition plus how many are carried
 /// and whether any are currently equipped.
 public struct InventoryEntry: Sendable, Identifiable {
-
     /// Stable UUID — multiple stacks of the same item (from different sources) have distinct IDs.
     public let id: UUID
 
@@ -38,8 +37,6 @@ public struct InventoryEntry: Sendable, Identifiable {
 }
 
 extension InventoryEntry: CodableWithConfiguration {
-    public typealias EncodingConfiguration = Items
-    public typealias DecodingConfiguration = Items
 
     private enum CodingKeys: String, CodingKey {
         case name

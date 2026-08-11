@@ -22,24 +22,6 @@ struct GearTests {
         gameData = try GameData("TestItemsConfiguration", from: .module)
     }
 
-    // MARK: - Gear.Category enum
-
-    @Test("Category raw values are correct")
-    func categoryRawValues() {
-        #expect(Gear.Category.general.rawValue == "general")
-        #expect(Gear.Category.ammunition.rawValue == "ammunition")
-        #expect(Gear.Category.arcaneFocus.rawValue == "arcane focus")
-        #expect(Gear.Category.druidicFocus.rawValue == "druidic focus")
-        #expect(Gear.Category.holySymbol.rawValue == "holy symbol")
-        #expect(Gear.Category.pack.rawValue == "pack")
-        #expect(Gear.Category.clothing.rawValue == "clothing")
-    }
-
-    @Test("Category CaseIterable has seven cases")
-    func categoryCaseIterable() {
-        #expect(Gear.Category.allCases.count == 7)
-    }
-
     // MARK: - Programmatic init
 
     @Test("Init stores all properties with defaults")

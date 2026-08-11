@@ -19,6 +19,7 @@ public struct BackgroundTraits: Named, Sendable {
 }
 
 extension BackgroundTraits: CodableWithConfiguration {
+
     private enum CodingKeys: String, CodingKey {
         case name
         case abilityScores = "ability scores"

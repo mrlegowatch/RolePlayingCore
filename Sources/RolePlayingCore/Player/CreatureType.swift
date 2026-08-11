@@ -25,7 +25,6 @@ extension CreatureType: Codable { }
 extension CreatureType: Hashable { }
 
 public struct CreatureTypes: Codable, Sendable {
-    
     private var allCreatureTypes: [String: CreatureType] = [:]
     
     public var all: [CreatureType] { Array(allCreatureTypes.values) }
