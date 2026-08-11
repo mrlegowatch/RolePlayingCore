@@ -28,13 +28,13 @@ public struct Money: Sendable {
 
     public init(_ quantities: [UnitCurrency: Int] = [:]) {
         self.quantities = quantities
-        self.base = nil
+        self.base = quantities.keys.first(where: { $0.isDefault })
     }
 
     /// Convenience initializer for a single denomination.
     public init(_ count: Int, of currency: UnitCurrency) {
         self.quantities = count > 0 ? [currency: count] : [:]
-        self.base = nil
+        self.base = currency
     }
 
     /// The coin count for the given denomination.
@@ -67,7 +67,7 @@ public struct Money: Sendable {
     public var totalValue: Double {
         let resolvedBase = quantities.keys.first(where: { $0.isDefault }) ?? base
         guard let resolvedBase else { return 0 }
-        return quantities.reduce(0.0) { $0 + Double($1.value) * $1.key.coefficient / resolvedBase.coefficient }
+        return totalValue(relativeTo: resolvedBase)
     }
 
     /// Total value expressed relative to the given currency.
@@ -229,14 +229,13 @@ public extension String {
                 }
             }
         }
+        
         // Bare number — use base unit
-        if let parsed = Double(trimmed) {
-            let count = Int(parsed)
-            guard let baseUnit = currencies.baseUnit else { return nil }
-            var money = count > 0 ? Money(count, of: baseUnit) : Money()
-            money.base = baseUnit
-            return money
-        }
-        return nil
+        guard let parsed = Double(trimmed) else { return nil }
+        let count = Int(parsed)
+        guard let baseUnit = currencies.baseUnit else { return nil }
+        var money = count > 0 ? Money(count, of: baseUnit) : Money()
+        money.base = baseUnit
+        return money
     }
 }

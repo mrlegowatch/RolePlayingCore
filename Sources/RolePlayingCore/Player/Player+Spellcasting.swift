@@ -46,21 +46,7 @@ extension Player {
     /// Returns the number of remaining unused spell slots at the given 1-based slot level.
     public func availableSpellSlots(at slotLevel: Int) -> Int {
         let total = totalSpellSlots(at: slotLevel)
-        guard slotLevel >= 1, slotLevel <= usedSpellSlots.count else { return total }
-        return max(0, total - usedSpellSlots[slotLevel - 1])
-    }
-
-    // MARK: - Spell management
-
-    /// Adds a spell to the prepared list. Ignored if the spell is already prepared.
-    public func prepareSpell(_ spell: Spell) {
-        guard !preparedSpells.contains(spell) else { return }
-        preparedSpells.append(spell)
-    }
-
-    /// Removes a spell from the prepared list. Ignored if the spell is not prepared.
-    public func unprepareSpell(_ spell: Spell) {
-        preparedSpells.removeAll { $0 == spell }
+        return max(0, total - spellbook.slotsExpended(at: slotLevel))
     }
 
     /// Expends one spell slot at the given 1-based slot level.
@@ -69,10 +55,7 @@ extension Player {
     @discardableResult
     public func castSpell(usingSlotLevel slotLevel: Int) -> Bool {
         guard availableSpellSlots(at: slotLevel) > 0 else { return false }
-        if slotLevel > usedSpellSlots.count {
-            usedSpellSlots += Array(repeating: 0, count: slotLevel - usedSpellSlots.count)
-        }
-        usedSpellSlots[slotLevel - 1] += 1
+        spellbook.expendSlot(at: slotLevel)
         return true
     }
 }

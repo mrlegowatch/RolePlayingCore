@@ -6,8 +6,6 @@
 //  Copyright © 2017 Brian Arnold. All rights reserved.
 //
 
-import Synchronization
-
 /// A unit of currency or coinage, defined by its symbol, exchange rate, and display names.
 public struct UnitCurrency: Sendable {
     /// The short symbol used in display and JSON (e.g. "gp").
@@ -41,24 +39,6 @@ extension UnitCurrency: Equatable {
 extension UnitCurrency: Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(symbol)
-    }
-}
-
-// MARK: - Global base unit
-
-extension UnitCurrency {
-    private static let base: Mutex<UnitCurrency> = Mutex(
-        UnitCurrency(symbol: "Credits", coefficient: 1.0, name: "Credit", plural: "Credits", isDefault: true)
-    )
-
-    /// Returns the current global base unit currency.
-    public static func baseUnit() -> UnitCurrency {
-        base.withLock { $0 }
-    }
-
-    /// Sets the global base unit currency. Called by `Currencies` when loading game configuration.
-    public static func setBaseUnit(_ unit: UnitCurrency) {
-        base.withLock { $0 = unit }
     }
 }
 

@@ -12,7 +12,7 @@ import Foundation
 @Suite("Tool Tests")
 struct ToolTests {
 
-    let zeroCost = Money(value: 0, unit: UnitCurrency.baseUnit())
+    let zeroCost = Money()
     let zeroWeight = Weight(value: 0, unit: .pounds)
     let decoder = JSONDecoder()
     let encoder = JSONEncoder()
@@ -26,16 +26,17 @@ struct ToolTests {
 
     @Test("Init stores all properties")
     func initAllProperties() {
+        let gp = gameData.currencies.baseUnit!
         let tool = Tool(
             name: "Thieves' Tools",
             plural: "Thieves' Tools",
-            cost: Money(value: 25, unit: UnitCurrency.baseUnit()),
+            cost: Money(25, of: gp),
             weight: Weight(value: 1, unit: .pounds),
             toolType: .thieves
         )
         #expect(tool.name == "Thieves' Tools")
         #expect(tool.plural == "Thieves' Tools")
-        #expect(tool.cost.value == 25)
+        #expect(tool.cost[gp] == 25)
         #expect(tool.weight.value == 1)
         #expect(tool.toolType == .thieves)
     }
@@ -59,7 +60,7 @@ struct ToolTests {
         let tool: any Item = Tool(name: "Lute", cost: zeroCost, weight: zeroWeight, toolType: .musical)
         #expect(tool.name == "Lute")
         #expect(tool.plural == "Lutes")
-        #expect(tool.cost.value == 0)
+        #expect(tool.cost.quantities.isEmpty)
         #expect(tool.weight.value == 0)
     }
 

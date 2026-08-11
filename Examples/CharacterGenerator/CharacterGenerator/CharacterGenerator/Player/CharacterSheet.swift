@@ -99,7 +99,7 @@ class CharacterSheet {
         return "\(player.availableHitDice)/\(player.level) d\(dieSides)"
     }
     var money: String { "\(player.inventory.money)" }
-    var gender: String { player.gender.map(\.rawValue) ?? "Androgynous" }
+    var gender: String { player.appearance.gender.map(\.rawValue) ?? "Androgynous" }
     var height: String { player.height.displayString }
     var speed: String {
         let value = player.speed

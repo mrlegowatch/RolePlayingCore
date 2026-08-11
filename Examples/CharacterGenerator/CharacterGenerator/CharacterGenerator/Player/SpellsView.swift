@@ -14,11 +14,11 @@ struct SpellsView: View {
     let player: Player
 
     private var cantrips: [Spell] {
-        player.preparedSpells.filter { $0.level == 0 }.sorted { $0.name < $1.name }
+        player.spellbook.preparedSpells.filter { $0.level == 0 }.sorted { $0.name < $1.name }
     }
 
     private var leveledSpells: [(level: Int, spells: [Spell])] {
-        let groups = Dictionary(grouping: player.preparedSpells.filter { $0.level > 0 }, by: \.level)
+        let groups = Dictionary(grouping: player.spellbook.preparedSpells.filter { $0.level > 0 }, by: \.level)
         return groups.sorted { $0.key < $1.key }.map { (level: $0.key, spells: $0.value.sorted { $0.name < $1.name }) }
     }
 
@@ -94,8 +94,7 @@ struct SpellsView: View {
                                 .font(.caption2)
                                 .foregroundStyle(.secondary)
                             HStack(spacing: 3) {
-                                let used = slotLevel <= player.usedSpellSlots.count
-                                    ? player.usedSpellSlots[slotLevel - 1] : 0
+                                let used = player.spellbook.slotsExpended(at: slotLevel)
                                 ForEach(0..<total, id: \.self) { i in
                                     Image(systemName: i < used ? "circle.fill" : "circle")
                                         .font(.system(size: 9))

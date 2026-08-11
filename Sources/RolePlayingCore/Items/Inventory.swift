@@ -108,14 +108,16 @@ extension Inventory: CodableWithConfiguration {
 
     public init(from decoder: Decoder, configuration: GameData) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        let money = try container.decode(Money.self, forKey: .money, configuration: configuration.currencies)
+        let money = try container.decodeIfPresent(Money.self, forKey: .money, configuration: configuration.currencies) ?? Money()
         let entries = try container.decodeIfPresent([InventoryEntry].self, forKey: .entries, configuration: configuration.items) ?? []
         self.init(entries: entries, money: money)
     }
 
     public func encode(to encoder: Encoder, configuration: GameData) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(money, forKey: .money, configuration: configuration.currencies)
+        if !money.quantities.isEmpty {
+            try container.encode(money, forKey: .money, configuration: configuration.currencies)
+        }
         if !entries.isEmpty {
             try container.encode(entries, forKey: .entries, configuration: configuration.items)
         }

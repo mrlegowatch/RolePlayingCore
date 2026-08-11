@@ -130,7 +130,7 @@ struct WeaponTests {
     func weaponRange() {
         let shortbow = Weapon(
             name: "Shortbow",
-            cost: Money(value: 25, unit: .baseUnit()),
+            cost: Money(),
             weight: Weight(value: 2, unit: .pounds),
             category: .simple,
             damage: DamageRoll(parsing: "1d6 piercing")!,
@@ -147,7 +147,7 @@ struct WeaponTests {
     func weaponVersatile() {
         let dagger = Weapon(
             name: "Dagger",
-            cost: Money(value: 2, unit: .baseUnit()),
+            cost: Money(),
             weight: Weight(value: 1, unit: .pounds),
             category: .simple,
             damage: DamageRoll(parsing: "1d4 piercing")!,
@@ -157,7 +157,7 @@ struct WeaponTests {
 
         let quarterstaff = Weapon(
             name: "Quarterstaff",
-            cost: Money(value: 0, unit: .baseUnit()),
+            cost: Money(),
             weight: Weight(value: 4, unit: .pounds),
             category: .simple,
             damage: DamageRoll(parsing: "1d6 bludgeoning")!,

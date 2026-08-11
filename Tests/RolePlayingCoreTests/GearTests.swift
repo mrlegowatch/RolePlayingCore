@@ -14,7 +14,7 @@ struct GearTests {
 
     let decoder = JSONDecoder()
     let encoder = JSONEncoder()
-    let zeroCost = Money(value: 0, unit: UnitCurrency.baseUnit())
+    let zeroCost = Money()
     let zeroWeight = Weight(value: 0, unit: .pounds)
     let gameData: GameData
 

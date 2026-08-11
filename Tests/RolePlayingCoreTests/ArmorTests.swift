@@ -177,7 +177,7 @@ struct ArmorTests {
 
     @Test("Armor programmatic init stores all properties")
     func initAllProperties() {
-        let zeroCost = Money(value: 0, unit: UnitCurrency.baseUnit())
+        let zeroCost = Money()
         let armor = Armor(
             name: "Plate",
             cost: zeroCost,
@@ -199,7 +199,7 @@ struct ArmorTests {
 
     @Test("Armor init defaults plural to name + 's' and stealthDisadvantage to false")
     func initDefaults() {
-        let zeroCost = Money(value: 0, unit: UnitCurrency.baseUnit())
+        let zeroCost = Money()
         let armor = Armor(
             name: "Buckler",
             cost: zeroCost,

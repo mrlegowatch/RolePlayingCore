@@ -24,7 +24,7 @@ The source code is grouped into the following modules under `Sources/RolePlaying
 | **Configuration** | `GameData`, `GameDataFiles`, `GameDataError`, `Bundle+JSONFile` |
 | **Currency** | `UnitCurrency`, `Money`, `Currencies` |
 | **Items** | `Item`, `Weapon`, `Armor`, `Gear`, `Tool`, `EquipmentOptions`, `InventoryEntry`, damage types, weapon properties |
-| **Player** | `Player`, `Players`, `Ability`, `Alignment`, `ClassTraits`/`Classes`, `SpeciesTraits`/`Species`, `BackgroundTraits`/`Backgrounds`, `Skill`/`Skills`, `FeatTraits`/`Feats`, `Spell`/`Spells`, `SubclassTraits`, `UnarmoredDefense`, `CreatureType`, `Initiative` |
+| **Player** | `Player`, `Players`, `PlayerAppearance`, `AppearanceTraitKey`, `DescriptiveTraitKey`, `Ability`, `Alignment`, `ClassTraits`/`Classes`, `SpeciesTraits`/`Species`, `BackgroundTraits`/`Backgrounds`, `Skill`/`Skills`, `FeatTraits`/`Feats`, `Spell`/`Spells`, `SubclassTraits`, `UnarmoredDefense`, `CreatureSize`, `CreatureType`, `Initiative` |
 | **CharacterGenerator** | `CharacterGenerator`, `NameGenerator` |
 
 ## Example App
@@ -96,8 +96,12 @@ Each class entry in `Classes.json` can carry an optional `"default background"` 
 
 ### Player
 
-- **`Player`** — the main character class. Holds species, class, background, ability scores, skill proficiencies, inventory, and prepared spells. Can compute AC, HP, initiative, ability modifiers, and proficiency bonus.
+- **`Player`** — the main character class. Holds species, class, background, ability scores, skill proficiencies, inventory, prepared spells, and physical appearance. `baseHeight` is the intrinsic height; the computed `height` property is the hook for future spell effects (Enlarge/Reduce). `size` is derived from `height` via `CreatureSize`. Can compute AC, HP, initiative, ability modifiers, and proficiency bonus.
 - **`Players`** — a `CodableWithConfiguration` collection of `Player` instances.
+- **`PlayerAppearance`** — dictionary-backed cosmetic appearance struct (`traits: [String: String]`). Typed computed properties (`hairColor`, `eyeColor`, `skinColor`, `age`, `birthdate`, `gender`) wrap standard keys. Any additional trait can be stored and retrieved via a subscript keyed by `AppearanceTraitKey`. The `Gender` enum is defined here. Codable via a single-value container that encodes the dictionary directly.
+- **`AppearanceTraitKey`** — a `Hashable` struct wrapping a raw string key. Standard keys are defined as static constants; clients can add domain-specific keys via extension without modifying the library. `allStandardKeys` enumerates the library-defined keys for use in builder UIs.
+- **`DescriptiveTraitKey`** — `CaseIterable` enum of narrative trait keys: `personalityTrait`, `ideal`, `bond`, `flaw`, and `backstory`. Physical appearance traits are intentionally excluded — those belong to `PlayerAppearance`.
+- **`CreatureSize`** — size category (tiny through gargantuan) derived from a `Player`'s height. Provides space, squares occupied, and a random-height range per size.
 - **`Ability`** — named ability (Strength, Dexterity, …) with a `scoreModifier` extension on `Int` that computes the standard floor-divided modifier.
 - **`AbilityScores`** — a keyed container for the six base scores with roll-4d6-drop-lowest support.
 - **`CharacterAlignment`** — ethics × morals enumeration with associated display names.

@@ -5,7 +5,7 @@
 //  Copyright © 2026 Brian Arnold. All rights reserved.
 //
 
-/// Physical and personal appearance for a player character.
+/// Cosmetic and personal appearance for a player character (hair, eyes, skin, gender, etc.).
 /// All traits are stored in a string dictionary; typed computed properties wrap the standard keys.
 /// Any non-standard trait can be stored and retrieved via the subscript, e.g.:
 /// ```swift
@@ -23,10 +23,9 @@ public struct PlayerAppearance: Sendable {
         self.traits = traits
     }
 
-    public init(gender: Gender? = nil, height: Height) {
+    public init(gender: Gender? = nil) {
         var t: [String: String] = [:]
         if let gender { t[AppearanceTraitKey.gender.rawValue] = gender.rawValue }
-        t[AppearanceTraitKey.height.rawValue] = "\(height)"
         self.init(traits: t)
     }
 
@@ -63,11 +62,6 @@ public struct PlayerAppearance: Sendable {
     public var gender: Gender? {
         get { self[.gender].flatMap(Gender.init(rawValue:)) }
         set { self[.gender] = newValue?.rawValue }
-    }
-
-    public var height: Height? {
-        get { self[.height].flatMap(\.parseHeight) }
-        set { self[.height] = newValue.map { "\($0)" } }
     }
 }
 

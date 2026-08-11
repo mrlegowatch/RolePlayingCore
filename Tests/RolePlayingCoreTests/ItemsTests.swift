@@ -125,7 +125,7 @@ struct ItemsTests {
                                         items: gameData.items,
                                         currencies: gameData.currencies)
         if case .money(let m) = entry {
-            #expect(m.value > 0)
+            #expect(m.totalValue > 0)
         } else {
             Issue.record("Expected .money entry, got \(entry)")
         }

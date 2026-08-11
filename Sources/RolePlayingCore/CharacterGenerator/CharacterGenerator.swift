@@ -54,7 +54,7 @@ public struct CharacterGenerator {
     public func makeCharacter<G: RandomIndexGenerator>(using generator: inout G) -> Player {
         // TODO: have SpeciesTraits, ClassTraits conform to whatever protocol specifies the random() function
         let randomClass = generator.randomIndex(upperBound: gameData.classes.count)
-        let gender = Player.Gender.allCases.randomElementByIndex(using: &generator)
+        let gender = PlayerAppearance.Gender.allCases.randomElementByIndex(using: &generator)
 
         let backgroundTraits = gameData.backgrounds.randomElementByIndex(using: &generator)
         let speciesTraits = gameData.species.randomElementByIndex(using: &generator)
@@ -62,10 +62,10 @@ public struct CharacterGenerator {
         let name = names.randomName(speciesTraits: speciesTraits, gender: gender, using: &generator)
         let alignment = randomAlignment(using: &generator)
 
-        let player = Player(name, backgroundTraits: backgroundTraits, speciesTraits: speciesTraits, classTraits: classTraits, gender: gender, alignment: alignment)
+        let player = Player(name, backgroundTraits: backgroundTraits, speciesTraits: speciesTraits, classTraits: classTraits, startingCurrencyUnit: gameData.currencies.baseUnit, gender: gender, alignment: alignment)
         player.descriptiveTraits = backgroundTraits.descriptiveTraits
         if classTraits.spellcastingType != nil {
-            player.preparedSpells = randomSpells(classTraits: classTraits, using: &generator)
+            player.spellbook.preparedSpells = randomSpells(classTraits: classTraits, using: &generator)
         }
         return player
     }
@@ -76,7 +76,7 @@ public struct CharacterGenerator {
     }
 
     /// Returns a species-appropriate name generated from the Markov chain.
-    public func randomName(speciesTraits: SpeciesTraits, gender: Player.Gender?) -> String {
+    public func randomName(speciesTraits: SpeciesTraits, gender: PlayerAppearance.Gender?) -> String {
         names.randomName(speciesTraits: speciesTraits, gender: gender)
     }
 }

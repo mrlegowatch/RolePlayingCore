@@ -31,7 +31,7 @@ class CharacterBuilderState {
     var chosenSpells: [Spell] = []
 
     var name: String = ""
-    var gender: Player.Gender?
+    var gender: PlayerAppearance.Gender?
     var alignment: CharacterAlignment?
 
     /// True after ability scores have been auto-rolled on first appearance.
@@ -129,7 +129,7 @@ class CharacterBuilderState {
                             gender: gender,
                             alignment: alignment)
         for spell in chosenCantrips + chosenSpells {
-            player.prepareSpell(spell)
+            player.spellbook.prepare(spell)
         }
         return player
     }

@@ -33,47 +33,17 @@ public class Player: CodableWithConfiguration {
     /// Descriptive traits, such as ideals, bonds, flaws, a background story, etc.
     public var descriptiveTraits: [String: String]
 
-    public enum Gender: String, Codable, CaseIterable {
-        case female = "Female"
-        case male = "Male"
-    }
-    
-    /// Androgynous or hermaphroditic are represented as nil.
-    public var gender: Gender?
-    
     /// An "unaligned" alignment is represented as nil.
     public var alignment: CharacterAlignment?
 
-    public var height: Height
+    /// Cosmetic and personal appearance (hair, eyes, skin, gender, etc.).
+    public var appearance: PlayerAppearance
 
-    // MARK: Descriptive trait accessors
+    /// Intrinsic height, in feet. May be temporarily altered by spells (e.g. Enlarge/Reduce).
+    public var baseHeight: Height
 
-    /// Accesses a well-known descriptive trait by key.
-    public subscript(key: DescriptiveTraitKey) -> String? {
-        get { descriptiveTraits[key.rawValue] }
-        set { descriptiveTraits[key.rawValue] = newValue }
-    }
-
-    public var hairColor: String? {
-        get { descriptiveTraits[DescriptiveTraitKey.hairColor.rawValue] }
-        set { descriptiveTraits[DescriptiveTraitKey.hairColor.rawValue] = newValue }
-    }
-    public var eyeColor: String? {
-        get { descriptiveTraits[DescriptiveTraitKey.eyeColor.rawValue] }
-        set { descriptiveTraits[DescriptiveTraitKey.eyeColor.rawValue] = newValue }
-    }
-    public var skinColor: String? {
-        get { descriptiveTraits[DescriptiveTraitKey.skinColor.rawValue] }
-        set { descriptiveTraits[DescriptiveTraitKey.skinColor.rawValue] = newValue }
-    }
-    public var age: String? {
-        get { descriptiveTraits[DescriptiveTraitKey.age.rawValue] }
-        set { descriptiveTraits[DescriptiveTraitKey.age.rawValue] = newValue }
-    }
-    public var birthdate: String? {
-        get { descriptiveTraits[DescriptiveTraitKey.birthdate.rawValue] }
-        set { descriptiveTraits[DescriptiveTraitKey.birthdate.rawValue] = newValue }
-    }
+    /// Effective height, accounting for any active spell effects.
+    public var height: Height { baseHeight }
 
     /// Ability scores
     
@@ -133,34 +103,8 @@ public class Player: CodableWithConfiguration {
 
     // Spellcasting
 
-    /// Spells currently prepared or known.
-    public var preparedSpells: [Spell]
-    /// Slots expended at each level since the last long rest (0-indexed; index 0 = 1st-level slots).
-    public var usedSpellSlots: [Int]
-
-    // Spellcasting computed properties
-
-    public var spellcastingAbility: Ability? { classTraits.spellcastingAbility }
-
-    public var spellcastingModifier: Int? {
-        guard let ability = spellcastingAbility else { return nil }
-        return modifiers[ability]
-    }
-
-    public var spellSaveDC: Int? {
-        spellcastingModifier.map { 8 + proficiencyBonus + $0 }
-    }
-
-    public var spellAttackBonus: Int? {
-        spellcastingModifier.map { proficiencyBonus + $0 }
-    }
-
-    /// Maximum spells that can be prepared: spellcasting modifier + character level, minimum 1.
-    public var maxPreparedSpells: Int? {
-        guard classTraits.spellcastingType == .prepared,
-              let modifier = spellcastingModifier else { return nil }
-        return max(1, modifier + level)
-    }
+    /// Prepared spells, expended spell slots, and related state.
+    public var spellbook: Spellbook
 
     private enum CodingKeys: String, CodingKey {
         case name
@@ -170,8 +114,8 @@ public class Player: CodableWithConfiguration {
         case subclassName = "subclass"
         case feats
         case descriptiveTraits = "descriptive traits"
-        case gender
         case alignment
+        case appearance
         case height
         case baseAbilities = "ability scores"
         case backgroundAbilities = "background ability scores"
@@ -182,8 +126,7 @@ public class Player: CodableWithConfiguration {
         case experiencePoints = "experience points"
         case level
         case inventory
-        case preparedSpells = "prepared spells"
-        case usedSpellSlots = "used spell slots"
+        case spellbook
     }
 
     public required init(from decoder: Decoder, configuration: GameData) throws {
@@ -195,9 +138,9 @@ public class Player: CodableWithConfiguration {
         let speciesName = try values.decode(String.self, forKey: .speciesName)
         let className = try values.decode(String.self, forKey: .className)
         let descriptiveTraits = try values.decodeIfPresent([String:String].self, forKey: .descriptiveTraits)
-        let gender = try values.decodeIfPresent(Gender.self, forKey: .gender)
         let alignment = try values.decodeIfPresent(CharacterAlignment.self, forKey: .alignment)
-        let height = try values.decode(Height.self, forKey: .height)
+        let appearance = try values.decode(PlayerAppearance.self, forKey: .appearance)
+        let baseHeight = try values.decode(Height.self, forKey: .height)
         let baseAbilities = try values.decode(AbilityScores.self, forKey: .baseAbilities)
         let backgroundAbilities = try values.decode([String].self, forKey: .backgroundAbilities)
         
@@ -229,11 +172,7 @@ public class Player: CodableWithConfiguration {
         let experiencePoints = try values.decodeIfPresent(Int.self, forKey: .experiencePoints)
         let level = try values.decodeIfPresent(Int.self, forKey: .level)
         let inventory = try values.decode(Inventory.self, forKey: .inventory, configuration: configuration)
-
-        // Resolve prepared spell names; silently skip any not found in configuration
-        let preparedSpellNames = try values.decodeIfPresent([String].self, forKey: .preparedSpells) ?? []
-        let preparedSpells = preparedSpellNames.compactMap { configuration.spells[$0] }
-        let usedSpellSlots = try values.decodeIfPresent([Int].self, forKey: .usedSpellSlots) ?? []
+        let spellbook = try values.decodeIfPresent(Spellbook.self, forKey: .spellbook, configuration: configuration) ?? Spellbook()
 
         // Resolve backgroundTraits from configuration
         guard let backgroundTraits = configuration.backgrounds[backgroundName] else {
@@ -260,9 +199,9 @@ public class Player: CodableWithConfiguration {
         // Safely set properties
         self.name = name
         self.descriptiveTraits = descriptiveTraits ?? [:]
-        self.gender = gender
         self.alignment = alignment
-        self.height = height
+        self.appearance = appearance
+        self.baseHeight = baseHeight
         self.baseAbilities = baseAbilities
         self.backgroundAbilities = backgroundAbilities.map { Ability($0) }
         self.skillProficiencies = resolvedSkills
@@ -273,8 +212,7 @@ public class Player: CodableWithConfiguration {
         self.experiencePoints = experiencePoints ?? 0
         self.level = level ?? 1
         self.inventory = inventory
-        self.preparedSpells = preparedSpells
-        self.usedSpellSlots = usedSpellSlots
+        self.spellbook = spellbook
         self.backgroundTraits = backgroundTraits
         self.speciesTraits = speciesTraits
         self.classTraits = classTraits
@@ -293,9 +231,9 @@ public class Player: CodableWithConfiguration {
             try values.encode(subclassTraits.name, forKey: .subclassName)
         }
         try values.encodeIfPresent(descriptiveTraits, forKey: .descriptiveTraits)
-        try values.encodeIfPresent(gender, forKey: .gender)
         try values.encodeIfPresent(alignment, forKey: .alignment)
-        try values.encode("\(height)", forKey: .height)
+        try values.encode(appearance, forKey: .appearance)
+        try values.encode(baseHeight.value, forKey: .height)
         try values.encode(baseAbilities, forKey: .baseAbilities)
         try values.encode(backgroundAbilities.map({ $0.name }), forKey: .backgroundAbilities)
         try values.encode(skillProficiencies.skillNames, forKey: .skillProficiencies)
@@ -308,16 +246,13 @@ public class Player: CodableWithConfiguration {
         try values.encodeIfPresent(experiencePoints, forKey: .experiencePoints)
         try values.encodeIfPresent(level, forKey: .level)
         try values.encode(inventory, forKey: .inventory, configuration: configuration)
-        if !preparedSpells.isEmpty {
-            try values.encode(preparedSpells.map(\.name), forKey: .preparedSpells)
-        }
-        if !usedSpellSlots.isEmpty {
-            try values.encode(usedSpellSlots, forKey: .usedSpellSlots)
+        if !spellbook.isEmpty {
+            try values.encode(spellbook, forKey: .spellbook, configuration: configuration)
         }
      }
     
     // Creates a player character with explicit ability scores and skill proficiencies.
-    public init(_ name: String, backgroundTraits: BackgroundTraits, speciesTraits: SpeciesTraits, classTraits: ClassTraits, baseAbilities: AbilityScores, skillProficiencies: [Skill], gender: Gender? = nil, alignment: CharacterAlignment? = nil) {
+    public init(_ name: String, backgroundTraits: BackgroundTraits, speciesTraits: SpeciesTraits, classTraits: ClassTraits, baseAbilities: AbilityScores, skillProficiencies: [Skill], startingCurrencyUnit: UnitCurrency? = nil, gender: PlayerAppearance.Gender? = nil, alignment: CharacterAlignment? = nil) {
         // @Observable turns stored properties into computed properties backed by _property.
         // The observation getter captures `self`, so read-modify-write operations and reads
         // of self properties require all stored properties to be initialized first (phase 2).
@@ -334,7 +269,7 @@ public class Player: CodableWithConfiguration {
         let maxHP = Player.rollHitPoints(classTraits: classTraits, speciesTraits: speciesTraits)
 
         let startingWealth = classTraits.startingWealth.roll().result
-        let money = Money(value: Double(startingWealth), unit: .baseUnit())
+        let money = startingCurrencyUnit.map { Money(startingWealth, of: $0) } ?? Money()
 
         // Populate inventory from the first starting equipment option.
         // Money entries within equipment options are not added to inventory.
@@ -354,9 +289,9 @@ public class Player: CodableWithConfiguration {
         self.speciesTraits = speciesTraits
         self.classTraits = classTraits
         self.subclassTraits = nil
-        self.gender = gender
         self.alignment = alignment
-        self.height = height
+        self.baseHeight = height
+        self.appearance = PlayerAppearance(gender: gender)
         self.baseAbilities = baseAbilities
         self.backgroundAbilities = backgroundAbilities
         self.skillProficiencies = skillProficiencies
@@ -365,177 +300,21 @@ public class Player: CodableWithConfiguration {
         self.currentHitPoints = maxHP
         self.usedHitDice = 0
         self.inventory = Inventory(entries: inventoryEntries, money: money)
-        self.preparedSpells = []
-        self.usedSpellSlots = []
+        self.spellbook = Spellbook()
         self.experiencePoints = 0
         self.level = 1
     }
 
     // Creates a player character by rolling random ability scores and selecting random skill proficiencies.
-    public convenience init(_ name: String, backgroundTraits: BackgroundTraits, speciesTraits: SpeciesTraits, classTraits: ClassTraits, gender: Gender? = nil, alignment: CharacterAlignment? = nil) {
+    public convenience init(_ name: String, backgroundTraits: BackgroundTraits, speciesTraits: SpeciesTraits, classTraits: ClassTraits, startingCurrencyUnit: UnitCurrency? = nil, gender: PlayerAppearance.Gender? = nil, alignment: CharacterAlignment? = nil) {
         var baseAbilities = AbilityScores()
         baseAbilities.roll()
 
         var skillProficiencies = classTraits.randomSkillProficiencies()
         skillProficiencies.append(backgroundTraits.skillProficiencies)
 
-        self.init(name, backgroundTraits: backgroundTraits, speciesTraits: speciesTraits, classTraits: classTraits, baseAbilities: baseAbilities, skillProficiencies: skillProficiencies, gender: gender, alignment: alignment)
+        self.init(name, backgroundTraits: backgroundTraits, speciesTraits: speciesTraits, classTraits: classTraits, baseAbilities: baseAbilities, skillProficiencies: skillProficiencies, startingCurrencyUnit: startingCurrencyUnit, gender: gender, alignment: alignment)
     }
-    
-    // MARK: Implementation
-    
-    public class func rollHitPoints(classTraits: ClassTraits, speciesTraits: SpeciesTraits) -> Int {
-        return max(classTraits.hitDice.sides / 2 + 1, classTraits.hitDice.roll().result)
-    }
-    
-    public func rollHitPoints() -> Int {
-        return Player.rollHitPoints(classTraits: classTraits, speciesTraits: speciesTraits)
-    }
-
-    public var canLevelUp: Bool {
-        return level < classTraits.maxLevel && experiencePoints > classTraits.maxExperiencePoints(at: level)
-    }
-
-    /// Describes what changed and what choices are pending after a level-up.
-    public struct LevelUpResult: Sendable {
-        /// The new character level.
-        public let newLevel: Int
-        /// Hit points added to both maximum and current HP.
-        public let hitPointsGained: Int
-        /// The feat category to select at this level, or nil if no feat is awarded.
-        public let featCategoryToSelect: FeatTraits.Category?
-        /// True when this level triggers subclass selection and choices are available.
-        public let requiresSubclassSelection: Bool
-    }
-
-    /// Levels up the character if the XP threshold has been reached.
-    ///
-    /// Returns a `LevelUpResult` describing HP gained and any pending choices
-    /// (feat selection, subclass selection) the UI needs to present, or `nil`
-    /// if the level-up precondition was not met.
-    @discardableResult
-    public func levelUp() -> LevelUpResult? {
-        guard canLevelUp else { return nil }
-
-        level += 1
-
-        let hpGained = rollHitPoints()
-        maximumHitPoints += hpGained
-        currentHitPoints += hpGained
-
-        let featCategory: FeatTraits.Category?
-        switch level {
-        case 20:            featCategory = .epicBoon
-        case 4, 8, 12, 16, 19: featCategory = .general
-        default:            featCategory = nil
-        }
-
-        let requiresSubclassSelection =
-            subclassTraits == nil &&
-            level == classTraits.subclassChoiceLevel &&
-            !classTraits.subclasses.isEmpty
-
-        return LevelUpResult(
-            newLevel: level,
-            hitPointsGained: hpGained,
-            featCategoryToSelect: featCategory,
-            requiresSubclassSelection: requiresSubclassSelection
-        )
-    }
-
-    /// Assigns a subclass to this character.
-    ///
-    /// Silently ignored if the character's level is below `classTraits.subclassChoiceLevel`
-    /// or if the subclass does not belong to the character's class.
-    public func selectSubclass(_ subclass: SubclassTraits) {
-        guard level >= classTraits.subclassChoiceLevel,
-              classTraits.subclasses.contains(subclass) else { return }
-        subclassTraits = subclass
-    }
-
-    // MARK: Rest
-
-    /// The result of a short rest: how many hit dice were spent and how much HP was restored.
-    public struct ShortRestResult: Sendable {
-        public let hitDiceSpent: Int
-        public let hitPointsGained: Int
-    }
-
-    /// Spends up to `hitDiceToSpend` hit dice from the available pool.
-    ///
-    /// Each die is rolled (using the class hit die) and the Constitution modifier is added;
-    /// the per-die contribution is floored at 0. Healed HP is capped at `maximumHitPoints`.
-    /// Requesting more dice than `availableHitDice` silently spends only what remains.
-    @discardableResult
-    public func shortRest(hitDiceToSpend: Int) -> ShortRestResult {
-        let toSpend = min(max(0, hitDiceToSpend), availableHitDice)
-        guard toSpend > 0 else {
-            return ShortRestResult(hitDiceSpent: 0, hitPointsGained: 0)
-        }
-
-        let constitutionModifier: Int = modifiers[.constitution]
-        var totalHealed = 0
-        for _ in 0..<toSpend {
-            totalHealed += max(0, classTraits.hitDice.roll().result + constitutionModifier)
-        }
-
-        let before = currentHitPoints
-        currentHitPoints = min(maximumHitPoints, currentHitPoints + totalHealed)
-        usedHitDice += toSpend
-
-        return ShortRestResult(hitDiceSpent: toSpend, hitPointsGained: currentHitPoints - before)
-    }
-
-    /// Restores all hit points, all spent hit dice, and all expended spell slots (5e 2024 rules).
-    public func longRest() {
-        currentHitPoints = maximumHitPoints
-        usedHitDice = 0
-        usedSpellSlots = []
-    }
-
-    // MARK: - Spellcasting
-
-    /// Returns the total spell slots at the given 1-based slot level for the character's current class level.
-    public func totalSpellSlots(at slotLevel: Int) -> Int {
-        guard slotLevel >= 1,
-              let slots = classTraits.spellSlots,
-              level >= 1, level <= slots.count else { return 0 }
-        let levelSlots = slots[level - 1]
-        guard slotLevel <= levelSlots.count else { return 0 }
-        return levelSlots[slotLevel - 1]
-    }
-
-    /// Returns the number of remaining unused spell slots at the given 1-based slot level.
-    public func availableSpellSlots(at slotLevel: Int) -> Int {
-        let total = totalSpellSlots(at: slotLevel)
-        guard slotLevel >= 1, slotLevel <= usedSpellSlots.count else { return total }
-        return max(0, total - usedSpellSlots[slotLevel - 1])
-    }
-
-    /// Adds a spell to the prepared list. Ignored if the spell is already prepared.
-    public func prepareSpell(_ spell: Spell) {
-        guard !preparedSpells.contains(spell) else { return }
-        preparedSpells.append(spell)
-    }
-
-    /// Removes a spell from the prepared list. Ignored if the spell is not prepared.
-    public func unprepareSpell(_ spell: Spell) {
-        preparedSpells.removeAll { $0 == spell }
-    }
-
-    /// Expends one spell slot at the given 1-based slot level.
-    ///
-    /// Returns `true` if a slot was available and expended, `false` if no slots remain at that level.
-    @discardableResult
-    public func castSpell(usingSlotLevel slotLevel: Int) -> Bool {
-        guard availableSpellSlots(at: slotLevel) > 0 else { return false }
-        if slotLevel > usedSpellSlots.count {
-            usedSpellSlots += Array(repeating: 0, count: slotLevel - usedSpellSlots.count)
-        }
-        usedSpellSlots[slotLevel - 1] += 1
-        return true
-    }
-
 }
 
 extension Player: Hashable {
@@ -546,9 +325,9 @@ extension Player: Hashable {
                lhs.speciesName == rhs.speciesName &&
                lhs.className == rhs.className &&
                lhs.descriptiveTraits == rhs.descriptiveTraits &&
-               lhs.gender == rhs.gender &&
                lhs.alignment == rhs.alignment &&
-               lhs.height == rhs.height &&
+               lhs.appearance == rhs.appearance &&
+               lhs.baseHeight == rhs.baseHeight &&
                lhs.baseAbilities == rhs.baseAbilities &&
                lhs.maximumHitPoints == rhs.maximumHitPoints &&
                lhs.currentHitPoints == rhs.currentHitPoints &&
@@ -564,9 +343,9 @@ extension Player: Hashable {
         hasher.combine(backgroundName)
         hasher.combine(speciesName)
         hasher.combine(className)
-        hasher.combine(gender)
         hasher.combine(alignment)
-        hasher.combine(height)
+        hasher.combine(appearance)
+        hasher.combine(baseHeight.value)
         hasher.combine(baseAbilities)
         hasher.combine(maximumHitPoints)
         hasher.combine(currentHitPoints)

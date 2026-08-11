@@ -41,7 +41,7 @@ struct PlayerIdentityView: View {
                             .font(.subheadline)
                     }
                 }
-                if let gender = player.gender {
+                if let gender = player.appearance.gender {
                     VStack(alignment: .leading, spacing: 1) {
                         Text("Gender")
                             .font(.caption2)

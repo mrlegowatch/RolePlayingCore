@@ -25,15 +25,14 @@ public struct AppearanceTraitKey: Hashable, Sendable {
     }
 
     public static let hairColor = AppearanceTraitKey("hair color")
-    public static let eyeColor  = AppearanceTraitKey("eye color")
+    public static let eyeColor = AppearanceTraitKey("eye color")
     public static let skinColor = AppearanceTraitKey("skin color")
-    public static let age       = AppearanceTraitKey("age")
+    public static let age = AppearanceTraitKey("age")
     public static let birthdate = AppearanceTraitKey("birthdate")
-    public static let gender    = AppearanceTraitKey("gender")
-    public static let height    = AppearanceTraitKey("height")
+    public static let gender = AppearanceTraitKey("gender")
 
     /// All keys defined by the library, for use in builder UIs.
     public static let allStandardKeys: [AppearanceTraitKey] = [
-        .hairColor, .eyeColor, .skinColor, .age, .birthdate, .gender, .height
+        .hairColor, .eyeColor, .skinColor, .age, .birthdate, .gender
     ]
 }

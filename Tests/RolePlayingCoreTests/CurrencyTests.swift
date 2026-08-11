@@ -49,8 +49,8 @@ struct UnitCurrencyTests {
         #expect(wallet[sp] == 12, "silver pieces")
         #expect(wallet[ep] == 2, "electrum pieces")
 
-        // totalValue: 25*1.0 + 12*0.1 + 2*0.5 = 28.2 gp
-        #expect(abs(wallet.totalValue - 28.2) < 0.0001, "totalValue should be 28.2 gp")
+        // totalValue: 25*1.0 + 12*0.1 + 2*0.5 = 27.2 gp
+        #expect(abs(wallet.totalValue - 27.2) < 0.0001, "totalValue should be 27.2 gp")
 
         // Subtraction removes from the matching denomination only
         let spent = wallet - Money(5, of: gp)
@@ -236,6 +236,134 @@ struct UnitCurrencyTests {
         let dict = try #require(JSONSerialization.jsonObject(with: encoded) as? [String: Any])
         let moneyDict = try #require(dict["money"] as? [String: Any])
         #expect(moneyDict["sp"] as? Int == 48, "encoded as keyed object with sp: 48")
+    }
+
+    @Test("UnitCurrency Equatable uses symbol only")
+    func unitCurrencyEquatable() {
+        let a = UnitCurrency(symbol: "gp", coefficient: 1.0, name: "gold piece", plural: "gold pieces", isDefault: true)
+        let b = UnitCurrency(symbol: "gp", coefficient: 999.0, name: "other", plural: "others", isDefault: false)
+        let c = UnitCurrency(symbol: "sp", coefficient: 0.1, name: "silver piece", plural: "silver pieces")
+        #expect(a == b, "same symbol is equal regardless of other fields")
+        #expect(a != c)
+    }
+
+    @Test("UnitCurrency Hashable uses symbol")
+    func unitCurrencyHashable() {
+        let a = UnitCurrency(symbol: "gp", coefficient: 1.0, name: "gold piece", plural: "gold pieces")
+        let b = UnitCurrency(symbol: "gp", coefficient: 2.0, name: "other", plural: "others")
+        var h1 = Hasher(); a.hash(into: &h1)
+        var h2 = Hasher(); b.hash(into: &h2)
+        #expect(h1.finalize() == h2.finalize())
+        let set: Set<UnitCurrency> = [a, b]
+        #expect(set.count == 1)
+    }
+
+    @Test("UnitCurrency encode omits isDefault when false, includes when true")
+    func unitCurrencyEncodeIsDefault() async throws {
+        let defaultCurrency = UnitCurrency(symbol: "gp", coefficient: 1.0, name: "gold piece", plural: "gold pieces", isDefault: true)
+        let nonDefault = UnitCurrency(symbol: "sp", coefficient: 0.1, name: "silver piece", plural: "silver pieces")
+        let encoder = JSONEncoder()
+
+        let encodedDefault = try encoder.encode(defaultCurrency)
+        let defaultDict = try #require(JSONSerialization.jsonObject(with: encodedDefault) as? [String: Any])
+        #expect(defaultDict["is default"] as? Bool == true)
+
+        let encodedNonDefault = try encoder.encode(nonDefault)
+        let nonDefaultDict = try #require(JSONSerialization.jsonObject(with: encodedNonDefault) as? [String: Any])
+        #expect(nonDefaultDict["is default"] == nil)
+    }
+
+    @Test("Money init with zero count produces empty quantities")
+    func moneyInitZeroCount() {
+        let gp = currencies["gp"]!
+        let wallet = Money(0, of: gp)
+        #expect(wallet.quantities.isEmpty)
+        #expect(wallet[gp] == 0)
+    }
+
+    @Test("Money subscript setter: assigning zero removes denomination")
+    func subscriptZeroRemovesDenomination() {
+        let gp = currencies["gp"]!
+        var wallet = Money(10, of: gp)
+        wallet[gp] = 0
+        #expect(wallet.quantities[gp] == nil)
+        #expect(wallet[gp] == 0)
+    }
+
+    @Test("Money add accumulates coins and ignores non-positive counts")
+    func moneyAdd() {
+        let gp = currencies["gp"]!
+        var wallet = Money()
+        wallet.add(10, of: gp)
+        wallet.add(5, of: gp)
+        #expect(wallet[gp] == 15)
+        wallet.add(0, of: gp)
+        wallet.add(-3, of: gp)
+        #expect(wallet[gp] == 15, "zero and negative counts are no-ops")
+    }
+
+    @Test("Money spend reduces coins, removes denomination at zero, throws when insufficient")
+    func moneySpend() async throws {
+        let gp = currencies["gp"]!
+        var wallet = Money(10, of: gp)
+        try wallet.spend(4, of: gp)
+        #expect(wallet[gp] == 6)
+        try wallet.spend(6, of: gp)
+        #expect(wallet.quantities[gp] == nil, "denomination removed when fully spent")
+        #expect(wallet[gp] == 0)
+    }
+
+    @Test("Money spend throws insufficientFunds and leaves wallet unchanged")
+    func moneySpendInsufficientFunds() {
+        let gp = currencies["gp"]!
+        var wallet = Money(3, of: gp)
+        #expect(throws: MoneyError.insufficientFunds) {
+            try wallet.spend(5, of: gp)
+        }
+        #expect(wallet[gp] == 3, "wallet unchanged after failed spend")
+    }
+
+    @Test("Money description: no coins and no base shows '0 ?'")
+    func descriptionNoCurrencyNoBase() {
+        let wallet = Money()
+        #expect("\(wallet)" == "0 ?")
+    }
+
+    @Test("Money description: no coins but has base shows '0 <symbol>'")
+    func descriptionNoCurrencyHasBase() {
+        let gp = currencies["gp"]!
+        let wallet = Money(0, of: gp)
+        #expect("\(wallet)" == "0 gp")
+    }
+
+    @Test("Money totalValue(relativeTo:) uses the provided unit")
+    func totalValueRelativeTo() {
+        let gp = currencies["gp"]!
+        let sp = currencies["sp"]!
+        // 10 gp at coefficient 1.0, sp at coefficient 0.1 → 10 * 1.0 / 0.1 = 100 sp
+        let wallet = Money(10, of: gp)
+        #expect(abs(wallet.totalValue(relativeTo: sp) - 100.0) < 0.0001)
+    }
+
+    @Test("Money Equatable compares quantities")
+    func moneyEquatable() {
+        let gp = currencies["gp"]!
+        let sp = currencies["sp"]!
+        let a = Money(10, of: gp)
+        let b = Money(10, of: gp)
+        let c = Money(10, of: sp)
+        #expect(a == b)
+        #expect(a != c)
+    }
+
+    @Test("Decoding money with unknown currency symbol throws")
+    func decodingUnknownSymbol() {
+        let data = """
+        { "money": {"xyz": 100} }
+        """.data(using: .utf8)!
+        #expect(throws: (any Error).self) {
+            _ = try decoder.decode(MoneyContainer.self, from: data, configuration: currencies)
+        }
     }
 
     @Test("Encoding currencies")

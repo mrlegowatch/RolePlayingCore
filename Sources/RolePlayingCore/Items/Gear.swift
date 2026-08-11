@@ -70,7 +70,7 @@ extension Gear: CodableWithConfiguration {
 
         name = try values.decode(String.self, forKey: .name)
         plural = try values.decodeIfPresent(String.self, forKey: .plural) ?? (name + "s")
-        cost = (try? values.decode(Money.self, forKey: .cost, configuration: configuration.currencies)) ?? .zero
+        cost = (try? values.decode(Money.self, forKey: .cost, configuration: configuration.currencies)) ?? Money()
         weight = (try? values.decode(Weight.self, forKey: .weight)) ?? Weight(value: 0, unit: .pounds)
         category = try values.decodeIfPresent(Category.self, forKey: .category) ?? .general
         description = try values.decodeIfPresent(String.self, forKey: .description)
