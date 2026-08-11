@@ -58,7 +58,7 @@ struct PlayerDetailView: View {
                 // Section 8: Money
                 sectionCard(8)
                 // Equipment (replaces section 9)
-                if !player.inventory.isEmpty {
+                if !player.inventory.entries.isEmpty {
                     InventoryView(player: player)
                         .padding()
                         .background(.background.secondary)

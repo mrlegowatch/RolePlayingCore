@@ -10,17 +10,6 @@ import Foundation
 import Observation
 import SwiftDice
 
-public extension AbilityScores {
-    
-    /// Sets the ability scores to random values using '4d6-L'.
-    mutating func roll() {
-        let dice = (4 * .d6).dropping(.lowest)
-        for ability in abilities {
-            scores[ability] = dice.roll().result
-        }
-    }
-}
-
 /// The base class for a player character, including its background, species, class, abilities, skills, hit points, and so on.
 @Observable
 public class Player: CodableWithConfiguration {
@@ -140,9 +129,7 @@ public class Player: CodableWithConfiguration {
 
     // Equipment and money
 
-    public var money: Money
-    /// All items carried by this player. Equipped state is tracked per entry.
-    public var inventory: [InventoryEntry]
+    public var inventory: Inventory
 
     // Spellcasting
 
@@ -150,52 +137,6 @@ public class Player: CodableWithConfiguration {
     public var preparedSpells: [Spell]
     /// Slots expended at each level since the last long rest (0-indexed; index 0 = 1st-level slots).
     public var usedSpellSlots: [Int]
-
-    /// The worn armor piece, if any (excludes shields).
-    public var equippedArmor: Armor? {
-        inventory.first(where: { $0.isEquipped && ($0.item as? Armor)?.category != .shield })?.item as? Armor
-    }
-
-    /// The held shield, if any.
-    public var equippedShield: Armor? {
-        inventory.first(where: { $0.isEquipped && ($0.item as? Armor)?.category == .shield })?.item as? Armor
-    }
-
-    /// Computed Armor Class.
-    /// Without armor, falls back to the class's unarmored defense feature, or base 10 + DEX.
-    /// Override by equipping armor or a shield via `inventory`.
-    public var armorClass: Int {
-        let dexterityModifier: Int = modifiers[.dexterity]
-        let shieldBonus = equippedShield?.baseAC ?? 0
-
-        if let armor = equippedArmor {
-            switch armor.dexterityModifierRule {
-            case .full: return armor.baseAC + dexterityModifier + shieldBonus
-            case .capped(let cap): return armor.baseAC + min(dexterityModifier, cap) + shieldBonus
-            case .excluded: return armor.baseAC + shieldBonus
-            case .bonus: return armor.baseAC + shieldBonus
-            }
-        }
-
-        // Unarmored: apply class feature if present, otherwise 10 + DEX
-        let unarmoredBase = classTraits.unarmoredDefense.map { defense in
-            defense.additionalAbilities.reduce(10 + dexterityModifier) { ac, ability in
-                ac + (modifiers[ability] ?? 0)
-            }
-        } ?? (10 + dexterityModifier)
-
-        return unarmoredBase + shieldBonus
-    }
-    
-    /// All weapon proficiencies — from class and from feats.
-    public var allWeaponProficiencies: [WeaponProficiency] {
-        classTraits.weaponProficiencies + feats.flatMap(\.weaponProficiencies)
-    }
-
-    /// All armor weight categories trained in — from class and from feats.
-    public var allArmorTraining: [ArmorProficiency] {
-        classTraits.armorTraining + feats.flatMap(\.armorTraining)
-    }
 
     // Spellcasting computed properties
 
@@ -240,7 +181,6 @@ public class Player: CodableWithConfiguration {
         case usedHitDice = "used hit dice"
         case experiencePoints = "experience points"
         case level
-        case money
         case inventory
         case preparedSpells = "prepared spells"
         case usedSpellSlots = "used spell slots"
@@ -288,9 +228,7 @@ public class Player: CodableWithConfiguration {
         let usedHitDice = try values.decodeIfPresent(Int.self, forKey: .usedHitDice) ?? 0
         let experiencePoints = try values.decodeIfPresent(Int.self, forKey: .experiencePoints)
         let level = try values.decodeIfPresent(Int.self, forKey: .level)
-        let money = try values.decode(Money.self, forKey: .money, configuration: configuration.currencies)
-
-        let resolvedInventory = try values.decodeIfPresent([InventoryEntry].self, forKey: .inventory, configuration: configuration.items) ?? []
+        let inventory = try values.decode(Inventory.self, forKey: .inventory, configuration: configuration)
 
         // Resolve prepared spell names; silently skip any not found in configuration
         let preparedSpellNames = try values.decodeIfPresent([String].self, forKey: .preparedSpells) ?? []
@@ -334,8 +272,7 @@ public class Player: CodableWithConfiguration {
         self.usedHitDice = usedHitDice
         self.experiencePoints = experiencePoints ?? 0
         self.level = level ?? 1
-        self.money = money
-        self.inventory = resolvedInventory
+        self.inventory = inventory
         self.preparedSpells = preparedSpells
         self.usedSpellSlots = usedSpellSlots
         self.backgroundTraits = backgroundTraits
@@ -370,10 +307,7 @@ public class Player: CodableWithConfiguration {
         }
         try values.encodeIfPresent(experiencePoints, forKey: .experiencePoints)
         try values.encodeIfPresent(level, forKey: .level)
-        try values.encode(money, forKey: .money, configuration: configuration.currencies)
-        if !inventory.isEmpty {
-            try values.encode(inventory, forKey: .inventory, configuration: configuration.items)
-        }
+        try values.encode(inventory, forKey: .inventory, configuration: configuration)
         if !preparedSpells.isEmpty {
             try values.encode(preparedSpells.map(\.name), forKey: .preparedSpells)
         }
@@ -430,8 +364,7 @@ public class Player: CodableWithConfiguration {
         self.maximumHitPoints = maxHP
         self.currentHitPoints = maxHP
         self.usedHitDice = 0
-        self.money = money
-        self.inventory = inventoryEntries
+        self.inventory = Inventory(entries: inventoryEntries, money: money)
         self.preparedSpells = []
         self.usedSpellSlots = []
         self.experiencePoints = 0
@@ -603,70 +536,6 @@ public class Player: CodableWithConfiguration {
         return true
     }
 
-    // MARK: - Inventory
-
-    /// Adds `quantity` of `item` to inventory.
-    ///
-    /// If an entry for this item already exists (matched by name) its quantity is increased;
-    /// otherwise a new entry is appended. Calls with `quantity` ≤ 0 are ignored.
-    public func addToInventory(_ item: any Item, quantity: Int = 1) {
-        guard quantity > 0 else { return }
-        if let index = inventory.firstIndex(where: { $0.item.name == item.name }) {
-            inventory[index].quantity += quantity
-        } else {
-            inventory.append(InventoryEntry(item: item, quantity: quantity))
-        }
-    }
-
-    /// Removes the inventory entry with the given ID. Ignored if no matching entry exists.
-    public func removeFromInventory(id: UUID) {
-        inventory.removeAll { $0.id == id }
-    }
-
-    /// Equips the inventory entry with the given ID.
-    ///
-    /// When equipping a non-shield armor, any other equipped non-shield armor is automatically
-    /// unequipped first. When equipping a shield, any other equipped shield is unequipped first.
-    /// Non-armor items are equipped without exclusivity enforcement.
-    /// Ignored if no entry with the given ID exists.
-    public func equipItem(id: UUID) {
-        guard let index = inventory.firstIndex(where: { $0.id == id }) else { return }
-        if let armor = inventory[index].item as? Armor {
-            if armor.category == .shield {
-                for i in inventory.indices where inventory[i].isEquipped {
-                    if (inventory[i].item as? Armor)?.category == .shield {
-                        inventory[i].isEquipped = false
-                    }
-                }
-            } else {
-                for i in inventory.indices where inventory[i].isEquipped {
-                    if let a = inventory[i].item as? Armor, a.category != .shield {
-                        inventory[i].isEquipped = false
-                    }
-                }
-            }
-        }
-        inventory[index].isEquipped = true
-    }
-
-    /// Unequips the inventory entry with the given ID. Ignored if no matching entry exists.
-    public func unequipItem(id: UUID) {
-        guard let index = inventory.firstIndex(where: { $0.id == id }) else { return }
-        inventory[index].isEquipped = false
-    }
-
-    /// Sets the quantity of the inventory entry with the given ID.
-    ///
-    /// If `quantity` is 0 or less, the entry is removed from inventory.
-    /// Ignored if no entry with the given ID exists.
-    public func adjustQuantity(_ quantity: Int, for id: UUID) {
-        guard let index = inventory.firstIndex(where: { $0.id == id }) else { return }
-        if quantity <= 0 {
-            inventory.remove(at: index)
-        } else {
-            inventory[index].quantity = quantity
-        }
-    }
 }
 
 extension Player: Hashable {
@@ -686,8 +555,8 @@ extension Player: Hashable {
                lhs.usedHitDice == rhs.usedHitDice &&
                lhs.experiencePoints == rhs.experiencePoints &&
                lhs.level == rhs.level &&
-               lhs.money == rhs.money &&
-               lhs.inventory.map(\.item.name) == rhs.inventory.map(\.item.name)
+               lhs.inventory.money == rhs.inventory.money &&
+               lhs.inventory.entries.map(\.item.name) == rhs.inventory.entries.map(\.item.name)
     }
     
     public func hash(into hasher: inout Hasher) {
@@ -704,7 +573,7 @@ extension Player: Hashable {
         hasher.combine(usedHitDice)
         hasher.combine(experiencePoints)
         hasher.combine(level)
-        hasher.combine(money)
-        hasher.combine(inventory.map(\.item.name))
+        hasher.combine(inventory.money)
+        hasher.combine(inventory.entries.map(\.item.name))
     }
 }

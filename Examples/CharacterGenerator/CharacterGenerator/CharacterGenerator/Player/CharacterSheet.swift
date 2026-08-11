@@ -98,7 +98,7 @@ class CharacterSheet {
         let dieSides = player.classTraits.hitDice.sides
         return "\(player.availableHitDice)/\(player.level) d\(dieSides)"
     }
-    var money: String { "\(player.money)" }
+    var money: String { "\(player.inventory.money)" }
     var gender: String { player.gender.map(\.rawValue) ?? "Androgynous" }
     var height: String { player.height.displayString }
     var speed: String {
@@ -113,8 +113,8 @@ class CharacterSheet {
     var size: String { "\(player.size)".capitalized }
     var passivePerception: String { "\(player.passivePerception)" }
     var inventory: String {
-        guard !player.inventory.isEmpty else { return "None" }
-        return player.inventory.map { entry in
+        guard !player.inventory.entries.isEmpty else { return "None" }
+        return player.inventory.entries.map { entry in
             let qty = entry.quantity > 1 ? "\(entry.quantity)x " : ""
             let equipped = entry.isEquipped ? " ✓" : ""
             return "\(qty)\(entry.item.name)\(equipped)"

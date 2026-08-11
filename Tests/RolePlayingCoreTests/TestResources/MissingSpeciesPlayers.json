@@ -6,7 +6,7 @@
                 "class": "Fighter",
                 "height": "3'9\"",
                 "ability scores": {"Dexterity": 13},
-                "money": 130,
+                "inventory": { "money": 130 },
                 "maximum hit points": 10
                 }
                 ]

@@ -8,7 +8,7 @@
                 "alignment": "Lawful Evil",
                 "height": "3'9\"",
                 "ability scores": {"Strength": 12},
-                "money": 130,
+                "inventory": { "money": 130 },
                 "maximum hit points": 10,
                 "experience points": 2300,
                 "level": 2

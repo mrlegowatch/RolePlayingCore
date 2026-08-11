@@ -178,7 +178,7 @@ struct PlayerTests {
         #expect(player.experiencePoints == 0, "experience points")
         #expect(player.level == 1, "level")
         
-        #expect((50...200).contains(player.money.value), "money \(player.money.value)")
+        #expect((50...200).contains(player.inventory.money.value), "money \(player.inventory.money.value)")
         
         #expect(player.proficiencyBonus == 2, "proficiency bonus")
     }
@@ -196,7 +196,7 @@ struct PlayerTests {
             "ability scores": {"Dexterity": 13, "Charisma": 12},
             "background ability scores": ["Strength", "Strength", "Dexterity"],
             "skill proficiencies": ["Athletics"],
-            "money": 130,
+            "inventory": { "money": 130 },
             "maximum hit points": 10
         }
         """.data(using: .utf8)!
@@ -223,7 +223,7 @@ struct PlayerTests {
         #expect(player.experiencePoints == 0, "experience points")
         #expect(player.level == 1, "level")
         
-        #expect(player.money.value == 130, "money")
+        #expect(player.inventory.money.value == 130, "money")
     }
     
     @Test("Decode player with optional traits and level up")
@@ -239,7 +239,7 @@ struct PlayerTests {
             "ability scores": {"Strength": 12},
             "background ability scores": ["Strength", "Strength", "Dexterity"],
             "skill proficiencies": ["Athletics"],
-            "money": 130,
+            "inventory": { "money": 130 },
             "maximum hit points": 10,
             "experience points": 2300,
             "level": 2
@@ -280,7 +280,7 @@ struct PlayerTests {
             "ability scores": {"Dexterity": 13},
             "background ability scores": ["Strength", "Strength", "Dexterity"],
             "skill proficiencies": ["Athletics"],
-            "money": 130,
+            "inventory": { "money": 130 },
             "maximum hit points": 20,
             "current hit points": 9,
             "level": 2
@@ -309,7 +309,8 @@ struct PlayerTests {
         #expect(backgroundAbilities.contains("Strength"), "player traits round trip background ability scores")
         #expect(!backgroundAbilities.contains("Charisma"), "player traits round trip background ability scores")
         
-        #expect(encoded["money"] as? String == "130.0 gp", "player traits round trip money")
+        let inventoryDict = try #require(encoded["inventory"] as? [String: Any])
+        #expect(inventoryDict["money"] as? String == "130.0 gp", "player traits round trip money")
         #expect(encoded["maximum hit points"] as? Int == 20, "player traits round trip maximum hit points")
         #expect(encoded["current hit points"] as? Int == 9, "player traits round trip current hit points")
         #expect(encoded["level"] as? Int == 2, "player traits round trip level")
@@ -340,7 +341,7 @@ struct PlayerTests {
             "name": "Bilbo",
             "height": "3'9\\"",
             "ability scores": {"Dexterity": 13},
-            "money": 130]
+            "inventory": { "money": 130 }]
         }
         """
     ])
@@ -542,7 +543,7 @@ struct PlayerTests {
             "ability scores": {"Charisma": 14, "Dexterity": 15},
             "background ability scores": ["Strength", "Strength", "Dexterity"],
             "skill proficiencies": ["Athletics"],
-            "money": 100,
+            "inventory": { "money": 100 },
             "maximum hit points": 12
         }
         """.data(using: .utf8)!
@@ -583,7 +584,7 @@ struct PlayerTests {
             "ability scores": {"Strength": 14},
             "background ability scores": ["Strength", "Strength", "Dexterity"],
             "skill proficiencies": ["Athletics"],
-            "money": 100,
+            "inventory": { "money": 100 },
             "maximum hit points": 12,
             "experience points": 0,
             "level": 1
@@ -709,7 +710,7 @@ struct PlayerTests {
             "ability scores": {"Strength": 12},
             "background ability scores": ["Strength", "Strength", "Dexterity"],
             "skill proficiencies": ["Athletics"],
-            "money": 130,
+            "inventory": { "money": 130 },
             "maximum hit points": 10,
             "current hit points": 7,
             "used hit dice": 1,
@@ -958,25 +959,25 @@ struct PlayerTests {
     @Test("addToInventory creates new entry for unknown item")
     func addToInventoryNewEntry() {
         let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
-        let countBefore = player.inventory.count
+        let countBefore = player.inventory.entries.count
         let longsword = gameData.items["Longsword"]!
-        player.addToInventory(longsword)
-        #expect(player.inventory.count == countBefore + 1)
-        #expect(player.inventory.last?.item.name == "Longsword")
-        #expect(player.inventory.last?.quantity == 1)
+        player.inventory.add(longsword)
+        #expect(player.inventory.entries.count == countBefore + 1)
+        #expect(player.inventory.entries.last?.item.name == "Longsword")
+        #expect(player.inventory.entries.last?.quantity == 1)
     }
 
     @Test("addToInventory stacks quantity with existing entry for same item")
     func addToInventoryStacksExisting() {
         let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
         let arrow = gameData.items["Arrow"]!
-        let arrowEntry = player.inventory.first(where: { $0.item.name == "Arrow" })
+        let arrowEntry = player.inventory.entries.first(where: { $0.item.name == "Arrow" })
         let originalQuantity = arrowEntry?.quantity ?? 0
-        let countBefore = player.inventory.count
+        let countBefore = player.inventory.entries.count
 
-        player.addToInventory(arrow, quantity: 5)
-        #expect(player.inventory.count == countBefore, "no new entry should be created")
-        let updated = player.inventory.first(where: { $0.item.name == "Arrow" })
+        player.inventory.add(arrow, quantity: 5)
+        #expect(player.inventory.entries.count == countBefore, "no new entry should be created")
+        let updated = player.inventory.entries.first(where: { $0.item.name == "Arrow" })
         #expect(updated?.quantity == originalQuantity + 5)
     }
 
@@ -984,50 +985,50 @@ struct PlayerTests {
     func addToInventoryDefaultQuantity() {
         let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
         let dagger = gameData.items["Dagger"]!
-        player.addToInventory(dagger)
-        #expect(player.inventory.first(where: { $0.item.name == "Dagger" })?.quantity == 1)
+        player.inventory.add(dagger)
+        #expect(player.inventory.entries.first(where: { $0.item.name == "Dagger" })?.quantity == 1)
     }
 
     @Test("addToInventory ignores zero or negative quantity")
     func addToInventoryIgnoresNonPositive() {
         let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
-        let countBefore = player.inventory.count
+        let countBefore = player.inventory.entries.count
         let longsword = gameData.items["Longsword"]!
-        player.addToInventory(longsword, quantity: 0)
-        player.addToInventory(longsword, quantity: -3)
-        #expect(player.inventory.count == countBefore)
+        player.inventory.add(longsword, quantity: 0)
+        player.inventory.add(longsword, quantity: -3)
+        #expect(player.inventory.entries.count == countBefore)
     }
 
     @Test("removeFromInventory removes entry by ID")
     func removeFromInventory() {
         let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
         let longsword = gameData.items["Longsword"]!
-        player.addToInventory(longsword)
-        let id = player.inventory.first(where: { $0.item.name == "Longsword" })!.id
-        let countBefore = player.inventory.count
+        player.inventory.add(longsword)
+        let id = player.inventory.entries.first(where: { $0.item.name == "Longsword" })!.id
+        let countBefore = player.inventory.entries.count
 
-        player.removeFromInventory(id: id)
-        #expect(player.inventory.count == countBefore - 1)
-        #expect(player.inventory.first(where: { $0.item.name == "Longsword" }) == nil)
+        player.inventory.remove(id: id)
+        #expect(player.inventory.entries.count == countBefore - 1)
+        #expect(player.inventory.entries.first(where: { $0.item.name == "Longsword" }) == nil)
     }
 
     @Test("removeFromInventory ignores unknown ID")
     func removeFromInventoryUnknownID() {
         let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
-        let countBefore = player.inventory.count
-        player.removeFromInventory(id: UUID())
-        #expect(player.inventory.count == countBefore)
+        let countBefore = player.inventory.entries.count
+        player.inventory.remove(id: UUID())
+        #expect(player.inventory.entries.count == countBefore)
     }
 
     @Test("equipItem sets isEquipped on the entry")
     func equipItem() {
         let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
         let leatherArmor = gameData.items["Leather Armor"]!
-        player.addToInventory(leatherArmor)
-        let id = player.inventory.first(where: { $0.item.name == "Leather Armor" })!.id
+        player.inventory.add(leatherArmor)
+        let id = player.inventory.entries.first(where: { $0.item.name == "Leather Armor" })!.id
 
-        player.equipItem(id: id)
-        #expect(player.inventory.first(where: { $0.item.name == "Leather Armor" })?.isEquipped == true)
+        player.inventory.equip(id: id)
+        #expect(player.inventory.entries.first(where: { $0.item.name == "Leather Armor" })?.isEquipped == true)
     }
 
     @Test("equipItem auto-unequips conflicting non-shield armor")
@@ -1035,38 +1036,38 @@ struct PlayerTests {
         let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
         let chainMail = gameData.items["Chain Mail"]!
         let leatherArmor = gameData.items["Leather Armor"]!
-        player.addToInventory(chainMail)
-        player.addToInventory(leatherArmor)
+        player.inventory.add(chainMail)
+        player.inventory.add(leatherArmor)
 
-        let chainID = player.inventory.first(where: { $0.item.name == "Chain Mail" })!.id
-        let leatherID = player.inventory.first(where: { $0.item.name == "Leather Armor" })!.id
+        let chainID = player.inventory.entries.first(where: { $0.item.name == "Chain Mail" })!.id
+        let leatherID = player.inventory.entries.first(where: { $0.item.name == "Leather Armor" })!.id
 
-        player.equipItem(id: chainID)
-        #expect(player.equippedArmor?.name == "Chain Mail")
+        player.inventory.equip(id: chainID)
+        #expect(player.inventory.equippedArmor?.name == "Chain Mail")
 
-        player.equipItem(id: leatherID)
-        #expect(player.equippedArmor?.name == "Leather Armor", "leather should now be equipped")
-        #expect(player.inventory.first(where: { $0.item.name == "Chain Mail" })?.isEquipped == false, "chain mail should be auto-unequipped")
+        player.inventory.equip(id: leatherID)
+        #expect(player.inventory.equippedArmor?.name == "Leather Armor", "leather should now be equipped")
+        #expect(player.inventory.entries.first(where: { $0.item.name == "Chain Mail" })?.isEquipped == false, "chain mail should be auto-unequipped")
     }
 
     @Test("equipItem auto-unequips conflicting shield")
     func equipItemUnequipsConflictingShield() {
         let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
         let shield1 = gameData.items["Shield"]!
-        player.addToInventory(shield1, quantity: 2)
+        player.inventory.add(shield1, quantity: 2)
         // Two separate entries wouldn't happen with stacking, so add via two different paths:
         // Re-add after removing to get a second distinct entry
-        let firstShieldID = player.inventory.first(where: { $0.item.name == "Shield" })!.id
-        player.equipItem(id: firstShieldID)
-        #expect(player.equippedShield != nil)
+        let firstShieldID = player.inventory.entries.first(where: { $0.item.name == "Shield" })!.id
+        player.inventory.equip(id: firstShieldID)
+        #expect(player.inventory.equippedShield != nil)
 
         // Remove equipped shield and add a fresh one to get a new ID
-        player.removeFromInventory(id: firstShieldID)
-        player.addToInventory(shield1)
-        let secondShieldID = player.inventory.first(where: { $0.item.name == "Shield" })!.id
-        player.equipItem(id: secondShieldID)
-        #expect(player.equippedShield?.name == "Shield")
-        let equippedCount = player.inventory.filter { $0.isEquipped && ($0.item as? Armor)?.category == .shield }.count
+        player.inventory.remove(id: firstShieldID)
+        player.inventory.add(shield1)
+        let secondShieldID = player.inventory.entries.first(where: { $0.item.name == "Shield" })!.id
+        player.inventory.equip(id: secondShieldID)
+        #expect(player.inventory.equippedShield?.name == "Shield")
+        let equippedCount = player.inventory.entries.filter { $0.isEquipped && ($0.item as? Armor)?.category == .shield }.count
         #expect(equippedCount == 1, "only one shield should be equipped at a time")
     }
 
@@ -1074,39 +1075,39 @@ struct PlayerTests {
     func unequipItem() {
         let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
         let leatherArmor = gameData.items["Leather Armor"]!
-        player.addToInventory(leatherArmor)
-        let id = player.inventory.first(where: { $0.item.name == "Leather Armor" })!.id
-        player.equipItem(id: id)
-        #expect(player.equippedArmor != nil)
+        player.inventory.add(leatherArmor)
+        let id = player.inventory.entries.first(where: { $0.item.name == "Leather Armor" })!.id
+        player.inventory.equip(id: id)
+        #expect(player.inventory.equippedArmor != nil)
 
-        player.unequipItem(id: id)
-        #expect(player.equippedArmor == nil)
+        player.inventory.unequip(id: id)
+        #expect(player.inventory.equippedArmor == nil)
     }
 
     @Test("adjustQuantity updates the quantity of an entry")
     func adjustQuantity() {
         let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
-        let arrowEntry = player.inventory.first(where: { $0.item.name == "Arrow" })!
-        player.adjustQuantity(50, for: arrowEntry.id)
-        #expect(player.inventory.first(where: { $0.item.name == "Arrow" })?.quantity == 50)
+        let arrowEntry = player.inventory.entries.first(where: { $0.item.name == "Arrow" })!
+        player.inventory.adjustQuantity(50, for: arrowEntry.id)
+        #expect(player.inventory.entries.first(where: { $0.item.name == "Arrow" })?.quantity == 50)
     }
 
     @Test("adjustQuantity removes entry when quantity is zero")
     func adjustQuantityRemovesAtZero() {
         let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
-        let countBefore = player.inventory.count
-        let spearID = player.inventory.first(where: { $0.item.name == "Spear" })!.id
-        player.adjustQuantity(0, for: spearID)
-        #expect(player.inventory.count == countBefore - 1)
-        #expect(player.inventory.first(where: { $0.item.name == "Spear" }) == nil)
+        let countBefore = player.inventory.entries.count
+        let spearID = player.inventory.entries.first(where: { $0.item.name == "Spear" })!.id
+        player.inventory.adjustQuantity(0, for: spearID)
+        #expect(player.inventory.entries.count == countBefore - 1)
+        #expect(player.inventory.entries.first(where: { $0.item.name == "Spear" }) == nil)
     }
 
     @Test("adjustQuantity ignores unknown ID")
     func adjustQuantityUnknownID() {
         let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
-        let countBefore = player.inventory.count
-        player.adjustQuantity(99, for: UUID())
-        #expect(player.inventory.count == countBefore)
+        let countBefore = player.inventory.entries.count
+        player.inventory.adjustQuantity(99, for: UUID())
+        #expect(player.inventory.entries.count == countBefore)
     }
 
     // MARK: - Spellcasting
@@ -1277,7 +1278,7 @@ struct PlayerTests {
             "ability scores": {"Wisdom": 14},
             "background ability scores": ["Strength", "Strength", "Dexterity"],
             "skill proficiencies": ["Athletics"],
-            "money": 130,
+            "inventory": { "money": 130 },
             "maximum hit points": 10,
             "prepared spells": ["Bless", "Fireball"]
         }
@@ -1307,7 +1308,7 @@ struct PlayerTests {
             "ability scores": {},
             "background ability scores": ["Strength", "Strength", "Dexterity"],
             "skill proficiencies": ["Athletics"],
-            "money": 130,
+            "inventory": { "money": 130 },
             "maximum hit points": 10,
             "prepared spells": ["Bless", "Nonexistent Spell XYZ"]
         }
@@ -1330,7 +1331,7 @@ struct PlayerTests {
             "ability scores": {},
             "background ability scores": ["Strength", "Strength", "Dexterity"],
             "skill proficiencies": ["Athletics"],
-            "money": 130,
+            "inventory": { "money": 130 },
             "maximum hit points": 10,
             "used spell slots": [1, 0, 2]
         }

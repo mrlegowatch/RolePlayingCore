@@ -10,7 +10,7 @@
                 "ability scores": {"Dexterity": 13},
                 "background ability scores": ["Strength", "Strength", "Dexterity"],
                 "skill proficiencies": ["Athletics"],
-                "money": 130,
+                "inventory": { "money": 130 },
                 "maximum hit points": 10
                 },
                 {
@@ -24,7 +24,7 @@
                 "ability scores": {"Strength": 12},
                 "background ability scores": ["Strength", "Dexterity", "Dexterity"],
                 "skill proficiencies": ["Athletics"],
-                "money": 130,
+                "inventory": { "money": 130 },
                 "maximum hit points": 10,
                 "experience points": 2300,
                 "level": 2

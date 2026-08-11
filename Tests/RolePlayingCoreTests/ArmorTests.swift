@@ -69,7 +69,7 @@ struct ArmorTests {
     func unarmoredAC() {
         // DEX 14 → modifier +2 → AC 12
         let player = makePlayer(baseAbilities: ["Dexterity": 14])
-        #expect(player.equippedArmor == nil)
+        #expect(player.inventory.equippedArmor == nil)
         #expect(player.armorClass == 12)
     }
 
@@ -77,7 +77,7 @@ struct ArmorTests {
     func lightArmorAC() {
         let player = makePlayer(baseAbilities: ["Dexterity": 16])  // DEX mod +3
         let leather = gameData.items["Leather Armor"] as! Armor  // base 11
-        player.inventory.append(InventoryEntry(item: leather, isEquipped: true))
+        player.inventory.entries.append(InventoryEntry(item: leather, isEquipped: true))
         #expect(player.armorClass == 14)  // 11 + 3
     }
 
@@ -85,7 +85,7 @@ struct ArmorTests {
     func mediumArmorAC() {
         let player = makePlayer(baseAbilities: ["Dexterity": 18])  // DEX mod +4, capped at +2
         let chainShirt = gameData.items["Chain Shirt"] as! Armor  // base 13, capped 2
-        player.inventory.append(InventoryEntry(item: chainShirt, isEquipped: true))
+        player.inventory.entries.append(InventoryEntry(item: chainShirt, isEquipped: true))
         #expect(player.armorClass == 15)  // 13 + 2
     }
 
@@ -93,7 +93,7 @@ struct ArmorTests {
     func heavyArmorAC() {
         let player = makePlayer(baseAbilities: ["Dexterity": 18])  // DEX mod +4, ignored
         let chainMail = gameData.items["Chain Mail"] as! Armor  // base 16, excluded
-        player.inventory.append(InventoryEntry(item: chainMail, isEquipped: true))
+        player.inventory.entries.append(InventoryEntry(item: chainMail, isEquipped: true))
         #expect(player.armorClass == 16)
     }
 
@@ -101,7 +101,7 @@ struct ArmorTests {
     func shieldBonus() {
         let player = makePlayer(baseAbilities: ["Dexterity": 14])  // unarmored AC 12
         let shield = gameData.items["Shield"] as! Armor        // +2 bonus
-        player.inventory.append(InventoryEntry(item: shield, isEquipped: true))
+        player.inventory.entries.append(InventoryEntry(item: shield, isEquipped: true))
         #expect(player.armorClass == 14)  // 12 + 2
     }
 
@@ -110,8 +110,8 @@ struct ArmorTests {
         let player = makePlayer(baseAbilities: ["Dexterity": 14])  // DEX mod +2
         let leather = gameData.items["Leather Armor"] as! Armor  // base 11 + dex = 13
         let shield  = gameData.items["Shield"] as! Armor          // +2
-        player.inventory.append(InventoryEntry(item: leather, isEquipped: true))
-        player.inventory.append(InventoryEntry(item: shield, isEquipped: true))
+        player.inventory.entries.append(InventoryEntry(item: leather, isEquipped: true))
+        player.inventory.entries.append(InventoryEntry(item: shield, isEquipped: true))
         #expect(player.armorClass == 15)  // 11 + 2 + 2
     }
 
@@ -123,7 +123,7 @@ struct ArmorTests {
             baseAbilities: ["Dexterity": 12, "Constitution": 16],
             unarmoredDefense: barbUD
         )
-        #expect(player.equippedArmor == nil)
+        #expect(player.inventory.equippedArmor == nil)
         #expect(player.armorClass == 14)
     }
 

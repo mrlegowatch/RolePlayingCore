@@ -13,19 +13,19 @@ struct InventoryView: View {
     let player: Player
 
     private var weapons: [InventoryEntry] {
-        player.inventory.filter { $0.item is Weapon }.sorted { $0.item.name < $1.item.name }
+        player.inventory.entries.filter { $0.item is Weapon }.sorted { $0.item.name < $1.item.name }
     }
 
     private var armorItems: [InventoryEntry] {
-        player.inventory.filter { $0.item is Armor }.sorted { $0.item.name < $1.item.name }
+        player.inventory.entries.filter { $0.item is Armor }.sorted { $0.item.name < $1.item.name }
     }
 
     private var gearItems: [InventoryEntry] {
-        player.inventory.filter { !($0.item is Weapon) && !($0.item is Armor) }.sorted { $0.item.name < $1.item.name }
+        player.inventory.entries.filter { !($0.item is Weapon) && !($0.item is Armor) }.sorted { $0.item.name < $1.item.name }
     }
 
     private var totalWeight: String {
-        let pounds = player.inventory.reduce(0.0) { $0 + $1.totalWeight.converted(to: .pounds).value }
+        let pounds = player.inventory.entries.reduce(0.0) { $0 + $1.totalWeight.converted(to: .pounds).value }
         return Weight(value: pounds, unit: .pounds).displayString
     }
 
@@ -35,7 +35,7 @@ struct InventoryView: View {
                 Label("Equipment", systemImage: "bag")
                     .font(.headline)
                 Spacer()
-                statPill(title: "\(player.money)", subtitle: "Money")
+                statPill(title: "\(player.inventory.money)", subtitle: "Money")
                 statPill(title: totalWeight, subtitle: "Weight")
             }
             if !weapons.isEmpty {
