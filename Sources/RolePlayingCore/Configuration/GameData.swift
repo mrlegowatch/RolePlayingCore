@@ -23,7 +23,7 @@ public struct GameDataFiles: Decodable, Sendable {
     let species: [String]
     let classes: [String]
     let players: [String]?
-    let speciesNames: String?
+    let characterNames: String?
 
     private enum CodingKeys: String, CodingKey {
         case currencies
@@ -36,7 +36,7 @@ public struct GameDataFiles: Decodable, Sendable {
         case species
         case classes
         case players
-        case speciesNames = "species names"
+        case characterNames = "character names"
     }
 }
 

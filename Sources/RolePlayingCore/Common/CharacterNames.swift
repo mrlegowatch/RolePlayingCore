@@ -1,5 +1,5 @@
 //
-//  SpeciesNames.swift
+//  CharacterNames.swift
 //  RolePlayingCore
 //
 //  Created by Brian Arnold on 7/8/17.
@@ -8,8 +8,8 @@
 
 import Foundation
 
-/// Collections of species names, for use in generating random names.
-public struct SpeciesNames: Codable, Sendable {
+/// Collections of character names by species, for use in generating random names.
+public struct CharacterNames: Codable, Sendable {
     
     struct FamilyNames: Codable, Sendable {
         let familyType: String

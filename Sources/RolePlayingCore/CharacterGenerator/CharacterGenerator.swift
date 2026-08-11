@@ -12,18 +12,18 @@ import Foundation
 /// provides a random character.
 public struct CharacterGenerator {
     let gameData: GameData
-    let names: SpeciesNames
+    let names: CharacterNames
     
     /// Creates a character generator instance with a reference to the current gameData.
     public init(_ gameData: GameData, from bundle: Bundle = .main) throws {
-        guard let speciesNamesFile = gameData.gameDataFiles.speciesNames else {
-            throw missingJSONError("speciesNames")
+        guard let characterNamesFile = gameData.gameDataFiles.characterNames else {
+            throw missingJSONError("characterNames")
         }
         
         self.gameData = gameData
-        let data = try bundle.loadJSON(speciesNamesFile)
+        let data = try bundle.loadJSON(characterNamesFile)
         let decoder = JSONDecoder()
-        self.names = try decoder.decode(SpeciesNames.self, from: data)
+        self.names = try decoder.decode(CharacterNames.self, from: data)
     }
     
     // TODO: support non-uniform distributions for different traits (e.g., some species and classes tend to have specific alignments)
