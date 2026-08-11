@@ -2,9 +2,9 @@
     "players": [
                 {
                 "name": "Frodo",
-                "gender": "Male",
-                "class": "Fighter",
+                "appearance": { "gender": "Male" },
                 "height": "3'9\"",
+                "class": "Fighter",
                 "ability scores": {"Dexterity": 13},
                 "inventory": { "money": 130 },
                 "maximum hit points": 10

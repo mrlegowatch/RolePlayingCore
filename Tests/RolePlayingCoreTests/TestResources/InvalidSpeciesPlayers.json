@@ -2,11 +2,11 @@
     "players": [
                 {
                 "name": "Bilbo",
-                "gender": "Female",
+                "appearance": { "gender": "Female" },
+                "height": "3'9\"",
                 "class": "Fighter",
                 "species": "Frog",
                 "alignment": "Lawful Evil",
-                "height": "3'9\"",
                 "ability scores": {"Strength": 12},
                 "inventory": { "money": 130 },
                 "maximum hit points": 10,
