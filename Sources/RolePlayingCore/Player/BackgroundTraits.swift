@@ -16,6 +16,8 @@ public struct BackgroundTraits: Named, Sendable {
     public var skillProficiencies: [Skill]
     public var toolProficiency: String
     public var equipment: EquipmentOptions
+    /// Personality flavor keyed by `DescriptiveTraitKey` raw values (personality trait, ideal, bond, flaw, etc.).
+    public var descriptiveTraits: [String: String]
 }
 
 extension BackgroundTraits: CodableWithConfiguration {
@@ -27,6 +29,7 @@ extension BackgroundTraits: CodableWithConfiguration {
         case skillProficiencies = "skill proficiencies"
         case toolProficiency = "tool proficiency"
         case equipment = "equipment"
+        case descriptiveTraits = "descriptive traits"
     }
     
     public init(from decoder: Decoder, configuration: GameData) throws {
@@ -45,6 +48,7 @@ extension BackgroundTraits: CodableWithConfiguration {
         
         self.toolProficiency = try values.decode(String.self, forKey: .toolProficiency)
         self.equipment = try values.decode(EquipmentOptions.self, forKey: .equipment, configuration: configuration)
+        self.descriptiveTraits = try values.decodeIfPresent([String: String].self, forKey: .descriptiveTraits) ?? [:]
     }
     
     public func encode(to encoder: Encoder, configuration: GameData) throws {
@@ -55,5 +59,8 @@ extension BackgroundTraits: CodableWithConfiguration {
         try container.encode(skillProficiencies.skillNames, forKey: .skillProficiencies)
         try container.encode(toolProficiency, forKey: .toolProficiency)
         try container.encode(equipment, forKey: .equipment, configuration: configuration)
+        if !descriptiveTraits.isEmpty {
+            try container.encode(descriptiveTraits, forKey: .descriptiveTraits)
+        }
     }
 }

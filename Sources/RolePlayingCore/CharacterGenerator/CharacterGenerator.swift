@@ -63,6 +63,7 @@ public struct CharacterGenerator {
         let alignment = randomAlignment(using: &generator)
 
         let player = Player(name, backgroundTraits: backgroundTraits, speciesTraits: speciesTraits, classTraits: classTraits, gender: gender, alignment: alignment)
+        player.descriptiveTraits = backgroundTraits.descriptiveTraits
         if classTraits.spellcastingType != nil {
             player.preparedSpells = randomSpells(classTraits: classTraits, using: &generator)
         }

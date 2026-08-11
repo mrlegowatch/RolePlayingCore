@@ -57,9 +57,34 @@ public class Player: CodableWithConfiguration {
 
     public var height: Height
 
-    // TODO: birthdate and age
-    
-    // TODO: hair, eyes, skin
+    // MARK: Descriptive trait accessors
+
+    /// Accesses a well-known descriptive trait by key.
+    public subscript(key: DescriptiveTraitKey) -> String? {
+        get { descriptiveTraits[key.rawValue] }
+        set { descriptiveTraits[key.rawValue] = newValue }
+    }
+
+    public var hairColor: String? {
+        get { descriptiveTraits[DescriptiveTraitKey.hairColor.rawValue] }
+        set { descriptiveTraits[DescriptiveTraitKey.hairColor.rawValue] = newValue }
+    }
+    public var eyeColor: String? {
+        get { descriptiveTraits[DescriptiveTraitKey.eyeColor.rawValue] }
+        set { descriptiveTraits[DescriptiveTraitKey.eyeColor.rawValue] = newValue }
+    }
+    public var skinColor: String? {
+        get { descriptiveTraits[DescriptiveTraitKey.skinColor.rawValue] }
+        set { descriptiveTraits[DescriptiveTraitKey.skinColor.rawValue] = newValue }
+    }
+    public var age: String? {
+        get { descriptiveTraits[DescriptiveTraitKey.age.rawValue] }
+        set { descriptiveTraits[DescriptiveTraitKey.age.rawValue] = newValue }
+    }
+    public var birthdate: String? {
+        get { descriptiveTraits[DescriptiveTraitKey.birthdate.rawValue] }
+        set { descriptiveTraits[DescriptiveTraitKey.birthdate.rawValue] = newValue }
+    }
 
     /// Ability scores
     
