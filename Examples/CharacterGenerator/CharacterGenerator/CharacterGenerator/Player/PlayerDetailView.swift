@@ -44,6 +44,13 @@ struct PlayerDetailView: View {
                 .padding()
                 .background(.background.secondary)
                 .cornerRadius(12)
+                // Proficiencies
+                if !player.allWeaponProficiencies.isEmpty || !player.allArmorTraining.isEmpty {
+                    ProficienciesView(player: player)
+                        .padding()
+                        .background(.background.secondary)
+                        .cornerRadius(12)
+                }
                 // Section 6: HP
                 sectionCard(6)
                 // Section 7: Height + Size

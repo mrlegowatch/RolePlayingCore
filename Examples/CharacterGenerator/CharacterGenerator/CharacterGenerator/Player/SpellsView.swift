@@ -64,6 +64,9 @@ struct SpellsView: View {
             if let bonus = player.spellAttackBonus {
                 statPill(title: bonus >= 0 ? "+\(bonus)" : "\(bonus)", subtitle: "Attack")
             }
+            if let max = player.maxPreparedSpells {
+                statPill(title: "\(max)", subtitle: "Prepared")
+            }
         }
     }
 
@@ -79,7 +82,7 @@ struct SpellsView: View {
 
     private var spellSlotsRow: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text("Spell Slots")
+            Text(player.classTraits.spellcastingType == .pactMagic ? "Pact Magic Slots" : "Spell Slots")
                 .font(.caption)
                 .foregroundStyle(.secondary)
             HStack(spacing: 12) {

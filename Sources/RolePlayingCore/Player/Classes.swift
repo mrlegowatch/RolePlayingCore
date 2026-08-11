@@ -69,6 +69,7 @@ extension Classes: CodableWithConfiguration {
         case classes
         case experiencePoints = "experience points"
         case displayOrder = "display order"
+        case spellSlotTables = "spell slot tables"
     }
 
     public init(from decoder: Decoder, configuration: GameData) throws {
@@ -77,6 +78,12 @@ extension Classes: CodableWithConfiguration {
         add(classes)
         self.experiencePoints = try values.decodeIfPresent([Int].self, forKey: .experiencePoints)
         self.displayOrder = try values.decodeIfPresent([String].self, forKey: .displayOrder) ?? []
+        let spellSlotTables = try values.decodeIfPresent([String: [[Int]]].self, forKey: .spellSlotTables) ?? [:]
+        for name in allClasses.keys {
+            if let tableName = allClasses[name]?.slotTableName, let table = spellSlotTables[tableName] {
+                allClasses[name]?.spellSlots = table
+            }
+        }
     }
 
     public func encode(to encoder: Encoder, configuration: GameData) throws {

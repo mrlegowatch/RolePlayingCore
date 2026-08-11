@@ -192,8 +192,7 @@ public class Player: CodableWithConfiguration {
     /// Maximum spells that can be prepared: spellcasting modifier + character level, minimum 1.
     public var maxPreparedSpells: Int? {
         guard classTraits.spellcastingType == .prepared,
-              let modifier = spellcastingModifier,
-              classTraits.spellSlots != nil else { return nil }
+              let modifier = spellcastingModifier else { return nil }
         return max(1, modifier + level)
     }
 

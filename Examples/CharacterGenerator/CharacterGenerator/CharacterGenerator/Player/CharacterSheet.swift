@@ -8,6 +8,7 @@
 
 import Foundation
 import RolePlayingCore
+import SwiftDice
 
 extension Int {
     var displayModifier: String { self > 0 ? " +\(self) " : " \(self) " }
@@ -93,7 +94,10 @@ class CharacterSheet {
     var proficiencyBonus: String { player.proficiencyBonus.displayModifier }
     var maximumHitPoints: String { "\(player.maximumHitPoints)" }
     var currentHitPoints: String { "\(player.currentHitPoints)" }
-    var hitDice: String { "\(player.hitDice)" }
+    var hitDice: String {
+        let dieSides = player.classTraits.hitDice.sides
+        return "\(player.availableHitDice)/\(player.level) d\(dieSides)"
+    }
     var money: String { "\(player.money)" }
     var gender: String { player.gender.map(\.rawValue) ?? "Androgynous" }
     var height: String { player.height.displayString }

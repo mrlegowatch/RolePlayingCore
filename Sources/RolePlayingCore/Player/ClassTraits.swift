@@ -38,6 +38,8 @@ public struct ClassTraits: Named, Sendable {
     public var spellcastingType: SpellcastingType?
     /// Spell slots indexed by [classLevel-1][slotLevel-1].
     public var spellSlots: [[Int]]?
+    /// The named slot table to apply from the class collection, resolved at load time.
+    public var slotTableName: String?
     /// Number of cantrips known at character level 1.
     public var cantripsKnown: Int?
     /// Number of spells known or prepared at character level 1.
@@ -92,6 +94,7 @@ public struct ClassTraits: Named, Sendable {
                 spellcastingAbility: Ability? = nil,
                 spellcastingType: SpellcastingType? = nil,
                 spellSlots: [[Int]]? = nil,
+                slotTableName: String? = nil,
                 cantripsKnown: Int? = nil,
                 spellsKnown: Int? = nil,
                 defaultBackground: String? = nil,
@@ -118,6 +121,7 @@ public struct ClassTraits: Named, Sendable {
         self.spellcastingAbility = spellcastingAbility
         self.spellcastingType = spellcastingType
         self.spellSlots = spellSlots
+        self.slotTableName = slotTableName
         self.cantripsKnown = cantripsKnown
         self.spellsKnown = spellsKnown
         self.defaultBackground = defaultBackground
@@ -149,6 +153,7 @@ extension ClassTraits: CodableWithConfiguration {
         case spellcastingAbility = "spellcasting ability"
         case spellcastingType = "spellcasting type"
         case spellSlots = "spell slots"
+        case slotTableName = "slot table"
         case cantripsKnown = "cantrips known"
         case spellsKnown = "spells known"
         case defaultBackground = "default background"
@@ -208,6 +213,7 @@ extension ClassTraits: CodableWithConfiguration {
         let spellcastingAbility = try values.decodeIfPresent(Ability.self, forKey: .spellcastingAbility)
         let spellcastingType = try values.decodeIfPresent(SpellcastingType.self, forKey: .spellcastingType)
         let spellSlots = try values.decodeIfPresent([[Int]].self, forKey: .spellSlots)
+        let slotTableName = try values.decodeIfPresent(String.self, forKey: .slotTableName)
         let cantripsKnown = try values.decodeIfPresent(Int.self, forKey: .cantripsKnown)
         let spellsKnown = try values.decodeIfPresent(Int.self, forKey: .spellsKnown)
         let defaultBackground = try values.decodeIfPresent(String.self, forKey: .defaultBackground)
@@ -237,6 +243,7 @@ extension ClassTraits: CodableWithConfiguration {
         self.spellcastingAbility = spellcastingAbility
         self.spellcastingType = spellcastingType
         self.spellSlots = spellSlots
+        self.slotTableName = slotTableName
         self.cantripsKnown = cantripsKnown
         self.spellsKnown = spellsKnown
         self.defaultBackground = defaultBackground
