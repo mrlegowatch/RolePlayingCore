@@ -7,7 +7,7 @@
 //
 
 /// A player character or monster size.
-public enum CreatureSize: String, Sendable {
+public enum CreatureSize: String, Codable, CaseIterable, Sendable {
     case tiny
     case small
     case medium

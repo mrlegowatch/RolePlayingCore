@@ -37,6 +37,19 @@ public struct Money: Sendable {
         self.base = currency
     }
 
+    /// Convenience initializer that converts a `[String: Int]` coin dictionary.
+    /// Unknown currency symbols are silently skipped.
+    public init(coins: [String: Int], currencies: Currencies) {
+        var result: [UnitCurrency: Int] = [:]
+        for (symbol, count) in coins where count > 0 {
+            if let unit = currencies[symbol] {
+                result[unit] = count
+            }
+        }
+        self.quantities = result
+        self.base = currencies.baseUnit
+    }
+
     /// The coin count for the given denomination.
     public subscript(currency: UnitCurrency) -> Int {
         get { quantities[currency] ?? 0 }

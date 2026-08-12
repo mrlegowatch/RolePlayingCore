@@ -14,7 +14,7 @@ public struct CreatureType: Sendable {
         case isDefault = "is default"
     }
     
-    init(_ name: String, isDefault: Bool? = nil) {
+    public init(_ name: String, isDefault: Bool? = nil) {
         self.name = name
         self.isDefault = isDefault
     }
