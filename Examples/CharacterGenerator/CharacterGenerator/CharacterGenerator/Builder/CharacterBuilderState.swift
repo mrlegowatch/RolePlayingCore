@@ -111,7 +111,7 @@ class CharacterBuilderState {
     }
 
     /// Creates the finished Player from the builder's current selections. Returns nil if `isComplete` is false.
-    func finalize() -> Player? {
+    func finalize(startingCurrencyUnit: UnitCurrency? = nil) -> Player? {
         guard let species = selectedSpecies,
               let classTraits = selectedClass,
               let background = selectedBackground,
@@ -126,6 +126,7 @@ class CharacterBuilderState {
                             classTraits: classTraits,
                             baseAbilities: assignedAbilities,
                             skillProficiencies: allSkills,
+                            startingCurrencyUnit: startingCurrencyUnit,
                             gender: gender,
                             alignment: alignment)
         for spell in chosenCantrips + chosenSpells {

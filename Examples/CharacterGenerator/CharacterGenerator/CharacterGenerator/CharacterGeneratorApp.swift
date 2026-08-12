@@ -65,7 +65,7 @@ class AppState: ObservableObject {
     }
 
     func finalizeBuiltCharacter() {
-        guard let player = builderState?.finalize() else { return }
+        guard let player = builderState?.finalize(startingCurrencyUnit: gameData.currencies.baseUnit) else { return }
         players.insert(player, at: 0)
         selectedPlayer = player
         builderState = nil

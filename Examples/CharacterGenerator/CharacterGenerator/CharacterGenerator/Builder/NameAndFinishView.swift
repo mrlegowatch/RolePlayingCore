@@ -39,9 +39,9 @@ struct NameAndFinishView: View {
 
             Section("Optional") {
                 Picker("Gender", selection: $builderState.gender) {
-                    Text("Any").tag(Player.Gender?.none)
-                    ForEach(Player.Gender.allCases, id: \.self) { g in
-                        Text(g.rawValue).tag(Player.Gender?.some(g))
+                    Text("Any").tag(PlayerAppearance.Gender?.none)
+                    ForEach(PlayerAppearance.Gender.allCases, id: \.self) { g in
+                        Text(g.rawValue).tag(PlayerAppearance.Gender?.some(g))
                     }
                 }
                 Picker("Ethics", selection: $ethics) {
