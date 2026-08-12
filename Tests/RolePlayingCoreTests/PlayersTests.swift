@@ -15,16 +15,16 @@ struct PlayersTests {
     
     let bundle = Bundle.module
     let decoder = JSONDecoder()
-    let configuration: Configuration
+    let gameData: GameData
     
     init() throws {
-        configuration = try Configuration("TestConfiguration", from: .module)
+        gameData = try GameData("TestConfiguration", from: .module)
     }
     
     @Test("Load and manipulate players collection")
     func players() async throws {
         let playersData = try bundle.loadJSON("TestPlayers")
-        let players = try decoder.decode(Players.self, from: playersData, configuration: configuration)
+        let players = try decoder.decode(Players.self, from: playersData, configuration: gameData)
         
         #expect(players.players.count == 2, "players count")
         #expect(players.count == 2, "players count")
@@ -41,10 +41,10 @@ struct PlayersTests {
     @Test("Encode round-trip preserves player count")
     func encodeRoundTrip() async throws {
         let playersData = try bundle.loadJSON("TestPlayers")
-        let original = try decoder.decode(Players.self, from: playersData, configuration: configuration)
+        let original = try decoder.decode(Players.self, from: playersData, configuration: gameData)
         let encoder = JSONEncoder()
-        let data = try encoder.encode(original, configuration: configuration)
-        let decoded = try decoder.decode(Players.self, from: data, configuration: configuration)
+        let data = try encoder.encode(original, configuration: gameData)
+        let decoded = try decoder.decode(Players.self, from: data, configuration: gameData)
         #expect(decoded.count == original.count)
     }
 
@@ -60,7 +60,7 @@ struct PlayersTests {
         // Attempt to decode, expecting an error to be thrown during decoding
         // since all trait resolution now happens during the decoding phase
         do {
-            _ = try decoder.decode(Players.self, from: playersData, configuration: configuration)
+            _ = try decoder.decode(Players.self, from: playersData, configuration: gameData)
             
             // If we reach here, no error was thrown - the test should fail
             Issue.record("Expected an error to be thrown for \(jsonFile), but none was thrown")

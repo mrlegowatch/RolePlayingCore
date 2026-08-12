@@ -8,6 +8,7 @@
 
 import Foundation
 import RolePlayingCore
+import SwiftDice
 
 extension Int {
     var displayModifier: String { self > 0 ? " +\(self) " : " \(self) " }
@@ -15,7 +16,6 @@ extension Int {
 
 /// Character sheet provides a mapping between player properties and collection view groupings and views.
 class CharacterSheet {
-    
     let player: Player
     
     init(_ player: Player) {
@@ -94,9 +94,12 @@ class CharacterSheet {
     var proficiencyBonus: String { player.proficiencyBonus.displayModifier }
     var maximumHitPoints: String { "\(player.maximumHitPoints)" }
     var currentHitPoints: String { "\(player.currentHitPoints)" }
-    var hitDice: String { "\(player.hitDice)" }
-    var money: String { "\(player.money)" }
-    var gender: String { player.gender.map(\.rawValue) ?? "Androgynous" }
+    var hitDice: String {
+        let dieSides = player.classTraits.hitDice.sides
+        return "\(player.availableHitDice)/\(player.level) d\(dieSides)"
+    }
+    var money: String { "\(player.inventory.money)" }
+    var gender: String { player.appearance.gender.map(\.rawValue) ?? "Androgynous" }
     var height: String { player.height.displayString }
     var speed: String {
         let value = player.speed
@@ -110,8 +113,8 @@ class CharacterSheet {
     var size: String { "\(player.size)".capitalized }
     var passivePerception: String { "\(player.passivePerception)" }
     var inventory: String {
-        guard !player.inventory.isEmpty else { return "None" }
-        return player.inventory.map { entry in
+        guard !player.inventory.entries.isEmpty else { return "None" }
+        return player.inventory.entries.map { entry in
             let qty = entry.quantity > 1 ? "\(entry.quantity)x " : ""
             let equipped = entry.isEquipped ? " ✓" : ""
             return "\(qty)\(entry.item.name)\(equipped)"

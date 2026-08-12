@@ -69,12 +69,12 @@ extension Armor: CodableWithConfiguration {
         case stealthDisadvantage = "stealth disadvantage"
     }
 
-    public init(from decoder: Decoder, configuration: Configuration) throws {
+    public init(from decoder: Decoder, configuration: GameData) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
 
         name = try values.decode(String.self, forKey: .name)
         plural = try values.decodeIfPresent(String.self, forKey: .plural) ?? (name + "s")
-        cost = (try? values.decode(Money.self, forKey: .cost, configuration: configuration.currencies)) ?? .zero
+        cost = (try? values.decode(Money.self, forKey: .cost, configuration: configuration.currencies)) ?? Money()
         weight = (try? values.decode(Weight.self, forKey: .weight)) ?? Weight(value: 0, unit: .pounds)
         category = try values.decode(WeightCategory.self, forKey: .category)
         baseAC = try values.decode(Int.self, forKey: .baseAC)
@@ -83,7 +83,7 @@ extension Armor: CodableWithConfiguration {
         stealthDisadvantage = try values.decodeIfPresent(Bool.self, forKey: .stealthDisadvantage) ?? false
     }
 
-    public func encode(to encoder: Encoder, configuration: Configuration) throws {
+    public func encode(to encoder: Encoder, configuration: GameData) throws {
         var values = encoder.container(keyedBy: CodingKeys.self)
         try values.encode(name, forKey: .name)
         if plural != name + "s" {

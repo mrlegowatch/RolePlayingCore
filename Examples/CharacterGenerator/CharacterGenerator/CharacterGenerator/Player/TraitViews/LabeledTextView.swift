@@ -3,6 +3,7 @@
 //  CharacterGenerator
 //
 //  Created by Brian Arnold on 1/3/26.
+//  Copyright © 2026 Brian Arnold. All rights reserved.
 //
 
 import SwiftUI

@@ -1,5 +1,5 @@
 //
-//  SpeciesNames.swift
+//  CharacterNames.swift
 //  RolePlayingCore
 //
 //  Created by Brian Arnold on 7/8/17.
@@ -8,8 +8,8 @@
 
 import Foundation
 
-/// Collections of species names, for use in generating random names.
-public struct SpeciesNames: Codable, Sendable {
+/// Collections of character names by species, for use in generating random names.
+public struct CharacterNames: Codable, Sendable {
     
     struct FamilyNames: Codable, Sendable {
         let familyType: String
@@ -94,13 +94,13 @@ public struct SpeciesNames: Codable, Sendable {
         return names[randomName]!
     }
     
-    private func resolveGender<G: RandomIndexGenerator>(_ gender: Player.Gender?, using generator: inout G) -> Player.Gender {
+    private func resolveGender<G: RandomIndexGenerator>(_ gender: PlayerAppearance.Gender?, using generator: inout G) -> PlayerAppearance.Gender {
         guard gender == nil else { return gender! }
-        let randomIndex = generator.randomIndex(upperBound: Player.Gender.allCases.count)
-        return Player.Gender.allCases[randomIndex]
+        let randomIndex = generator.randomIndex(upperBound: PlayerAppearance.Gender.allCases.count)
+        return PlayerAppearance.Gender.allCases[randomIndex]
     }
     
-    public func randomName<G: RandomIndexGenerator>(speciesTraits: SpeciesTraits, gender: Player.Gender?, using generator: inout G) -> String {
+    public func randomName<G: RandomIndexGenerator>(speciesTraits: SpeciesTraits, gender: PlayerAppearance.Gender?, using generator: inout G) -> String {
         // Determine species or parent species (for subspecies)
         var familyNames = resolveSpeciesNames(speciesTraits)
         familyNames = resolveAliasNames(familyNames, using: &generator)
@@ -111,7 +111,7 @@ public struct SpeciesNames: Codable, Sendable {
         return nameGenerator.makeName(using: &generator)
     }
     
-    public func randomName(speciesTraits: SpeciesTraits, gender: Player.Gender?) -> String {
+    public func randomName(speciesTraits: SpeciesTraits, gender: PlayerAppearance.Gender?) -> String {
         var rng = DefaultRandomIndexGenerator()
         return randomName(speciesTraits: speciesTraits, gender: gender, using: &rng)
     }

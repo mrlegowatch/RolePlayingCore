@@ -9,11 +9,13 @@
 import Foundation
 
 /// A collection of species traits, including subspecies.
-public class Species: CodableWithConfiguration {
-    
+public class Species: CodableWithConfiguration, DisplayOrdered {
     /// All of the species and subspecies traits as a flattened dictionary, indexed by species name.
     private var allSpecies: [String: SpeciesTraits] = [:]
-    
+
+    /// The preferred display order for species; empty means no preference (alphabetical fallback).
+    public var displayOrder: [String] = []
+
     /// Accesses all of the species and subspecies that have been loaded.
     public var all: [SpeciesTraits] { Array(allSpecies.values) }
     
@@ -28,6 +30,7 @@ public class Species: CodableWithConfiguration {
     }
     
     public func add(_ species: Species) {
+        if !species.displayOrder.isEmpty { displayOrder = species.displayOrder }
         add(species.all)
     }
     
@@ -61,35 +64,40 @@ public class Species: CodableWithConfiguration {
     
     enum CodingKeys: String, CodingKey {
         case species
+        case displayOrder = "display order"
     }
-    
+
     /// Overridden to stitch together subspecies embedded in species.
-    public required init(from decoder: Decoder, configuration: Configuration) throws {
+    public required init(from decoder: Decoder, configuration: GameData) throws {
         let root = try decoder.container(keyedBy: CodingKeys.self)
-        
+
         var leaf = try root.nestedUnkeyedContainer(forKey: .species)
-        
+
         var species = [SpeciesTraits]()
         while (!leaf.isAtEnd) {
             let speciesTraits = try leaf.decode(SpeciesTraits.self, configuration: configuration)
             species.append(speciesTraits)
-            
+
             /// If there are subspecies, append those
             for subspeciesTraits in speciesTraits.subspecies {
                 species.append(subspeciesTraits)
             }
         }
-        
+
         add(species)
+        self.displayOrder = try root.decodeIfPresent([String].self, forKey: .displayOrder) ?? []
     }
-    
-    public func encode(to encoder: any Encoder, configuration: Configuration) throws {
+
+    public func encode(to encoder: any Encoder, configuration: GameData) throws {
         var root = encoder.container(keyedBy: CodingKeys.self)
-        
+
         var leaf = root.nestedUnkeyedContainer(forKey: .species)
         let rootSpecies = all.filter { $0.parentName == nil }
         for speciesTraits in rootSpecies {
             try leaf.encode(speciesTraits, configuration: configuration)
+        }
+        if !displayOrder.isEmpty {
+            try root.encode(displayOrder, forKey: .displayOrder)
         }
     }
 }

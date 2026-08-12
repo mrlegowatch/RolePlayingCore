@@ -40,12 +40,12 @@ public class Players: CodableWithConfiguration {
         case players
     }
     
-    public required init(from decoder: Decoder, configuration: Configuration) throws {
+    public required init(from decoder: Decoder, configuration: GameData) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         players = try container.decode([Player].self, forKey: .players, configuration: configuration)
     }
     
-    public func encode(to encoder: Encoder, configuration: Configuration) throws {
+    public func encode(to encoder: Encoder, configuration: GameData) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(players, forKey: .players, configuration: configuration)
     }

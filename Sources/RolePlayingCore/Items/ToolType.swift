@@ -34,14 +34,14 @@ extension ToolType: CustomStringConvertible {
 // MARK: - Default Tool Types
 
 extension ToolType {
-    public static let artisans    = ToolType("artisan's tools")
-    public static let musical     = ToolType("musical instrument")
-    public static let gaming      = ToolType("gaming set")
-    public static let thieves     = ToolType("thieves' tools")
-    public static let navigator   = ToolType("navigator's tools")
-    public static let herbalism   = ToolType("herbalism kit")
-    public static let poisoner    = ToolType("poisoner's kit")
-    public static let forgery     = ToolType("forgery kit")
-    public static let disguise    = ToolType("disguise kit")
+    public static let artisans = ToolType("artisan's tools")
+    public static let musical = ToolType("musical instrument")
+    public static let gaming = ToolType("gaming set")
+    public static let thieves = ToolType("thieves' tools")
+    public static let navigator = ToolType("navigator's tools")
+    public static let herbalism = ToolType("herbalism kit")
+    public static let poisoner = ToolType("poisoner's kit")
+    public static let forgery = ToolType("forgery kit")
+    public static let disguise = ToolType("disguise kit")
     public static let cartographer = ToolType("cartographer's tools")
 }

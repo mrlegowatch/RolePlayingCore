@@ -6,6 +6,8 @@
 //  Copyright © 2016-2017 Brian Arnold. All rights reserved.
 //
 
+import SwiftDice
+
 /// A named ability.
 public struct Ability: Sendable {
     public let name: String
@@ -222,9 +224,20 @@ extension Ability {
 }
 
 extension AbilityScores {
-    
+
     /// Creates a set of default ability scores with values initialized to 0.
     public init(defaults: [Ability] = Ability.defaults) {
         scores = Dictionary(uniqueKeysWithValues: defaults.map { ($0, 0) })
+    }
+}
+
+extension AbilityScores {
+
+    /// Sets the ability scores to random values using '4d6-L'.
+    public mutating func roll() {
+        let dice = (4 * .d6).dropping(.lowest)
+        for ability in abilities {
+            scores[ability] = dice.roll().result
+        }
     }
 }

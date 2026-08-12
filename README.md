@@ -4,56 +4,137 @@
 ![Platform](https://img.shields.io/badge/platform-iOS%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-This framework provides reusable role playing game core logic in the Swift language. It is a work-in-progress. Capabilities will be provided incrementally over time.
+A Swift package providing reusable core logic for role-playing games. It is a work in progress — capabilities are added incrementally.
 
-The short-term goal for this project is to provide core logic for implementing a role playing game on macOS, iOS, and Linux. The architecture is intended to be flexible enough to support Open Game Content in addition to similar kinds of games, and nimble enough to minimize upstream dependencies. 
+The short-term goal is to cover the key moving parts of a tabletop RPG character: species, class, background, ability scores, skills, spells, equipment, and the random-generation plumbing that ties them together. The architecture is designed to be flexible enough to support Open Game Content and similar game systems, and to minimize upstream dependencies.
 
-The library is built as a generic Swift Package, and the Example character generator app uses the iOS SDK with SwiftUI. The longer-term goal is to leverage this as a framework or library for implementing role playing games and utilities on the desktop and web.
+The library is a generic Swift Package. The included CharacterGenerator example app demonstrates iOS/macOS usage with a full SwiftUI character-builder workflow.
 
 ## Dependencies
 
-RolePlayingCore depends on [SwiftDice](https://github.com/mrlegowatch/SwiftDice), a separate package providing the `Rollable` protocol, dice types, and dice notation parser.
+RolePlayingCore depends on [SwiftDice](https://github.com/mrlegowatch/SwiftDice), which provides the `Rollable` protocol, dice types (`Dice`, `CompoundDice`, …), and a dice-notation parser.
 
 ## Organization
 
-The current organizational groupings include:
+The source code is grouped into the following modules under `Sources/RolePlayingCore`:
 
-* **Common**: common utilities such as height and weight, and a runtime error type
-* **Currency**: currency types, conversion, and parsing
-* **Player**: the player, species, classes, and related types
+| Group | What's inside |
+|---|---|
+| **Common** | `Height`, `Weight`, `CharacterNames`, `Named` & `DisplayOrdered` protocols |
+| **Configuration** | `GameData`, `GameDataFiles`, `GameDataError`, `Bundle+JSONFile` |
+| **Currency** | `UnitCurrency`, `Money`, `Currencies` |
+| **Items** | `Item`, `Weapon`, `Armor`, `Gear`, `Tool`, `EquipmentOptions`, `InventoryEntry`, damage types, weapon properties |
+| **Player** | `Player`, `Players`, `PlayerAppearance`, `AppearanceTraitKey`, `DescriptiveTraitKey`, `Ability`, `Alignment`, `ClassTraits`/`Classes`, `SpeciesTraits`/`Species`, `BackgroundTraits`/`Backgrounds`, `Skill`/`Skills`, `FeatTraits`/`Feats`, `Spell`/`Spells`, `SubclassTraits`, `UnarmoredDefense`, `CreatureSize`, `CreatureType`, `Initiative` |
+| **CharacterGenerator** | `CharacterGenerator`, `NameGenerator` |
 
-### Coming Soon...
+## Example App
 
-In addition to fleshing out the Player grouping with types for classes, species, etc., the following additional groupings are currently being prototyped:
+`Examples/CharacterGenerator` is a SwiftUI iOS/macOS app that demonstrates the full library. It loads all game data from JSON at launch via `GameData` and provides:
 
-* **Items**: Item, Container, Ammunition, Armor, Equipment, Weapon, ...
-* **Map**: Map, Geometry, Room, Door, Segment, Hallway, ...
-* **Dungeon**: Document wrapper for Map instances
+- A **character builder** — a step-by-step navigation flow for choosing species, class, background, ability scores, skills, and spells, finishing with a name
+- A **player list** with a detail sheet showing abilities, skills, inventory, and spells
+- Random character generation using `CharacterGenerator`
 
-## What is currently implemented
+## Game Data
 
-The following types have an initial implementation with unit tests and full code coverage:
+All game content is stored in JSON files and decoded at launch by `GameData`. The configuration entry point is a manifest JSON (e.g. `Configuration.json`) that lists the file names to load for each content type:
 
-* **Player**: The base player class.
-* **Ability**: An Ability type and nested Scores type for managing ability scores. Default ability types are provided.
-* **Alignment**: Enumerations for Ethics and Morals, with a Kind and associated Double values.
-* **ClassTraits**: Properties describing a class, that can be created from dictionary traits.
-* **Classes**: A factory for managing ClassTraits.
-* **SpeciesTraits**: Properties describing a species, that can be created from dictionary traits, and a parent species (for defining subspecies).
-* **Species**: A factory for managing SpeciesTraits.
-* **UnitCurrency**: A subclass of Foundation.Dimension that can convert between different types of currency (e.g., gp, cp, pp). A DefaultCurrencies.json file is provided.
-* **Money**: A Foundation.Measurement for UnitCurrency.
-* **Dice**: Provided by the [SwiftDice](https://github.com/mrlegowatch/SwiftDice) package. Includes a `Rollable` protocol, a `Die` type, and several implementations for simple dice rolls, modifiers, dropping, and composition of dice rolls.
-* **DiceParser**: Provided by the [SwiftDice](https://github.com/mrlegowatch/SwiftDice) package. Free functions and extensions for converting from string representations of dice rolls into `Rollable` types.
-* **RandomNumberGenerator**: An open class for use by the Die type. Can be modified as required.
-* **Height** and **Weight**: Typealiases and free functions for parsing strings representing height and weight into Foundation.Measurement of types Foundation.UnitLength and Foundation.UnitMass.
+```json
+{
+    "currencies": ["Currencies"],
+    "skills":  ["Skills"],
+    "feats":   ["Feats"],
+    "spells":  ["Spells"],
+    "items":   ["Items"],
+    "backgrounds": ["Backgrounds"],
+    "creature types": ["CreatureTypes"],
+    "species": ["Species"],
+    "classes": ["Classes"]
+}
+```
 
-Since this is still in the very early stages, I welcome feedback regarding organization and the current implementation.
+Collection types (`Backgrounds`, `Classes`, `Species`) decode via Apple's `CodableWithConfiguration` protocol, which threads the partially-loaded `GameData` context through the decoder so nested types (equipment, skills, spells) can resolve cross-references during decoding.
 
-To learn about the Dice classes, read about their evolution on medium.com here, in three parts:
+### Display Ordering
+
+Collections support an optional `"display order"` key in their JSON. When present, `allByDisplayOrder` returns elements in that order (with alphabetical fallback for unlisted names). This is exposed through the `DisplayOrdered` protocol, which `Backgrounds`, `Classes`, and `Species` all conform to.
+
+### Default Backgrounds
+
+Each class entry in `Classes.json` can carry an optional `"default background"` key. The character builder uses this to pre-select the most thematically appropriate background when a class is chosen.
+
+## What Is Implemented
+
+### Common
+
+- **`Named`** — protocol requiring `var name: String`. Adopted by `BackgroundTraits`, `ClassTraits`, and `SpeciesTraits`.
+- **`DisplayOrdered`** — protocol for collections that have a `displayOrder: [String]` and an `all: [Element]` array. Provides a default `allByDisplayOrder` computed property that sorts by the display order array and falls back alphabetically.
+- **`Height`** / **`Weight`** — typealiases and string-parsing helpers built on `Foundation.Measurement`.
+- **`CharacterNames`** — loads first and last name lists from JSON for use by `NameGenerator`.
+
+### Configuration
+
+- **`GameData`** — the top-level loader. Initialized with a bundle and a manifest filename; loads all content types in dependency order. Content is accessed via properties such as `gameData.classes`, `gameData.backgrounds`, `gameData.spells`.
+- **`GameDataFiles`** — `Decodable` manifest struct describing which JSON files to load for each content type.
+- **`GameDataError`** — typed errors thrown during loading (missing file, decode failure, etc.).
+
+### Currency
+
+- **`UnitCurrency`** — a `Foundation.Dimension` subclass that converts between denominations (cp, sp, ep, gp, pp).
+- **`Money`** — a `Foundation.Measurement<UnitCurrency>` with formatting and arithmetic.
+- **`Currencies`** — collection loaded from JSON; provides lookup by abbreviation.
+
+### Items
+
+- **`Item`** — base item with name, weight, value, and quantity.
+- **`Weapon`** — adds damage roll, properties (finesse, thrown, …), range, and proficiency category.
+- **`Armor`** — adds AC formula, weight category, and dexterity modifier rule.
+- **`Gear`** / **`Tool`** — general equipment variants.
+- **`EquipmentOptions`** — a list of item-choice alternatives (e.g. "Option A or Option B"), decoded from nested JSON arrays. Used for class and background starting equipment.
+- **`InventoryEntry`** — pairs an `Item` with a quantity and equipped flag; used by `Player`.
+- **`WeaponProficiency`** — represents a proficiency by category (simple, martial) or specific weapon name.
+
+### Player
+
+- **`Player`** — the main character class. Holds species, class, background, ability scores, skill proficiencies, inventory, prepared spells, and physical appearance. `baseHeight` is the intrinsic height; the computed `height` property is the hook for future spell effects (Enlarge/Reduce). `size` is derived from `height` via `CreatureSize`. Can compute AC, HP, initiative, ability modifiers, and proficiency bonus.
+- **`Players`** — a `CodableWithConfiguration` collection of `Player` instances.
+- **`PlayerAppearance`** — dictionary-backed cosmetic appearance struct (`traits: [String: String]`). Typed computed properties (`hairColor`, `eyeColor`, `skinColor`, `age`, `birthdate`, `gender`) wrap standard keys. Any additional trait can be stored and retrieved via a subscript keyed by `AppearanceTraitKey`. The `Gender` enum is defined here. Codable via a single-value container that encodes the dictionary directly.
+- **`AppearanceTraitKey`** — a `Hashable` struct wrapping a raw string key. Standard keys are defined as static constants; clients can add domain-specific keys via extension without modifying the library. `allStandardKeys` enumerates the library-defined keys for use in builder UIs.
+- **`DescriptiveTraitKey`** — `CaseIterable` enum of narrative trait keys: `personalityTrait`, `ideal`, `bond`, `flaw`, and `backstory`. Physical appearance traits are intentionally excluded — those belong to `PlayerAppearance`.
+- **`CreatureSize`** — size category (tiny through gargantuan) derived from a `Player`'s height. Provides space, squares occupied, and a random-height range per size.
+- **`Ability`** — named ability (Strength, Dexterity, …) with a `scoreModifier` extension on `Int` that computes the standard floor-divided modifier.
+- **`AbilityScores`** — a keyed container for the six base scores with roll-4d6-drop-lowest support.
+- **`CharacterAlignment`** — ethics × morals enumeration with associated display names.
+- **`ClassTraits`** — describes a class: hit dice, primary ability, saving throws, skill and weapon proficiencies, armor training, starting equipment, spellcasting ability and type, spell slots, cantrips/spells known, subclass details, and an optional suggested `defaultBackground`.
+- **`Classes`** — `CodableWithConfiguration`, `DisplayOrdered` collection of `ClassTraits`. Supports an optional shared experience-points table and a `"display order"` array.
+- **`SubclassTraits`** — describes a subclass with its own descriptive traits.
+- **`SpeciesTraits`** — describes a species: lifespan, size, speed, darkvision, creature type, traits, and optional subspecies. The `parentName` property links subspecies to their parent.
+- **`Species`** — `CodableWithConfiguration`, `DisplayOrdered` collection. Custom decoder stitches subspecies into the flat `allSpecies` dictionary; encoder writes only root species (with embedded subspecies).
+- **`BackgroundTraits`** — describes a background: ability scores, feat, skill proficiencies, tool proficiency, and equipment options.
+- **`Backgrounds`** — `CodableWithConfiguration`, `DisplayOrdered` collection of `BackgroundTraits`. Supports a `"display order"` array.
+- **`Skill`** / **`Skills`** — named skill with associated ability.
+- **`FeatTraits`** / **`Feats`** — feat with name and optional prerequisites.
+- **`Spell`** / **`Spells`** — spell with school, level, casting time, range, components, duration, and class lists.
+- **`UnarmoredDefense`** — computes AC from a list of ability modifiers (e.g. Barbarian's CON bonus).
+- **`CreatureType`** / **`CreatureTypes`** — creature type taxonomy (humanoid, beast, …).
+- **`Initiative`** — computed initiative value with optional tiebreaker.
+
+### CharacterGenerator
+
+- **`CharacterGenerator`** — generates randomised `Player` instances by sampling from the loaded `GameData`. Uses `SwiftDice` for all die rolls.
+- **`NameGenerator`** — produces random names by combining first and last names loaded from `CharacterNames.json`.
+
+## Coming Soon
+
+Currently in development as a Swift package that depends on RolePlayingCore:
+- **Dungeon**: Document wrapper for `Map` instances
+- **DungeonMap**: `Map`, `Room`, `Door`, `Hallway`, geometry primitives
+---
+
+To learn about the origin of the dice types that power random generation, see the three-part series on Medium:
 * [So, I made a Dice class](https://medium.com/@mrlegowatch/so-i-made-a-dice-class-1-of-3-9b9bb5c1dc2)
 * [So, I tested Dice and added a parser](https://medium.com/@mrlegowatch/so-i-tested-dice-and-added-a-parser-2-of-3-80335e08ddf8)
 * [So, Dice is in GitHub now](https://medium.com/@mrlegowatch/so-dice-is-in-github-now-3-3-204fd6c40fc0)
 
-I also describe how Codable was applied to various classes in this repository, here:
+For background on why `Codable` was applied across this repository:
 * [OMG, Codable is so frickin' awesome](https://medium.com/@mrlegowatch/omg-codable-is-so-frickin-awesome-bb9ff33139da)

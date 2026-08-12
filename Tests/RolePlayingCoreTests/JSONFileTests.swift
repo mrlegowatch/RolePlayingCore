@@ -65,12 +65,12 @@ struct JSONFileTests {
             _ = try bundle.loadJSON("MissingJSONFile")
         }
         
-        // Verify it's specifically a ConfigurationError
+        // Verify it's specifically a GameDataError
         do {
             _ = try bundle.loadJSON("MissingJSONFile")
             Issue.record("Should have thrown an error")
         } catch {
-            #expect(error is ConfigurationError, "expected ConfigurationError, got \(error)")
+            #expect(error is GameDataError, "expected GameDataError, got \(error)")
         }
     }
     

@@ -9,8 +9,7 @@
 import Foundation
 
 /// Traits representing a species.
-public struct SpeciesTraits: Sendable {
-
+public struct SpeciesTraits: Named, Sendable {
     public var name: String
     public var plural: String
     public var aliases: [String]
@@ -24,6 +23,7 @@ public struct SpeciesTraits: Sendable {
     public var darkVision: Int?
     public var speed: Int
 
+    public var description: String?
     public var parentName: String?
     public var subspecies: [SpeciesTraits] = []
 
@@ -35,7 +35,8 @@ public struct SpeciesTraits: Sendable {
                 lifespan: Int,
                 baseSizes: [String] = ["4-7"],
                 darkVision: Int? = nil,
-                speed: Int) {
+                speed: Int,
+                description: String? = nil) {
         self.name = name
         self.plural = plural
         self.aliases = aliases
@@ -45,6 +46,7 @@ public struct SpeciesTraits: Sendable {
         self.baseSizes = baseSizes
         self.darkVision = darkVision
         self.speed = speed
+        self.description = description
     }
 }
 
@@ -60,10 +62,11 @@ extension SpeciesTraits: CodableWithConfiguration {
         case baseSizes = "base sizes"
         case darkVision = "darkvision"
         case speed
+        case description
         case subspecies
     }
 
-    public init(from decoder: Decoder, configuration: Configuration) throws {
+    public init(from decoder: Decoder, configuration: GameData) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
 
         let name = try values.decode(String.self, forKey: .name)
@@ -89,6 +92,7 @@ extension SpeciesTraits: CodableWithConfiguration {
         self.baseSizes = baseSizes ?? ["4-7"]
         self.darkVision = darkVision
         self.speed = speed
+        self.description = try values.decodeIfPresent(String.self, forKey: .description)
 
         // Decode subspecies, merging parent values for any field not specified.
         if var container = try? values.nestedUnkeyedContainer(forKey: .subspecies) {
@@ -102,6 +106,7 @@ extension SpeciesTraits: CodableWithConfiguration {
                 let subBaseSizes = try subValues.decodeIfPresent([String].self, forKey: .baseSizes) ?? self.baseSizes
                 let subDarkVision = try subValues.decodeIfPresent(Int.self, forKey: .darkVision) ?? self.darkVision
                 let subSpeed = try subValues.decodeIfPresent(Int.self, forKey: .speed) ?? self.speed
+                let subDescription = try subValues.decodeIfPresent(String.self, forKey: .description)
                 var subTraits = SpeciesTraits(
                     name: subName,
                     plural: subPlural,
@@ -111,7 +116,8 @@ extension SpeciesTraits: CodableWithConfiguration {
                     lifespan: subLifespan,
                     baseSizes: subBaseSizes,
                     darkVision: subDarkVision,
-                    speed: subSpeed
+                    speed: subSpeed,
+                    description: subDescription
                 )
                 subTraits.parentName = self.name
                 self.subspecies.append(subTraits)
@@ -119,7 +125,7 @@ extension SpeciesTraits: CodableWithConfiguration {
         }
     }
 
-    public func encode(to encoder: Encoder, configuration: Configuration) throws {
+    public func encode(to encoder: Encoder, configuration: GameData) throws {
         var values = encoder.container(keyedBy: CodingKeys.self)
 
         try values.encode(name, forKey: .name)
@@ -131,6 +137,7 @@ extension SpeciesTraits: CodableWithConfiguration {
         try values.encode(baseSizes, forKey: .baseSizes)
         try values.encodeIfPresent(darkVision, forKey: .darkVision)
         try values.encode(speed, forKey: .speed)
+        try values.encodeIfPresent(description, forKey: .description)
 
         var subspeciesContainer = values.nestedUnkeyedContainer(forKey: .subspecies)
         for subspeciesTraits in subspecies {
@@ -164,5 +171,6 @@ extension SpeciesTraits: CodableWithConfiguration {
         if speed != parent.speed {
             try values.encode(speed, forKey: .speed)
         }
+        try values.encodeIfPresent(description, forKey: .description)
     }
 }

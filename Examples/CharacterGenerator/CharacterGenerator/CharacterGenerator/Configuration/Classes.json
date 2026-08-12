@@ -20,9 +20,24 @@
                            265000,
                            305000,
                            355000],
+    "display order": ["Fighter", "Rogue", "Wizard", "Paladin", "Barbarian", "Ranger", "Cleric", "Bard", "Druid", "Monk", "Sorcerer", "Warlock"],
+    "spell slot tables": {
+        "full caster": [
+            [2],[3],[4,2],[4,3],[4,3,2],[4,3,3],[4,3,3,1],[4,3,3,2],
+            [4,3,3,3,1],[4,3,3,3,2],[4,3,3,3,2,1],[4,3,3,3,2,1],
+            [4,3,3,3,2,1,1],[4,3,3,3,2,1,1],[4,3,3,3,2,1,1,1],[4,3,3,3,2,1,1,1],
+            [4,3,3,3,2,1,1,1,1],[4,3,3,3,3,1,1,1,1],[4,3,3,3,3,2,1,1,1],[4,3,3,3,3,2,2,1,1]
+        ],
+        "half caster": [
+            [2],[2],[3],[3],[4,2],[4,2],[4,3],[4,3],[4,3,2],[4,3,2],
+            [4,3,3],[4,3,3],[4,3,3,1],[4,3,3,1],[4,3,3,2],[4,3,3,2],
+            [4,3,3,3,1],[4,3,3,3,1],[4,3,3,3,2],[4,3,3,3,2]
+        ]
+    },
     "classes": [
                 {
                 "name": "Cleric",
+                "default background": "Acolyte",
                 "plural": "Clerics",
                 "hit dice": "d8",
                 "primary ability": ["Wisdom"],
@@ -35,11 +50,13 @@
                 "weapon proficiencies": ["simple"],
                 "spellcasting ability": "Wisdom",
                 "spellcasting type": "prepared",
+                "slot table": "full caster",
                 "cantrips known": 3,
                 "spells known": 2,
                 },
                 {
                 "name": "Fighter",
+                "default background": "Soldier",
                 "plural": "Fighters",
                 "hit dice": "d10",
                 "primary ability": ["Strength"],
@@ -54,6 +71,7 @@
                 },
                 {
                 "name": "Rogue",
+                "default background": "Criminal",
                 "plural": "Rogues",
                 "aliases": ["Thief"],
                 "hit dice": "d8",
@@ -69,6 +87,7 @@
                 },
                 {
                 "name": "Wizard",
+                "default background": "Sage",
                 "plural": "Wizards",
                 "hit dice": "d6",
                 "primary ability": ["Intelligence"],
@@ -81,11 +100,13 @@
                 "weapon proficiencies": ["simple"],
                 "spellcasting ability": "Intelligence",
                 "spellcasting type": "prepared",
+                "slot table": "full caster",
                 "cantrips known": 3,
                 "spells known": 2,
                 },
                 {
                 "name": "Barbarian",
+                "default background": "Farmer",
                 "plural": "Barbarians",
                 "hit dice": "d12",
                 "primary ability": ["Strength"],
@@ -100,6 +121,7 @@
                 },
                 {
                 "name": "Bard",
+                "default background": "Entertainer",
                 "plural": "Bards",
                 "hit dice": "d8",
                 "primary ability": ["Charisma"],
@@ -113,11 +135,13 @@
                 "weapon proficiencies": ["simple"],
                 "spellcasting ability": "Charisma",
                 "spellcasting type": "known",
+                "slot table": "full caster",
                 "cantrips known": 2,
                 "spells known": 4,
                 },
                 {
                 "name": "Druid",
+                "default background": "Hermit",
                 "plural": "Druids",
                 "hit dice": "d8",
                 "primary ability": ["Wisdom"],
@@ -132,11 +156,13 @@
                 "weapon proficiencies": ["simple"],
                 "spellcasting ability": "Wisdom",
                 "spellcasting type": "prepared",
+                "slot table": "full caster",
                 "cantrips known": 2,
                 "spells known": 2,
                 },
                 {
                 "name": "Monk",
+                "default background": "Hermit",
                 "plural": "Monks",
                 "hit dice": "d8",
                 "primary ability": ["Dexterity", "Wisdom"],
@@ -153,6 +179,7 @@
                 },
                 {
                 "name": "Paladin",
+                "default background": "Guard",
                 "plural": "Paladins",
                 "hit dice": "d10",
                 "primary ability": ["Strength", "Charisma"],
@@ -165,10 +192,12 @@
                 "weapon proficiencies": ["simple", "martial"],
                 "spellcasting ability": "Charisma",
                 "spellcasting type": "prepared",
+                "slot table": "half caster",
                 "spells known": 2,
                 },
                 {
                 "name": "Ranger",
+                "default background": "Guide",
                 "plural": "Rangers",
                 "hit dice": "d10",
                 "primary ability": ["Dexterity", "Wisdom"],
@@ -179,9 +208,18 @@
                 "starting equipment": [["Studded Leather Armor", "Scimitar", "Shortsword", "Longbow", "20 Arrows", "Quiver", "Druidic Focus (sprig of mistletoe)", "Explorer's Pack", "7 GP"], ["150 GP"]],
                 "armor training": ["light", "medium", "shield"],
                 "weapon proficiencies": ["simple", "martial"],
+                "spellcasting ability": "Wisdom",
+                "spellcasting type": "known",
+                "spell slots": [
+                    [],[2],[3],[3],[4,2],[4,2],[4,3],[4,3],[4,3,2],[4,3,2],
+                    [4,3,3],[4,3,3],[4,3,3,1],[4,3,3,1],[4,3,3,2],[4,3,3,2],
+                    [4,3,3,3,1],[4,3,3,3,1],[4,3,3,3,2],[4,3,3,3,2]
+                ],
+                "spells known": 2,
                 },
                 {
                 "name": "Sorcerer",
+                "default background": "Sage",
                 "plural": "Sorcerers",
                 "hit dice": "d6",
                 "primary ability": ["Charisma"],
@@ -194,11 +232,13 @@
                 "weapon proficiencies": ["simple"],
                 "spellcasting ability": "Charisma",
                 "spellcasting type": "known",
+                "slot table": "full caster",
                 "cantrips known": 4,
                 "spells known": 2,
                 },
                 {
                 "name": "Warlock",
+                "default background": "Charlatan",
                 "plural": "Warlocks",
                 "hit dice": "d8",
                 "primary ability": ["Charisma"],
@@ -211,6 +251,12 @@
                 "weapon proficiencies": ["simple"],
                 "spellcasting ability": "Charisma",
                 "spellcasting type": "pact magic",
+                "spell slots": [
+                    [1],[2],[0,2],[0,2],[0,0,2],[0,0,2],[0,0,0,2],[0,0,0,2],
+                    [0,0,0,0,2],[0,0,0,0,2],[0,0,0,0,3],[0,0,0,0,3],[0,0,0,0,3],
+                    [0,0,0,0,3],[0,0,0,0,3],[0,0,0,0,3],[0,0,0,0,4],[0,0,0,0,4],
+                    [0,0,0,0,4],[0,0,0,0,4]
+                ],
                 "cantrips known": 2,
                 "spells known": 2
                 }

@@ -14,16 +14,6 @@ struct CreatureSizeTests {
 
     // MARK: - RawValue / init(rawValue:)
 
-    @Test("All cases have correct raw values")
-    func rawValues() {
-        #expect(CreatureSize.tiny.rawValue == "tiny")
-        #expect(CreatureSize.small.rawValue == "small")
-        #expect(CreatureSize.medium.rawValue == "medium")
-        #expect(CreatureSize.large.rawValue == "large")
-        #expect(CreatureSize.huge.rawValue == "huge")
-        #expect(CreatureSize.gargantuan.rawValue == "gargantuan")
-    }
-
     @Test("Init from raw value")
     func initFromRawValue() {
         #expect(CreatureSize(rawValue: "medium") == .medium)

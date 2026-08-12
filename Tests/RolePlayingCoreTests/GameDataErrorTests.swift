@@ -1,5 +1,5 @@
 //
-//  ConfigurationErrorTests.swift
+//  GameDataErrorTests.swift
 //  RolePlayingCore
 //
 //  Created by Brian Arnold on 2/5/17.
@@ -9,20 +9,20 @@
 import Testing
 import RolePlayingCore
 
-@Suite("Configuration Error Tests")
-struct ConfigurationErrorTests {
+@Suite("Game Data Error Tests")
+struct GameDataErrorTests {
     
-    @Test("Verify ConfigurationError contains expected information")
+    @Test("Verify GameDataError contains expected information")
     func configurationError() async throws {
         do {
             throw missingFileError("Foo.json", "MyBundle")
         } catch {
-            #expect(error is ConfigurationError, "should be a configuration error")
+            #expect(error is GameDataError, "should be a configuration error")
             let description = "\(error)"
             #expect(description.contains("Configuration error"), "should be a configuration error")
             #expect(description.contains("Foo.json"), "should contain the message")
             #expect(description.contains("configurationError"), "should have throw function name in it")
-            #expect(description.contains("ConfigurationErrorTests"), "should have throw file name in it")
+            #expect(description.contains("GameDataErrorTests"), "should have throw file name in it")
         }
     }
 
@@ -31,7 +31,7 @@ struct ConfigurationErrorTests {
         do {
             throw RolePlayingCore.missingJSONError("species")
         } catch {
-            #expect(error is ConfigurationError, "should be a ConfigurationError")
+            #expect(error is GameDataError, "should be a GameDataError")
             let description = "\(error)"
             #expect(description.contains("Configuration error"))
             #expect(description.contains("species"))
@@ -44,7 +44,7 @@ struct ConfigurationErrorTests {
         do {
             throw RolePlayingCore.missingTypeError("class", "Fighter")
         } catch {
-            #expect(error is ConfigurationError, "should be a ConfigurationError")
+            #expect(error is GameDataError, "should be a GameDataError")
             let description = "\(error)"
             #expect(description.contains("Configuration error"))
             #expect(description.contains("class"))
@@ -53,11 +53,11 @@ struct ConfigurationErrorTests {
         }
     }
 
-    @Test("ConfigurationError cases are distinct")
+    @Test("GameDataError cases are distinct")
     func configurationErrorCases() {
-        let file = ConfigurationError.missingFile("a.json", "Bundle", "loc")
-        let json = ConfigurationError.missingJSON("species", "loc")
-        let type_ = ConfigurationError.missingType("class", "Fighter", "loc")
+        let file = GameDataError.missingFile("a.json", "Bundle", "loc")
+        let json = GameDataError.missingJSON("species", "loc")
+        let type_ = GameDataError.missingType("class", "Fighter", "loc")
 
         #expect(file.description.contains("Missing file"))
         #expect(json.description.contains("Missing species"))

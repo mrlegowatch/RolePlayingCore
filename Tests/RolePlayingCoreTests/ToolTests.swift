@@ -12,30 +12,31 @@ import Foundation
 @Suite("Tool Tests")
 struct ToolTests {
 
-    let zeroCost = Money(value: 0, unit: UnitCurrency.baseUnit())
+    let zeroCost = Money()
     let zeroWeight = Weight(value: 0, unit: .pounds)
     let decoder = JSONDecoder()
     let encoder = JSONEncoder()
-    let configuration: Configuration
+    let gameData: GameData
 
     init() throws {
-        configuration = try Configuration("TestItemsConfiguration", from: .module)
+        gameData = try GameData("TestItemsConfiguration", from: .module)
     }
 
     // MARK: - Init
 
     @Test("Init stores all properties")
     func initAllProperties() {
+        let gp = gameData.currencies.baseUnit!
         let tool = Tool(
             name: "Thieves' Tools",
             plural: "Thieves' Tools",
-            cost: Money(value: 25, unit: UnitCurrency.baseUnit()),
+            cost: Money(25, of: gp),
             weight: Weight(value: 1, unit: .pounds),
             toolType: .thieves
         )
         #expect(tool.name == "Thieves' Tools")
         #expect(tool.plural == "Thieves' Tools")
-        #expect(tool.cost.value == 25)
+        #expect(tool.cost[gp] == 25)
         #expect(tool.weight.value == 1)
         #expect(tool.toolType == .thieves)
     }
@@ -59,7 +60,7 @@ struct ToolTests {
         let tool: any Item = Tool(name: "Lute", cost: zeroCost, weight: zeroWeight, toolType: .musical)
         #expect(tool.name == "Lute")
         #expect(tool.plural == "Lutes")
-        #expect(tool.cost.value == 0)
+        #expect(tool.cost.quantities.isEmpty)
         #expect(tool.weight.value == 0)
     }
 
@@ -102,7 +103,7 @@ struct ToolTests {
         let json = """
         {"name": "Hammer", "tool type": "artisan's tools"}
         """.data(using: .utf8)!
-        let tool = try decoder.decode(Tool.self, from: json, configuration: configuration)
+        let tool = try decoder.decode(Tool.self, from: json, configuration: gameData)
         #expect(tool.name == "Hammer")
         #expect(tool.plural == "Hammers")
     }
@@ -112,7 +113,7 @@ struct ToolTests {
         let json = """
         {"name": "Chisel", "tool type": "artisan's tools"}
         """.data(using: .utf8)!
-        let tool = try decoder.decode(Tool.self, from: json, configuration: configuration)
+        let tool = try decoder.decode(Tool.self, from: json, configuration: gameData)
         #expect(tool.weight.value == 0)
         #expect(tool.weight.unit == .pounds)
     }
@@ -128,8 +129,8 @@ struct ToolTests {
             weight: Weight(value: 2, unit: .pounds),
             toolType: .navigator
         )
-        let data = try encoder.encode(original, configuration: configuration)
-        let decoded = try decoder.decode(Tool.self, from: data, configuration: configuration)
+        let data = try encoder.encode(original, configuration: gameData)
+        let decoded = try decoder.decode(Tool.self, from: data, configuration: gameData)
         #expect(decoded.name == original.name)
         #expect(decoded.plural == original.plural)
         #expect(decoded.weight.value == original.weight.value)

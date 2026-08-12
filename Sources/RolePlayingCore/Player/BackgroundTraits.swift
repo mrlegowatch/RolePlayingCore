@@ -9,16 +9,19 @@
 import Foundation
 
 /// Traits associated with a player character's background.
-public struct BackgroundTraits: Sendable {
+public struct BackgroundTraits: Named, Sendable {
     public var name: String
     public var abilityScores: [Ability]
     public var feat: FeatTraits
     public var skillProficiencies: [Skill]
     public var toolProficiency: String
     public var equipment: EquipmentOptions
+    /// Personality flavor keyed by `DescriptiveTraitKey` raw values (personality trait, ideal, bond, flaw, etc.).
+    public var descriptiveTraits: [String: String]
 }
 
 extension BackgroundTraits: CodableWithConfiguration {
+
     private enum CodingKeys: String, CodingKey {
         case name
         case abilityScores = "ability scores"
@@ -26,9 +29,10 @@ extension BackgroundTraits: CodableWithConfiguration {
         case skillProficiencies = "skill proficiencies"
         case toolProficiency = "tool proficiency"
         case equipment = "equipment"
+        case descriptiveTraits = "descriptive traits"
     }
     
-    public init(from decoder: Decoder, configuration: Configuration) throws {
+    public init(from decoder: Decoder, configuration: GameData) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         self.name = try values.decode(String.self, forKey: .name)
         self.abilityScores = try values.decode([Ability].self, forKey: .abilityScores)
@@ -44,9 +48,10 @@ extension BackgroundTraits: CodableWithConfiguration {
         
         self.toolProficiency = try values.decode(String.self, forKey: .toolProficiency)
         self.equipment = try values.decode(EquipmentOptions.self, forKey: .equipment, configuration: configuration)
+        self.descriptiveTraits = try values.decodeIfPresent([String: String].self, forKey: .descriptiveTraits) ?? [:]
     }
     
-    public func encode(to encoder: Encoder, configuration: Configuration) throws {
+    public func encode(to encoder: Encoder, configuration: GameData) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(name, forKey: .name)
         try container.encode(abilityScores, forKey: .abilityScores)
@@ -54,5 +59,8 @@ extension BackgroundTraits: CodableWithConfiguration {
         try container.encode(skillProficiencies.skillNames, forKey: .skillProficiencies)
         try container.encode(toolProficiency, forKey: .toolProficiency)
         try container.encode(equipment, forKey: .equipment, configuration: configuration)
+        if !descriptiveTraits.isEmpty {
+            try container.encode(descriptiveTraits, forKey: .descriptiveTraits)
+        }
     }
 }

@@ -8,7 +8,6 @@
 
 /// A spell a character can learn, prepare, or cast.
 public struct Spell: Sendable, Equatable, Hashable {
-
     public var name: String
 
     /// Spell level, where 0 indicates a cantrip.
@@ -43,8 +42,13 @@ public struct Spell: Sendable, Equatable, Hashable {
 }
 
 extension Spell: Codable {
+    
     private enum CodingKeys: String, CodingKey {
-        case name, level, school, components, description
+        case name
+        case level
+        case school
+        case components
+        case description
         case castingTime = "casting time"
     }
 

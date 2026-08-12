@@ -15,7 +15,7 @@ import Foundation
 struct PlayerTests {
     
     let decoder = JSONDecoder()
-    let configuration: Configuration
+    let gameData: GameData
     let skillTraits: Data
     let skills: Skills
     let soldierTraits: Data
@@ -26,7 +26,7 @@ struct PlayerTests {
     let fighter: ClassTraits
     
     init() throws {
-        configuration = try Configuration("TestConfiguration", from: .module)
+        gameData = try GameData("TestConfiguration", from: .module)
         
         self.skillTraits = """
         {
@@ -118,7 +118,7 @@ struct PlayerTests {
             "equipment": [["Spear", "Shortbow", "20 Arrows", "Gaming Set", "Healer's Kit", "Quiver", "Traveler's Clothes", "14 GP"], ["50 GP"]]
         }
         """.data(using: .utf8)!
-        self.soldier = try! decoder.decode(BackgroundTraits.self, from: self.soldierTraits, configuration: configuration)
+        self.soldier = try! decoder.decode(BackgroundTraits.self, from: self.soldierTraits, configuration: gameData)
         
         self.fighterTraits = """
         {
@@ -132,7 +132,7 @@ struct PlayerTests {
             "experience points": [0, 300, 900, 2700]
         }
         """.data(using: .utf8)!
-        self.fighter = try! decoder.decode(ClassTraits.self, from: self.fighterTraits, configuration: configuration)
+        self.fighter = try! decoder.decode(ClassTraits.self, from: self.fighterTraits, configuration: gameData)
         
         self.humanTraits = """
         {
@@ -148,29 +148,30 @@ struct PlayerTests {
             "extra languages": 1
         }
         """.data(using: .utf8)!
-        self.human = try! decoder.decode(SpeciesTraits.self, from: self.humanTraits, configuration: configuration)
+        self.human = try! decoder.decode(SpeciesTraits.self, from: self.humanTraits, configuration: gameData)
     }
     
     @Test("Create player with basic traits")
     func player() async throws {
-        let player = Player("Frodo", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter, gender: .female, alignment: CharacterAlignment(.lawful, .neutral))
+        let player = Player("Frodo", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter, startingCurrencyUnit: gameData.currencies.baseUnit, gender: .female, alignment: CharacterAlignment(.lawful, .neutral))
         #expect(player.name == "Frodo", "player name")
         #expect(player.className == "Fighter", "class name")
         #expect(player.speciesName == "Human", "species name")
         
         #expect(player.descriptiveTraits.count == 0, "descriptiveTraits")
         
-        #expect(player.gender == Player.Gender.female, "gender")
+        #expect(player.appearance.gender == PlayerAppearance.Gender.female, "gender")
         #expect(player.alignment == CharacterAlignment(.lawful, .neutral), "alignment")
-        
+
         // Abilities is scores plus species modifiers, so + 1
         for key in player.abilities.abilities {
             let score = player.abilities[key]!
             #expect((3...20).contains(score), "ability score \(score) for \(key)")
         }
-        
+
         // I do the maths
-        #expect((4..<7).contains(player.height.value), "height \(player.height.value)")
+        let height = player.height
+        #expect((4..<7).contains(height.value), "height \(height.value)")
         
         #expect((1...10).contains(player.maximumHitPoints), "maximum hit points")
         #expect(player.maximumHitPoints == player.currentHitPoints, "current hit points")
@@ -178,7 +179,7 @@ struct PlayerTests {
         #expect(player.experiencePoints == 0, "experience points")
         #expect(player.level == 1, "level")
         
-        #expect((50...200).contains(player.money.value), "money \(player.money.value)")
+        #expect((50.0...200.0).contains(player.inventory.money.totalValue), "money \(player.inventory.money.totalValue)")
         
         #expect(player.proficiencyBonus == 2, "proficiency bonus")
     }
@@ -191,30 +192,30 @@ struct PlayerTests {
             "background": "Sailor",
             "species": "Human",
             "class": "Fighter",
-            "gender": "Male",
+            "appearance": { "gender": "Male" },
             "height": "3'9\\"",
             "ability scores": {"Dexterity": 13, "Charisma": 12},
             "background ability scores": ["Strength", "Strength", "Dexterity"],
             "skill proficiencies": ["Athletics"],
-            "money": 130,
+            "inventory": { "money": 130 },
             "maximum hit points": 10
         }
         """.data(using: .utf8)!
-        
-        let player = try decoder.decode(Player.self, from: playerTraits, configuration: configuration)
+
+        let player = try decoder.decode(Player.self, from: playerTraits, configuration: gameData)
         player.speciesTraits = human
         player.classTraits = fighter
-        
+
         #expect(player.name == "Bilbo", "player name")
         #expect(player.className == "Fighter", "class name")
         #expect(player.speciesName == "Human", "species name")
-        
-        #expect(player.gender == Player.Gender.male, "gender")
+
+        #expect(player.appearance.gender == PlayerAppearance.Gender.male, "gender")
         #expect(player.alignment == nil, "alignment")
-        
+
         #expect(player.abilities[.dexterity] == 14, "dexterity")
         #expect(player.abilities[.charisma] == 12, "charisma")
-        
+
         #expect(player.height.value == 3.75, "height")
         
         #expect(player.maximumHitPoints == 10, "maximum hit points")
@@ -223,7 +224,7 @@ struct PlayerTests {
         #expect(player.experiencePoints == 0, "experience points")
         #expect(player.level == 1, "level")
         
-        #expect(player.money.value == 130, "money")
+        #expect(player.inventory.money.totalValue == 130, "money")
     }
     
     @Test("Decode player with optional traits and level up")
@@ -235,22 +236,23 @@ struct PlayerTests {
             "species": "Human",
             "class": "Fighter",
             "alignment": "Lawful Evil",
+            "appearance": {},
             "height": "3'9\\"",
             "ability scores": {"Strength": 12},
             "background ability scores": ["Strength", "Strength", "Dexterity"],
             "skill proficiencies": ["Athletics"],
-            "money": 130,
+            "inventory": { "money": 130 },
             "maximum hit points": 10,
             "experience points": 2300,
             "level": 2
         }
         """.data(using: .utf8)!
-        
-        let player = try decoder.decode(Player.self, from: playerTraits, configuration: configuration)
+
+        let player = try decoder.decode(Player.self, from: playerTraits, configuration: gameData)
         player.speciesTraits = human
         player.classTraits = fighter
-        
-        #expect(player.gender == nil, "gender")
+
+        #expect(player.appearance.gender == nil, "gender")
         #expect(player.alignment == CharacterAlignment(.lawful, .evil), "alignment")
         
         #expect(player.canLevelUp == true, "level up")
@@ -274,32 +276,33 @@ struct PlayerTests {
             "background": "Sailor",
             "species": "Human",
             "class": "Fighter",
-            "gender": "Male",
             "alignment": "Neutral Good",
+            "appearance": { "gender": "Male" },
             "height": "3'9\\"",
             "ability scores": {"Dexterity": 13},
             "background ability scores": ["Strength", "Strength", "Dexterity"],
             "skill proficiencies": ["Athletics"],
-            "money": 130,
+            "inventory": { "money": 130 },
             "maximum hit points": 20,
             "current hit points": 9,
             "level": 2
         }
         """.data(using: .utf8)!
-        
-        let player = try #require(try? decoder.decode(Player.self, from: playerTraits, configuration: configuration))
+
+        let player = try #require(try? decoder.decode(Player.self, from: playerTraits, configuration: gameData))
         let encoder = JSONEncoder()
-        let encodedPlayer = try encoder.encode(player, configuration: configuration)
+        let encodedPlayer = try encoder.encode(player, configuration: gameData)
         let encoded = try #require(try? JSONSerialization.jsonObject(with: encodedPlayer, options: []) as? [String: Any])
-        
+        let encodedAppearance = try #require(encoded["appearance"] as? [String: Any])
+
         #expect(encoded["name"] as? String == "Bilbo", "player traits round trip name")
-        #expect(encoded["gender"] as? String == "Male", "player traits round trip gender")
-        
+        #expect(encodedAppearance["gender"] as? String == "Male", "player traits round trip gender")
+
         let alignment = try #require(encoded["alignment"] as? [String: Double])
         #expect(alignment["ethics"] == 0, "player traits round trip alignment ethics")
         #expect(alignment["morals"] == 1, "player traits round trip alignment morals")
-        
-        #expect(encoded["height"] as? String == "3.75 ft", "player traits round trip height")
+
+        #expect(encoded["height"] as? Double == 3.75, "player traits round trip height")
         
         let abilities = try #require(encoded["ability scores"] as? [String: Int])
         #expect(abilities["Dexterity"] == 13, "player traits round trip ability scores")
@@ -309,7 +312,9 @@ struct PlayerTests {
         #expect(backgroundAbilities.contains("Strength"), "player traits round trip background ability scores")
         #expect(!backgroundAbilities.contains("Charisma"), "player traits round trip background ability scores")
         
-        #expect(encoded["money"] as? String == "130.0 gp", "player traits round trip money")
+        let inventoryDict = try #require(encoded["inventory"] as? [String: Any])
+        let moneyDict = try #require(inventoryDict["money"] as? [String: Any])
+        #expect(moneyDict["gp"] as? Int == 130, "player traits round trip money")
         #expect(encoded["maximum hit points"] as? Int == 20, "player traits round trip maximum hit points")
         #expect(encoded["current hit points"] as? Int == 9, "player traits round trip current hit points")
         #expect(encoded["level"] as? Int == 2, "player traits round trip level")
@@ -325,28 +330,28 @@ struct PlayerTests {
         """
         {
             "name": "Bilbo",
-            "height": "3'9\\"",
+            "appearance": { "height": "3'9\\"" }
         }
         """,
         """
         {
             "name": "Bilbo",
-            "height": "3'9\\"",
+            "appearance": { "height": "3'9\\"" },
             "ability scores": {"Dexterity": 13}
         }
         """,
         """
         {
             "name": "Bilbo",
-            "height": "3'9\\"",
+            "appearance": { "height": "3'9\\"" },
             "ability scores": {"Dexterity": 13},
-            "money": 130]
+            "inventory": { "money": 130 }]
         }
         """
     ])
     func missingTraits(json: String) async throws {
         let traits = json.data(using: .utf8)!
-        let player = try? decoder.decode(Player.self, from: traits, configuration: configuration)
+        let player = try? decoder.decode(Player.self, from: traits, configuration: gameData)
         #expect(player == nil)
     }
     
@@ -412,11 +417,11 @@ struct PlayerTests {
         player2.speciesTraits = human
         player2.classTraits = fighter
         player2.baseAbilities = player1.baseAbilities
-        player2.height = player1.height
+        player2.baseHeight = player1.baseHeight
         player2.maximumHitPoints = player1.maximumHitPoints
         player2.currentHitPoints = player1.currentHitPoints
         player2.experiencePoints = player1.experiencePoints
-        player2.money = player1.money
+        player2.inventory.money = player1.inventory.money
         player2.descriptiveTraits = ["ideal": "Honor", "bond": "My axe"]
         
         // Test equality
@@ -449,8 +454,8 @@ struct PlayerTests {
         // Different hit points
         let player3 = Player("Boromir", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
         player3.baseAbilities = player1.baseAbilities
-        player3.height = player1.height
-        player3.money = player1.money
+        player3.baseHeight = player1.baseHeight
+        player3.inventory.money = player1.inventory.money
         player3.currentHitPoints = player3.currentHitPoints - 5
         
         #expect(player1 != player3, "players with different current HP should not be equal")
@@ -460,13 +465,13 @@ struct PlayerTests {
     func genderCases() async throws {
         // Test all gender cases
         let female = Player("Diana", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter, gender: .female)
-        #expect(female.gender == .female, "female gender")
-        
+        #expect(female.appearance.gender == .female, "female gender")
+
         let male = Player("Arthur", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter, gender: .male)
-        #expect(male.gender == .male, "male gender")
+        #expect(male.appearance.gender == .male, "male gender")
         
         let agender = Player("Riley", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter, gender: nil)
-        #expect(agender.gender == nil, "nil gender for androgynous/hermaphroditic")
+        #expect(agender.appearance.gender == nil, "nil gender for androgynous/hermaphroditic")
     }
     
     @Test("Verify descriptive traits")
@@ -538,23 +543,24 @@ struct PlayerTests {
                 "bond": "The Shire",
                 "flaw": "Impulsive"
             },
+            "appearance": {},
             "height": "4'2\\"",
             "ability scores": {"Charisma": 14, "Dexterity": 15},
             "background ability scores": ["Strength", "Strength", "Dexterity"],
             "skill proficiencies": ["Athletics"],
-            "money": 100,
+            "inventory": { "money": 100 },
             "maximum hit points": 12
         }
         """.data(using: .utf8)!
         
-        let player = try decoder.decode(Player.self, from: playerTraits, configuration: configuration)
+        let player = try decoder.decode(Player.self, from: playerTraits, configuration: gameData)
         #expect(player.descriptiveTraits.count == 3)
         #expect(player.descriptiveTraits["ideal"] == "Adventure")
         #expect(player.descriptiveTraits["bond"] == "The Shire")
         #expect(player.descriptiveTraits["flaw"] == "Impulsive")
         
         // Test encoding
-        let encoded = try encoder.encode(player, configuration: configuration)
+        let encoded = try encoder.encode(player, configuration: gameData)
         let decodedDict = try #require(try? JSONSerialization.jsonObject(with: encoded) as? [String: Any])
         let encodedTraits = try #require(decodedDict["descriptive traits"] as? [String: String])
         #expect(encodedTraits["ideal"] == "Adventure")
@@ -579,18 +585,19 @@ struct PlayerTests {
             "background": "Sailor",
             "species": "Human",
             "class": "Fighter",
+            "appearance": {},
             "height": "4'2\\"",
             "ability scores": {"Strength": 14},
             "background ability scores": ["Strength", "Strength", "Dexterity"],
             "skill proficiencies": ["Athletics"],
-            "money": 100,
+            "inventory": { "money": 100 },
             "maximum hit points": 12,
             "experience points": 0,
             "level": 1
         }
         """.data(using: .utf8)!
 
-        let player = try decoder.decode(Player.self, from: playerTraits, configuration: configuration)
+        let player = try decoder.decode(Player.self, from: playerTraits, configuration: gameData)
         player.speciesTraits = human
         player.classTraits = fighter
 
@@ -705,11 +712,12 @@ struct PlayerTests {
             "background": "Sailor",
             "species": "Human",
             "class": "Fighter",
+            "appearance": {},
             "height": "3'9\\"",
             "ability scores": {"Strength": 12},
             "background ability scores": ["Strength", "Strength", "Dexterity"],
             "skill proficiencies": ["Athletics"],
-            "money": 130,
+            "inventory": { "money": 130 },
             "maximum hit points": 10,
             "current hit points": 7,
             "used hit dice": 1,
@@ -717,12 +725,12 @@ struct PlayerTests {
         }
         """.data(using: .utf8)!
 
-        let player = try decoder.decode(Player.self, from: playerTraits, configuration: configuration)
+        let player = try decoder.decode(Player.self, from: playerTraits, configuration: gameData)
         #expect(player.usedHitDice == 1)
         #expect(player.availableHitDice == 1)  // level 2, 1 used
 
         let encoder = JSONEncoder()
-        let encoded = try encoder.encode(player, configuration: configuration)
+        let encoded = try encoder.encode(player, configuration: gameData)
         let dict = try #require(try? JSONSerialization.jsonObject(with: encoded) as? [String: Any])
         #expect(dict["used hit dice"] as? Int == 1)
     }
@@ -731,7 +739,7 @@ struct PlayerTests {
     func usedHitDiceOmittedWhenZero() async throws {
         let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
         let encoder = JSONEncoder()
-        let encoded = try encoder.encode(player, configuration: configuration)
+        let encoded = try encoder.encode(player, configuration: gameData)
         let dict = try #require(try? JSONSerialization.jsonObject(with: encoded) as? [String: Any])
         #expect(dict["used hit dice"] == nil)
     }
@@ -790,7 +798,7 @@ struct PlayerTests {
                                    165000, 195000, 225000, 265000, 305000, 355000]
         }
         """.data(using: .utf8)!
-        let fullFighter = try decoder.decode(ClassTraits.self, from: fullClassData, configuration: configuration)
+        let fullFighter = try decoder.decode(ClassTraits.self, from: fullClassData, configuration: gameData)
 
         let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fullFighter)
         player.level = targetLevel - 1
@@ -816,7 +824,7 @@ struct PlayerTests {
                                    165000, 195000, 225000, 265000, 305000, 355000]
         }
         """.data(using: .utf8)!
-        let fullFighter = try decoder.decode(ClassTraits.self, from: fullClassData, configuration: configuration)
+        let fullFighter = try decoder.decode(ClassTraits.self, from: fullClassData, configuration: gameData)
 
         let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fullFighter)
         player.level = 19
@@ -856,7 +864,7 @@ struct PlayerTests {
             ]
         }
         """.data(using: .utf8)!
-        let archetypeFighter = try decoder.decode(ClassTraits.self, from: classWithSubclasses, configuration: configuration)
+        let archetypeFighter = try decoder.decode(ClassTraits.self, from: classWithSubclasses, configuration: gameData)
 
         let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: archetypeFighter)
         player.level = 2
@@ -891,7 +899,7 @@ struct PlayerTests {
             "subclasses": [{ "name": "Champion" }]
         }
         """.data(using: .utf8)!
-        let archetypeFighter = try decoder.decode(ClassTraits.self, from: classWithSubclasses, configuration: configuration)
+        let archetypeFighter = try decoder.decode(ClassTraits.self, from: classWithSubclasses, configuration: gameData)
         let champion = archetypeFighter.subclasses[0]
 
         let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: archetypeFighter)
@@ -918,7 +926,7 @@ struct PlayerTests {
             "subclasses": [{ "name": "Champion" }]
         }
         """.data(using: .utf8)!
-        let archetypeFighter = try decoder.decode(ClassTraits.self, from: classWithSubclasses, configuration: configuration)
+        let archetypeFighter = try decoder.decode(ClassTraits.self, from: classWithSubclasses, configuration: gameData)
 
         let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: archetypeFighter)
         player.level = 3
@@ -943,7 +951,7 @@ struct PlayerTests {
             "subclasses": [{ "name": "Champion" }]
         }
         """.data(using: .utf8)!
-        let archetypeFighter = try decoder.decode(ClassTraits.self, from: classWithSubclasses, configuration: configuration)
+        let archetypeFighter = try decoder.decode(ClassTraits.self, from: classWithSubclasses, configuration: gameData)
         let champion = archetypeFighter.subclasses[0]
 
         let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: archetypeFighter)
@@ -958,155 +966,155 @@ struct PlayerTests {
     @Test("addToInventory creates new entry for unknown item")
     func addToInventoryNewEntry() {
         let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
-        let countBefore = player.inventory.count
-        let longsword = configuration.items["Longsword"]!
-        player.addToInventory(longsword)
-        #expect(player.inventory.count == countBefore + 1)
-        #expect(player.inventory.last?.item.name == "Longsword")
-        #expect(player.inventory.last?.quantity == 1)
+        let countBefore = player.inventory.entries.count
+        let longsword = gameData.items["Longsword"]!
+        player.inventory.add(longsword)
+        #expect(player.inventory.entries.count == countBefore + 1)
+        #expect(player.inventory.entries.last?.item.name == "Longsword")
+        #expect(player.inventory.entries.last?.quantity == 1)
     }
 
     @Test("addToInventory stacks quantity with existing entry for same item")
     func addToInventoryStacksExisting() {
         let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
-        let arrow = configuration.items["Arrow"]!
-        let arrowEntry = player.inventory.first(where: { $0.item.name == "Arrow" })
+        let arrow = gameData.items["Arrow"]!
+        let arrowEntry = player.inventory.entries.first(where: { $0.item.name == "Arrow" })
         let originalQuantity = arrowEntry?.quantity ?? 0
-        let countBefore = player.inventory.count
+        let countBefore = player.inventory.entries.count
 
-        player.addToInventory(arrow, quantity: 5)
-        #expect(player.inventory.count == countBefore, "no new entry should be created")
-        let updated = player.inventory.first(where: { $0.item.name == "Arrow" })
+        player.inventory.add(arrow, quantity: 5)
+        #expect(player.inventory.entries.count == countBefore, "no new entry should be created")
+        let updated = player.inventory.entries.first(where: { $0.item.name == "Arrow" })
         #expect(updated?.quantity == originalQuantity + 5)
     }
 
     @Test("addToInventory with quantity 1 is the default")
     func addToInventoryDefaultQuantity() {
         let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
-        let dagger = configuration.items["Dagger"]!
-        player.addToInventory(dagger)
-        #expect(player.inventory.first(where: { $0.item.name == "Dagger" })?.quantity == 1)
+        let dagger = gameData.items["Dagger"]!
+        player.inventory.add(dagger)
+        #expect(player.inventory.entries.first(where: { $0.item.name == "Dagger" })?.quantity == 1)
     }
 
     @Test("addToInventory ignores zero or negative quantity")
     func addToInventoryIgnoresNonPositive() {
         let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
-        let countBefore = player.inventory.count
-        let longsword = configuration.items["Longsword"]!
-        player.addToInventory(longsword, quantity: 0)
-        player.addToInventory(longsword, quantity: -3)
-        #expect(player.inventory.count == countBefore)
+        let countBefore = player.inventory.entries.count
+        let longsword = gameData.items["Longsword"]!
+        player.inventory.add(longsword, quantity: 0)
+        player.inventory.add(longsword, quantity: -3)
+        #expect(player.inventory.entries.count == countBefore)
     }
 
     @Test("removeFromInventory removes entry by ID")
     func removeFromInventory() {
         let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
-        let longsword = configuration.items["Longsword"]!
-        player.addToInventory(longsword)
-        let id = player.inventory.first(where: { $0.item.name == "Longsword" })!.id
-        let countBefore = player.inventory.count
+        let longsword = gameData.items["Longsword"]!
+        player.inventory.add(longsword)
+        let id = player.inventory.entries.first(where: { $0.item.name == "Longsword" })!.id
+        let countBefore = player.inventory.entries.count
 
-        player.removeFromInventory(id: id)
-        #expect(player.inventory.count == countBefore - 1)
-        #expect(player.inventory.first(where: { $0.item.name == "Longsword" }) == nil)
+        player.inventory.remove(id: id)
+        #expect(player.inventory.entries.count == countBefore - 1)
+        #expect(player.inventory.entries.first(where: { $0.item.name == "Longsword" }) == nil)
     }
 
     @Test("removeFromInventory ignores unknown ID")
     func removeFromInventoryUnknownID() {
         let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
-        let countBefore = player.inventory.count
-        player.removeFromInventory(id: UUID())
-        #expect(player.inventory.count == countBefore)
+        let countBefore = player.inventory.entries.count
+        player.inventory.remove(id: UUID())
+        #expect(player.inventory.entries.count == countBefore)
     }
 
     @Test("equipItem sets isEquipped on the entry")
     func equipItem() {
         let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
-        let leatherArmor = configuration.items["Leather Armor"]!
-        player.addToInventory(leatherArmor)
-        let id = player.inventory.first(where: { $0.item.name == "Leather Armor" })!.id
+        let leatherArmor = gameData.items["Leather Armor"]!
+        player.inventory.add(leatherArmor)
+        let id = player.inventory.entries.first(where: { $0.item.name == "Leather Armor" })!.id
 
-        player.equipItem(id: id)
-        #expect(player.inventory.first(where: { $0.item.name == "Leather Armor" })?.isEquipped == true)
+        player.inventory.equip(id: id)
+        #expect(player.inventory.entries.first(where: { $0.item.name == "Leather Armor" })?.isEquipped == true)
     }
 
     @Test("equipItem auto-unequips conflicting non-shield armor")
     func equipItemUnequipsConflictingArmor() {
         let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
-        let chainMail = configuration.items["Chain Mail"]!
-        let leatherArmor = configuration.items["Leather Armor"]!
-        player.addToInventory(chainMail)
-        player.addToInventory(leatherArmor)
+        let chainMail = gameData.items["Chain Mail"]!
+        let leatherArmor = gameData.items["Leather Armor"]!
+        player.inventory.add(chainMail)
+        player.inventory.add(leatherArmor)
 
-        let chainID = player.inventory.first(where: { $0.item.name == "Chain Mail" })!.id
-        let leatherID = player.inventory.first(where: { $0.item.name == "Leather Armor" })!.id
+        let chainID = player.inventory.entries.first(where: { $0.item.name == "Chain Mail" })!.id
+        let leatherID = player.inventory.entries.first(where: { $0.item.name == "Leather Armor" })!.id
 
-        player.equipItem(id: chainID)
-        #expect(player.equippedArmor?.name == "Chain Mail")
+        player.inventory.equip(id: chainID)
+        #expect(player.inventory.equippedArmor?.name == "Chain Mail")
 
-        player.equipItem(id: leatherID)
-        #expect(player.equippedArmor?.name == "Leather Armor", "leather should now be equipped")
-        #expect(player.inventory.first(where: { $0.item.name == "Chain Mail" })?.isEquipped == false, "chain mail should be auto-unequipped")
+        player.inventory.equip(id: leatherID)
+        #expect(player.inventory.equippedArmor?.name == "Leather Armor", "leather should now be equipped")
+        #expect(player.inventory.entries.first(where: { $0.item.name == "Chain Mail" })?.isEquipped == false, "chain mail should be auto-unequipped")
     }
 
     @Test("equipItem auto-unequips conflicting shield")
     func equipItemUnequipsConflictingShield() {
         let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
-        let shield1 = configuration.items["Shield"]!
-        player.addToInventory(shield1, quantity: 2)
+        let shield1 = gameData.items["Shield"]!
+        player.inventory.add(shield1, quantity: 2)
         // Two separate entries wouldn't happen with stacking, so add via two different paths:
         // Re-add after removing to get a second distinct entry
-        let firstShieldID = player.inventory.first(where: { $0.item.name == "Shield" })!.id
-        player.equipItem(id: firstShieldID)
-        #expect(player.equippedShield != nil)
+        let firstShieldID = player.inventory.entries.first(where: { $0.item.name == "Shield" })!.id
+        player.inventory.equip(id: firstShieldID)
+        #expect(player.inventory.equippedShield != nil)
 
         // Remove equipped shield and add a fresh one to get a new ID
-        player.removeFromInventory(id: firstShieldID)
-        player.addToInventory(shield1)
-        let secondShieldID = player.inventory.first(where: { $0.item.name == "Shield" })!.id
-        player.equipItem(id: secondShieldID)
-        #expect(player.equippedShield?.name == "Shield")
-        let equippedCount = player.inventory.filter { $0.isEquipped && ($0.item as? Armor)?.category == .shield }.count
+        player.inventory.remove(id: firstShieldID)
+        player.inventory.add(shield1)
+        let secondShieldID = player.inventory.entries.first(where: { $0.item.name == "Shield" })!.id
+        player.inventory.equip(id: secondShieldID)
+        #expect(player.inventory.equippedShield?.name == "Shield")
+        let equippedCount = player.inventory.entries.filter { $0.isEquipped && ($0.item as? Armor)?.category == .shield }.count
         #expect(equippedCount == 1, "only one shield should be equipped at a time")
     }
 
     @Test("unequipItem clears isEquipped")
     func unequipItem() {
         let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
-        let leatherArmor = configuration.items["Leather Armor"]!
-        player.addToInventory(leatherArmor)
-        let id = player.inventory.first(where: { $0.item.name == "Leather Armor" })!.id
-        player.equipItem(id: id)
-        #expect(player.equippedArmor != nil)
+        let leatherArmor = gameData.items["Leather Armor"]!
+        player.inventory.add(leatherArmor)
+        let id = player.inventory.entries.first(where: { $0.item.name == "Leather Armor" })!.id
+        player.inventory.equip(id: id)
+        #expect(player.inventory.equippedArmor != nil)
 
-        player.unequipItem(id: id)
-        #expect(player.equippedArmor == nil)
+        player.inventory.unequip(id: id)
+        #expect(player.inventory.equippedArmor == nil)
     }
 
     @Test("adjustQuantity updates the quantity of an entry")
     func adjustQuantity() {
         let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
-        let arrowEntry = player.inventory.first(where: { $0.item.name == "Arrow" })!
-        player.adjustQuantity(50, for: arrowEntry.id)
-        #expect(player.inventory.first(where: { $0.item.name == "Arrow" })?.quantity == 50)
+        let arrowEntry = player.inventory.entries.first(where: { $0.item.name == "Arrow" })!
+        player.inventory.adjustQuantity(50, for: arrowEntry.id)
+        #expect(player.inventory.entries.first(where: { $0.item.name == "Arrow" })?.quantity == 50)
     }
 
     @Test("adjustQuantity removes entry when quantity is zero")
     func adjustQuantityRemovesAtZero() {
         let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
-        let countBefore = player.inventory.count
-        let spearID = player.inventory.first(where: { $0.item.name == "Spear" })!.id
-        player.adjustQuantity(0, for: spearID)
-        #expect(player.inventory.count == countBefore - 1)
-        #expect(player.inventory.first(where: { $0.item.name == "Spear" }) == nil)
+        let countBefore = player.inventory.entries.count
+        let spearID = player.inventory.entries.first(where: { $0.item.name == "Spear" })!.id
+        player.inventory.adjustQuantity(0, for: spearID)
+        #expect(player.inventory.entries.count == countBefore - 1)
+        #expect(player.inventory.entries.first(where: { $0.item.name == "Spear" }) == nil)
     }
 
     @Test("adjustQuantity ignores unknown ID")
     func adjustQuantityUnknownID() {
         let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
-        let countBefore = player.inventory.count
-        player.adjustQuantity(99, for: UUID())
-        #expect(player.inventory.count == countBefore)
+        let countBefore = player.inventory.entries.count
+        player.inventory.adjustQuantity(99, for: UUID())
+        #expect(player.inventory.entries.count == countBefore)
     }
 
     // MARK: - Spellcasting
@@ -1134,7 +1142,7 @@ struct PlayerTests {
             "spell slots": [[2], [3], [4, 2]]
         }
         """.data(using: .utf8)!
-        let cleric = try decoder.decode(ClassTraits.self, from: clericTraits, configuration: configuration)
+        let cleric = try decoder.decode(ClassTraits.self, from: clericTraits, configuration: gameData)
 
         let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: cleric)
         player.baseAbilities[.wisdom] = 16  // +3 modifier
@@ -1159,7 +1167,7 @@ struct PlayerTests {
             "spell slots": [[2], [3], [4, 2], [4, 3]]
         }
         """.data(using: .utf8)!
-        let cleric = try decoder.decode(ClassTraits.self, from: clericTraits, configuration: configuration)
+        let cleric = try decoder.decode(ClassTraits.self, from: clericTraits, configuration: gameData)
         let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: cleric)
 
         player.level = 1
@@ -1188,7 +1196,7 @@ struct PlayerTests {
             "spell slots": [[2]]
         }
         """.data(using: .utf8)!
-        let cleric = try decoder.decode(ClassTraits.self, from: clericTraits, configuration: configuration)
+        let cleric = try decoder.decode(ClassTraits.self, from: clericTraits, configuration: gameData)
         let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: cleric)
 
         #expect(player.totalSpellSlots(at: 1) == 2)
@@ -1212,31 +1220,31 @@ struct PlayerTests {
     @Test("prepareSpell adds spell; is idempotent")
     func prepareSpell() {
         let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
-        let bless = configuration.spells["Bless"]!
-        #expect(player.preparedSpells.isEmpty)
+        let bless = gameData.spells["Bless"]!
+        #expect(player.spellbook.preparedSpells.isEmpty)
 
-        player.prepareSpell(bless)
-        #expect(player.preparedSpells.count == 1)
+        player.spellbook.prepare(bless)
+        #expect(player.spellbook.preparedSpells.count == 1)
 
-        player.prepareSpell(bless)
-        #expect(player.preparedSpells.count == 1, "duplicate prepareSpell should be ignored")
+        player.spellbook.prepare(bless)
+        #expect(player.spellbook.preparedSpells.count == 1, "duplicate prepare should be ignored")
     }
 
     @Test("unprepareSpell removes a prepared spell")
     func unprepareSpell() {
         let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
-        let bless = configuration.spells["Bless"]!
-        let fireball = configuration.spells["Fireball"]!
-        player.prepareSpell(bless)
-        player.prepareSpell(fireball)
-        #expect(player.preparedSpells.count == 2)
+        let bless = gameData.spells["Bless"]!
+        let fireball = gameData.spells["Fireball"]!
+        player.spellbook.prepare(bless)
+        player.spellbook.prepare(fireball)
+        #expect(player.spellbook.preparedSpells.count == 2)
 
-        player.unprepareSpell(bless)
-        #expect(player.preparedSpells.count == 1)
-        #expect(player.preparedSpells.first?.name == "Fireball")
+        player.spellbook.unprepare(bless)
+        #expect(player.spellbook.preparedSpells.count == 1)
+        #expect(player.spellbook.preparedSpells.first?.name == "Fireball")
 
-        player.unprepareSpell(bless)  // already removed — no-op
-        #expect(player.preparedSpells.count == 1)
+        player.spellbook.unprepare(bless)  // already removed — no-op
+        #expect(player.spellbook.preparedSpells.count == 1)
     }
 
     @Test("Long rest resets used spell slots")
@@ -1252,15 +1260,15 @@ struct PlayerTests {
             "spell slots": [[2, 1]]
         }
         """.data(using: .utf8)!
-        let cleric = try decoder.decode(ClassTraits.self, from: clericTraits, configuration: configuration)
+        let cleric = try decoder.decode(ClassTraits.self, from: clericTraits, configuration: gameData)
         let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: cleric)
 
         player.castSpell(usingSlotLevel: 1)
         player.castSpell(usingSlotLevel: 2)
-        #expect(!player.usedSpellSlots.isEmpty)
+        #expect(!player.spellbook.usedSpellSlots.isEmpty)
 
         player.longRest()
-        #expect(player.usedSpellSlots.isEmpty)
+        #expect(player.spellbook.usedSpellSlots.isEmpty)
         #expect(player.availableSpellSlots(at: 1) == 2)
         #expect(player.availableSpellSlots(at: 2) == 1)
     }
@@ -1273,25 +1281,27 @@ struct PlayerTests {
             "background": "Sailor",
             "species": "Human",
             "class": "Fighter",
+            "appearance": {},
             "height": "3'9\\"",
             "ability scores": {"Wisdom": 14},
             "background ability scores": ["Strength", "Strength", "Dexterity"],
             "skill proficiencies": ["Athletics"],
-            "money": 130,
+            "inventory": { "money": 130 },
             "maximum hit points": 10,
-            "prepared spells": ["Bless", "Fireball"]
+            "spellbook": { "prepared spells": ["Bless", "Fireball"] }
         }
         """.data(using: .utf8)!
 
-        let player = try decoder.decode(Player.self, from: playerTraits, configuration: configuration)
-        #expect(player.preparedSpells.count == 2)
-        #expect(player.preparedSpells.contains(where: { $0.name == "Bless" }))
-        #expect(player.preparedSpells.contains(where: { $0.name == "Fireball" }))
+        let player = try decoder.decode(Player.self, from: playerTraits, configuration: gameData)
+        #expect(player.spellbook.preparedSpells.count == 2)
+        #expect(player.spellbook.preparedSpells.contains(where: { $0.name == "Bless" }))
+        #expect(player.spellbook.preparedSpells.contains(where: { $0.name == "Fireball" }))
 
         let encoder = JSONEncoder()
-        let encoded = try encoder.encode(player, configuration: configuration)
+        let encoded = try encoder.encode(player, configuration: gameData)
         let dict = try #require(try? JSONSerialization.jsonObject(with: encoded) as? [String: Any])
-        let names = try #require(dict["prepared spells"] as? [String])
+        let spellbookDict = try #require(dict["spellbook"] as? [String: Any])
+        let names = try #require(spellbookDict["prepared spells"] as? [String])
         #expect(Set(names) == Set(["Bless", "Fireball"]))
     }
 
@@ -1303,19 +1313,20 @@ struct PlayerTests {
             "background": "Sailor",
             "species": "Human",
             "class": "Fighter",
+            "appearance": {},
             "height": "3'9\\"",
             "ability scores": {},
             "background ability scores": ["Strength", "Strength", "Dexterity"],
             "skill proficiencies": ["Athletics"],
-            "money": 130,
+            "inventory": { "money": 130 },
             "maximum hit points": 10,
-            "prepared spells": ["Bless", "Nonexistent Spell XYZ"]
+            "spellbook": { "prepared spells": ["Bless", "Nonexistent Spell XYZ"] }
         }
         """.data(using: .utf8)!
 
-        let player = try decoder.decode(Player.self, from: playerTraits, configuration: configuration)
-        #expect(player.preparedSpells.count == 1)
-        #expect(player.preparedSpells.first?.name == "Bless")
+        let player = try decoder.decode(Player.self, from: playerTraits, configuration: gameData)
+        #expect(player.spellbook.preparedSpells.count == 1)
+        #expect(player.spellbook.preparedSpells.first?.name == "Bless")
     }
 
     @Test("Used spell slots survive encode/decode round-trip")
@@ -1326,23 +1337,25 @@ struct PlayerTests {
             "background": "Sailor",
             "species": "Human",
             "class": "Fighter",
+            "appearance": {},
             "height": "3'9\\"",
             "ability scores": {},
             "background ability scores": ["Strength", "Strength", "Dexterity"],
             "skill proficiencies": ["Athletics"],
-            "money": 130,
+            "inventory": { "money": 130 },
             "maximum hit points": 10,
-            "used spell slots": [1, 0, 2]
+            "spellbook": { "used spell slots": [1, 0, 2] }
         }
         """.data(using: .utf8)!
 
-        let player = try decoder.decode(Player.self, from: playerTraits, configuration: configuration)
-        #expect(player.usedSpellSlots == [1, 0, 2])
+        let player = try decoder.decode(Player.self, from: playerTraits, configuration: gameData)
+        #expect(player.spellbook.usedSpellSlots == [1, 0, 2])
 
         let encoder = JSONEncoder()
-        let encoded = try encoder.encode(player, configuration: configuration)
+        let encoded = try encoder.encode(player, configuration: gameData)
         let dict = try #require(try? JSONSerialization.jsonObject(with: encoded) as? [String: Any])
-        let slots = try #require(dict["used spell slots"] as? [Int])
+        let spellbookDict = try #require(dict["spellbook"] as? [String: Any])
+        let slots = try #require(spellbookDict["used spell slots"] as? [Int])
         #expect(slots == [1, 0, 2])
     }
 
@@ -1350,8 +1363,57 @@ struct PlayerTests {
     func usedSpellSlotsOmittedWhenEmpty() {
         let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
         let encoder = JSONEncoder()
-        let encoded = try! encoder.encode(player, configuration: configuration)
+        let encoded = try! encoder.encode(player, configuration: gameData)
         let dict = try! JSONSerialization.jsonObject(with: encoded) as! [String: Any]
-        #expect(dict["used spell slots"] == nil)
+        #expect(dict["spellbook"] == nil)
+    }
+
+    // MARK: - Proficiency and feat properties
+
+    @Test("allWeaponProficiencies combines class and feat proficiencies")
+    func allWeaponProficiencies() {
+        let classWithProfs = ClassTraits(
+            name: "Fighter",
+            plural: "Fighters",
+            hitDice: .d10,
+            startingWealth: Dice.d4,
+            weaponProficiencies: [.category(.simple), .category(.martial)]
+        )
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: classWithProfs)
+        let featWithProf = FeatTraits(name: "Weapon Expert", weaponProficiencies: [.specific("Longsword")])
+        player.feats = [featWithProf]
+
+        // 2 from class + 1 from feat
+        #expect(player.allWeaponProficiencies.count == 3)
+    }
+
+    @Test("allArmorTraining combines class and feat training")
+    func allArmorTraining() {
+        let classWithArmor = ClassTraits(
+            name: "Fighter",
+            plural: "Fighters",
+            hitDice: .d10,
+            startingWealth: Dice.d4,
+            armorTraining: [.light, .medium]
+        )
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: classWithArmor)
+        let featWithArmor = FeatTraits(name: "Heavy Armor Master", armorTraining: [.heavy])
+        player.feats = [featWithArmor]
+
+        // 2 from class + 1 from feat
+        #expect(player.allArmorTraining.count == 3)
+    }
+
+    @Test("featAbilityIncrease sums ability score increases across all feats")
+    func featAbilityIncrease() {
+        let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter)
+        let feat1 = FeatTraits(name: "Tough", abilityScoreIncreases: [Ability("Strength"): 2])
+        let feat2 = FeatTraits(name: "Alert", abilityScoreIncreases: [Ability("Strength"): 1, Ability("Wisdom"): 1])
+        player.feats = [feat1, feat2]
+
+        let increase = player.featAbilityIncrease
+        #expect(increase[Ability("Strength")] == 3)
+        #expect(increase[Ability("Wisdom")] == 1)
+        #expect(increase[Ability("Dexterity")] == nil)
     }
 }

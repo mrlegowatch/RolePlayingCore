@@ -56,22 +56,28 @@ public struct Gear: Item {
 extension Gear: CodableWithConfiguration {
 
     private enum CodingKeys: String, CodingKey {
-        case name, plural, cost, weight, category, description, contents
+        case name
+        case plural
+        case cost
+        case weight
+        case category
+        case description
+        case contents
     }
 
-    public init(from decoder: Decoder, configuration: Configuration) throws {
+    public init(from decoder: Decoder, configuration: GameData) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
 
         name = try values.decode(String.self, forKey: .name)
         plural = try values.decodeIfPresent(String.self, forKey: .plural) ?? (name + "s")
-        cost = (try? values.decode(Money.self, forKey: .cost, configuration: configuration.currencies)) ?? .zero
+        cost = (try? values.decode(Money.self, forKey: .cost, configuration: configuration.currencies)) ?? Money()
         weight = (try? values.decode(Weight.self, forKey: .weight)) ?? Weight(value: 0, unit: .pounds)
         category = try values.decodeIfPresent(Category.self, forKey: .category) ?? .general
         description = try values.decodeIfPresent(String.self, forKey: .description)
         contents = try values.decodeIfPresent([String].self, forKey: .contents)
     }
 
-    public func encode(to encoder: Encoder, configuration: Configuration) throws {
+    public func encode(to encoder: Encoder, configuration: GameData) throws {
         var values = encoder.container(keyedBy: CodingKeys.self)
         try values.encode(name, forKey: .name)
         if plural != name + "s" {

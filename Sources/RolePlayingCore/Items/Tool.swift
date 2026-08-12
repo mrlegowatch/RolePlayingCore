@@ -34,21 +34,24 @@ public struct Tool: Item {
 extension Tool: CodableWithConfiguration {
 
     private enum CodingKeys: String, CodingKey {
-        case name, plural, cost, weight
+        case name
+        case plural
+        case cost
+        case weight
         case toolType = "tool type"
     }
 
-    public init(from decoder: Decoder, configuration: Configuration) throws {
+    public init(from decoder: Decoder, configuration: GameData) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
 
-        name     = try values.decode(String.self, forKey: .name)
-        plural   = try values.decodeIfPresent(String.self, forKey: .plural) ?? (name + "s")
-        cost     = (try? values.decode(Money.self, forKey: .cost, configuration: configuration.currencies)) ?? .zero
-        weight   = (try? values.decode(Weight.self, forKey: .weight)) ?? Weight(value: 0, unit: .pounds)
+        name = try values.decode(String.self, forKey: .name)
+        plural = try values.decodeIfPresent(String.self, forKey: .plural) ?? (name + "s")
+        cost = (try? values.decode(Money.self, forKey: .cost, configuration: configuration.currencies)) ?? Money()
+        weight = (try? values.decode(Weight.self, forKey: .weight)) ?? Weight(value: 0, unit: .pounds)
         toolType = try values.decode(ToolType.self, forKey: .toolType)
     }
 
-    public func encode(to encoder: Encoder, configuration: Configuration) throws {
+    public func encode(to encoder: Encoder, configuration: GameData) throws {
         var values = encoder.container(keyedBy: CodingKeys.self)
         try values.encode(name, forKey: .name)
         if plural != name + "s" {

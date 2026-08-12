@@ -32,6 +32,6 @@ extension WeaponCategory: CustomStringConvertible {
 // MARK: - Default Weapon Categories
 
 extension WeaponCategory {
-    public static let simple  = WeaponCategory("simple")
+    public static let simple = WeaponCategory("simple")
     public static let martial = WeaponCategory("martial")
 }

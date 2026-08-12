@@ -34,26 +34,47 @@ struct CharacterGeneratorApp: App {
 /// Shared state for the application
 @MainActor
 class AppState: ObservableObject {
-    @Published var configuration: Configuration!
+    @Published var gameData: GameData!
     @Published var characterGenerator: CharacterGenerator!
     @Published var players: Players!
     @Published var selectedPlayer: Player?
-    
+    @Published var builderState: CharacterBuilderState?
+
     init() {
         do {
-            configuration = try Configuration("Configuration")
-            characterGenerator = try CharacterGenerator(configuration)
-            players = configuration.players
+            gameData = try GameData("Configuration")
+            characterGenerator = try CharacterGenerator(gameData)
+            players = gameData.players
         } catch {
             fatalError("Failed to initialize configuration: \(error)")
         }
     }
-    
+
     func addNewCharacter() {
         let player = characterGenerator.makeCharacter()
         players.insert(player, at: 0)
+        selectedPlayer = player
     }
-    
+
+    func startBuildingCharacter() {
+        let state = CharacterBuilderState()
+        state.selectedSpecies = gameData.species["Human"]
+        state.selectedClass = gameData.classes["Fighter"]
+        state.selectedBackground = gameData.backgrounds["Soldier"]
+        builderState = state
+    }
+
+    func finalizeBuiltCharacter() {
+        guard let player = builderState?.finalize(startingCurrencyUnit: gameData.currencies.baseUnit) else { return }
+        players.insert(player, at: 0)
+        selectedPlayer = player
+        builderState = nil
+    }
+
+    func cancelBuildingCharacter() {
+        builderState = nil
+    }
+
     func deleteCharacter(at indexSet: IndexSet) {
         for index in indexSet {
             players.remove(at: index)

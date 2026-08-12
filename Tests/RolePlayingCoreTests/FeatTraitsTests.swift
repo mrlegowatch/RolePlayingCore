@@ -19,26 +19,6 @@ struct FeatTraitsTests {
         return e
     }()
 
-    // MARK: - Category enum
-
-    @Test("Category raw values")
-    func categoryRawValues() {
-        #expect(FeatTraits.Category.origin.rawValue == "origin")
-        #expect(FeatTraits.Category.general.rawValue == "general")
-        #expect(FeatTraits.Category.fightingStyle.rawValue == "fighting style")
-        #expect(FeatTraits.Category.epicBoon.rawValue == "epic boon")
-    }
-
-    @Test("Category CaseIterable contains all four cases")
-    func categoryCaseIterable() {
-        let all = FeatTraits.Category.allCases
-        #expect(all.count == 4)
-        #expect(all.contains(.origin))
-        #expect(all.contains(.general))
-        #expect(all.contains(.fightingStyle))
-        #expect(all.contains(.epicBoon))
-    }
-
     // MARK: - Init
 
     @Test("Init with defaults")

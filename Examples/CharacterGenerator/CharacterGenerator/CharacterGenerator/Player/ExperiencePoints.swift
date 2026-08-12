@@ -10,7 +10,6 @@ import Foundation
 import RolePlayingCore
 
 class ExperiencePoints {
-    
     let player: Player
     
     init(_ player: Player) {

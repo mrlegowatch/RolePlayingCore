@@ -18,10 +18,10 @@ struct SubclassTraitsTests {
         e.outputFormatting = .sortedKeys
         return e
     }()
-    let configuration: Configuration
+    let gameData: GameData
 
     init() throws {
-        configuration = try Configuration("TestClassesConfiguration", from: .module)
+        gameData = try GameData("TestClassesConfiguration", from: .module)
     }
 
     // MARK: - Init
@@ -80,7 +80,7 @@ struct SubclassTraitsTests {
         }
         """.data(using: .utf8)!
 
-        let sub = try decoder.decode(SubclassTraits.self, from: json, configuration: configuration)
+        let sub = try decoder.decode(SubclassTraits.self, from: json, configuration: gameData)
         #expect(sub.name == "Thief")
         #expect(sub.features[3]?.count == 2)
         #expect(sub.features[3]?.contains("Fast Hands") == true)
@@ -104,7 +104,7 @@ struct SubclassTraitsTests {
         }
         """.data(using: .utf8)!
 
-        let sub = try decoder.decode(SubclassTraits.self, from: json, configuration: configuration)
+        let sub = try decoder.decode(SubclassTraits.self, from: json, configuration: gameData)
         #expect(sub.descriptiveTraits["flavor"] == "Primal rage and fury")
         #expect(sub.features[3]?.first == "Frenzy")
     }
@@ -127,7 +127,7 @@ struct SubclassTraitsTests {
         }
         """.data(using: .utf8)!
 
-        let sub = try decoder.decode(SubclassTraits.self, from: json, configuration: configuration)
+        let sub = try decoder.decode(SubclassTraits.self, from: json, configuration: gameData)
         #expect(sub.name == "Life Domain")
         let spells1 = try #require(sub.additionalSpells?[1])
         #expect(spells1.contains(where: { $0.name == "Bless" }))
@@ -148,7 +148,7 @@ struct SubclassTraitsTests {
         """.data(using: .utf8)!
 
         #expect(throws: (any Error).self) {
-            _ = try decoder.decode(SubclassTraits.self, from: json, configuration: configuration)
+            _ = try decoder.decode(SubclassTraits.self, from: json, configuration: gameData)
         }
     }
 
@@ -157,7 +157,7 @@ struct SubclassTraitsTests {
     @Test("Encode omits empty descriptiveTraits")
     func encodeOmitsEmptyDescriptiveTraits() throws {
         let sub = SubclassTraits(name: "Thief", features: [3: ["Fast Hands"]])
-        let data = try encoder.encode(sub, configuration: configuration)
+        let data = try encoder.encode(sub, configuration: gameData)
         let dict = try #require(try? JSONSerialization.jsonObject(with: data) as? [String: Any])
         #expect(dict["descriptive traits"] == nil, "Empty descriptiveTraits should be omitted")
     }
@@ -165,15 +165,15 @@ struct SubclassTraitsTests {
     @Test("Encode omits empty features")
     func encodeOmitsEmptyFeatures() throws {
         let sub = SubclassTraits(name: "Placeholder")
-        let data = try encoder.encode(sub, configuration: configuration)
+        let data = try encoder.encode(sub, configuration: gameData)
         let dict = try #require(try? JSONSerialization.jsonObject(with: data) as? [String: Any])
         #expect(dict["features"] == nil, "Empty features should be omitted")
     }
 
     @Test("Codable round-trip preserves all data")
     func codableRoundTrip() throws {
-        let bless = try #require(configuration.spells["Bless"])
-        let fireball = try #require(configuration.spells["Fireball"])
+        let bless = try #require(gameData.spells["Bless"])
+        let fireball = try #require(gameData.spells["Fireball"])
         let original = SubclassTraits(
             name: "Life Domain",
             descriptiveTraits: ["role": "Healer"],
@@ -181,8 +181,8 @@ struct SubclassTraitsTests {
             additionalSpells: [3: [bless, fireball]]
         )
 
-        let data = try encoder.encode(original, configuration: configuration)
-        let decoded = try decoder.decode(SubclassTraits.self, from: data, configuration: configuration)
+        let data = try encoder.encode(original, configuration: gameData)
+        let decoded = try decoder.decode(SubclassTraits.self, from: data, configuration: gameData)
 
         #expect(decoded == original)
         #expect(decoded.descriptiveTraits["role"] == "Healer")
@@ -204,7 +204,7 @@ struct SubclassTraitsTests {
         }
         """.data(using: .utf8)!
 
-        let sub = try decoder.decode(SubclassTraits.self, from: json, configuration: configuration)
+        let sub = try decoder.decode(SubclassTraits.self, from: json, configuration: gameData)
         #expect(sub.features.count == 1, "Non-integer string key should be dropped")
         #expect(sub.features[3] != nil)
     }

@@ -27,7 +27,7 @@ struct ItemTests {
         var weight: Weight
     }
 
-    let zeroCost = Money(value: 0, unit: UnitCurrency.baseUnit())
+    let zeroCost = Money()
     let zeroWeight = Weight(value: 0, unit: .pounds)
 
     // MARK: - Default plural

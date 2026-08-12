@@ -15,10 +15,13 @@ public struct FeatTraits: Sendable, Equatable {
 
     /// The category of a feat, governing when and whether it can be taken.
     public enum Category: String, Codable, CaseIterable, Sendable {
-        case origin                        // Background feats; no prerequisites; level 1 only
-        case general                       // Most feats; may have prerequisites
+        /// Background feats; no prerequisites; level 1 only
+        case origin
+        /// Most feats; may have prerequisites
+        case general
         case fightingStyle = "fighting style"
-        case epicBoon = "epic boon"        // Level 20 only
+        /// Level 20 only
+        case epicBoon = "epic boon"
     }
 
     /// Fixed ability score increases granted by this feat (e.g., `[.strength: 2]`).

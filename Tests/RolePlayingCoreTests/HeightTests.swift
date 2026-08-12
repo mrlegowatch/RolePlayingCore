@@ -167,14 +167,40 @@ struct UnitHeightTests {
                 "height": 6.5
             }
             """.data(using: .utf8)!
-            
+
             let decoder = JSONDecoder()
             let decoded = try decoder.decode(HeightContainer.self, from: traits)
-            
+
             #expect(decoded.height?.value == 6.5, "Decoded height should be 6.5")
         }
     }
-}
 
+    @Test("Malformed height string in decodeIfPresent throws dataCorrupted")
+    func malformedHeightDecodeIfPresent() {
+        struct HeightContainer: Decodable {
+            let height: Height?
+        }
+
+        let traits = """
+        {
+            "height": "not-a-height"
+        }
+        """.data(using: .utf8)!
+
+        let decoder = JSONDecoder()
+        #expect(throws: DecodingError.self) {
+            _ = try decoder.decode(HeightContainer.self, from: traits)
+        }
+    }
+
+    @Test("displayString formats height as feet and inches")
+    func displayString() {
+        // 5.5 feet = 66 inches → 5 feet 6 inches
+        let height = Height(value: 5.5, unit: .feet)
+        let display = height.displayString
+        #expect(display.contains("5"), "Should contain feet value")
+        #expect(display.contains("6"), "Should contain inches value")
+    }
+}
 
 
