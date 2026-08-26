@@ -14,7 +14,7 @@ public struct Currencies: Sendable {
     private var allCurrencies: [String: UnitCurrency] = [:]
     
     /// A read-only array of currencies.
-    var all: [UnitCurrency] { Array(allCurrencies.values) }
+    public var all: [UnitCurrency] { Array(allCurrencies.values) }
     
     /// The currency designated as the base (default) unit for this game system, if any.
     public var baseUnit: UnitCurrency? {
@@ -32,7 +32,7 @@ public struct Currencies: Sendable {
     }
     
     /// Adds the array of currencies to the collection.
-    mutating func add(_ currencies: [UnitCurrency]) {
+    public mutating func add(_ currencies: [UnitCurrency]) {
         allCurrencies = Dictionary(currencies.map { ($0.symbol, $0) }, uniquingKeysWith: { _, last in last })
     }
 }
