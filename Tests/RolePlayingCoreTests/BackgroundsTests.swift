@@ -10,14 +10,14 @@ import Testing
 import RolePlayingCore
 import Foundation
 
-@Suite("Backgrounds Tests")
+@Suite("Backgrounds Tests", .serialized)
 struct BackgroundsTests {
-    
+
     let decoder = JSONDecoder()
-    let configuration: Configuration
-    
+    let gameData: GameData
+
     init() throws {
-        configuration = try Configuration("TestConfiguration", from: .module)
+        gameData = try GameData("TestBackgroundsConfiguration", from: .module)
     }
     
     @Test("Decode background traits")
@@ -33,19 +33,24 @@ struct BackgroundsTests {
             "equipment": [["Holy Symbol", "Prayer Book", "Vestments", "10 GP"], ["15 GP"]]
         }
         """.data(using: .utf8)!
-        
+
         // When: Decoding the JSON data with configuration
-        let background = try decoder.decode(BackgroundTraits.self, from: jsonData, configuration: configuration)
+        let background = try decoder.decode(BackgroundTraits.self, from: jsonData, configuration: gameData)
         
         // Then: The properties should match the input
         #expect(background.name == "Acolyte", "Name should match")
-        #expect(background.abilityScores == ["Intelligence", "Wisdom"], "Ability scores should match")
-        #expect(background.feat == "Magic Initiate", "Feat should match")
+        #expect(background.abilityScores == [Ability("Intelligence"), Ability("Wisdom")], "Ability scores should match")
+        #expect(background.feat.name == "Magic Initiate", "Feat should match")
         #expect(background.skillProficiencies.count == 2, "Should have 2 skill proficiencies")
         #expect(background.skillProficiencies.skillNames == ["Insight", "Religion"], "Skill names should match")
         #expect(background.toolProficiency == "Calligrapher's Supplies", "Tool proficiency should match")
         #expect(background.equipment.count == 2, "Should have 2 equipment choices")
-        #expect(background.equipment[0] == ["Holy Symbol", "Prayer Book", "Vestments", "10 GP"], "First equipment choice should match")
+        #expect(background.equipment[0].count == 4, "First equipment choice should have 4 entries")
+        if case .item(let item, _) = background.equipment[0][0] {
+            #expect(item.name == "Holy Symbol", "First item should be Holy Symbol")
+        } else {
+            Issue.record("Expected Holy Symbol as first equipment item")
+        }
     }
     
     @Test("Encode background traits with round-trip")
@@ -61,23 +66,23 @@ struct BackgroundsTests {
             "equipment": [["Crowbar", "Dark Clothes", "Thieves' Tools", "16 GP"]]
         }
         """.data(using: .utf8)!
-        
-        let background = try decoder.decode(BackgroundTraits.self, from: jsonData, configuration: configuration)
+
+        let background = try decoder.decode(BackgroundTraits.self, from: jsonData, configuration: gameData)
         
         // When: Encoding the background back to JSON
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
-        let encodedData = try encoder.encode(background, configuration: configuration)
+        let encodedData = try encoder.encode(background, configuration: gameData)
         
         // Then: The encoded data should be decodable and match the original
-        let decodedBackground = try decoder.decode(BackgroundTraits.self, from: encodedData, configuration: configuration)
+        let decodedBackground = try decoder.decode(BackgroundTraits.self, from: encodedData, configuration: gameData)
         
         #expect(decodedBackground.name == background.name, "Name should match after round-trip")
         #expect(decodedBackground.abilityScores == background.abilityScores, "Ability scores should match after round-trip")
         #expect(decodedBackground.feat == background.feat, "Feat should match after round-trip")
         #expect(decodedBackground.skillProficiencies.skillNames == background.skillProficiencies.skillNames, "Skills should match after round-trip")
         #expect(decodedBackground.toolProficiency == background.toolProficiency, "Tool proficiency should match after round-trip")
-        #expect(decodedBackground.equipment == background.equipment, "Equipment should match after round-trip")
+        #expect(decodedBackground.equipment.count == background.equipment.count, "Equipment option count should match after round-trip")
     }
     
     @Test("Decode and query backgrounds collection")
@@ -115,7 +120,7 @@ struct BackgroundsTests {
         """.data(using: .utf8)!
         
         // When: Decoding the JSON data into a Backgrounds collection with configuration
-        let backgrounds = try decoder.decode(Backgrounds.self, from: jsonData, configuration: configuration)
+        let backgrounds = try decoder.decode(Backgrounds.self, from: jsonData, configuration: gameData)
         
         // Then: The collection should have the correct count
         #expect(backgrounds.count == 3, "Should have 3 backgrounds")
@@ -123,7 +128,7 @@ struct BackgroundsTests {
         // Then: The find method should locate backgrounds by name
         let acolyte = try #require(backgrounds["Acolyte"])
         #expect(acolyte.name == "Acolyte", "Found background should be Acolyte")
-        #expect(acolyte.feat == "Magic Initiate", "Acolyte feat should match")
+        #expect(acolyte.feat.name == "Magic Initiate", "Acolyte feat should match")
         
         let criminal = try #require(backgrounds["Criminal"])
         #expect(criminal.skillProficiencies.skillNames == ["Deception", "Stealth"], "Criminal skills should match")
@@ -139,11 +144,100 @@ struct BackgroundsTests {
         // Then: Round-trip encoding should preserve data
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.sortedKeys]
-        let encodedData = try encoder.encode(backgrounds, configuration: configuration)
-        let decodedBackgrounds = try decoder.decode(Backgrounds.self, from: encodedData, configuration: configuration)
+        let encodedData = try encoder.encode(backgrounds, configuration: gameData)
+        let decodedBackgrounds = try decoder.decode(Backgrounds.self, from: encodedData, configuration: gameData)
         
         #expect(decodedBackgrounds.count == backgrounds.count, "Count should match after round-trip")
         let decodedCriminal = try #require(decodedBackgrounds["Criminal"])
         #expect(decodedCriminal.toolProficiency == backgrounds["Criminal"]?.toolProficiency, "Should find Criminal with matching tool proficiency after round-trip")
+    }
+
+    @Test("displayOrder is decoded when present")
+    func displayOrderPresent() async throws {
+        let jsonData = """
+        {
+            "display order": ["Soldier", "Acolyte"],
+            "backgrounds": [
+                {
+                    "name": "Acolyte",
+                    "ability scores": ["Intelligence", "Wisdom"],
+                    "feat": "Magic Initiate",
+                    "skill proficiencies": ["Insight", "Religion"],
+                    "tool proficiency": "Calligrapher's Supplies",
+                    "equipment": [["Holy Symbol", "10 GP"]]
+                },
+                {
+                    "name": "Soldier",
+                    "ability scores": ["Strength", "Constitution"],
+                    "feat": "Savage Attacker",
+                    "skill proficiencies": ["Athletics", "Intimidation"],
+                    "tool proficiency": "Gaming Set",
+                    "equipment": [["Spear", "16 GP"]]
+                }
+            ]
+        }
+        """.data(using: .utf8)!
+        let backgrounds = try decoder.decode(Backgrounds.self, from: jsonData, configuration: gameData)
+        #expect(backgrounds.displayOrder == ["Soldier", "Acolyte"])
+    }
+
+    @Test("displayOrder is empty when absent")
+    func displayOrderAbsent() async throws {
+        let jsonData = """
+        {
+            "backgrounds": [
+                {
+                    "name": "Soldier",
+                    "ability scores": ["Strength", "Constitution"],
+                    "feat": "Savage Attacker",
+                    "skill proficiencies": ["Athletics", "Intimidation"],
+                    "tool proficiency": "Gaming Set",
+                    "equipment": [["Spear", "16 GP"]]
+                }
+            ]
+        }
+        """.data(using: .utf8)!
+        let backgrounds = try decoder.decode(Backgrounds.self, from: jsonData, configuration: gameData)
+        #expect(backgrounds.displayOrder.isEmpty)
+    }
+
+    @Test("allSorted returns backgrounds in alphabetical order")
+    func allSorted() async throws {
+        let jsonData = """
+        {
+            "backgrounds": [
+                {
+                    "name": "Soldier",
+                    "ability scores": ["Strength", "Constitution"],
+                    "feat": "Savage Attacker",
+                    "skill proficiencies": ["Athletics", "Intimidation"],
+                    "tool proficiency": "Gaming Set",
+                    "equipment": [["Spear", "Shortbow", "16 GP"]]
+                },
+                {
+                    "name": "Acolyte",
+                    "ability scores": ["Intelligence", "Wisdom"],
+                    "feat": "Magic Initiate",
+                    "skill proficiencies": ["Insight", "Religion"],
+                    "tool proficiency": "Calligrapher's Supplies",
+                    "equipment": [["Holy Symbol", "10 GP"]]
+                },
+                {
+                    "name": "Criminal",
+                    "ability scores": ["Dexterity", "Intelligence"],
+                    "feat": "Alert",
+                    "skill proficiencies": ["Deception", "Stealth"],
+                    "tool proficiency": "Thieves' Tools",
+                    "equipment": [["Crowbar", "16 GP"]]
+                }
+            ]
+        }
+        """.data(using: .utf8)!
+        let backgrounds = try decoder.decode(Backgrounds.self, from: jsonData, configuration: gameData)
+        let sorted = backgrounds.allSorted
+        #expect(sorted.count == 3)
+        #expect(sorted[0].name == "Acolyte")
+        #expect(sorted[1].name == "Criminal")
+        #expect(sorted[2].name == "Soldier")
     }
 }

@@ -1,5 +1,5 @@
 //
-//  Configuration.swift
+//  GameData.swift
 //  RolePlayingCore
 //
 //  Created by Brian Arnold on 3/4/17.
@@ -8,45 +8,54 @@
 
 import Foundation
 
-// MARK: - Configuration Files
+// MARK: - Game Data Files
 
 /// Represents a collection of JSON file names that belong to a bundle.
-/// Used by the `Configuration` to determine which files to load.
-public struct ConfigurationFiles: Decodable, Sendable {
+/// Used by `GameData` to determine which files to load.
+public struct GameDataFiles: Decodable, Sendable {
     let currencies: [String]
     let skills: [String]
+    let feats: [String]?
+    let spells: [String]?
+    let items: [String]?
     let backgrounds: [String]
     let creatureTypes: [String]
     let species: [String]
     let classes: [String]
     let players: [String]?
-    let speciesNames: String?
-    
+    let characterNames: String?
+
     private enum CodingKeys: String, CodingKey {
         case currencies
         case skills
+        case feats
+        case spells
+        case items
         case backgrounds
         case creatureTypes = "creature types"
         case species
         case classes
         case players
-        case speciesNames = "species names"
+        case characterNames = "character names"
     }
 }
 
-// MARK: - Configuration
+// MARK: - GameData
 
 /// Configure a client's data from a framework or application bundle.
 ///
 /// This type manages the loading and organization of game data including currencies,
 /// skills, backgrounds, creature types, species, classes, and players from JSON files.
-public struct Configuration {
+public struct GameData {
     let bundle: Bundle
     let decoder = JSONDecoder()
-    public private(set) var configurationFiles: ConfigurationFiles
+    public private(set) var gameDataFiles: GameDataFiles
     
     public private(set) var currencies = Currencies()
     public private(set) var skills = Skills()
+    public private(set) var feats = Feats()
+    public private(set) var spells = Spells()
+    public private(set) var items = Items()
     public private(set) var backgrounds = Backgrounds()
     public private(set) var creatureTypes = CreatureTypes()
     public private(set) var species = Species()
@@ -64,24 +73,27 @@ public struct Configuration {
     public init(_ configurationFile: String, from bundle: Bundle = .main) throws {
         self.bundle = bundle
         let data = try bundle.loadJSON(configurationFile)
-        self.configurationFiles = try decoder.decode(ConfigurationFiles.self, from: data)
-        try self.load(configurationFiles)
+        self.gameDataFiles = try decoder.decode(GameDataFiles.self, from: data)
+        try self.load(gameDataFiles)
     }
     
     // MARK: - Loading Methods
     
     /// Loads all configuration data from the specified configuration files.
     ///
-    /// - Parameter configurationFiles: The configuration files structure containing file names.
+    /// - Parameter gameDataFiles: The configuration files structure containing file names.
     /// - Throws: An error if any file cannot be loaded or decoded.
-    mutating func load(_ configurationFiles: ConfigurationFiles) throws {
-        try loadCurrencies(from: configurationFiles.currencies)
-        try loadSkills(from: configurationFiles.skills)
-        try loadBackgrounds(from: configurationFiles.backgrounds)
-        try loadCreatureTypes(from: configurationFiles.creatureTypes)
-        try loadSpecies(from: configurationFiles.species)
-        try loadClasses(from: configurationFiles.classes)
-        try loadPlayers(from: configurationFiles.players)
+    mutating func load(_ gameDataFiles: GameDataFiles) throws {
+        try loadCurrencies(from: gameDataFiles.currencies)
+        try loadSkills(from: gameDataFiles.skills)
+        try loadFeats(from: gameDataFiles.feats)
+        try loadSpells(from: gameDataFiles.spells)
+        try loadItems(from: gameDataFiles.items)
+        try loadBackgrounds(from: gameDataFiles.backgrounds)
+        try loadCreatureTypes(from: gameDataFiles.creatureTypes)
+        try loadSpecies(from: gameDataFiles.species)
+        try loadClasses(from: gameDataFiles.classes)
+        try loadPlayers(from: gameDataFiles.players)
     }
     
     // MARK: - Private Loading Helpers
@@ -103,13 +115,43 @@ public struct Configuration {
             self.skills.add(skills.all)
         }
     }
+
+    /// Loads feats from the specified file names, if provided.
+    private mutating func loadFeats(from fileNames: [String]?) throws {
+        guard let fileNames else { return }
+        for fileName in fileNames {
+            let jsonData = try bundle.loadJSON(fileName)
+            let feats = try decoder.decode(Feats.self, from: jsonData)
+            self.feats.add(feats.all)
+        }
+    }
+
+    /// Loads spells from the specified file names, if provided.
+    private mutating func loadSpells(from fileNames: [String]?) throws {
+        guard let fileNames else { return }
+        for fileName in fileNames {
+            let jsonData = try bundle.loadJSON(fileName)
+            let spells = try decoder.decode(Spells.self, from: jsonData)
+            self.spells.add(spells.all)
+        }
+    }
+
+    /// Loads items from the specified file names, if provided.
+    private mutating func loadItems(from fileNames: [String]?) throws {
+        guard let fileNames else { return }
+        for fileName in fileNames {
+            let jsonData = try bundle.loadJSON(fileName)
+            let items = try decoder.decode(Items.self, from: jsonData, configuration: self)
+            self.items.add(items)
+        }
+    }
     
     /// Loads backgrounds from the specified file names.
     private mutating func loadBackgrounds(from fileNames: [String]) throws {
         for fileName in fileNames {
             let jsonData = try bundle.loadJSON(fileName)
             let backgrounds = try decoder.decode(Backgrounds.self, from: jsonData, configuration: self)
-            self.backgrounds.add(backgrounds.all)
+            self.backgrounds.add(backgrounds)
         }
     }
     

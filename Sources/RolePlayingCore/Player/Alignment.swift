@@ -95,7 +95,7 @@ extension String {
 }
 
 /// A combined measure of ethics and morals.
-public struct Alignment: Sendable {
+public struct CharacterAlignment: Sendable {
     
     /// A combination of ethics and morals enumerations.
     public struct Kind: Sendable {
@@ -160,7 +160,7 @@ public struct Alignment: Sendable {
     }
 }
 
-extension Alignment.Kind: CustomStringConvertible {
+extension CharacterAlignment.Kind: CustomStringConvertible {
     
     /// Returns a combined string for ethics and morals, e.g., "Lawful Good", "Chaotic Evil" etc..
     /// Returns "Neutral" if both ethics and morals are neutral.
@@ -170,9 +170,9 @@ extension Alignment.Kind: CustomStringConvertible {
     
 }
 
-extension Alignment.Kind: Equatable { }
+extension CharacterAlignment.Kind: Equatable { }
 
-extension Alignment: CustomStringConvertible {
+extension CharacterAlignment: CustomStringConvertible {
     
     /// Returns a descriptive string, e.g., "Lawful Neutral", "Neutral Good", etc.
     public var description: String {
@@ -180,15 +180,15 @@ extension Alignment: CustomStringConvertible {
     }
 }
 
-extension Alignment: Equatable { }
+extension CharacterAlignment: Equatable { }
 
-extension Alignment: Hashable { }
+extension CharacterAlignment: Hashable { }
 
 extension Ethics: Codable { }
 
 extension Morals: Codable { }
 
-extension Alignment: Codable {
+extension CharacterAlignment: Codable {
     
     internal enum CodingKeys: String, CodingKey {
         case ethics

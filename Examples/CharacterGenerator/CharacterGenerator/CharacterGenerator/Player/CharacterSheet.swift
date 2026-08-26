@@ -8,6 +8,7 @@
 
 import Foundation
 import RolePlayingCore
+import SwiftDice
 
 extension Int {
     var displayModifier: String { self > 0 ? " +\(self) " : " \(self) " }
@@ -15,7 +16,6 @@ extension Int {
 
 /// Character sheet provides a mapping between player properties and collection view groupings and views.
 class CharacterSheet {
-    
     let player: Player
     
     init(_ player: Player) {
@@ -25,16 +25,17 @@ class CharacterSheet {
     // Mapping between sections/items and key paths to properties.
     var keys: [[PartialKeyPath<CharacterSheet>]] = [
         [\.experiencePoints],
-        [\.backgroundName, \.speciesName, \.className],
+        [\.backgroundName, \.speciesName, \.className, \.subclassName],
         [\.abilities],
         [\.skills],
         [\.initiative, \.speed],
         [\.armorClass, \.proficiencyBonus, \.passivePerception],
-        [\.maximumHitPoints, \.hitDice],
+        [\.currentHitPoints, \.maximumHitPoints, \.hitDice],
         [\.height, \.size],
-        [\.money]
+        [\.money],
+        [\.inventory]
     ]
-    
+
     // Mapping of properties to label keys.
     var labelKeys: [[String]] = [
         ["Experience Points"],
@@ -43,21 +44,23 @@ class CharacterSheet {
         ["Skills"],
         ["Initiative", "Speed"],
         ["Armor Class", "Proficiency Bonus", "Passive Perception"],
-        ["Hit Points", "Hit Dice"],
+        ["Current HP", "Max HP", "Hit Dice"],
         ["Height", "Size"],
-        ["Money"]
+        ["Money"],
+        ["Inventory"]
     ]
-    
+
     // Mapping of properties to view types.
     var cellIdentifiers: [[String]] = [
         ["experiencePoints"],
-        ["labeledText", "labeledText", "labeledText"],
+        ["labeledText", "labeledText", "labeledText", "labeledText"],
         ["abilities"],
         ["labeledText"],
         ["labeledNumber", "labeledNumber"],
         ["labeledNumber", "labeledNumber", "labeledNumber"],
-        ["labeledNumber", "labeledText"],
+        ["labeledNumber", "labeledNumber", "labeledText"],
         ["labeledText", "labeledText"],
+        ["labeledText"],
         ["labeledText"]
     ]
     
@@ -74,6 +77,7 @@ class CharacterSheet {
     var backgroundName: String { player.backgroundName }
     var className: String { player.className }
     var speciesName: String { player.speciesName }
+    var subclassName: String { player.subclassName }
     var alignment: String {
         if let alignment = player.alignment {
             return "\(alignment)"
@@ -90,9 +94,12 @@ class CharacterSheet {
     var proficiencyBonus: String { player.proficiencyBonus.displayModifier }
     var maximumHitPoints: String { "\(player.maximumHitPoints)" }
     var currentHitPoints: String { "\(player.currentHitPoints)" }
-    var hitDice: String { "\(player.hitDice)" }
-    var money: String { "\(player.money)" }
-    var gender: String { player.gender.map(\.rawValue) ?? "Androgynous" }
+    var hitDice: String {
+        let dieSides = player.classTraits.hitDice.sides
+        return "\(player.availableHitDice)/\(player.level) d\(dieSides)"
+    }
+    var money: String { "\(player.inventory.money)" }
+    var gender: String { player.appearance.gender.map(\.rawValue) ?? "Androgynous" }
     var height: String { player.height.displayString }
     var speed: String {
         let value = player.speed
@@ -105,4 +112,12 @@ class CharacterSheet {
     }
     var size: String { "\(player.size)".capitalized }
     var passivePerception: String { "\(player.passivePerception)" }
+    var inventory: String {
+        guard !player.inventory.entries.isEmpty else { return "None" }
+        return player.inventory.entries.map { entry in
+            let qty = entry.quantity > 1 ? "\(entry.quantity)x " : ""
+            let equipped = entry.isEquipped ? " ✓" : ""
+            return "\(qty)\(entry.item.name)\(equipped)"
+        }.joined(separator: "\n")
+    }
 }

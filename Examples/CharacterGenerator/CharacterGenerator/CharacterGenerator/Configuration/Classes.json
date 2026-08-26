@@ -20,9 +20,24 @@
                            265000,
                            305000,
                            355000],
+    "display order": ["Fighter", "Rogue", "Wizard", "Paladin", "Barbarian", "Ranger", "Cleric", "Bard", "Druid", "Monk", "Sorcerer", "Warlock"],
+    "spell slot tables": {
+        "full caster": [
+            [2],[3],[4,2],[4,3],[4,3,2],[4,3,3],[4,3,3,1],[4,3,3,2],
+            [4,3,3,3,1],[4,3,3,3,2],[4,3,3,3,2,1],[4,3,3,3,2,1],
+            [4,3,3,3,2,1,1],[4,3,3,3,2,1,1],[4,3,3,3,2,1,1,1],[4,3,3,3,2,1,1,1],
+            [4,3,3,3,2,1,1,1,1],[4,3,3,3,3,1,1,1,1],[4,3,3,3,3,2,1,1,1],[4,3,3,3,3,2,2,1,1]
+        ],
+        "half caster": [
+            [2],[2],[3],[3],[4,2],[4,2],[4,3],[4,3],[4,3,2],[4,3,2],
+            [4,3,3],[4,3,3],[4,3,3,1],[4,3,3,1],[4,3,3,2],[4,3,3,2],
+            [4,3,3,3,1],[4,3,3,3,1],[4,3,3,3,2],[4,3,3,3,2]
+        ]
+    },
     "classes": [
                 {
                 "name": "Cleric",
+                "default background": "Acolyte",
                 "plural": "Clerics",
                 "hit dice": "d8",
                 "primary ability": ["Wisdom"],
@@ -33,9 +48,15 @@
                 "starting equipment": [["Chain Shirt", "Shield", "Mace", "Holy Symbol", "Priest's Pack", "7 GP"], ["110 GP"]],
                 "armor training": ["light", "medium", "shield"],
                 "weapon proficiencies": ["simple"],
+                "spellcasting ability": "Wisdom",
+                "spellcasting type": "prepared",
+                "slot table": "full caster",
+                "cantrips known": 3,
+                "spells known": 2,
                 },
                 {
                 "name": "Fighter",
+                "default background": "Soldier",
                 "plural": "Fighters",
                 "hit dice": "d10",
                 "primary ability": ["Strength"],
@@ -50,6 +71,7 @@
                 },
                 {
                 "name": "Rogue",
+                "default background": "Criminal",
                 "plural": "Rogues",
                 "aliases": ["Thief"],
                 "hit dice": "d8",
@@ -61,10 +83,11 @@
                 "starting wealth": "4d4x10",
                 "starting equipment": [["Leather Armor", "2 Daggers", "Shortsword", "Shortbow", "20 Arrows", "Quiver", "Thieves' Tools", "Burglar's Pack", "8 GP"], ["100 GP"]],
                 "armor training": ["light"],
-                "weapon proficiencies": ["simple", "martial (finesse or light)"],
+                "weapon proficiencies": ["simple", "martial (finesse, light)"],
                 },
                 {
                 "name": "Wizard",
+                "default background": "Sage",
                 "plural": "Wizards",
                 "hit dice": "d6",
                 "primary ability": ["Intelligence"],
@@ -75,9 +98,15 @@
                 "starting equipment": [["2 Daggers", "Arcane Focus (quarterstaff)", "Robe", "Spellbook", "Scholar's Pack", "5 GP"], ["55 GP"]],
                 "armor training": [],
                 "weapon proficiencies": ["simple"],
+                "spellcasting ability": "Intelligence",
+                "spellcasting type": "prepared",
+                "slot table": "full caster",
+                "cantrips known": 3,
+                "spells known": 2,
                 },
                 {
                 "name": "Barbarian",
+                "default background": "Farmer",
                 "plural": "Barbarians",
                 "hit dice": "d12",
                 "primary ability": ["Strength"],
@@ -88,9 +117,11 @@
                 "starting equipment": [["Greataxe", "4 Handaxes", "Explorer's Pack", "15 GP"], ["75 GP"]],
                 "armor training": ["light", "medium", "shield"],
                 "weapon proficiencies": ["simple", "martial"],
+                "unarmored defense": ["Constitution"],
                 },
                 {
                 "name": "Bard",
+                "default background": "Entertainer",
                 "plural": "Bards",
                 "hit dice": "d8",
                 "primary ability": ["Charisma"],
@@ -102,9 +133,15 @@
                 "starting equipment": [["Leather Armor", "2 Daggers", "Any Tool", "Entertainer's Pack", "19 GP"], ["90 GP"]],
                 "armor training": ["light"],
                 "weapon proficiencies": ["simple"],
+                "spellcasting ability": "Charisma",
+                "spellcasting type": "known",
+                "slot table": "full caster",
+                "cantrips known": 2,
+                "spells known": 4,
                 },
                 {
                 "name": "Druid",
+                "default background": "Hermit",
                 "plural": "Druids",
                 "hit dice": "d8",
                 "primary ability": ["Wisdom"],
@@ -115,11 +152,17 @@
                 "tool proficiencies": ["Herbalism Kit"],
                 "starting wealth": "2d4x10",
                 "starting equipment": [["Leather Armor", "Shield", "Sickle", "Druidic Focus (Quarterstaff)", "Explorer's Pack", "Herbalism Kit", "9 GP"], ["50 GP"]],
-                "armor training": ["light", "shields"],
+                "armor training": ["light", "shield"],
                 "weapon proficiencies": ["simple"],
+                "spellcasting ability": "Wisdom",
+                "spellcasting type": "prepared",
+                "slot table": "full caster",
+                "cantrips known": 2,
+                "spells known": 2,
                 },
                 {
                 "name": "Monk",
+                "default background": "Hermit",
                 "plural": "Monks",
                 "hit dice": "d8",
                 "primary ability": ["Dexterity", "Wisdom"],
@@ -132,9 +175,11 @@
                 "starting equipment": [["Spear", "5 Daggers", "Any Tool", "Explorer's Pack", "11 GP"], ["50 GP"]],
                 "armor training": [],
                 "weapon proficiencies": ["simple", "martial (light)"],
+                "unarmored defense": ["Wisdom"],
                 },
                 {
                 "name": "Paladin",
+                "default background": "Guard",
                 "plural": "Paladins",
                 "hit dice": "d10",
                 "primary ability": ["Strength", "Charisma"],
@@ -145,9 +190,14 @@
                 "starting equipment": [["Chain Mail", "Shield", "Longsword", "6 Javelins", "Holy Symbol", "Priest's Pack", "9 GP"], ["150 GP"]],
                 "armor training": ["light", "medium", "heavy", "shield"],
                 "weapon proficiencies": ["simple", "martial"],
+                "spellcasting ability": "Charisma",
+                "spellcasting type": "prepared",
+                "slot table": "half caster",
+                "spells known": 2,
                 },
                 {
                 "name": "Ranger",
+                "default background": "Guide",
                 "plural": "Rangers",
                 "hit dice": "d10",
                 "primary ability": ["Dexterity", "Wisdom"],
@@ -158,9 +208,18 @@
                 "starting equipment": [["Studded Leather Armor", "Scimitar", "Shortsword", "Longbow", "20 Arrows", "Quiver", "Druidic Focus (sprig of mistletoe)", "Explorer's Pack", "7 GP"], ["150 GP"]],
                 "armor training": ["light", "medium", "shield"],
                 "weapon proficiencies": ["simple", "martial"],
+                "spellcasting ability": "Wisdom",
+                "spellcasting type": "known",
+                "spell slots": [
+                    [],[2],[3],[3],[4,2],[4,2],[4,3],[4,3],[4,3,2],[4,3,2],
+                    [4,3,3],[4,3,3],[4,3,3,1],[4,3,3,1],[4,3,3,2],[4,3,3,2],
+                    [4,3,3,3,1],[4,3,3,3,1],[4,3,3,3,2],[4,3,3,3,2]
+                ],
+                "spells known": 2,
                 },
                 {
                 "name": "Sorcerer",
+                "default background": "Sage",
                 "plural": "Sorcerers",
                 "hit dice": "d6",
                 "primary ability": ["Charisma"],
@@ -171,9 +230,15 @@
                 "starting equipment": [["Spear", "2 Daggers", "Arcane Focus (crystal)", "Dungeoneer's Pack", "28 GP"], ["50 GP"]],
                 "armor training": [],
                 "weapon proficiencies": ["simple"],
+                "spellcasting ability": "Charisma",
+                "spellcasting type": "known",
+                "slot table": "full caster",
+                "cantrips known": 4,
+                "spells known": 2,
                 },
                 {
                 "name": "Warlock",
+                "default background": "Charlatan",
                 "plural": "Warlocks",
                 "hit dice": "d8",
                 "primary ability": ["Charisma"],
@@ -184,6 +249,16 @@
                 "starting equipment": [["Leather Armor", "Sickle", "2 Daggers", "Arcane Focus (orb)", "Book (occult lore)", "Scholar's Pack", "15 GP"], ["100 GP"]],
                 "armor training": ["light"],
                 "weapon proficiencies": ["simple"],
+                "spellcasting ability": "Charisma",
+                "spellcasting type": "pact magic",
+                "spell slots": [
+                    [1],[2],[0,2],[0,2],[0,0,2],[0,0,2],[0,0,0,2],[0,0,0,2],
+                    [0,0,0,0,2],[0,0,0,0,2],[0,0,0,0,3],[0,0,0,0,3],[0,0,0,0,3],
+                    [0,0,0,0,3],[0,0,0,0,3],[0,0,0,0,3],[0,0,0,0,4],[0,0,0,0,4],
+                    [0,0,0,0,4],[0,0,0,0,4]
+                ],
+                "cantrips known": 2,
+                "spells known": 2
                 }
                 ]
 }

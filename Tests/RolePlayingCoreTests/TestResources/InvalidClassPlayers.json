@@ -2,12 +2,12 @@
     "players": [
                 {
                 "name": "Frodo",
-                "gender": "Male",
+                "appearance": { "gender": "Male" },
+                "height": "3'9\"",
                 "class": "Software Engineer",
                 "species": "High Elf",
-                "height": "3'9\"",
                 "ability scores": {"Dexterity": 13},
-                "money": 130,
+                "inventory": { "money": 130 },
                 "maximum hit points": 10
                 }
                 ]

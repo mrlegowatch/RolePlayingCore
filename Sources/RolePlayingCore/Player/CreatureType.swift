@@ -14,7 +14,7 @@ public struct CreatureType: Sendable {
         case isDefault = "is default"
     }
     
-    init(_ name: String, isDefault: Bool? = nil) {
+    public init(_ name: String, isDefault: Bool? = nil) {
         self.name = name
         self.isDefault = isDefault
     }
@@ -25,7 +25,6 @@ extension CreatureType: Codable { }
 extension CreatureType: Hashable { }
 
 public struct CreatureTypes: Codable, Sendable {
-    
     private var allCreatureTypes: [String: CreatureType] = [:]
     
     public var all: [CreatureType] { Array(allCreatureTypes.values) }

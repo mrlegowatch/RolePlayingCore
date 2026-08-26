@@ -15,10 +15,10 @@ struct SpeciesTests {
     
     let bundle = Bundle.module
     let decoder = JSONDecoder()
-    let configuration: Configuration
+    let gameData: GameData
     
     init() throws {
-        configuration = try Configuration("TestConfiguration", from: .module)
+        gameData = try GameData("TestConfiguration", from: .module)
     }
     
     @Test("Default initialization creates empty species")
@@ -30,7 +30,7 @@ struct SpeciesTests {
     @Test("Load and parse species from JSON file")
     func species() async throws {
         let jsonData = try bundle.loadJSON("TestSpecies")
-        let species = try decoder.decode(Species.self, from: jsonData, configuration: configuration)
+        let species = try decoder.decode(Species.self, from: jsonData, configuration: gameData)
         
         #expect(species.leafSpecies.count == 8, "all species")
         #expect(species.count == 11, "all species")
@@ -44,9 +44,31 @@ struct SpeciesTests {
     @Test("Load uncommon species from JSON file")
     func uncommonSpecies() async throws {
         let jsonData = try bundle.loadJSON("TestMoreSpecies")
-        let species = try decoder.decode(Species.self, from: jsonData, configuration: configuration)
-        
+        let species = try decoder.decode(Species.self, from: jsonData, configuration: gameData)
+
         // There should be 5 species plus 2 subspecies
         #expect(species.count == 5, "all species")
+    }
+
+    @Test("Encode round-trip preserves species count")
+    func encodeRoundTrip() async throws {
+        let jsonData = try bundle.loadJSON("TestSpecies")
+        let original = try decoder.decode(Species.self, from: jsonData, configuration: gameData)
+        let encoder = JSONEncoder()
+        let data = try encoder.encode(original, configuration: gameData)
+        let decoded = try decoder.decode(Species.self, from: data, configuration: gameData)
+        #expect(decoded.count == original.count)
+        #expect(decoded["Human"] != nil)
+    }
+
+    @Test("leafSpeciesSorted returns leaf species in alphabetical order")
+    func leafSpeciesSorted() async throws {
+        let jsonData = try bundle.loadJSON("TestSpecies")
+        let species = try decoder.decode(Species.self, from: jsonData, configuration: gameData)
+        let sorted = species.leafSpeciesSorted
+        #expect(sorted.count == species.leafSpecies.count)
+        for i in 0..<sorted.count - 1 {
+            #expect(sorted[i].name < sorted[i + 1].name)
+        }
     }
 }

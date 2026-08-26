@@ -1,4 +1,5 @@
 {
+    "display order": ["Soldier", "Criminal", "Noble", "Sage", "Acolyte", "Charlatan", "Entertainer", "Hermit", "Guard", "Farmer", "Guide", "Artisan", "Merchant", "Sailor", "Scribe", "Wayfarer"],
     "backgrounds": [
         {
         "name": "Acolyte",
@@ -6,7 +7,13 @@
         "feat": "Magic Initiate (Cleric)",
         "skill proficiencies" : ["Insight", "Religion"],
         "tool proficiency": "Calligrapher's Supplies",
-        "equipment": [["Calligrapher's Supplies", "Book (prayers)", "Holy Symbol", "Parchment (10 sheets)", "Robe", "8 GP"], ["50 GP"]]
+        "equipment": [["Calligrapher's Supplies", "Book (prayers)", "Holy Symbol", "Parchment (10 sheets)", "Robe", "8 GP"], ["50 GP"]],
+        "descriptive traits": {
+            "personality trait": "You see omens in every event and action. The gods try to speak to us, if only we had the wisdom to listen.",
+            "ideal": "Faith: You trust that your deity will guide your actions. If you work hard, things will go well.",
+            "bond": "The sacred texts of your temple are your greatest responsibility. You would sacrifice anything to protect them.",
+            "flaw": "You judge others harshly, and yourself even more severely."
+        }
         },
         {
         "name": "Artisan",
@@ -14,7 +21,13 @@
         "feat": "Crafter",
         "skill proficiencies" : ["Investigation", "Persuasion"],
         "tool proficiency": "Artisan's Tools",
-        "equipment": [["Artisan's Tools", "2 Pouches", "Traveler's Clothes", "32 GP"], ["50 GP"]]
+        "equipment": [["Artisan's Tools", "2 Pouches", "Traveler's Clothes", "32 GP"], ["50 GP"]],
+        "descriptive traits": {
+            "personality trait": "I believe that anything worth doing is worth doing right. I can't help it—I'm a perfectionist.",
+            "ideal": "Community: It is the duty of all civilized people to strengthen the bonds of community and family.",
+            "bond": "The workshop where I learned my trade is the most important place in the world to me.",
+            "flaw": "I'll do anything to get my hands on something rare or priceless."
+        }
         },
         {
         "name": "Charlatan",
@@ -22,7 +35,13 @@
         "feat": "Skilled",
         "skill proficiencies" : ["Deception", "Sleight of Hand"],
         "tool proficiency": "Forgery Kit",
-        "equipment": [["Forgery Kit", "Costume", "Fine Clothes", "15 GP"], ["50 GP"]]
+        "equipment": [["Forgery Kit", "Costume", "Fine Clothes", "15 GP"], ["50 GP"]],
+        "descriptive traits": {
+            "personality trait": "I lie about almost everything, even when there's no good reason to.",
+            "ideal": "Independence: I am a free spirit—no one tells me what to do.",
+            "bond": "I owe a debt I can never repay to the person who took pity on me as a child.",
+            "flaw": "I can't resist swindling people who are more powerful than me."
+        }
         },
         {
         "name": "Criminal",
@@ -30,7 +49,13 @@
         "feat": "Alert",
         "skill proficiencies" : ["Sleight of Hand", "Stealth"],
         "tool proficiency": "Thieves' Tools",
-        "equipment": [["2 Daggers", "Thieves' Tools", "Crowbar", "2 Pouches", "Traveler's Clothes", "16 GP"], ["50 GP"]]
+        "equipment": [["2 Daggers", "Thieves' Tools", "Crowbar", "2 Pouches", "Traveler's Clothes", "16 GP"], ["50 GP"]],
+        "descriptive traits": {
+            "personality trait": "I always have a plan for what to do when things go wrong.",
+            "ideal": "Freedom: Chains are meant to be broken, as are those who would forge them.",
+            "bond": "I'm trying to pay off an old debt I owe to a generous benefactor.",
+            "flaw": "When I see something valuable, I can't think of anything but how to steal it."
+        }
         },
         {
         "name": "Entertainer",
@@ -38,7 +63,13 @@
         "feat": "Musician",
         "skill proficiencies" : ["Acrobatics", "Performance"],
         "tool proficiency": "Musical Instrument",
-        "equipment": [["Musical Instrument", "2 Costumes", "Mirror", "Perfume", "Traveler's Clothes", "11 GP"], ["50 GP"]]
+        "equipment": [["Musical Instrument", "2 Costumes", "Mirror", "Perfume", "Traveler's Clothes", "11 GP"], ["50 GP"]],
+        "descriptive traits": {
+            "personality trait": "I know a story relevant to almost every situation.",
+            "ideal": "Creativity: The world is in need of new ideas and bold action.",
+            "bond": "I want to be famous, whatever it takes.",
+            "flaw": "I have trouble keeping my true feelings hidden. My sharp tongue lands me in trouble."
+        }
         },
         {
         "name": "Farmer",
@@ -46,7 +77,13 @@
         "feat": "Tough",
         "skill proficiencies" : ["Animal Handling", "Nature"],
         "tool proficiency": "Carpenter's Tools",
-        "equipment": [["Sickle", "Carpenter's Tools", "Healer's Kit", "Iron Pot", "Shovel", "Traveler's Clothes", "30 GP"], ["50 GP"]]
+        "equipment": [["Sickle", "Carpenter's Tools", "Healer's Kit", "Iron Pot", "Shovel", "Traveler's Clothes", "30 GP"], ["50 GP"]],
+        "descriptive traits": {
+            "personality trait": "I'm used to helping out those who don't know much about life on the land.",
+            "ideal": "Tradition: The old stories, customs, and songs must never be forgotten, for they teach us who we are.",
+            "bond": "My family is everything. I would do anything to protect them.",
+            "flaw": "I am suspicious of strangers and expect the worst of them."
+        }
         },
         {
         "name": "Guard",
@@ -54,7 +91,13 @@
         "feat": "Alert",
         "skill proficiencies" : ["Athletics", "Perception"],
         "tool proficiency": "Gaming Set",
-        "equipment": [["Spear", "Light Crossbow", "20 Bolts", "Gaming Set", "Hooded Lantern", "Manacles", "Quiver", "Traveler's Clothes", "12 GP"], ["50 GP"]]
+        "equipment": [["Spear", "Light Crossbow", "20 Bolts", "Gaming Set", "Hooded Lantern", "Manacles", "Quiver", "Traveler's Clothes", "12 GP"], ["50 GP"]],
+        "descriptive traits": {
+            "personality trait": "I'm always polite and respectful to those I meet.",
+            "ideal": "Responsibility: I do what I must and obey just authority.",
+            "bond": "Someone saved my life when I was in danger. To this day, I will never leave a friend behind.",
+            "flaw": "I have a weakness for the vices of the city, especially strong drink."
+        }
         },
         {
         "name": "Guide",
@@ -62,7 +105,13 @@
         "feat": "Magic Initiate (Druid)",
         "skill proficiencies" : ["Stealth", "Survival"],
         "tool proficiency": "Cartographer's Tools",
-        "equipment": [["Shortbow", "20 Arrows", "Cartographer's Tools", "Bedroll", "Quiver", "Tent", "Traveler's Clothes", "3 GP"], ["50 GP"]]
+        "equipment": [["Shortbow", "20 Arrows", "Cartographer's Tools", "Bedroll", "Quiver", "Tent", "Traveler's Clothes", "3 GP"], ["50 GP"]],
+        "descriptive traits": {
+            "personality trait": "I'm always looking to the horizon, wondering what lies beyond.",
+            "ideal": "Nature: The natural world is more important than all the constructs of civilization.",
+            "bond": "I want to explore every wild place in the world before my days are done.",
+            "flaw": "I don't pay attention to risks in a situation. Never tell me the odds."
+        }
         },
         {
         "name": "Hermit",
@@ -70,7 +119,13 @@
         "feat": "Healer",
         "skill proficiencies" : ["Medicine", "Religion"],
         "tool proficiency": "Herbalism Kit",
-        "equipment": [["Quarterstaff", "Herbalism Kit", "Bedroll", "Book (philosophy)", "Lamp", "Oil (3 flasks)", "Traveler's Clothes", "16 GP"], ["50 GP"]]
+        "equipment": [["Quarterstaff", "Herbalism Kit", "Bedroll", "Book (philosophy)", "Lamp", "Oil (3 flasks)", "Traveler's Clothes", "16 GP"], ["50 GP"]],
+        "descriptive traits": {
+            "personality trait": "I've been isolated for so long that I rarely speak, preferring gestures and expressions.",
+            "ideal": "Self-Knowledge: If you know yourself, there is nothing left to truly know.",
+            "bond": "I entered seclusion to hide from those who might still be hunting me. I must someday confront them.",
+            "flaw": "I am dogmatic in my thinking, unable to admit the possibility that I may be wrong."
+        }
         },
         {
         "name": "Merchant",
@@ -78,7 +133,13 @@
         "feat": "Lucky",
         "skill proficiencies" : ["Animal Handling", "Persuasion"],
         "tool proficiency": "Navigator's Tools",
-        "equipment": [["Navigator's Tools", "2 Pouches", "Traveler's Clothes", "22 GP"], ["50 GP"]]
+        "equipment": [["Navigator's Tools", "2 Pouches", "Traveler's Clothes", "22 GP"], ["50 GP"]],
+        "descriptive traits": {
+            "personality trait": "I'm a born negotiator who can't help evaluating everything as a potential deal.",
+            "ideal": "Aspiration: I'm determined to make something of myself, and my wealth is only the beginning.",
+            "bond": "My business partner betrayed me. Someday soon I'll have my revenge.",
+            "flaw": "I'm too greedy for my own good. I can't resist taking a risk if there's money involved."
+        }
         },
         {
         "name": "Noble",
@@ -86,7 +147,13 @@
         "feat": "Skilled",
         "skill proficiencies" : ["History", "Persuasion"],
         "tool proficiency": "Gaming Set",
-        "equipment": [["Gaming Set", "Fine Clothes", "Perfume", "29 GP"], ["50 GP"]]
+        "equipment": [["Gaming Set", "Fine Clothes", "Perfume", "29 GP"], ["50 GP"]],
+        "descriptive traits": {
+            "personality trait": "My favor, once lost, is lost forever.",
+            "ideal": "Responsibility: It is my duty to respect the authority of my family and to protect those who depend on me.",
+            "bond": "I will face any challenge to win the approval of my family.",
+            "flaw": "I secretly believe that everyone else is beneath me."
+        }
         },
         {
         "name": "Sage",
@@ -94,7 +161,13 @@
         "feat": "Magic Initiate (Wizard)",
         "skill proficiencies" : ["Arcana", "History"],
         "tool proficiency": "Calligrapher's Supplies",
-        "equipment": [["Quarterstaff", "Calligrapher's Supplies", "Book (history)", "Parchment (8 sheets)", "Robe", "8 GP"], ["50 GP"]]
+        "equipment": [["Quarterstaff", "Calligrapher's Supplies", "Book (history)", "Parchment (8 sheets)", "Robe", "8 GP"], ["50 GP"]],
+        "descriptive traits": {
+            "personality trait": "I use polysyllabic words that convey the impression of great erudition.",
+            "ideal": "Knowledge: The path to power and self-improvement is through knowledge.",
+            "bond": "I have a great library, and I am always seeking to expand its contents.",
+            "flaw": "I speak without really thinking through my words, invariably insulting others."
+        }
         },
         {
         "name": "Sailor",
@@ -102,7 +175,13 @@
         "feat": "Tavern Brawler",
         "skill proficiencies" : ["Acrobatics", "Perception"],
         "tool proficiency": "Navigator's Tools",
-        "equipment": [["Dagger", "Navigator's Tools", "Rope", "Traveler's Clothes", "20 GP"], ["50 GP"]]
+        "equipment": [["Dagger", "Navigator's Tools", "Rope", "Traveler's Clothes", "20 GP"], ["50 GP"]],
+        "descriptive traits": {
+            "personality trait": "My friends know they can rely on me, no matter what.",
+            "ideal": "Change: Life is like the sea—ever-shifting, and those who cannot adapt are lost.",
+            "bond": "I'll always remember the first vessel I crewed and the sailors who taught me my trade.",
+            "flaw": "My pride will probably lead to my destruction."
+        }
         },
         {
         "name": "Scribe",
@@ -110,7 +189,13 @@
         "feat": "Skilled",
         "skill proficiencies" : ["Investigation", "Perception"],
         "tool proficiency": "Calligrapher's Supplies",
-        "equipment": [["Calligrapher's Supplies", "Fine Clothes", "Lamp", "Oil (3 flasks)", "Parchment (12 sheets)", "23 GP"], ["50 GP"]]
+        "equipment": [["Calligrapher's Supplies", "Fine Clothes", "Lamp", "Oil (3 flasks)", "Parchment (12 sheets)", "23 GP"], ["50 GP"]],
+        "descriptive traits": {
+            "personality trait": "I am methodical and deliberate in my work, taking great care to record things accurately.",
+            "ideal": "Truth: Every lie is a tarnish on the soul of its teller. Records must be kept faithfully.",
+            "bond": "I protect a secret hidden in the archives I once tended—a secret that could spell disaster if revealed.",
+            "flaw": "I am easily distracted by the promise of new information."
+        }
         },
         {
         "name": "Soldier",
@@ -118,7 +203,13 @@
         "feat": "Savage Attacker",
         "skill proficiencies" : ["Athletics", "Intimidation"],
         "tool proficiency": "Gaming Set",
-        "equipment": [["Spear", "Shortbow", "20 Arrows", "Gaming Set", "Healer's Kit", "Quiver", "Traveler's Clothes", "14 GP"], ["50 GP"]]
+        "equipment": [["Spear", "Shortbow", "20 Arrows", "Gaming Set", "Healer's Kit", "Quiver", "Traveler's Clothes", "14 GP"], ["50 GP"]],
+        "descriptive traits": {
+            "personality trait": "I'm always courteous and respectful.",
+            "ideal": "Greater Good: Our lot is to lay down our lives in defense of others.",
+            "bond": "Those who fight beside me are those worth dying for.",
+            "flaw": "I made a terrible mistake in battle that cost many lives, and I would do anything to keep that secret."
+        }
         },
         {
         "name": "Wayfarer",
@@ -126,7 +217,13 @@
         "feat": "Lucky",
         "skill proficiencies" : ["Insight", "Stealth"],
         "tool proficiency": "Thieves' Tools",
-        "equipment": [["2 Daggers", "Thieves' Tools", "Gaming Set", "Bedroll", "2 Pouches", "Traveler's Clothes", "16 GP"], ["50 GP"]]
+        "equipment": [["2 Daggers", "Thieves' Tools", "Gaming Set", "Bedroll", "2 Pouches", "Traveler's Clothes", "16 GP"], ["50 GP"]],
+        "descriptive traits": {
+            "personality trait": "I have a story for every occasion, drawn from a life of hard travel.",
+            "ideal": "People: I help the people who help me—that's what keeps us alive out on the road.",
+            "bond": "I want to see every corner of the world before my time is done.",
+            "flaw": "The best way to get me to do something is to tell me I can't do it."
+        }
         }
     ]
 }

@@ -9,8 +9,11 @@
 import Foundation
 import SwiftDice
 
+/// The armor category a character class is trained to use.
+public typealias ArmorProficiency = Armor.WeightCategory
+
 /// Traits representing a class.
-public struct ClassTraits: Sendable {
+public struct ClassTraits: Named, Sendable {
     public var name: String
     public var plural: String
     public var hitDice: Dice
@@ -23,11 +26,28 @@ public struct ClassTraits: Sendable {
     public var experiencePoints: [Int]?
     public var startingSkillCount: Int
     public var skillProficiencies: [Skill]
-    public var weaponProficiencies: [String]
+    public var weaponProficiencies: [WeaponProficiency]
     public var toolProficiencies: [String]
-    public var armorTraining: [String]
-    public var startingEquipment: [[String]]
-        
+    public var armorTraining: [ArmorProficiency]
+    public var startingEquipment: EquipmentOptions
+    public var unarmoredDefense: UnarmoredDefense?
+    public var subclassTitle: String
+    public var subclassChoiceLevel: Int
+    public var subclasses: [SubclassTraits]
+    public var spellcastingAbility: Ability?
+    public var spellcastingType: SpellcastingType?
+    /// Spell slots indexed by [classLevel-1][slotLevel-1].
+    public var spellSlots: [[Int]]?
+    /// The named slot table to apply from the class collection, resolved at load time.
+    public var slotTableName: String?
+    /// Number of cantrips known at character level 1.
+    public var cantripsKnown: Int?
+    /// Number of spells known or prepared at character level 1.
+    public var spellsKnown: Int?
+
+    /// The default background suggested for this class when starting a new character; nil means no suggestion.
+    public var defaultBackground: String?
+
     /// Accesses the experiencePoints array for the specified 1-based level.
     public func minExperiencePoints(at level: Int) -> Int {
         // Map the level to an index of the array
@@ -63,10 +83,21 @@ public struct ClassTraits: Sendable {
                 savingThrows: [Ability] = [],
                 startingSkillCount: Int = 2,
                 skillProficiencies: [Skill] = [],
-                weaponProficiencies: [String] = [],
+                weaponProficiencies: [WeaponProficiency] = [],
                 toolProficiencies: [String] = [],
-                armorTraining: [String] = [],
-                startingEquipment: [[String]] = [],
+                armorTraining: [ArmorProficiency] = [],
+                startingEquipment: EquipmentOptions = [],
+                unarmoredDefense: UnarmoredDefense? = nil,
+                subclassTitle: String = "Subclass",
+                subclassChoiceLevel: Int = 3,
+                subclasses: [SubclassTraits] = [],
+                spellcastingAbility: Ability? = nil,
+                spellcastingType: SpellcastingType? = nil,
+                spellSlots: [[Int]]? = nil,
+                slotTableName: String? = nil,
+                cantripsKnown: Int? = nil,
+                spellsKnown: Int? = nil,
+                defaultBackground: String? = nil,
                 experiencePoints: [Int]? = nil) {
         self.name = name
         self.plural = plural
@@ -83,6 +114,17 @@ public struct ClassTraits: Sendable {
         self.toolProficiencies = toolProficiencies
         self.armorTraining = armorTraining
         self.startingEquipment = startingEquipment
+        self.unarmoredDefense = unarmoredDefense
+        self.subclassTitle = subclassTitle
+        self.subclassChoiceLevel = subclassChoiceLevel
+        self.subclasses = subclasses
+        self.spellcastingAbility = spellcastingAbility
+        self.spellcastingType = spellcastingType
+        self.spellSlots = spellSlots
+        self.slotTableName = slotTableName
+        self.cantripsKnown = cantripsKnown
+        self.spellsKnown = spellsKnown
+        self.defaultBackground = defaultBackground
         self.experiencePoints = experiencePoints
     }
 }
@@ -104,10 +146,21 @@ extension ClassTraits: CodableWithConfiguration {
         case toolProficiencies = "tool proficiencies"
         case armorTraining = "armor training"
         case startingEquipment = "starting equipment"
+        case unarmoredDefense = "unarmored defense"
+        case subclassTitle = "subclass title"
+        case subclassChoiceLevel = "subclass choice level"
+        case subclasses
+        case spellcastingAbility = "spellcasting ability"
+        case spellcastingType = "spellcasting type"
+        case spellSlots = "spell slots"
+        case slotTableName = "slot table"
+        case cantripsKnown = "cantrips known"
+        case spellsKnown = "spells known"
+        case defaultBackground = "default background"
         case experiencePoints = "experience points"
     }
     
-    public init(from decoder: Decoder, configuration: Configuration) throws {
+    public init(from decoder: Decoder, configuration: GameData) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         
         // Try decoding properties
@@ -133,13 +186,40 @@ extension ClassTraits: CodableWithConfiguration {
         let skillNames = try values.decodeIfPresent([String].self, forKey: .skillProficiencies) ?? []
         let resolvedSkills = try skillNames.skills(from: configuration.skills)
         
-        let weaponProficiencies = try values.decodeIfPresent([String].self, forKey: .weaponProficiencies)
+        let weaponProficiencyStrings = try values.decodeIfPresent([String].self, forKey: .weaponProficiencies) ?? []
+        let weaponProficiencies = weaponProficiencyStrings.map { WeaponProficiency(parsing: $0) }
+
         let toolProficiencies = try values.decodeIfPresent([String].self, forKey: .toolProficiencies)
-        let armorTraining = try values.decodeIfPresent([String].self, forKey: .armorTraining)
-        let startingEquipment = try values.decodeIfPresent([[String]].self, forKey: .startingEquipment)
-        
+
+        let armorStrings = try values.decodeIfPresent([String].self, forKey: .armorTraining) ?? []
+        var armorTraining: [ArmorProficiency] = []
+        for string in armorStrings {
+            if string == "all" {
+                armorTraining = ArmorProficiency.allCases
+                break
+            } else if let prof = ArmorProficiency(rawValue: string) {
+                armorTraining.append(prof)
+            }
+        }
+
+        let startingEquipment = try values.decodeIfPresent(EquipmentOptions.self, forKey: .startingEquipment, configuration: configuration) ?? []
+
+        let unarmoredDefense = try values.decodeIfPresent(UnarmoredDefense.self, forKey: .unarmoredDefense)
+
+        let subclassTitle = try values.decodeIfPresent(String.self, forKey: .subclassTitle) ?? "Subclass"
+        let subclassChoiceLevel = try values.decodeIfPresent(Int.self, forKey: .subclassChoiceLevel) ?? 3
+        let subclasses = try values.decodeIfPresent([SubclassTraits].self, forKey: .subclasses, configuration: configuration) ?? []
+
+        let spellcastingAbility = try values.decodeIfPresent(Ability.self, forKey: .spellcastingAbility)
+        let spellcastingType = try values.decodeIfPresent(SpellcastingType.self, forKey: .spellcastingType)
+        let spellSlots = try values.decodeIfPresent([[Int]].self, forKey: .spellSlots)
+        let slotTableName = try values.decodeIfPresent(String.self, forKey: .slotTableName)
+        let cantripsKnown = try values.decodeIfPresent(Int.self, forKey: .cantripsKnown)
+        let spellsKnown = try values.decodeIfPresent(Int.self, forKey: .spellsKnown)
+        let defaultBackground = try values.decodeIfPresent(String.self, forKey: .defaultBackground)
+
         let experiencePoints = try values.decodeIfPresent([Int].self, forKey: .experiencePoints)
-        
+
         // Safely set properties
         self.name = name
         self.plural = plural
@@ -152,15 +232,26 @@ extension ClassTraits: CodableWithConfiguration {
         self.savingThrows = savingThrows ?? []
         self.startingSkillCount = startingSkillCount ?? 2
         self.skillProficiencies = resolvedSkills
-        self.weaponProficiencies = weaponProficiencies ?? []
+        self.weaponProficiencies = weaponProficiencies
         self.toolProficiencies = toolProficiencies ?? []
-        self.armorTraining = armorTraining ?? []
-        self.startingEquipment = startingEquipment ?? []
-        
+        self.armorTraining = armorTraining
+        self.startingEquipment = startingEquipment
+        self.unarmoredDefense = unarmoredDefense
+        self.subclassTitle = subclassTitle
+        self.subclassChoiceLevel = subclassChoiceLevel
+        self.subclasses = subclasses
+        self.spellcastingAbility = spellcastingAbility
+        self.spellcastingType = spellcastingType
+        self.spellSlots = spellSlots
+        self.slotTableName = slotTableName
+        self.cantripsKnown = cantripsKnown
+        self.spellsKnown = spellsKnown
+        self.defaultBackground = defaultBackground
+
         self.experiencePoints = experiencePoints
     }
-        
-    public func encode(to encoder: Encoder, configuration: Configuration) throws {
+
+    public func encode(to encoder: Encoder, configuration: GameData) throws {
         var values = encoder.container(keyedBy: CodingKeys.self)
         
         try values.encode(name, forKey: .name)
@@ -174,19 +265,40 @@ extension ClassTraits: CodableWithConfiguration {
         try values.encode(savingThrows, forKey: .savingThrows)
         try values.encode(startingSkillCount, forKey: .startingSkillCount)
         try values.encode(skillProficiencies.skillNames, forKey: .skillProficiencies)
-        try values.encode(weaponProficiencies, forKey: .weaponProficiencies)
+        try values.encode(weaponProficiencies.map(\.description), forKey: .weaponProficiencies)
         try values.encode(toolProficiencies, forKey: .toolProficiencies)
-        try values.encode(armorTraining, forKey: .armorTraining)
-        try values.encode(startingEquipment, forKey: .startingEquipment)
-        
+        try values.encode(armorTraining.map(\.rawValue), forKey: .armorTraining)
+        try values.encode(startingEquipment, forKey: .startingEquipment, configuration: configuration)
+        try values.encodeIfPresent(unarmoredDefense, forKey: .unarmoredDefense)
+        if !subclasses.isEmpty {
+            try values.encode(subclassTitle, forKey: .subclassTitle)
+            try values.encode(subclassChoiceLevel, forKey: .subclassChoiceLevel)
+            try values.encode(subclasses, forKey: .subclasses, configuration: configuration)
+        }
+        try values.encodeIfPresent(spellcastingAbility, forKey: .spellcastingAbility)
+        try values.encodeIfPresent(spellcastingType, forKey: .spellcastingType)
+        try values.encodeIfPresent(spellSlots, forKey: .spellSlots)
+        try values.encodeIfPresent(cantripsKnown, forKey: .cantripsKnown)
+        try values.encodeIfPresent(spellsKnown, forKey: .spellsKnown)
+        try values.encodeIfPresent(defaultBackground, forKey: .defaultBackground)
+
         try values.encodeIfPresent(experiencePoints, forKey: .experiencePoints)
     }
 }
 
 extension ClassTraits {
-    
+
     /// Returns a random array of skill proficiencies, of a count matching startingSkillCount.
     public func randomSkillProficiencies() -> [Skill] {
         return skillProficiencies.randomSkills(count: startingSkillCount)
+    }
+
+    /// Returns the skills in the class skill pool that are not already in `excluded`.
+    ///
+    /// Use this in a character builder to show which class skills a player can still
+    /// choose, after background-granted skills have already been applied.
+    public func availableSkillChoices(excluding excluded: [Skill]) -> [Skill] {
+        let excludedNames = Set(excluded.map { $0.name })
+        return skillProficiencies.filter { !excludedNames.contains($0.name) }
     }
 }

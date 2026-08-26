@@ -9,23 +9,24 @@
 import Foundation
 
 /// Traits representing a species.
-public struct SpeciesTraits: Sendable {
-    
+public struct SpeciesTraits: Named, Sendable {
     public var name: String
     public var plural: String
     public var aliases: [String]
     public var creatureType: CreatureType
     public var descriptiveTraits: [String: String]
-    public var lifespan: Int!
-    
+    public var lifespan: Int
+
     public var baseSizes: [String]
-    
-    public var darkVision: Int!
-    public var speed: Int!
-    
+
+    /// Darkvision range in feet. Nil means no darkvision.
+    public var darkVision: Int?
+    public var speed: Int
+
+    public var description: String?
     public var parentName: String?
     public var subspecies: [SpeciesTraits] = []
-    
+
     public init(name: String,
                 plural: String,
                 aliases: [String] = [],
@@ -33,8 +34,9 @@ public struct SpeciesTraits: Sendable {
                 descriptiveTraits: [String: String] = [:],
                 lifespan: Int,
                 baseSizes: [String] = ["4-7"],
-                darkVision: Int,
-                speed: Int) {
+                darkVision: Int? = nil,
+                speed: Int,
+                description: String? = nil) {
         self.name = name
         self.plural = plural
         self.aliases = aliases
@@ -44,11 +46,12 @@ public struct SpeciesTraits: Sendable {
         self.baseSizes = baseSizes
         self.darkVision = darkVision
         self.speed = speed
+        self.description = description
     }
 }
 
 extension SpeciesTraits: CodableWithConfiguration {
-    
+
     private enum CodingKeys: String, CodingKey {
         case name
         case plural
@@ -59,24 +62,23 @@ extension SpeciesTraits: CodableWithConfiguration {
         case baseSizes = "base sizes"
         case darkVision = "darkvision"
         case speed
+        case description
         case subspecies
     }
-    
-    public init(from decoder: Decoder, configuration: Configuration) throws {
+
+    public init(from decoder: Decoder, configuration: GameData) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
-        
-        // Try decoding properties
+
         let name = try values.decode(String.self, forKey: .name)
         let plural = try values.decode(String.self, forKey: .plural)
         let aliases = try values.decodeIfPresent([String].self, forKey: .aliases)
         let creatureType = try values.decodeIfPresent(String.self, forKey: .creatureType)
-        let descriptiveTraits = try values.decodeIfPresent([String:String].self, forKey: .descriptiveTraits)
-        let lifespan = try values.decodeIfPresent(Int.self, forKey: .lifespan)
+        let descriptiveTraits = try values.decodeIfPresent([String: String].self, forKey: .descriptiveTraits)
+        let lifespan = try values.decode(Int.self, forKey: .lifespan)
         let baseSizes = try values.decodeIfPresent([String].self, forKey: .baseSizes)
         let darkVision = try values.decodeIfPresent(Int.self, forKey: .darkVision)
-        let speed = try values.decodeIfPresent(Int.self, forKey: .speed)
-        
-        // Safely set properties
+        let speed = try values.decode(Int.self, forKey: .speed)
+
         self.name = name
         self.plural = plural
         self.aliases = aliases ?? []
@@ -90,43 +92,42 @@ extension SpeciesTraits: CodableWithConfiguration {
         self.baseSizes = baseSizes ?? ["4-7"]
         self.darkVision = darkVision
         self.speed = speed
-        
-        // Decode subspecies
-        if var subspecies = try? values.nestedUnkeyedContainer(forKey: .subspecies) {
-            while (!subspecies.isAtEnd) {
-                var subspeciesTraits = try subspecies.decode(SpeciesTraits.self, configuration: configuration)
-                subspeciesTraits.blendTraits(from: self)
-                self.subspecies.append(subspeciesTraits)
+        self.description = try values.decodeIfPresent(String.self, forKey: .description)
+
+        // Decode subspecies, merging parent values for any field not specified.
+        if var container = try? values.nestedUnkeyedContainer(forKey: .subspecies) {
+            while !container.isAtEnd {
+                let subValues = try container.nestedContainer(keyedBy: CodingKeys.self)
+                let subName = try subValues.decode(String.self, forKey: .name)
+                let subPlural = try subValues.decode(String.self, forKey: .plural)
+                let subAliases = try subValues.decodeIfPresent([String].self, forKey: .aliases) ?? []
+                let subDescriptiveTraits = try subValues.decodeIfPresent([String: String].self, forKey: .descriptiveTraits) ?? [:]
+                let subLifespan = try subValues.decodeIfPresent(Int.self, forKey: .lifespan) ?? self.lifespan
+                let subBaseSizes = try subValues.decodeIfPresent([String].self, forKey: .baseSizes) ?? self.baseSizes
+                let subDarkVision = try subValues.decodeIfPresent(Int.self, forKey: .darkVision) ?? self.darkVision
+                let subSpeed = try subValues.decodeIfPresent(Int.self, forKey: .speed) ?? self.speed
+                let subDescription = try subValues.decodeIfPresent(String.self, forKey: .description)
+                var subTraits = SpeciesTraits(
+                    name: subName,
+                    plural: subPlural,
+                    aliases: subAliases,
+                    creatureType: self.creatureType,
+                    descriptiveTraits: subDescriptiveTraits,
+                    lifespan: subLifespan,
+                    baseSizes: subBaseSizes,
+                    darkVision: subDarkVision,
+                    speed: subSpeed,
+                    description: subDescription
+                )
+                subTraits.parentName = self.name
+                self.subspecies.append(subTraits)
             }
         }
     }
-    
-    /// Inherit parent traits, for each trait that is not already set.
-    public mutating func blendTraits(from parent: SpeciesTraits) {
-        // Name, plural, aliases and descriptive traits are unique to each set of species traits.
-        // The rest may be inherited from the parent.
-        self.parentName = parent.name
-        self.creatureType = parent.creatureType
-        
-        if self.baseSizes.isEmpty {
-            self.baseSizes = parent.baseSizes
-        }
-        
-        if self.lifespan == nil {
-            self.lifespan = parent.lifespan
-        }
-        
-        if self.darkVision == nil {
-            self.darkVision = parent.darkVision
-        }
-        if self.speed == nil {
-            self.speed = parent.speed
-        }
-    }
-    
-    public func encode(to encoder: Encoder, configuration: Configuration) throws {
+
+    public func encode(to encoder: Encoder, configuration: GameData) throws {
         var values = encoder.container(keyedBy: CodingKeys.self)
-        
+
         try values.encode(name, forKey: .name)
         try values.encode(plural, forKey: .plural)
         try values.encode(aliases, forKey: .aliases)
@@ -134,40 +135,42 @@ extension SpeciesTraits: CodableWithConfiguration {
         try values.encode(descriptiveTraits, forKey: .descriptiveTraits)
         try values.encode(lifespan, forKey: .lifespan)
         try values.encode(baseSizes, forKey: .baseSizes)
-        try values.encode(darkVision, forKey: .darkVision)
+        try values.encodeIfPresent(darkVision, forKey: .darkVision)
         try values.encode(speed, forKey: .speed)
-        
+        try values.encodeIfPresent(description, forKey: .description)
+
         var subspeciesContainer = values.nestedUnkeyedContainer(forKey: .subspecies)
         for subspeciesTraits in subspecies {
             try subspeciesTraits.encode(to: &subspeciesContainer, parent: self)
         }
     }
-    
+
     public func encode(to container: inout UnkeyedEncodingContainer, parent: SpeciesTraits) throws {
-        // Name, plural, aliases and descriptive traits are unique to each set of species traits.
-        // The rest may be inherited from the parent.
+        // Name, plural, aliases and descriptive traits are unique to each subspecies.
+        // Numeric traits are only written when they differ from the parent.
         var values = container.nestedContainer(keyedBy: CodingKeys.self)
-        
+
         try values.encode(name, forKey: .name)
         try values.encode(plural, forKey: .plural)
         try values.encode(creatureType.name, forKey: .creatureType)
-        if self.aliases.count > 0 {
+        if !aliases.isEmpty {
             try values.encode(aliases, forKey: .aliases)
         }
-        if self.descriptiveTraits.count > 0 {
+        if !descriptiveTraits.isEmpty {
             try values.encode(descriptiveTraits, forKey: .descriptiveTraits)
         }
-        if self.lifespan != parent.lifespan {
-            try values.encode(self.lifespan, forKey: .lifespan)
+        if lifespan != parent.lifespan {
+            try values.encode(lifespan, forKey: .lifespan)
         }
-        if self.baseSizes != parent.baseSizes {
-            try values.encode(self.baseSizes, forKey: .baseSizes)
+        if baseSizes != parent.baseSizes {
+            try values.encode(baseSizes, forKey: .baseSizes)
         }
-        if self.darkVision != parent.darkVision {
-            try values.encode(self.darkVision, forKey: .darkVision)
+        if darkVision != parent.darkVision {
+            try values.encodeIfPresent(darkVision, forKey: .darkVision)
         }
-        if self.speed != parent.speed {
-            try values.encode(self.speed, forKey: .speed)
+        if speed != parent.speed {
+            try values.encode(speed, forKey: .speed)
         }
+        try values.encodeIfPresent(description, forKey: .description)
     }
 }

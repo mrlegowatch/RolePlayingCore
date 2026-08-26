@@ -1,11 +1,13 @@
 {
     "currencies": ["TestCurrencies"],
     "skills": ["TestSkills"],
+    "feats": ["TestFeats"],
     "backgrounds": ["TestBackgrounds"],
     "creature types": ["TestCreatureTypes"],
+    "spells": ["TestSpells"],
     "classes": ["TestClasses", "TestMoreClasses"],
     "species": ["TestSpecies", "TestMoreSpecies"],
     "players": ["TestPlayers"],
-    "species names": "TestSpeciesNames"
+    "character names": "TestCharacterNames"
 }
 

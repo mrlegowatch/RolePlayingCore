@@ -3,6 +3,7 @@
 //  CharacterGenerator
 //
 //  Created by Brian Arnold on 1/3/26.
+//  Copyright © 2026 Brian Arnold. All rights reserved.
 //
 
 import SwiftUI
@@ -49,7 +50,7 @@ struct ExperiencePointsView: View {
 }
 
 #Preview("Experience Points") {
-    if let player = try? CharacterGenerator(Configuration("Configuration")).makeCharacter() {
+    if let player = try? CharacterGenerator(GameData("Configuration")).makeCharacter() {
         ExperiencePointsView(experiencePoints: ExperiencePoints(player))
             .padding()
     } else {

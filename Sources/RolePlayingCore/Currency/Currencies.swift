@@ -9,14 +9,18 @@
 import Foundation
 
 /// A collection of currencies.
-public struct Currencies: Codable, Sendable {
-            
+public struct Currencies: Sendable {
     /// A dictionary of currencies indexed by currency symbol.
     private var allCurrencies: [String: UnitCurrency] = [:]
     
     /// A read-only array of currencies.
-    var all: [UnitCurrency] { Array(allCurrencies.values) }
-
+    public var all: [UnitCurrency] { Array(allCurrencies.values) }
+    
+    /// The currency designated as the base (default) unit for this game system, if any.
+    public var baseUnit: UnitCurrency? {
+        allCurrencies.values.first(where: { $0.isDefault })
+    }
+    
     /// Returns a currencies instance that can access a currency by symbol, and a base unit currency if specified.
     public init(_ currencies: [UnitCurrency] = []) {
         add(currencies)
@@ -27,16 +31,13 @@ public struct Currencies: Codable, Sendable {
         return allCurrencies[symbol]
     }
     
-    /// Adds the array of currencies to the collection. Updates the default or base unit currency if specified.
-    mutating func add(_ currencies: [UnitCurrency]) {
+    /// Adds the array of currencies to the collection.
+    public mutating func add(_ currencies: [UnitCurrency]) {
         allCurrencies = Dictionary(currencies.map { ($0.symbol, $0) }, uniquingKeysWith: { _, last in last })
-        
-        if let baseCurrency = allCurrencies.first(where: { $0.value.isDefault }) {
-            UnitCurrency.setBaseUnit(baseCurrency.value)
-        }
     }
+}
 
-    // MARK: Codable conformance
+extension Currencies: Codable {
     
     private enum CodingKeys: String, CodingKey {
         case currencies

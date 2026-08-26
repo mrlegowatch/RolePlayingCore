@@ -1,9 +1,12 @@
 {
     "currencies": ["Currencies"],
     "skills": ["Skills"],
+    "feats": ["Feats"],
+    "items": ["Items"],
     "backgrounds": ["Backgrounds"],
     "creature types": ["CreatureTypes"],
     "classes": ["Classes"],
     "species": ["Species"],
-    "species names": "SpeciesNames"
+    "character names": "CharacterNames",
+    "spells": ["Spells"]
 }

@@ -15,16 +15,16 @@ struct ClassesTests {
     
     let bundle = Bundle.module
     let decoder = JSONDecoder()
-    let configuration: Configuration
+    let gameData: GameData
     
     init() throws {
-        configuration = try Configuration("TestClassesConfiguration", from: .module)
+        gameData = try GameData("TestClassesConfiguration", from: .module)
     }
     
     @Test("Default classes")
     func defaultClasses() throws {
         let jsonData = try bundle.loadJSON("TestClasses")
-        let classes = try decoder.decode(Classes.self, from: jsonData, configuration: configuration)
+        let classes = try decoder.decode(Classes.self, from: jsonData, configuration: gameData)
         #expect(classes.all.count == 4, "classes count failed")
         #expect(classes.count == 4, "classes count failed")
         #expect(classes[0] != nil, "class by index failed")
@@ -39,9 +39,31 @@ struct ClassesTests {
     @Test("Uncommon classes")
     func uncommonClasses() throws {
         let jsonData = try bundle.loadJSON("TestMoreClasses")
-        let classes = try decoder.decode(Classes.self, from: jsonData, configuration: configuration)
-        
+        let classes = try decoder.decode(Classes.self, from: jsonData, configuration: gameData)
+
         #expect(classes.count == 8, "classes count failed")
     }
-    
+
+    @Test("Encode round-trip preserves class count and names")
+    func encodeRoundTrip() throws {
+        let jsonData = try bundle.loadJSON("TestClasses")
+        let original = try decoder.decode(Classes.self, from: jsonData, configuration: gameData)
+        let encoder = JSONEncoder()
+        let data = try encoder.encode(original, configuration: gameData)
+        let decoded = try decoder.decode(Classes.self, from: data, configuration: gameData)
+        #expect(decoded.count == original.count)
+        #expect(decoded["Fighter"] != nil)
+    }
+
+    @Test("allSorted returns classes in alphabetical order")
+    func allSorted() throws {
+        let jsonData = try bundle.loadJSON("TestClasses")
+        let classes = try decoder.decode(Classes.self, from: jsonData, configuration: gameData)
+        let sorted = classes.allSorted
+        #expect(sorted.count == classes.count)
+        for i in 0..<sorted.count - 1 {
+            #expect(sorted[i].name < sorted[i + 1].name)
+        }
+    }
+
 }
