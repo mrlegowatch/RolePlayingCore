@@ -80,9 +80,16 @@ Each class entry in `Classes.json` can carry an optional `"default background"` 
 
 ### Currency
 
-- **`UnitCurrency`** — a `Foundation.Dimension` subclass that converts between denominations (cp, sp, ep, gp, pp).
-- **`Money`** — a `Foundation.Measurement<UnitCurrency>` with formatting and arithmetic.
-- **`Currencies`** — collection loaded from JSON; provides lookup by abbreviation.
+- **`UnitCurrency`** — a denomination's symbol, exchange rate (`coefficient`, relative to the base unit), singular/plural names, and whether it's the game system's default (base) currency. Equatable/Hashable by symbol.
+- **`Currencies`** — a collection of `UnitCurrency` loaded from JSON, looked up by symbol (`currencies["gp"]`); exposes the configured `baseUnit`.
+- **`Money`** — a wallet of coin counts per denomination (`[UnitCurrency: Int]`), with denomination-preserving `+`/`-`, `add`/`spend`, and `totalValue` (converted to the base currency via each denomination's coefficient). Decodes from a keyed object (`{"gp": 130}`), a parsed string (`"14 GP"`), or a bare number (treated as the base unit).
+- **`MoneyRoll`** — like `Money`, but each denomination holds a dice expression (`AnyRollable` from SwiftDice) instead of a fixed count, for rollable treasure such as "d6 gp each". Call `roll()` to produce a concrete `Money`:
+
+  ```swift
+  let treasure = try decoder.decode(MoneyRoll.self, from: json, configuration: currencies)
+  // treasure == "d10 gp 2d8 sp"
+  let loot = treasure.roll()  // a concrete Money, e.g. "7 gp 11 sp"
+  ```
 
 ### Items
 
