@@ -85,7 +85,7 @@ public class Player: CodableWithConfiguration {
     public var speed: Int { speciesTraits.speed }
     public var size: CreatureSize { CreatureSize(from: height) }
 
-    public var hitDice: Rollable { level * classTraits.hitDice }
+    public var hitDice: Dice { level * classTraits.hitDice }
     /// Hit dice remaining in the pool (total pool = level; restored on long rest).
     public var availableHitDice: Int { level - usedHitDice }
 

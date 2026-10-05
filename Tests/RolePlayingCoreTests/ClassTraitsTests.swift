@@ -49,7 +49,7 @@ struct ClassTraitsTests {
         let savingThrows: [Ability] = classTraits.savingThrows
         #expect(savingThrows == [Ability("Strength"), Ability("Constitution")], "saving throws")
 
-        let startingWealth = classTraits.startingWealth as? CompoundDice
+        let startingWealth = classTraits.startingWealth.rollable as? CompoundDice
         #expect(startingWealth != nil, "starting wealth")
         
         #expect(classTraits.experiencePoints == nil, "experience points")
@@ -79,7 +79,7 @@ struct ClassTraitsTests {
         let savingThrows: [Ability] = classTraits.savingThrows
         #expect(savingThrows.count == 0, "saving throws")
         
-        let startingWealth = classTraits.startingWealth as? CompoundDice
+        let startingWealth = classTraits.startingWealth.rollable as? CompoundDice
         #expect(startingWealth != nil, "starting wealth")
         
         #expect(classTraits.experiencePoints == nil, "experience points")
@@ -113,8 +113,8 @@ struct ClassTraitsTests {
         let classTraits = ClassTraits(name: "Fighter",
                                       plural: "Fighters",
                                       hitDice: .d10,
-                                      startingWealth: 5 * .d4 * 10)
-        
+                                      startingWealth: AnyRollable(5 * .d4 * 10))
+
         let encoded = try encoder.encode(classTraits, configuration: gameData)
         let dictionary = try JSONSerialization.jsonObject(with: encoded, options: []) as? [String: Any]
         #expect(dictionary?["name"] as? String == "Fighter", "name")
@@ -212,7 +212,7 @@ struct ClassTraitsTests {
             name: "Test",
             plural: "Tests",
             hitDice: .d8,
-            startingWealth: Dice.d4,
+            startingWealth: AnyRollable(Dice.d4),
             experiencePoints: [0, 300, 900, 2700]
         )
         
@@ -227,7 +227,7 @@ struct ClassTraitsTests {
             name: "Test",
             plural: "Tests",
             hitDice: .d8,
-            startingWealth: Dice.d4,
+            startingWealth: AnyRollable(Dice.d4),
             experiencePoints: [0, 300, 900]
         )
         
@@ -330,7 +330,7 @@ struct ClassTraitsTests {
             name: "Bard",
             plural: "Bards",
             hitDice: .d8,
-            startingWealth: 5 * .d4 * 10,
+            startingWealth: AnyRollable(5 * .d4 * 10),
             descriptiveTraits: ["Spellcasting": "Can cast spells", "Bardic Inspiration": "Can inspire others"],
             primaryAbility: [Ability("Charisma")],
             alternatePrimaryAbility: [Ability("Dexterity")],
@@ -349,6 +349,7 @@ struct ClassTraitsTests {
         
         #expect(decoded.name == original.name, "Name should match after round-trip")
         #expect(decoded.plural == original.plural, "Plural should match")
+        #expect(decoded.startingWealth == original.startingWealth, "Starting wealth should match")
         #expect(decoded.primaryAbility == original.primaryAbility, "Primary ability should match")
         #expect(decoded.alternatePrimaryAbility == original.alternatePrimaryAbility, "Alternate ability should match")
         #expect(decoded.savingThrows == original.savingThrows, "Saving throws should match")
@@ -428,7 +429,7 @@ struct ClassTraitsTests {
             name: "Sorcerer",
             plural: "Sorcerers",
             hitDice: .d6,
-            startingWealth: 3 * .d4 * 10,
+            startingWealth: AnyRollable(3 * .d4 * 10),
             spellcastingAbility: Ability("Charisma"),
             spellcastingType: .known,
             spellSlots: [[2], [3], [4, 2], [4, 3]]
@@ -449,7 +450,7 @@ struct ClassTraitsTests {
             name: "Fighter",
             plural: "Fighters",
             hitDice: .d10,
-            startingWealth: 5 * .d4 * 10
+            startingWealth: AnyRollable(5 * .d4 * 10)
         )
 
         let encoded = try encoder.encode(classTraits, configuration: gameData)
@@ -465,7 +466,7 @@ struct ClassTraitsTests {
     func availableSkillChoicesNoExclusions() throws {
         let pool = try ["Athletics", "Acrobatics", "Stealth", "Perception"].skills(from: gameData.skills)
         let classTraits = ClassTraits(name: "Rogue", plural: "Rogues", hitDice: .d8,
-                                      startingWealth: 4 * .d4 * 10, skillProficiencies: pool)
+                                      startingWealth: AnyRollable(4 * .d4 * 10), skillProficiencies: pool)
         #expect(classTraits.availableSkillChoices(excluding: []).count == 4)
     }
 
@@ -474,7 +475,7 @@ struct ClassTraitsTests {
         let pool = try ["Athletics", "Acrobatics", "Stealth", "Perception"].skills(from: gameData.skills)
         let excluded = try ["Athletics", "Stealth"].skills(from: gameData.skills)
         let classTraits = ClassTraits(name: "Rogue", plural: "Rogues", hitDice: .d8,
-                                      startingWealth: 4 * .d4 * 10, skillProficiencies: pool)
+                                      startingWealth: AnyRollable(4 * .d4 * 10), skillProficiencies: pool)
         let available = classTraits.availableSkillChoices(excluding: excluded)
         #expect(available.count == 2)
         let names = available.map(\.name)
@@ -487,7 +488,7 @@ struct ClassTraitsTests {
         let pool = try ["Athletics", "Acrobatics"].skills(from: gameData.skills)
         let excluded = try ["Persuasion"].skills(from: gameData.skills)
         let classTraits = ClassTraits(name: "Fighter", plural: "Fighters", hitDice: .d10,
-                                      startingWealth: 5 * .d4 * 10, skillProficiencies: pool)
+                                      startingWealth: AnyRollable(5 * .d4 * 10), skillProficiencies: pool)
         #expect(classTraits.availableSkillChoices(excluding: excluded).count == 2)
     }
 

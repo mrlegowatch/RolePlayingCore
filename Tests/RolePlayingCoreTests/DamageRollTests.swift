@@ -170,4 +170,13 @@ struct DamageRollTests {
         #expect(copy.type == DamageType("lightning"))
         #expect(copy.description == "2d6 lightning")
     }
+
+    // MARK: - Equatable
+
+    @Test("DamageRoll equality ignores dice coefficient of 1")
+    func damageRollEquatable() throws {
+        let withCoefficient = try #require(DamageRoll(parsing: "1d8 slashing"))
+        let withoutCoefficient = try #require(DamageRoll(parsing: "d8 slashing"))
+        #expect(withCoefficient == withoutCoefficient)
+    }
 }

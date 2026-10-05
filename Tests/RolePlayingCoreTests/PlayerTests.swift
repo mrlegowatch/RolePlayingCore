@@ -1376,7 +1376,7 @@ struct PlayerTests {
             name: "Fighter",
             plural: "Fighters",
             hitDice: .d10,
-            startingWealth: Dice.d4,
+            startingWealth: AnyRollable(Dice.d4),
             weaponProficiencies: [.category(.simple), .category(.martial)]
         )
         let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: classWithProfs)
@@ -1393,7 +1393,7 @@ struct PlayerTests {
             name: "Fighter",
             plural: "Fighters",
             hitDice: .d10,
-            startingWealth: Dice.d4,
+            startingWealth: AnyRollable(Dice.d4),
             armorTraining: [.light, .medium]
         )
         let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: classWithArmor)

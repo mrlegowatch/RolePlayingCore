@@ -12,11 +12,11 @@ import SwiftDice
 ///
 /// JSON format: `"<dice> <type>"`, e.g., `"1d8 slashing"` or `"2d6 fire"`.
 /// The dice portion uses SwiftDice notation; the type portion is any `DamageType` string.
-public struct DamageRoll: Sendable {
-    public var dice: Rollable
+public struct DamageRoll: Sendable, Equatable, Hashable {
+    public var dice: AnyRollable
     public var type: DamageType
 
-    public init(dice: Rollable, type: DamageType) {
+    public init(dice: AnyRollable, type: DamageType) {
         self.dice = dice
         self.type = type
     }
@@ -31,7 +31,7 @@ extension DamageRoll {
         guard let lastSpace = trimmed.lastIndex(of: " ") else { return nil }
         let diceString = String(trimmed[..<lastSpace])
         let typeString = String(trimmed[trimmed.index(after: lastSpace)...])
-        guard let rollable = try? DiceParser().parse(diceString) else { return nil }
+        guard let rollable = try? AnyRollable(parsing: diceString) else { return nil }
         self.dice = rollable
         self.type = DamageType(typeString)
     }
