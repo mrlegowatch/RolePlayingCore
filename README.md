@@ -22,9 +22,11 @@ The source code is grouped into the following modules under `Sources/RolePlaying
 |---|---|
 | **Common** | `Height`, `Weight`, `CharacterNames`, `Named` & `DisplayOrdered` protocols |
 | **Configuration** | `GameData`, `GameDataFiles`, `GameDataError`, `Bundle+JSONFile` |
+| **Creature** | `StatLine` |
 | **Currency** | `UnitCurrency`, `Money`, `Currencies` |
 | **Items** | `Item`, `Weapon`, `Armor`, `Gear`, `Tool`, `EquipmentOptions`, `InventoryEntry`, damage types, weapon properties |
-| **Player** | `Player`, `Players`, `PlayerAppearance`, `AppearanceTraitKey`, `DescriptiveTraitKey`, `Ability`, `Alignment`, `ClassTraits`/`Classes`, `SpeciesTraits`/`Species`, `BackgroundTraits`/`Backgrounds`, `Skill`/`Skills`, `FeatTraits`/`Feats`, `Spell`/`Spells`, `SubclassTraits`, `UnarmoredDefense`, `CreatureSize`, `CreatureType`, `Initiative` |
+| **Player** | `Player`, `Players`, `PlayerAppearance`, `AppearanceTraitKey`, `DescriptiveTraitKey`, `Ability`, `Alignment`, `ClassTraits`/`Classes`, `SpeciesTraits`/`Species`, `BackgroundTraits`/`Backgrounds`, `Skill`/`Skills`, `FeatTraits`/`Feats`, `SubclassTraits`, `UnarmoredDefense`, `CreatureSize`, `CreatureType`, `Initiative` |
+| **Spellcasting** | `Spell`/`Spells`, `SpellcastingType`, `Spellbook` |
 | **CharacterGenerator** | `CharacterGenerator`, `NameGenerator` |
 
 ## Example App
@@ -78,6 +80,10 @@ Each class entry in `Classes.json` can carry an optional `"default background"` 
 - **`GameDataFiles`** — `Decodable` manifest struct describing which JSON files to load for each content type.
 - **`GameDataError`** — typed errors thrown during loading (missing file, decode failure, etc.).
 
+### Creature
+
+- **`StatLine`** — a compact creature stat line as printed in an adventure key (armor class, hit dice, hit points, attacks per round, damage, and a catch-all `special` string), with a `summary` computed property that reconstructs the printed line from its fields when no verbatim `text` was supplied. Used by downstream packages such as DungeonCore to describe monsters in keyed encounters.
+
 ### Currency
 
 - **`UnitCurrency`** — a denomination's symbol, exchange rate (`coefficient`, relative to the base unit), singular/plural names, and whether it's the game system's default (base) currency. Equatable/Hashable by symbol.
@@ -103,7 +109,7 @@ Each class entry in `Classes.json` can carry an optional `"default background"` 
 
 ### Player
 
-- **`Player`** — the main character class. Holds species, class, background, ability scores, skill proficiencies, inventory, prepared spells, and physical appearance. `baseHeight` is the intrinsic height; the computed `height` property is the hook for future spell effects (Enlarge/Reduce). `size` is derived from `height` via `CreatureSize`. Can compute AC, HP, initiative, ability modifiers, and proficiency bonus.
+- **`Player`** — the main character class. Holds species, class, background, ability scores, skill proficiencies, inventory, a `spellbook` of prepared spells and expended spell slots, and physical appearance. `baseHeight` is the intrinsic height; the computed `height` property is the hook for future spell effects (Enlarge/Reduce). `size` is derived from `height` via `CreatureSize`. Can compute AC, HP, initiative, ability modifiers, and proficiency bonus.
 - **`Players`** — a `CodableWithConfiguration` collection of `Player` instances.
 - **`PlayerAppearance`** — dictionary-backed cosmetic appearance struct (`traits: [String: String]`). Typed computed properties (`hairColor`, `eyeColor`, `skinColor`, `age`, `birthdate`, `gender`) wrap standard keys. Any additional trait can be stored and retrieved via a subscript keyed by `AppearanceTraitKey`. The `Gender` enum is defined here. Codable via a single-value container that encodes the dictionary directly.
 - **`AppearanceTraitKey`** — a `Hashable` struct wrapping a raw string key. Standard keys are defined as static constants; clients can add domain-specific keys via extension without modifying the library. `allStandardKeys` enumerates the library-defined keys for use in builder UIs.
@@ -121,21 +127,25 @@ Each class entry in `Classes.json` can carry an optional `"default background"` 
 - **`Backgrounds`** — `CodableWithConfiguration`, `DisplayOrdered` collection of `BackgroundTraits`. Supports a `"display order"` array.
 - **`Skill`** / **`Skills`** — named skill with associated ability.
 - **`FeatTraits`** / **`Feats`** — feat with name and optional prerequisites.
-- **`Spell`** / **`Spells`** — spell with school, level, casting time, range, components, duration, and class lists.
 - **`UnarmoredDefense`** — computes AC from a list of ability modifiers (e.g. Barbarian's CON bonus).
 - **`CreatureType`** / **`CreatureTypes`** — creature type taxonomy (humanoid, beast, …).
 - **`Initiative`** — computed initiative value with optional tiebreaker.
+
+### Spellcasting
+
+- **`Spell`** / **`Spells`** — spell with school, level, casting time, range, components, duration, and class lists.
+- **`SpellcastingType`** — how a class learns and uses spells: `prepared`, `known`, or `pactMagic`. Set on `ClassTraits.spellcastingType`.
+- **`Spellbook`** — a character's prepared/known spells and per-level expended spell slots (`Player.spellbook`). `prepare(_:)`/`unprepare(_:)` manage the spell list; `expendSlot(at:)`/`slotsExpended(at:)`/`resetSlots()` track usage against `ClassTraits.spellSlots`. Encodes spells by name via the `GameData` configuration context, so JSON stores names rather than full spell definitions.
 
 ### CharacterGenerator
 
 - **`CharacterGenerator`** — generates randomised `Player` instances by sampling from the loaded `GameData`. Uses `SwiftDice` for all die rolls.
 - **`NameGenerator`** — produces random names by combining first and last names loaded from `CharacterNames.json`.
 
-## Coming Soon
+## Related Packages
 
-Currently in development as a Swift package that depends on RolePlayingCore:
-- **Dungeon**: Document wrapper for `Map` instances
-- **DungeonMap**: `Map`, `Room`, `Door`, `Hallway`, geometry primitives
+[DungeonCore](https://github.com/mrlegowatch/DungeonCore) is a Swift package built on top of RolePlayingCore that models tabletop dungeon maps — rooms, hallways, and doors, derived connectivity/reachability, and keyed module content such as encounters, treasure, and occupancy checks. Its `Examples/DungeonMapBuilder` app is a SwiftUI map viewer and room-content editor for iOS and Mac Catalyst.
+
 ---
 
 To learn about the origin of the dice types that power random generation, see the three-part series on Medium:
