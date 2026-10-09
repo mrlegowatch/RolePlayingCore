@@ -9,6 +9,7 @@
 import Testing
 @testable import RolePlayingCore
 import Foundation
+import SwiftDice
 
 @Suite("MoneyRoll Tests")
 struct MoneyRollTests {
@@ -127,5 +128,130 @@ struct MoneyRollTests {
         #expect(moneyRoll.quantities.count == 1)
         let sp = currencies["sp"]!
         #expect(moneyRoll[sp]?.constant == 4)
+    }
+
+    @Test("Default init produces an empty MoneyRoll with no base")
+    func defaultInitIsEmpty() async throws {
+        let moneyRoll = MoneyRoll()
+        #expect(moneyRoll.isEmpty)
+        #expect(moneyRoll.base == nil)
+        #expect("\(moneyRoll)" == "0 ?")
+    }
+
+    @Test("Init with quantities keeps dice expressions and positive constants, drops zero and negative constants")
+    func initWithQuantitiesFiltersNonPositiveConstants() async throws {
+        let gp = currencies["gp"]!
+        let sp = currencies["sp"]!
+        let cp = currencies["cp"]!
+        let ep = currencies["ep"]!
+        let dice = try AnyRollable(parsing: "d6")
+
+        let moneyRoll = MoneyRoll([
+            gp: AnyRollable(5),
+            sp: AnyRollable(0),
+            cp: AnyRollable(-3),
+            ep: dice
+        ])
+
+        #expect(moneyRoll[gp]?.constant == 5, "positive constants are kept")
+        #expect(moneyRoll[sp] == nil, "zero constant is dropped")
+        #expect(moneyRoll[cp] == nil, "negative constant is dropped")
+        #expect(moneyRoll[ep] == dice, "dice expressions are kept regardless of sign")
+    }
+
+    @Test("Init with quantities sets base from the isDefault currency, or nil when none is default")
+    func initWithQuantitiesSetsBase() async throws {
+        let gp = currencies["gp"]!
+        let sp = currencies["sp"]!
+        let cp = currencies["cp"]!
+
+        let withDefault = MoneyRoll([sp: AnyRollable(5), gp: AnyRollable(10)])
+        #expect(withDefault.base == gp)
+
+        let withoutDefault = MoneyRoll([sp: AnyRollable(5), cp: AnyRollable(3)])
+        #expect(withoutDefault.base == nil)
+    }
+
+    @Test("Init from Money skips non-positive counts")
+    func initFromMoneySkipsNonPositiveCounts() async throws {
+        let gp = currencies["gp"]!
+        let sp = currencies["sp"]!
+        let money = Money([gp: 10, sp: 0])
+
+        let moneyRoll = MoneyRoll(money)
+        #expect(moneyRoll[gp]?.constant == 10)
+        #expect(moneyRoll[sp] == nil)
+    }
+
+    @Test("isEmpty reflects whether quantities is empty")
+    func isEmptyReflectsQuantities() async throws {
+        let gp = currencies["gp"]!
+        var moneyRoll = MoneyRoll()
+        #expect(moneyRoll.isEmpty)
+
+        moneyRoll[gp] = AnyRollable(5)
+        #expect(!moneyRoll.isEmpty)
+    }
+
+    @Test("Subscript set adds, updates, and removes a denomination")
+    func subscriptSetAddsUpdatesRemoves() async throws {
+        let gp = currencies["gp"]!
+        var moneyRoll = MoneyRoll()
+        #expect(moneyRoll[gp] == nil)
+
+        moneyRoll[gp] = AnyRollable(5)
+        #expect(moneyRoll[gp]?.constant == 5)
+
+        moneyRoll[gp] = AnyRollable(9)
+        #expect(moneyRoll[gp]?.constant == 9, "setting again updates the value")
+
+        moneyRoll[gp] = nil
+        #expect(moneyRoll[gp] == nil, "setting nil removes the denomination")
+        #expect(moneyRoll.isEmpty)
+    }
+
+    @Test("fixed is an empty Money when quantities is empty")
+    func fixedIsEmptyMoneyWhenEmpty() async throws {
+        let moneyRoll = MoneyRoll()
+        let fixed = try #require(moneyRoll.fixed)
+        #expect(fixed.quantities.isEmpty)
+    }
+
+    @Test("roll() drops denominations that roll to zero or less")
+    func rollDropsNonPositiveResults() async throws {
+        let gp = currencies["gp"]!
+        var moneyRoll = MoneyRoll()
+        moneyRoll[gp] = AnyRollable(-5)
+
+        let rolled = moneyRoll.roll()
+        #expect(rolled.quantities.isEmpty)
+        #expect(rolled[gp] == 0)
+    }
+
+    @Test("Equality compares quantities only, ignoring base")
+    func equalityIgnoresBase() async throws {
+        let gp = currencies["gp"]!
+        var a = MoneyRoll([gp: AnyRollable(5)])
+        var b = MoneyRoll([gp: AnyRollable(5)])
+        a.base = nil
+        b.base = currencies["sp"]!
+        #expect(a == b)
+    }
+
+    @Test("Equal MoneyRoll values hash the same")
+    func equalValuesHashTheSame() async throws {
+        let gp = currencies["gp"]!
+        let a = MoneyRoll([gp: AnyRollable(5)])
+        let b = MoneyRoll([gp: AnyRollable(5)])
+        #expect(a.hashValue == b.hashValue)
+    }
+
+    @Test("Encoding and decoding an empty MoneyRoll round trips")
+    func emptyRoundTrip() async throws {
+        let moneyRoll = MoneyRoll()
+        let encoded = try encoder.encode(moneyRoll, configuration: currencies)
+        let decoded = try decoder.decode(MoneyRoll.self, from: encoded, configuration: currencies)
+        #expect(decoded.isEmpty)
+        #expect(decoded.base == currencies.baseUnit)
     }
 }
