@@ -52,8 +52,8 @@ public struct CreatureTypes: Codable, Sendable {
     }
     
     public init(from decoder: Decoder) throws {
-        let values = try decoder.container(keyedBy: CodingKeys.self)
-        let creatureTypes = try values.decode([CreatureType].self, forKey: .creatureTypes)
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let creatureTypes = try container.decode([CreatureType].self, forKey: .creatureTypes)
         add(creatureTypes)
     }
     

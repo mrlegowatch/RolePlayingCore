@@ -49,16 +49,16 @@ extension SubclassTraits: CodableWithConfiguration {
     /// Decodes features and spells from string-keyed JSON objects (e.g., `"3": [...]`),
     /// converting string level keys to Int and resolving spell names via configuration.
     public init(from decoder: any Decoder, configuration: GameData) throws {
-        let values = try decoder.container(keyedBy: CodingKeys.self)
-        self.name = try values.decode(String.self, forKey: .name)
-        self.descriptiveTraits = try values.decodeIfPresent([String: String].self, forKey: .descriptiveTraits) ?? [:]
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.name = try container.decode(String.self, forKey: .name)
+        self.descriptiveTraits = try container.decodeIfPresent([String: String].self, forKey: .descriptiveTraits) ?? [:]
 
-        let featureStrings = try values.decodeIfPresent([String: [String]].self, forKey: .features) ?? [:]
+        let featureStrings = try container.decodeIfPresent([String: [String]].self, forKey: .features) ?? [:]
         self.features = Dictionary(uniqueKeysWithValues: featureStrings.compactMap { key, value in
             Int(key).map { ($0, value) }
         })
 
-        if let spellStrings = try values.decodeIfPresent([String: [String]].self, forKey: .additionalSpells) {
+        if let spellStrings = try container.decodeIfPresent([String: [String]].self, forKey: .additionalSpells) {
             var resolved: [Int: [Spell]] = [:]
             for (key, names) in spellStrings {
                 guard let level = Int(key) else { continue }
@@ -79,20 +79,20 @@ extension SubclassTraits: CodableWithConfiguration {
 
     /// Encodes features and spells with string level keys for JSON compatibility.
     public func encode(to encoder: any Encoder, configuration: GameData) throws {
-        var values = encoder.container(keyedBy: CodingKeys.self)
-        try values.encode(name, forKey: .name)
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(name, forKey: .name)
         if !descriptiveTraits.isEmpty {
-            try values.encode(descriptiveTraits, forKey: .descriptiveTraits)
+            try container.encode(descriptiveTraits, forKey: .descriptiveTraits)
         }
         if !features.isEmpty {
             let featureStrings = Dictionary(uniqueKeysWithValues: features.map { ("\($0.key)", $0.value) })
-            try values.encode(featureStrings, forKey: .features)
+            try container.encode(featureStrings, forKey: .features)
         }
         if let additionalSpells {
             let spellStrings = Dictionary(uniqueKeysWithValues: additionalSpells.map {
                 ("\($0.key)", $0.value.map(\.name))
             })
-            try values.encode(spellStrings, forKey: .additionalSpells)
+            try container.encode(spellStrings, forKey: .additionalSpells)
         }
     }
 }

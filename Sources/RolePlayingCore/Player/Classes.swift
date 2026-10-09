@@ -73,12 +73,12 @@ extension Classes: CodableWithConfiguration {
     }
 
     public init(from decoder: Decoder, configuration: GameData) throws {
-        let values = try decoder.container(keyedBy: CodingKeys.self)
-        let classes = try values.decode([ClassTraits].self, forKey: .classes, configuration: configuration)
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let classes = try container.decode([ClassTraits].self, forKey: .classes, configuration: configuration)
         add(classes)
-        self.experiencePoints = try values.decodeIfPresent([Int].self, forKey: .experiencePoints)
-        self.displayOrder = try values.decodeIfPresent([String].self, forKey: .displayOrder) ?? []
-        let spellSlotTables = try values.decodeIfPresent([String: [[Int]]].self, forKey: .spellSlotTables) ?? [:]
+        self.experiencePoints = try container.decodeIfPresent([Int].self, forKey: .experiencePoints)
+        self.displayOrder = try container.decodeIfPresent([String].self, forKey: .displayOrder) ?? []
+        let spellSlotTables = try container.decodeIfPresent([String: [[Int]]].self, forKey: .spellSlotTables) ?? [:]
         for name in allClasses.keys {
             if let tableName = allClasses[name]?.slotTableName, let table = spellSlotTables[tableName] {
                 allClasses[name]?.spellSlots = table

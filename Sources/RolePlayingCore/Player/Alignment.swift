@@ -206,13 +206,13 @@ extension CharacterAlignment: Codable {
             self.init(ethics, morals)
         } else {
             // The value must decode into either two doubles or two strings with the coding keys.
-            let values = try decoder.container(keyedBy: CodingKeys.self)
-            if let ethicsValue = try? values.decodeIfPresent(Double.self, forKey: .ethics),
-                let moralsValue = try? values.decodeIfPresent(Double.self, forKey: .morals) {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            if let ethicsValue = try? container.decodeIfPresent(Double.self, forKey: .ethics),
+                let moralsValue = try? container.decodeIfPresent(Double.self, forKey: .morals) {
                 self.init(ethics: ethicsValue, morals: moralsValue)
             } else {
-                let ethics = try values.decode(Ethics.self, forKey: .ethics)
-                let morals = try values.decode(Morals.self, forKey: .morals)
+                let ethics = try container.decode(Ethics.self, forKey: .ethics)
+                let morals = try container.decode(Morals.self, forKey: .morals)
                 self.init(ethics, morals)
             }
         }
@@ -221,8 +221,8 @@ extension CharacterAlignment: Codable {
     /// Encodes alignment as a dictionary of doubles for ethics and morals.
     /// To encode alignment as a parseable string instead, use encode("\(propertyName)").
     public func encode(to encoder: Encoder) throws {
-        var values = encoder.container(keyedBy: CodingKeys.self)
-        try values.encode(ethicsValue, forKey: .ethics)
-        try values.encode(moralsValue, forKey: .morals)
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(ethicsValue, forKey: .ethics)
+        try container.encode(moralsValue, forKey: .morals)
     }
 }

@@ -117,16 +117,16 @@ extension MoneyRoll: CodableWithConfiguration {
     /// Decodes a money roll from an object `{"gp": "d10", "sp": "2d8", "cp": 175}`.
     /// Values are integers or dice notation strings. Unknown symbols throw a decoding error.
     public init(from decoder: any Decoder, configuration: Currencies) throws {
-        let keyed = try decoder.container(keyedBy: SymbolCodingKey.self)
+        let container = try decoder.container(keyedBy: SymbolCodingKey.self)
         var result: [UnitCurrency: AnyRollable] = [:]
-        for key in keyed.allKeys {
+        for key in container.allKeys {
             guard let unit = configuration[key.stringValue] else {
                 throw DecodingError.dataCorruptedError(
-                    forKey: key, in: keyed,
+                    forKey: key, in: container,
                     debugDescription: "Unknown currency symbol '\(key.stringValue)'"
                 )
             }
-            let rollable = try keyed.decode(AnyRollable.self, forKey: key)
+            let rollable = try container.decode(AnyRollable.self, forKey: key)
             if let constant = rollable.constant, constant <= 0 { continue }
             result[unit] = rollable
         }
