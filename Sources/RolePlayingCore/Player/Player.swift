@@ -130,22 +130,22 @@ public class Player: CodableWithConfiguration {
     }
 
     public required init(from decoder: Decoder, configuration: GameData) throws {
-        let values = try decoder.container(keyedBy: CodingKeys.self)
+        let container = try decoder.container(keyedBy: CodingKeys.self)
         
         // Try decoding properties
-        let name = try values.decode(String.self, forKey: .name)
-        let backgroundName = try values.decode(String.self, forKey: .backgroundName)
-        let speciesName = try values.decode(String.self, forKey: .speciesName)
-        let className = try values.decode(String.self, forKey: .className)
-        let descriptiveTraits = try values.decodeIfPresent([String:String].self, forKey: .descriptiveTraits)
-        let alignment = try values.decodeIfPresent(CharacterAlignment.self, forKey: .alignment)
-        let appearance = try values.decode(PlayerAppearance.self, forKey: .appearance)
-        let baseHeight = try values.decode(Height.self, forKey: .height)
-        let baseAbilities = try values.decode(AbilityScores.self, forKey: .baseAbilities)
-        let backgroundAbilities = try values.decode([String].self, forKey: .backgroundAbilities)
+        let name = try container.decode(String.self, forKey: .name)
+        let backgroundName = try container.decode(String.self, forKey: .backgroundName)
+        let speciesName = try container.decode(String.self, forKey: .speciesName)
+        let className = try container.decode(String.self, forKey: .className)
+        let descriptiveTraits = try container.decodeIfPresent([String:String].self, forKey: .descriptiveTraits)
+        let alignment = try container.decodeIfPresent(CharacterAlignment.self, forKey: .alignment)
+        let appearance = try container.decode(PlayerAppearance.self, forKey: .appearance)
+        let baseHeight = try container.decode(Height.self, forKey: .height)
+        let baseAbilities = try container.decode(AbilityScores.self, forKey: .baseAbilities)
+        let backgroundAbilities = try container.decode([String].self, forKey: .backgroundAbilities)
         
         // Decode skill proficiency names and resolve them using configuration
-        let skillNames = try values.decode([String].self, forKey: .skillProficiencies)
+        let skillNames = try container.decode([String].self, forKey: .skillProficiencies)
         var resolvedSkills: [Skill] = []
         for skillName in skillNames {
             guard let skill = configuration.skills[skillName] else {
@@ -155,7 +155,7 @@ public class Player: CodableWithConfiguration {
         }
 
         // Decode feat names and resolve them using configuration; fall back to background feat if absent
-        let featNames = try values.decodeIfPresent([String].self, forKey: .feats)
+        let featNames = try container.decodeIfPresent([String].self, forKey: .feats)
         var resolvedFeats: [FeatTraits] = []
         if let featNames {
             for featName in featNames {
@@ -166,13 +166,13 @@ public class Player: CodableWithConfiguration {
             }
         }
         
-        let maximumHitPoints = try values.decode(Int.self, forKey: .maximumHitPoints)
-        let currentHitPoints = try values.decodeIfPresent(Int.self, forKey: .currentHitPoints)
-        let usedHitDice = try values.decodeIfPresent(Int.self, forKey: .usedHitDice) ?? 0
-        let experiencePoints = try values.decodeIfPresent(Int.self, forKey: .experiencePoints)
-        let level = try values.decodeIfPresent(Int.self, forKey: .level)
-        let inventory = try values.decode(Inventory.self, forKey: .inventory, configuration: configuration)
-        let spellbook = try values.decodeIfPresent(Spellbook.self, forKey: .spellbook, configuration: configuration) ?? Spellbook()
+        let maximumHitPoints = try container.decode(Int.self, forKey: .maximumHitPoints)
+        let currentHitPoints = try container.decodeIfPresent(Int.self, forKey: .currentHitPoints)
+        let usedHitDice = try container.decodeIfPresent(Int.self, forKey: .usedHitDice) ?? 0
+        let experiencePoints = try container.decodeIfPresent(Int.self, forKey: .experiencePoints)
+        let level = try container.decodeIfPresent(Int.self, forKey: .level)
+        let inventory = try container.decode(Inventory.self, forKey: .inventory, configuration: configuration)
+        let spellbook = try container.decodeIfPresent(Spellbook.self, forKey: .spellbook, configuration: configuration) ?? Spellbook()
 
         // Resolve backgroundTraits from configuration
         guard let backgroundTraits = configuration.backgrounds[backgroundName] else {
@@ -190,7 +190,7 @@ public class Player: CodableWithConfiguration {
         }
 
         let subclassTraits: SubclassTraits?
-        if let subclassName = try values.decodeIfPresent(String.self, forKey: .subclassName) {
+        if let subclassName = try container.decodeIfPresent(String.self, forKey: .subclassName) {
             subclassTraits = classTraits.subclasses.first(where: { $0.name == subclassName })
         } else {
             subclassTraits = nil
@@ -220,34 +220,34 @@ public class Player: CodableWithConfiguration {
     }
     
     public func encode(to encoder: Encoder, configuration: GameData) throws {
-        var values = encoder.container(keyedBy: CodingKeys.self)
+        var container = encoder.container(keyedBy: CodingKeys.self)
         
         // Try decoding properties
-        try values.encode(name, forKey: .name)
-        try values.encode(backgroundName, forKey: .backgroundName)
-        try values.encode(speciesName, forKey: .speciesName)
-        try values.encode(className, forKey: .className)
+        try container.encode(name, forKey: .name)
+        try container.encode(backgroundName, forKey: .backgroundName)
+        try container.encode(speciesName, forKey: .speciesName)
+        try container.encode(className, forKey: .className)
         if let subclassTraits {
-            try values.encode(subclassTraits.name, forKey: .subclassName)
+            try container.encode(subclassTraits.name, forKey: .subclassName)
         }
-        try values.encodeIfPresent(descriptiveTraits, forKey: .descriptiveTraits)
-        try values.encodeIfPresent(alignment, forKey: .alignment)
-        try values.encode(appearance, forKey: .appearance)
-        try values.encode(baseHeight.value, forKey: .height)
-        try values.encode(baseAbilities, forKey: .baseAbilities)
-        try values.encode(backgroundAbilities.map({ $0.name }), forKey: .backgroundAbilities)
-        try values.encode(skillProficiencies.skillNames, forKey: .skillProficiencies)
-        try values.encode(feats.map(\.name), forKey: .feats)
-        try values.encode(maximumHitPoints, forKey: .maximumHitPoints)
-        try values.encodeIfPresent(currentHitPoints, forKey: .currentHitPoints)
+        try container.encodeIfPresent(descriptiveTraits, forKey: .descriptiveTraits)
+        try container.encodeIfPresent(alignment, forKey: .alignment)
+        try container.encode(appearance, forKey: .appearance)
+        try container.encode(baseHeight.value, forKey: .height)
+        try container.encode(baseAbilities, forKey: .baseAbilities)
+        try container.encode(backgroundAbilities.map({ $0.name }), forKey: .backgroundAbilities)
+        try container.encode(skillProficiencies.skillNames, forKey: .skillProficiencies)
+        try container.encode(feats.map(\.name), forKey: .feats)
+        try container.encode(maximumHitPoints, forKey: .maximumHitPoints)
+        try container.encodeIfPresent(currentHitPoints, forKey: .currentHitPoints)
         if usedHitDice > 0 {
-            try values.encode(usedHitDice, forKey: .usedHitDice)
+            try container.encode(usedHitDice, forKey: .usedHitDice)
         }
-        try values.encodeIfPresent(experiencePoints, forKey: .experiencePoints)
-        try values.encodeIfPresent(level, forKey: .level)
-        try values.encode(inventory, forKey: .inventory, configuration: configuration)
+        try container.encodeIfPresent(experiencePoints, forKey: .experiencePoints)
+        try container.encodeIfPresent(level, forKey: .level)
+        try container.encode(inventory, forKey: .inventory, configuration: configuration)
         if !spellbook.isEmpty {
-            try values.encode(spellbook, forKey: .spellbook, configuration: configuration)
+            try container.encode(spellbook, forKey: .spellbook, configuration: configuration)
         }
      }
     

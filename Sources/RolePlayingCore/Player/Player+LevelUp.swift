@@ -52,9 +52,12 @@ extension Player {
 
         let featCategory: FeatTraits.Category?
         switch level {
-        case 20:            featCategory = .epicBoon
-        case 4, 8, 12, 16, 19: featCategory = .general
-        default:            featCategory = nil
+        case 20:
+            featCategory = .epicBoon
+        case 4, 8, 12, 16, 19:
+            featCategory = .general
+        default:
+            featCategory = nil
         }
 
         let requiresSubclassSelection =

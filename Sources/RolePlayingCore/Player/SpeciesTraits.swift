@@ -67,17 +67,17 @@ extension SpeciesTraits: CodableWithConfiguration {
     }
 
     public init(from decoder: Decoder, configuration: GameData) throws {
-        let values = try decoder.container(keyedBy: CodingKeys.self)
+        let speciesContainer = try decoder.container(keyedBy: CodingKeys.self)
 
-        let name = try values.decode(String.self, forKey: .name)
-        let plural = try values.decode(String.self, forKey: .plural)
-        let aliases = try values.decodeIfPresent([String].self, forKey: .aliases)
-        let creatureType = try values.decodeIfPresent(String.self, forKey: .creatureType)
-        let descriptiveTraits = try values.decodeIfPresent([String: String].self, forKey: .descriptiveTraits)
-        let lifespan = try values.decode(Int.self, forKey: .lifespan)
-        let baseSizes = try values.decodeIfPresent([String].self, forKey: .baseSizes)
-        let darkVision = try values.decodeIfPresent(Int.self, forKey: .darkVision)
-        let speed = try values.decode(Int.self, forKey: .speed)
+        let name = try speciesContainer.decode(String.self, forKey: .name)
+        let plural = try speciesContainer.decode(String.self, forKey: .plural)
+        let aliases = try speciesContainer.decodeIfPresent([String].self, forKey: .aliases)
+        let creatureType = try speciesContainer.decodeIfPresent(String.self, forKey: .creatureType)
+        let descriptiveTraits = try speciesContainer.decodeIfPresent([String: String].self, forKey: .descriptiveTraits)
+        let lifespan = try speciesContainer.decode(Int.self, forKey: .lifespan)
+        let baseSizes = try speciesContainer.decodeIfPresent([String].self, forKey: .baseSizes)
+        let darkVision = try speciesContainer.decodeIfPresent(Int.self, forKey: .darkVision)
+        let speed = try speciesContainer.decode(Int.self, forKey: .speed)
 
         self.name = name
         self.plural = plural
@@ -92,21 +92,21 @@ extension SpeciesTraits: CodableWithConfiguration {
         self.baseSizes = baseSizes ?? ["4-7"]
         self.darkVision = darkVision
         self.speed = speed
-        self.description = try values.decodeIfPresent(String.self, forKey: .description)
+        self.description = try speciesContainer.decodeIfPresent(String.self, forKey: .description)
 
         // Decode subspecies, merging parent values for any field not specified.
-        if var container = try? values.nestedUnkeyedContainer(forKey: .subspecies) {
-            while !container.isAtEnd {
-                let subValues = try container.nestedContainer(keyedBy: CodingKeys.self)
-                let subName = try subValues.decode(String.self, forKey: .name)
-                let subPlural = try subValues.decode(String.self, forKey: .plural)
-                let subAliases = try subValues.decodeIfPresent([String].self, forKey: .aliases) ?? []
-                let subDescriptiveTraits = try subValues.decodeIfPresent([String: String].self, forKey: .descriptiveTraits) ?? [:]
-                let subLifespan = try subValues.decodeIfPresent(Int.self, forKey: .lifespan) ?? self.lifespan
-                let subBaseSizes = try subValues.decodeIfPresent([String].self, forKey: .baseSizes) ?? self.baseSizes
-                let subDarkVision = try subValues.decodeIfPresent(Int.self, forKey: .darkVision) ?? self.darkVision
-                let subSpeed = try subValues.decodeIfPresent(Int.self, forKey: .speed) ?? self.speed
-                let subDescription = try subValues.decodeIfPresent(String.self, forKey: .description)
+        if var unkeyedContainer = try? speciesContainer.nestedUnkeyedContainer(forKey: .subspecies) {
+            while !unkeyedContainer.isAtEnd {
+                let subspeciesContainer = try unkeyedContainer.nestedContainer(keyedBy: CodingKeys.self)
+                let subName = try subspeciesContainer.decode(String.self, forKey: .name)
+                let subPlural = try subspeciesContainer.decode(String.self, forKey: .plural)
+                let subAliases = try subspeciesContainer.decodeIfPresent([String].self, forKey: .aliases) ?? []
+                let subDescriptiveTraits = try subspeciesContainer.decodeIfPresent([String: String].self, forKey: .descriptiveTraits) ?? [:]
+                let subLifespan = try subspeciesContainer.decodeIfPresent(Int.self, forKey: .lifespan) ?? self.lifespan
+                let subBaseSizes = try subspeciesContainer.decodeIfPresent([String].self, forKey: .baseSizes) ?? self.baseSizes
+                let subDarkVision = try subspeciesContainer.decodeIfPresent(Int.self, forKey: .darkVision) ?? self.darkVision
+                let subSpeed = try subspeciesContainer.decodeIfPresent(Int.self, forKey: .speed) ?? self.speed
+                let subDescription = try subspeciesContainer.decodeIfPresent(String.self, forKey: .description)
                 var subTraits = SpeciesTraits(
                     name: subName,
                     plural: subPlural,
@@ -126,20 +126,20 @@ extension SpeciesTraits: CodableWithConfiguration {
     }
 
     public func encode(to encoder: Encoder, configuration: GameData) throws {
-        var values = encoder.container(keyedBy: CodingKeys.self)
+        var speciesContainer = encoder.container(keyedBy: CodingKeys.self)
 
-        try values.encode(name, forKey: .name)
-        try values.encode(plural, forKey: .plural)
-        try values.encode(aliases, forKey: .aliases)
-        try values.encode(creatureType.name, forKey: .creatureType)
-        try values.encode(descriptiveTraits, forKey: .descriptiveTraits)
-        try values.encode(lifespan, forKey: .lifespan)
-        try values.encode(baseSizes, forKey: .baseSizes)
-        try values.encodeIfPresent(darkVision, forKey: .darkVision)
-        try values.encode(speed, forKey: .speed)
-        try values.encodeIfPresent(description, forKey: .description)
+        try speciesContainer.encode(name, forKey: .name)
+        try speciesContainer.encode(plural, forKey: .plural)
+        try speciesContainer.encode(aliases, forKey: .aliases)
+        try speciesContainer.encode(creatureType.name, forKey: .creatureType)
+        try speciesContainer.encode(descriptiveTraits, forKey: .descriptiveTraits)
+        try speciesContainer.encode(lifespan, forKey: .lifespan)
+        try speciesContainer.encode(baseSizes, forKey: .baseSizes)
+        try speciesContainer.encodeIfPresent(darkVision, forKey: .darkVision)
+        try speciesContainer.encode(speed, forKey: .speed)
+        try speciesContainer.encodeIfPresent(description, forKey: .description)
 
-        var subspeciesContainer = values.nestedUnkeyedContainer(forKey: .subspecies)
+        var subspeciesContainer = speciesContainer.nestedUnkeyedContainer(forKey: .subspecies)
         for subspeciesTraits in subspecies {
             try subspeciesTraits.encode(to: &subspeciesContainer, parent: self)
         }
@@ -148,29 +148,29 @@ extension SpeciesTraits: CodableWithConfiguration {
     public func encode(to container: inout UnkeyedEncodingContainer, parent: SpeciesTraits) throws {
         // Name, plural, aliases and descriptive traits are unique to each subspecies.
         // Numeric traits are only written when they differ from the parent.
-        var values = container.nestedContainer(keyedBy: CodingKeys.self)
+        var subSpeciesContainer = container.nestedContainer(keyedBy: CodingKeys.self)
 
-        try values.encode(name, forKey: .name)
-        try values.encode(plural, forKey: .plural)
-        try values.encode(creatureType.name, forKey: .creatureType)
+        try subSpeciesContainer.encode(name, forKey: .name)
+        try subSpeciesContainer.encode(plural, forKey: .plural)
+        try subSpeciesContainer.encode(creatureType.name, forKey: .creatureType)
         if !aliases.isEmpty {
-            try values.encode(aliases, forKey: .aliases)
+            try subSpeciesContainer.encode(aliases, forKey: .aliases)
         }
         if !descriptiveTraits.isEmpty {
-            try values.encode(descriptiveTraits, forKey: .descriptiveTraits)
+            try subSpeciesContainer.encode(descriptiveTraits, forKey: .descriptiveTraits)
         }
         if lifespan != parent.lifespan {
-            try values.encode(lifespan, forKey: .lifespan)
+            try subSpeciesContainer.encode(lifespan, forKey: .lifespan)
         }
         if baseSizes != parent.baseSizes {
-            try values.encode(baseSizes, forKey: .baseSizes)
+            try subSpeciesContainer.encode(baseSizes, forKey: .baseSizes)
         }
         if darkVision != parent.darkVision {
-            try values.encodeIfPresent(darkVision, forKey: .darkVision)
+            try subSpeciesContainer.encodeIfPresent(darkVision, forKey: .darkVision)
         }
         if speed != parent.speed {
-            try values.encode(speed, forKey: .speed)
+            try subSpeciesContainer.encode(speed, forKey: .speed)
         }
-        try values.encodeIfPresent(description, forKey: .description)
+        try subSpeciesContainer.encodeIfPresent(description, forKey: .description)
     }
 }
