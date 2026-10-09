@@ -3,7 +3,7 @@
 //  RolePlayingCore
 //
 //  Created by Brian Arnold on 11/11/16.
-//  Copyright © 2016-2017 Brian Arnold. All rights reserved.
+//  Copyright © 2016-2017 Brian Arnold. Licensed under the MIT License.
 //
 
 import Foundation
@@ -85,7 +85,7 @@ public class Player: CodableWithConfiguration {
     public var speed: Int { speciesTraits.speed }
     public var size: CreatureSize { CreatureSize(from: height) }
 
-    public var hitDice: Rollable { level * classTraits.hitDice }
+    public var hitDice: Dice { level * classTraits.hitDice }
     /// Hit dice remaining in the pool (total pool = level; restored on long rest).
     public var availableHitDice: Int { level - usedHitDice }
 

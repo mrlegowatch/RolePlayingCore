@@ -12,3 +12,6 @@ DerivedData
 *.bak
 *.orig
 *.lock
+
+# Library convention: don't pin dependency resolutions for a package
+Package.resolved

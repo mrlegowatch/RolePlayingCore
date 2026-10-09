@@ -3,7 +3,7 @@
 //  RolePlayingCore
 //
 //  Created by Brian Arnold on 11/11/16.
-//  Copyright © 2016-2017 Brian Arnold. All rights reserved.
+//  Copyright © 2016-2017 Brian Arnold. Licensed under the MIT License.
 //
 
 import SwiftDice

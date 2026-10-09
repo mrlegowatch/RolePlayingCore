@@ -2,7 +2,7 @@
 //  AppearanceTraitKey.swift
 //  RolePlayingCore
 //
-//  Copyright © 2026 Brian Arnold. All rights reserved.
+//  Copyright © 2026 Brian Arnold. Licensed under the MIT License.
 //
 
 /// A key for a trait in a `PlayerAppearance` dictionary.

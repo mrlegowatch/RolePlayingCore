@@ -3,7 +3,7 @@
 //  RolePlayingCore
 //
 //  Created by Brian Arnold on 8/26/21.
-//  Copyright © 2021 Brian Arnold. All rights reserved.
+//  Copyright © 2021 Brian Arnold. Licensed under the MIT License.
 //
 
 import Foundation

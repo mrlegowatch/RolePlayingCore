@@ -1,7 +1,7 @@
 {
     "players": [
                 {
-                "name": "Frodo",
+                "name": "Rowan",
                 "appearance": { "gender": "Male" },
                 "height": "3'9\"",
                 "species": "High Elf",

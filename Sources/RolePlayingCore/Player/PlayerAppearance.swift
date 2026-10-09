@@ -2,7 +2,7 @@
 //  PlayerAppearance.swift
 //  RolePlayingCore
 //
-//  Copyright © 2026 Brian Arnold. All rights reserved.
+//  Copyright © 2026 Brian Arnold. Licensed under the MIT License.
 //
 
 /// Cosmetic and personal appearance for a player character (hair, eyes, skin, gender, etc.).

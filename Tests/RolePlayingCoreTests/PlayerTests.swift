@@ -3,7 +3,7 @@
 //  RolePlayingCore
 //
 //  Created by Brian Arnold on 2/18/17.
-//  Copyright © 2017 Brian Arnold. All rights reserved.
+//  Copyright © 2017 Brian Arnold. Licensed under the MIT License.
 //
 
 import Testing
@@ -153,8 +153,8 @@ struct PlayerTests {
     
     @Test("Create player with basic traits")
     func player() async throws {
-        let player = Player("Frodo", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter, startingCurrencyUnit: gameData.currencies.baseUnit, gender: .female, alignment: CharacterAlignment(.lawful, .neutral))
-        #expect(player.name == "Frodo", "player name")
+        let player = Player("Rowan", backgroundTraits: soldier, speciesTraits: human, classTraits: fighter, startingCurrencyUnit: gameData.currencies.baseUnit, gender: .female, alignment: CharacterAlignment(.lawful, .neutral))
+        #expect(player.name == "Rowan", "player name")
         #expect(player.className == "Fighter", "class name")
         #expect(player.speciesName == "Human", "species name")
         
@@ -188,7 +188,7 @@ struct PlayerTests {
     func minimumTraitsPlayer() async throws {
         let playerTraits = """
         {
-            "name": "Bilbo",
+            "name": "Garrick",
             "background": "Sailor",
             "species": "Human",
             "class": "Fighter",
@@ -206,7 +206,7 @@ struct PlayerTests {
         player.speciesTraits = human
         player.classTraits = fighter
 
-        #expect(player.name == "Bilbo", "player name")
+        #expect(player.name == "Garrick", "player name")
         #expect(player.className == "Fighter", "class name")
         #expect(player.speciesName == "Human", "species name")
 
@@ -231,7 +231,7 @@ struct PlayerTests {
     func optionalPlayerTraits() async throws {
         let playerTraits = """
         {
-            "name": "Bilbo",
+            "name": "Garrick",
             "background": "Sailor",
             "species": "Human",
             "class": "Fighter",
@@ -272,7 +272,7 @@ struct PlayerTests {
     func playerRoundTrip() async throws {
         let playerTraits = """
         {
-            "name": "Bilbo",
+            "name": "Garrick",
             "background": "Sailor",
             "species": "Human",
             "class": "Fighter",
@@ -295,7 +295,7 @@ struct PlayerTests {
         let encoded = try #require(try? JSONSerialization.jsonObject(with: encodedPlayer, options: []) as? [String: Any])
         let encodedAppearance = try #require(encoded["appearance"] as? [String: Any])
 
-        #expect(encoded["name"] as? String == "Bilbo", "player traits round trip name")
+        #expect(encoded["name"] as? String == "Garrick", "player traits round trip name")
         #expect(encodedAppearance["gender"] as? String == "Male", "player traits round trip gender")
 
         let alignment = try #require(encoded["alignment"] as? [String: Double])
@@ -324,25 +324,25 @@ struct PlayerTests {
         "{:}",
         """
         {
-            "name": "Bilbo"
+            "name": "Garrick"
         }
         """,
         """
         {
-            "name": "Bilbo",
+            "name": "Garrick",
             "appearance": { "height": "3'9\\"" }
         }
         """,
         """
         {
-            "name": "Bilbo",
+            "name": "Garrick",
             "appearance": { "height": "3'9\\"" },
             "ability scores": {"Dexterity": 13}
         }
         """,
         """
         {
-            "name": "Bilbo",
+            "name": "Garrick",
             "appearance": { "height": "3'9\\"" },
             "ability scores": {"Dexterity": 13},
             "inventory": { "money": 130 }]
@@ -708,7 +708,7 @@ struct PlayerTests {
     func usedHitDiceRoundTrip() async throws {
         let playerTraits = """
         {
-            "name": "Bilbo",
+            "name": "Garrick",
             "background": "Sailor",
             "species": "Human",
             "class": "Fighter",
@@ -1277,7 +1277,7 @@ struct PlayerTests {
     func preparedSpellsRoundTrip() async throws {
         let playerTraits = """
         {
-            "name": "Frodo",
+            "name": "Rowan",
             "background": "Sailor",
             "species": "Human",
             "class": "Fighter",
@@ -1309,7 +1309,7 @@ struct PlayerTests {
     func unknownPreparedSpellSkipped() async throws {
         let playerTraits = """
         {
-            "name": "Frodo",
+            "name": "Rowan",
             "background": "Sailor",
             "species": "Human",
             "class": "Fighter",
@@ -1333,7 +1333,7 @@ struct PlayerTests {
     func usedSpellSlotsRoundTrip() async throws {
         let playerTraits = """
         {
-            "name": "Frodo",
+            "name": "Rowan",
             "background": "Sailor",
             "species": "Human",
             "class": "Fighter",
@@ -1376,7 +1376,7 @@ struct PlayerTests {
             name: "Fighter",
             plural: "Fighters",
             hitDice: .d10,
-            startingWealth: Dice.d4,
+            startingWealth: AnyRollable(Dice.d4),
             weaponProficiencies: [.category(.simple), .category(.martial)]
         )
         let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: classWithProfs)
@@ -1393,7 +1393,7 @@ struct PlayerTests {
             name: "Fighter",
             plural: "Fighters",
             hitDice: .d10,
-            startingWealth: Dice.d4,
+            startingWealth: AnyRollable(Dice.d4),
             armorTraining: [.light, .medium]
         )
         let player = Player("Tester", backgroundTraits: soldier, speciesTraits: human, classTraits: classWithArmor)

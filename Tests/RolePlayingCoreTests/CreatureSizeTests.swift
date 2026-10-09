@@ -2,7 +2,7 @@
 //  CreatureSizeTests.swift
 //  RolePlayingCore
 //
-//  Copyright © 2025 Brian Arnold. All rights reserved.
+//  Copyright © 2025 Brian Arnold. Licensed under the MIT License.
 //
 
 import Testing

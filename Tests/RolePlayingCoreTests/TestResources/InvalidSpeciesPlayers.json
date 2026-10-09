@@ -1,7 +1,7 @@
 {
     "players": [
                 {
-                "name": "Bilbo",
+                "name": "Garrick",
                 "appearance": { "gender": "Female" },
                 "height": "3'9\"",
                 "class": "Fighter",

@@ -3,7 +3,7 @@
 //  RolePlayingCore
 //
 //  Created by Brian Arnold on 10/26/25.
-//  Copyright © 2025 Brian Arnold. All rights reserved.
+//  Copyright © 2025 Brian Arnold. Licensed under the MIT License.
 //
 
 /// A skill proficiency associated with an ability.

@@ -1,5 +1,5 @@
 {
-    "display order": ["Human", "Elf", "Dwarf", "Halfling", "Dragonborn", "Tiefling", "Gnome", "Goliath", "Orc", "Aasimar"],
+    "display order": ["Human", "Elf", "Dwarf", "Halfling", "Dragonborn", "Tiefling", "Gnome", "Goliath", "Orc"],
     "species": [
         {
             "name": "Human",
@@ -25,6 +25,7 @@
                 {
                     "name": "Wood Elf",
                     "plural": "Wood Elves",
+                    "speed": 35,
                     "description": "Reclusive forest-dwellers with preternatural swiftness and keen senses, deeply at home in the wild."
                 },
                 {
@@ -43,18 +44,7 @@
             "base sizes": ["4-5 ft"],
             "speed": 30,
             "darkvision": 120,
-            "subspecies": [
-                {
-                    "name": "Hill Dwarf",
-                    "plural": "Hill Dwarves",
-                    "description": "Perceptive and resilient, hill dwarves live among rolling highlands and are renowned for extraordinary toughness."
-                },
-                {
-                    "name": "Mountain Dwarf",
-                    "plural": "Mountain Dwarves",
-                    "description": "Born in high peaks, mountain dwarves are powerfully built warriors at home in heavy armor."
-                }
-            ]
+            "description": "Stout and resilient, dwarves are renowned for their toughness, craftsmanship, and deep connection to stone and clan."
         },
         {
             "name": "Halfling",
@@ -62,20 +52,7 @@
             "lifespan": 150,
             "base sizes": ["2-3 ft"],
             "speed": 30,
-            "subspecies": [
-                {
-                    "name": "Lightfoot",
-                    "plural": "Lightfoots",
-                    "aliases": ["Tallfellow"],
-                    "description": "Nimble and sociable, lightfoot halflings blend into almost any community with natural charm and quiet luck."
-                },
-                {
-                    "name": "Stout",
-                    "plural": "Stouts",
-                    "aliases": ["Strongheart"],
-                    "description": "Sturdier than their kin, stout halflings carry a touch of dwarven blood that grants resistance to poison."
-                }
-            ]
+            "description": "Small, nimble and lucky, halflings meet a dangerous world with cheerful resourcefulness and quiet courage."
         },
         {
             "name": "Dragonborn",
@@ -131,15 +108,6 @@
             "speed": 30,
             "darkvision": 120,
             "description": "Powerful warriors whose orcish endurance lets them shrug off blows that would fell lesser combatants."
-        },
-        {
-            "name": "Aasimar",
-            "plural": "Aasimar",
-            "lifespan": 160,
-            "base sizes": ["4-7 ft", "2-4 ft"],
-            "speed": 30,
-            "darkvision": 60,
-            "description": "Touched by celestial radiance, aasimar carry divine light within them, drawn by destiny toward heroic deeds."
         }
     ]
 }
