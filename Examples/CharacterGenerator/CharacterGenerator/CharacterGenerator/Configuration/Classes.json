@@ -106,7 +106,7 @@
                 },
                 {
                 "name": "Barbarian",
-                "default background": "Farmer",
+                "default background": "Soldier",
                 "plural": "Barbarians",
                 "hit dice": "d12",
                 "primary ability": ["Strength"],
@@ -121,7 +121,7 @@
                 },
                 {
                 "name": "Bard",
-                "default background": "Entertainer",
+                "default background": "Criminal",
                 "plural": "Bards",
                 "hit dice": "d8",
                 "primary ability": ["Charisma"],
@@ -141,7 +141,7 @@
                 },
                 {
                 "name": "Druid",
-                "default background": "Hermit",
+                "default background": "Sage",
                 "plural": "Druids",
                 "hit dice": "d8",
                 "primary ability": ["Wisdom"],
@@ -162,7 +162,7 @@
                 },
                 {
                 "name": "Monk",
-                "default background": "Hermit",
+                "default background": "Acolyte",
                 "plural": "Monks",
                 "hit dice": "d8",
                 "primary ability": ["Dexterity", "Wisdom"],
@@ -179,7 +179,7 @@
                 },
                 {
                 "name": "Paladin",
-                "default background": "Guard",
+                "default background": "Acolyte",
                 "plural": "Paladins",
                 "hit dice": "d10",
                 "primary ability": ["Strength", "Charisma"],
@@ -197,7 +197,7 @@
                 },
                 {
                 "name": "Ranger",
-                "default background": "Guide",
+                "default background": "Soldier",
                 "plural": "Rangers",
                 "hit dice": "d10",
                 "primary ability": ["Dexterity", "Wisdom"],
@@ -238,7 +238,7 @@
                 },
                 {
                 "name": "Warlock",
-                "default background": "Charlatan",
+                "default background": "Criminal",
                 "plural": "Warlocks",
                 "hit dice": "d8",
                 "primary ability": ["Charisma"],
