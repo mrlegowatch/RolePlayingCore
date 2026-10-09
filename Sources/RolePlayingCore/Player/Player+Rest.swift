@@ -42,7 +42,7 @@ extension Player {
 
     // MARK: - Long rest
 
-    /// Restores all hit points, all spent hit dice, and all expended spell slots (5e 2024 rules).
+    /// Restores all hit points, all spent hit dice, and all expended spell slots (SRD 5.2.1 rules).
     public func longRest() {
         currentHitPoints = maximumHitPoints
         usedHitDice = 0

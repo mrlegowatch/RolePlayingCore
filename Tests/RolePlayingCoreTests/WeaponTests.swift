@@ -16,7 +16,7 @@ struct WeaponTests {
 
     // MARK: - DamageRoll
 
-    @Test("DamageRoll parses standard D&D expressions")
+    @Test("DamageRoll parses standard dice expressions")
     func damageRollParsing() {
         let d8Slashing = DamageRoll(parsing: "1d8 slashing")
         #expect(d8Slashing != nil)
