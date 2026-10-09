@@ -15,7 +15,7 @@
         },
         "Halfling": {
             "family type": "Family",
-            "Male": ["Tolby", "Perrick", "Finnick", "Oddwin", "Hobner", "Warrick", "Milben", "Coltan", "Rooder", "Fennimer", "Garrow", "Linden"],
+            "Male": ["Tolby", "Perrick", "Tobin", "Oddwin", "Hobner", "Warrick", "Milben", "Coltan", "Rooder", "Fennimer", "Garrow", "Linden"],
             "Female": ["Nella", "Tilra", "Pennie", "Lissa", "Dovey", "Wrenna", "Hollis", "Quilla", "Birdy", "Sable", "Fennis", "Marrow"],
             "family": ["Tallowmere", "Thistlebrook", "Hollowmere", "Underlea", "Puddlefoot", "Barleycorn", "Fennwhistle", "Oatbridge", "Thornbrew", "Applegate"]
         },
@@ -34,27 +34,27 @@
         },
         "Goliath": {
             "family type": "Clan",
-            "Male": ["Aukan", "Threnak", "Gorvash", "Kuonai", "Lo-Vash", "Mantuk", "Paavrek", "Thokane", "Uvrath", "Vaskol"],
-            "Female": ["Ethane", "Ferinda", "Ikova", "Keshani", "Lonavi", "Mavrith", "Oranka", "Shalevi", "Tevina", "Uskara"],
-            "family": ["Anakalvor", "Elanithra", "Gathakuva", "Kalvoreth", "Katholavi", "Kolevane", "Oganathu", "Thunakai", "Vaimeiro", "Threnakor"],
+            "Male": ["Brenjo", "Kadrok", "Moszu", "Teklan", "Varnu", "Osketh", "Driman", "Jolku", "Sennor", "Waklin"],
+            "Female": ["Ashena", "Brindara", "Kessu", "Memira", "Ostaya", "Varnith", "Drelu", "Jonneth", "Senyth", "Waklith"],
+            "family": ["Dremokhal", "Varnashtu", "Kelbrunash", "Oshtemir", "Jolkavandu", "Sennorakai", "Waklinthor", "Brenjokar", "Mozudrenai", "Teklashun"],
             "nickname": ["Stonebreaker", "Windstrider", "Frostwalker", "Ridgeclimber", "Thunderfist", "Ironjaw", "Sunscar", "Quietstorm", "Longstride", "Cliffborn"]
         },
         "Gnome": {
             "family type": "Clan",
-            "Male": ["Wimblet", "Fonnick", "Darble", "Pindle", "Quibbin", "Rooknall", "Sprindle", "Tankwhistle", "Wobbin", "Zindle", "Nollick"],
-            "Female": ["Dillywink", "Fennetta", "Hobbina", "Jinkle", "Lorrabee", "Nixietta", "Pollywick", "Quindra", "Sprigalee", "Tillabee"],
+            "Male": ["Tindlewick", "Fonnick", "Darble", "Pindle", "Quibbin", "Rooknall", "Sprindle", "Tankwhistle", "Wobbin", "Zindle", "Nollick"],
+            "Female": ["Dillywink", "Fennetta", "Hobbina", "Jinkle", "Lorrabee", "Nixietta", "Marrowbell", "Quindra", "Sprigalee", "Tillabee"],
             "family": ["Pindlewick", "Quizzlebane", "Rattlecog", "Sprocketine", "Tinkerhollow", "Cradlenut", "Fizzlewick", "Gearspindle", "Hobnuckle", "Inklewood", "Jangleton"],
             "nickname": ["Fizzbolt", "Gearwhistle", "Inkspark", "Jinglecap", "Knobtinker", "Pocketful", "Quickwit", "Spindlecap", "Tinkwhistle", "Wobblejack"]
         },
         "Orc": {
             "family type": "",
             "Male": ["Ruknar", "Dreng", "Fazzik", "Horgun", "Jarnuk", "Kelgor", "Vrathok", "Orrgun", "Prezz", "Dhuk", "Vraggor"],
-            "Female": ["Ashka", "Dagrosh", "Ekka", "Fennu", "Grosha", "Harka", "Ishtha", "Kreega", "Mogra", "Narsha", "Ovreth", "Prazka"]
+            "Female": ["Ashka", "Dagrosh", "Ekka", "Fennu", "Grosha", "Harka", "Ishtha", "Vrokka", "Mogra", "Narsha", "Ovreth", "Prazka"]
         },
         "Tiefling": {
             "family type": "Virtue",
-            "Male": ["Kaivor", "Nessaro", "Dravek", "Othmar", "Ilvath", "Kesmir", "Oravain", "Pellenos", "Sarthis", "Vexamor", "Zarenth", "Ashkavel"],
-            "Female": ["Nyssara", "Kyrenna", "Thalvix", "Oryana", "Sevareth", "Vexalia", "Zyrenna", "Ashvaine", "Dravena", "Ilmara", "Kessandra", "Pellanis"],
+            "Male": ["Kaivor", "Nessaro", "Dravek", "Othmar", "Ilvath", "Kesmir", "Oravain", "Sellanor", "Sarthis", "Vexamor", "Zarenth", "Ashkavel"],
+            "Female": ["Nyssara", "Kyrenna", "Thalvix", "Vethana", "Sevareth", "Vexalia", "Zyrenna", "Ashvaine", "Dravena", "Ilmara", "Kessandra", "Vallanis"],
             "family": ["Solace", "Ember", "Gloom", "Zeal", "Mercy", "Wrath", "Echo", "Omen", "Dusk", "Grief", "Ruin", "Vow", "Thorn", "Ash", "Dread", "Bliss", "Scorn", "Favor", "Silence", "Longing"]
         }
     }
