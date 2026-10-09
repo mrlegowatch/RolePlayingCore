@@ -90,4 +90,12 @@ struct RandomIndexGeneratorTests {
         #expect(array.randomElementByIndex(using: &gen) == "only")
         #expect(array.randomElementByIndex(using: &gen) == "only", "Still picks the one element")
     }
+
+    @Test("randomElementByIndex returns nil for an empty array instead of crashing")
+    func randomElementByIndexEmpty() {
+        var gen = MockIndexGenerator()
+        let array: [String] = []
+        #expect(array.randomElementByIndex(using: &gen) == nil, "Mirrors randomElement(), which returns nil when empty")
+        #expect(array.randomElementByIndex() == nil)
+    }
 }

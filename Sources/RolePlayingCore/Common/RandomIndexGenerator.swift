@@ -42,6 +42,7 @@ extension Array {
     // Extensions that mirror randomElement, but with a RandomIndexGenerator instead of a RandomNumberGenerator
     
     public func randomElementByIndex<T>(using generator: inout T) -> Element? where T : RandomIndexGenerator {
+        guard !self.isEmpty else { return nil }
         let index = generator.randomIndex(upperBound: self.count)
         return self[index]
     }
