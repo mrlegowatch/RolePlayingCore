@@ -2,7 +2,7 @@
 //  DescriptiveTraitKey.swift
 //  RolePlayingCore
 //
-//  Copyright © 2026 Brian Arnold. All rights reserved.
+//  Copyright © 2026 Brian Arnold. Licensed under the MIT License.
 //
 
 /// Well-known string keys for narrative trait dictionaries on `Player`, `BackgroundTraits`,

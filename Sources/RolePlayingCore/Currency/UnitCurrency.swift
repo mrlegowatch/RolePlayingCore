@@ -3,7 +3,7 @@
 //  RolePlayingCore
 //
 //  Created by Brian Arnold on 2/5/17.
-//  Copyright © 2017 Brian Arnold. All rights reserved.
+//  Copyright © 2017 Brian Arnold. Licensed under the MIT License.
 //
 
 /// A unit of currency or coinage, defined by its symbol, exchange rate, and display names.

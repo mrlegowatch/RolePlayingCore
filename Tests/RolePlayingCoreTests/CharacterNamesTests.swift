@@ -3,7 +3,7 @@
 //  RolePlayingCoreTests
 //
 //  Created by Brian Arnold on 7/8/17.
-//  Copyright © 2017 Brian Arnold. All rights reserved.
+//  Copyright © 2017 Brian Arnold. Licensed under the MIT License.
 //
 
 import Testing
