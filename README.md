@@ -155,3 +155,13 @@ To learn about the origin of the dice types that power random generation, see th
 
 For background on why `Codable` was applied across this repository:
 * [OMG, Codable is so frickin' awesome](https://medium.com/@mrlegowatch/omg-codable-is-so-frickin-awesome-bb9ff33139da)
+
+## Game Content
+
+The RolePlayingCore source code is licensed under the [MIT License](LICENSE). The example game data in `Examples/CharacterGenerator/CharacterGenerator/CharacterGenerator/Configuration` includes material from the System Reference Document 5.2.1.
+
+> This work includes material from the System Reference Document 5.2.1
+> ("SRD 5.2.1") by Wizards of the Coast LLC, available at
+> https://www.dndbeyond.com/srd. The SRD 5.2.1 is licensed under the
+> Creative Commons Attribution 4.0 International License, available at
+> https://creativecommons.org/licenses/by/4.0/legalcode.
