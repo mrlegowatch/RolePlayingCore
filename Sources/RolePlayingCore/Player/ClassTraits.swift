@@ -3,7 +3,7 @@
 //  RolePlayingCore
 //
 //  Created by Brian Arnold on 11/12/16.
-//  Copyright © 2016-2017 Brian Arnold. All rights reserved.
+//  Copyright © 2016-2017 Brian Arnold. Licensed under the MIT License.
 //
 
 import Foundation
@@ -17,7 +17,7 @@ public struct ClassTraits: Named, Sendable {
     public var name: String
     public var plural: String
     public var hitDice: Dice
-    public var startingWealth: Rollable
+    public var startingWealth: AnyRollable
     
     public var descriptiveTraits: [String: String]
     public var primaryAbility: [Ability]
@@ -76,7 +76,7 @@ public struct ClassTraits: Named, Sendable {
     public init(name: String,
                 plural: String,
                 hitDice: Dice,
-                startingWealth: Rollable,
+                startingWealth: AnyRollable,
                 descriptiveTraits: [String: String] = [:],
                 primaryAbility: [Ability] = [],
                 alternatePrimaryAbility: [Ability]? = nil,
@@ -161,37 +161,37 @@ extension ClassTraits: CodableWithConfiguration {
     }
     
     public init(from decoder: Decoder, configuration: GameData) throws {
-        let values = try decoder.container(keyedBy: CodingKeys.self)
+        let container = try decoder.container(keyedBy: CodingKeys.self)
         
         // Try decoding properties
-        let name = try values.decode(String.self, forKey: .name)
-        let plural = try values.decode(String.self, forKey: .plural)
-        let hitDiceRollable = try values.decode(Rollable.self, forKey: .hitDice)
-        guard let hitDice = hitDiceRollable as? Dice else {
+        let name = try container.decode(String.self, forKey: .name)
+        let plural = try container.decode(String.self, forKey: .plural)
+        let hitDiceRollable = try container.decode(AnyRollable.self, forKey: .hitDice)
+        guard let hitDice = hitDiceRollable.rollable as? Dice else {
             let context = DecodingError.Context(
-                codingPath: values.codingPath + [CodingKeys.hitDice],
+                codingPath: container.codingPath + [CodingKeys.hitDice],
                 debugDescription: "Hit dice must be a simple die expression (e.g. \"d10\"), got \"\(hitDiceRollable)\""
             )
             throw DecodingError.dataCorrupted(context)
         }
-        let startingWealth = try values.decode(Rollable.self, forKey: .startingWealth)
+        let startingWealth = try container.decode(AnyRollable.self, forKey: .startingWealth)
         
-        let descriptiveTraits = try values.decodeIfPresent([String:String].self, forKey: .descriptiveTraits)
-        let primaryAbility = try values.decodeIfPresent([Ability].self, forKey: .primaryAbility)
-        let alternatePrimaryAbility = try values.decodeIfPresent([Ability].self, forKey: .alternatePrimaryAbility)
-        let savingThrows = try values.decodeIfPresent([Ability].self, forKey: .savingThrows)
-        let startingSkillCount = try values.decodeIfPresent(Int.self, forKey: .startingSkillCount)
+        let descriptiveTraits = try container.decodeIfPresent([String:String].self, forKey: .descriptiveTraits)
+        let primaryAbility = try container.decodeIfPresent([Ability].self, forKey: .primaryAbility)
+        let alternatePrimaryAbility = try container.decodeIfPresent([Ability].self, forKey: .alternatePrimaryAbility)
+        let savingThrows = try container.decodeIfPresent([Ability].self, forKey: .savingThrows)
+        let startingSkillCount = try container.decodeIfPresent(Int.self, forKey: .startingSkillCount)
         
         // Decode skill proficiency names and resolve them using configuration
-        let skillNames = try values.decodeIfPresent([String].self, forKey: .skillProficiencies) ?? []
+        let skillNames = try container.decodeIfPresent([String].self, forKey: .skillProficiencies) ?? []
         let resolvedSkills = try skillNames.skills(from: configuration.skills)
         
-        let weaponProficiencyStrings = try values.decodeIfPresent([String].self, forKey: .weaponProficiencies) ?? []
+        let weaponProficiencyStrings = try container.decodeIfPresent([String].self, forKey: .weaponProficiencies) ?? []
         let weaponProficiencies = weaponProficiencyStrings.map { WeaponProficiency(parsing: $0) }
 
-        let toolProficiencies = try values.decodeIfPresent([String].self, forKey: .toolProficiencies)
+        let toolProficiencies = try container.decodeIfPresent([String].self, forKey: .toolProficiencies)
 
-        let armorStrings = try values.decodeIfPresent([String].self, forKey: .armorTraining) ?? []
+        let armorStrings = try container.decodeIfPresent([String].self, forKey: .armorTraining) ?? []
         var armorTraining: [ArmorProficiency] = []
         for string in armorStrings {
             if string == "all" {
@@ -202,23 +202,23 @@ extension ClassTraits: CodableWithConfiguration {
             }
         }
 
-        let startingEquipment = try values.decodeIfPresent(EquipmentOptions.self, forKey: .startingEquipment, configuration: configuration) ?? []
+        let startingEquipment = try container.decodeIfPresent(EquipmentOptions.self, forKey: .startingEquipment, configuration: configuration) ?? []
 
-        let unarmoredDefense = try values.decodeIfPresent(UnarmoredDefense.self, forKey: .unarmoredDefense)
+        let unarmoredDefense = try container.decodeIfPresent(UnarmoredDefense.self, forKey: .unarmoredDefense)
 
-        let subclassTitle = try values.decodeIfPresent(String.self, forKey: .subclassTitle) ?? "Subclass"
-        let subclassChoiceLevel = try values.decodeIfPresent(Int.self, forKey: .subclassChoiceLevel) ?? 3
-        let subclasses = try values.decodeIfPresent([SubclassTraits].self, forKey: .subclasses, configuration: configuration) ?? []
+        let subclassTitle = try container.decodeIfPresent(String.self, forKey: .subclassTitle) ?? "Subclass"
+        let subclassChoiceLevel = try container.decodeIfPresent(Int.self, forKey: .subclassChoiceLevel) ?? 3
+        let subclasses = try container.decodeIfPresent([SubclassTraits].self, forKey: .subclasses, configuration: configuration) ?? []
 
-        let spellcastingAbility = try values.decodeIfPresent(Ability.self, forKey: .spellcastingAbility)
-        let spellcastingType = try values.decodeIfPresent(SpellcastingType.self, forKey: .spellcastingType)
-        let spellSlots = try values.decodeIfPresent([[Int]].self, forKey: .spellSlots)
-        let slotTableName = try values.decodeIfPresent(String.self, forKey: .slotTableName)
-        let cantripsKnown = try values.decodeIfPresent(Int.self, forKey: .cantripsKnown)
-        let spellsKnown = try values.decodeIfPresent(Int.self, forKey: .spellsKnown)
-        let defaultBackground = try values.decodeIfPresent(String.self, forKey: .defaultBackground)
+        let spellcastingAbility = try container.decodeIfPresent(Ability.self, forKey: .spellcastingAbility)
+        let spellcastingType = try container.decodeIfPresent(SpellcastingType.self, forKey: .spellcastingType)
+        let spellSlots = try container.decodeIfPresent([[Int]].self, forKey: .spellSlots)
+        let slotTableName = try container.decodeIfPresent(String.self, forKey: .slotTableName)
+        let cantripsKnown = try container.decodeIfPresent(Int.self, forKey: .cantripsKnown)
+        let spellsKnown = try container.decodeIfPresent(Int.self, forKey: .spellsKnown)
+        let defaultBackground = try container.decodeIfPresent(String.self, forKey: .defaultBackground)
 
-        let experiencePoints = try values.decodeIfPresent([Int].self, forKey: .experiencePoints)
+        let experiencePoints = try container.decodeIfPresent([Int].self, forKey: .experiencePoints)
 
         // Safely set properties
         self.name = name
@@ -252,37 +252,37 @@ extension ClassTraits: CodableWithConfiguration {
     }
 
     public func encode(to encoder: Encoder, configuration: GameData) throws {
-        var values = encoder.container(keyedBy: CodingKeys.self)
+        var container = encoder.container(keyedBy: CodingKeys.self)
         
-        try values.encode(name, forKey: .name)
-        try values.encode(plural, forKey: .plural)
-        try values.encode(hitDice, forKey: .hitDice)
-        try values.encode(startingWealth, forKey: .startingWealth)
+        try container.encode(name, forKey: .name)
+        try container.encode(plural, forKey: .plural)
+        try container.encode(AnyRollable(hitDice), forKey: .hitDice)
+        try container.encode(startingWealth, forKey: .startingWealth)
         
-        try values.encode(descriptiveTraits, forKey: .descriptiveTraits)
-        try values.encode(primaryAbility, forKey: .primaryAbility)
-        try values.encodeIfPresent(alternatePrimaryAbility, forKey: .alternatePrimaryAbility)
-        try values.encode(savingThrows, forKey: .savingThrows)
-        try values.encode(startingSkillCount, forKey: .startingSkillCount)
-        try values.encode(skillProficiencies.skillNames, forKey: .skillProficiencies)
-        try values.encode(weaponProficiencies.map(\.description), forKey: .weaponProficiencies)
-        try values.encode(toolProficiencies, forKey: .toolProficiencies)
-        try values.encode(armorTraining.map(\.rawValue), forKey: .armorTraining)
-        try values.encode(startingEquipment, forKey: .startingEquipment, configuration: configuration)
-        try values.encodeIfPresent(unarmoredDefense, forKey: .unarmoredDefense)
+        try container.encode(descriptiveTraits, forKey: .descriptiveTraits)
+        try container.encode(primaryAbility, forKey: .primaryAbility)
+        try container.encodeIfPresent(alternatePrimaryAbility, forKey: .alternatePrimaryAbility)
+        try container.encode(savingThrows, forKey: .savingThrows)
+        try container.encode(startingSkillCount, forKey: .startingSkillCount)
+        try container.encode(skillProficiencies.skillNames, forKey: .skillProficiencies)
+        try container.encode(weaponProficiencies.map(\.description), forKey: .weaponProficiencies)
+        try container.encode(toolProficiencies, forKey: .toolProficiencies)
+        try container.encode(armorTraining.map(\.rawValue), forKey: .armorTraining)
+        try container.encode(startingEquipment, forKey: .startingEquipment, configuration: configuration)
+        try container.encodeIfPresent(unarmoredDefense, forKey: .unarmoredDefense)
         if !subclasses.isEmpty {
-            try values.encode(subclassTitle, forKey: .subclassTitle)
-            try values.encode(subclassChoiceLevel, forKey: .subclassChoiceLevel)
-            try values.encode(subclasses, forKey: .subclasses, configuration: configuration)
+            try container.encode(subclassTitle, forKey: .subclassTitle)
+            try container.encode(subclassChoiceLevel, forKey: .subclassChoiceLevel)
+            try container.encode(subclasses, forKey: .subclasses, configuration: configuration)
         }
-        try values.encodeIfPresent(spellcastingAbility, forKey: .spellcastingAbility)
-        try values.encodeIfPresent(spellcastingType, forKey: .spellcastingType)
-        try values.encodeIfPresent(spellSlots, forKey: .spellSlots)
-        try values.encodeIfPresent(cantripsKnown, forKey: .cantripsKnown)
-        try values.encodeIfPresent(spellsKnown, forKey: .spellsKnown)
-        try values.encodeIfPresent(defaultBackground, forKey: .defaultBackground)
+        try container.encodeIfPresent(spellcastingAbility, forKey: .spellcastingAbility)
+        try container.encodeIfPresent(spellcastingType, forKey: .spellcastingType)
+        try container.encodeIfPresent(spellSlots, forKey: .spellSlots)
+        try container.encodeIfPresent(cantripsKnown, forKey: .cantripsKnown)
+        try container.encodeIfPresent(spellsKnown, forKey: .spellsKnown)
+        try container.encodeIfPresent(defaultBackground, forKey: .defaultBackground)
 
-        try values.encodeIfPresent(experiencePoints, forKey: .experiencePoints)
+        try container.encodeIfPresent(experiencePoints, forKey: .experiencePoints)
     }
 }
 

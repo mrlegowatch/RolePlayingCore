@@ -3,7 +3,7 @@
 //  RolePlayingCore
 //
 //  Created by Brian Arnold on 7/21/26.
-//  Copyright © 2026 Brian Arnold. All rights reserved.
+//  Copyright © 2026 Brian Arnold. Licensed under the MIT License.
 //
 
 import Foundation
@@ -42,23 +42,23 @@ extension Tool: CodableWithConfiguration {
     }
 
     public init(from decoder: Decoder, configuration: GameData) throws {
-        let values = try decoder.container(keyedBy: CodingKeys.self)
+        let container = try decoder.container(keyedBy: CodingKeys.self)
 
-        name = try values.decode(String.self, forKey: .name)
-        plural = try values.decodeIfPresent(String.self, forKey: .plural) ?? (name + "s")
-        cost = (try? values.decode(Money.self, forKey: .cost, configuration: configuration.currencies)) ?? Money()
-        weight = (try? values.decode(Weight.self, forKey: .weight)) ?? Weight(value: 0, unit: .pounds)
-        toolType = try values.decode(ToolType.self, forKey: .toolType)
+        name = try container.decode(String.self, forKey: .name)
+        plural = try container.decodeIfPresent(String.self, forKey: .plural) ?? (name + "s")
+        cost = (try? container.decode(Money.self, forKey: .cost, configuration: configuration.currencies)) ?? Money()
+        weight = (try? container.decode(Weight.self, forKey: .weight)) ?? Weight(value: 0, unit: .pounds)
+        toolType = try container.decode(ToolType.self, forKey: .toolType)
     }
 
     public func encode(to encoder: Encoder, configuration: GameData) throws {
-        var values = encoder.container(keyedBy: CodingKeys.self)
-        try values.encode(name, forKey: .name)
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(name, forKey: .name)
         if plural != name + "s" {
-            try values.encode(plural, forKey: .plural)
+            try container.encode(plural, forKey: .plural)
         }
-        try values.encode(cost, forKey: .cost, configuration: configuration.currencies)
-        try values.encode(weight.value, forKey: .weight)
-        try values.encode(toolType, forKey: .toolType)
+        try container.encode(cost, forKey: .cost, configuration: configuration.currencies)
+        try container.encode(weight.value, forKey: .weight)
+        try container.encode(toolType, forKey: .toolType)
     }
 }

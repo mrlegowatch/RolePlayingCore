@@ -3,7 +3,7 @@
 //  RolePlayingCore
 //
 //  Created by Brian Arnold on 7/22/26.
-//  Copyright © 2026 Brian Arnold. All rights reserved.
+//  Copyright © 2026 Brian Arnold. Licensed under the MIT License.
 //
 
 /// Traits describing a feat — a special ability a character acquires at character creation
@@ -59,16 +59,16 @@ extension FeatTraits: Codable {
     }
 
     public init(from decoder: any Decoder) throws {
-        let values = try decoder.container(keyedBy: CodingKeys.self)
-        let name = try values.decode(String.self, forKey: .name)
-        let description = try values.decodeIfPresent(String.self, forKey: .description) ?? ""
-        let category = try values.decodeIfPresent(Category.self, forKey: .category) ?? .general
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let name = try container.decode(String.self, forKey: .name)
+        let description = try container.decodeIfPresent(String.self, forKey: .description) ?? ""
+        let category = try container.decodeIfPresent(Category.self, forKey: .category) ?? .general
 
-        let rawIncreases = try values.decodeIfPresent([String: Int].self, forKey: .abilityScoreIncreases) ?? [:]
+        let rawIncreases = try container.decodeIfPresent([String: Int].self, forKey: .abilityScoreIncreases) ?? [:]
         let abilityScoreIncreases = Dictionary(uniqueKeysWithValues: rawIncreases.map { (Ability($0.key), $0.value) })
 
-        let weaponProficiencies = try values.decodeIfPresent([WeaponProficiency].self, forKey: .weaponProficiencies) ?? []
-        let armorTraining = try values.decodeIfPresent([ArmorProficiency].self, forKey: .armorTraining) ?? []
+        let weaponProficiencies = try container.decodeIfPresent([WeaponProficiency].self, forKey: .weaponProficiencies) ?? []
+        let armorTraining = try container.decodeIfPresent([ArmorProficiency].self, forKey: .armorTraining) ?? []
 
         self.init(name: name, description: description, category: category,
                   abilityScoreIncreases: abilityScoreIncreases,
@@ -77,23 +77,23 @@ extension FeatTraits: Codable {
     }
 
     public func encode(to encoder: any Encoder) throws {
-        var values = encoder.container(keyedBy: CodingKeys.self)
-        try values.encode(name, forKey: .name)
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(name, forKey: .name)
         if !description.isEmpty {
-            try values.encode(description, forKey: .description)
+            try container.encode(description, forKey: .description)
         }
         if category != .general {
-            try values.encode(category, forKey: .category)
+            try container.encode(category, forKey: .category)
         }
         if !abilityScoreIncreases.isEmpty {
             let raw = Dictionary(uniqueKeysWithValues: abilityScoreIncreases.map { ($0.key.name, $0.value) })
-            try values.encode(raw, forKey: .abilityScoreIncreases)
+            try container.encode(raw, forKey: .abilityScoreIncreases)
         }
         if !weaponProficiencies.isEmpty {
-            try values.encode(weaponProficiencies, forKey: .weaponProficiencies)
+            try container.encode(weaponProficiencies, forKey: .weaponProficiencies)
         }
         if !armorTraining.isEmpty {
-            try values.encode(armorTraining, forKey: .armorTraining)
+            try container.encode(armorTraining, forKey: .armorTraining)
         }
     }
 }

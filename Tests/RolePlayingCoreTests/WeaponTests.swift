@@ -3,7 +3,7 @@
 //  RolePlayingCore
 //
 //  Created by Brian Arnold on 7/21/26.
-//  Copyright © 2026 Brian Arnold. All rights reserved.
+//  Copyright © 2026 Brian Arnold. Licensed under the MIT License.
 //
 
 import Testing
@@ -16,19 +16,19 @@ struct WeaponTests {
 
     // MARK: - DamageRoll
 
-    @Test("DamageRoll parses standard D&D expressions")
+    @Test("DamageRoll parses standard dice expressions")
     func damageRollParsing() {
         let d8Slashing = DamageRoll(parsing: "1d8 slashing")
         #expect(d8Slashing != nil)
         #expect(d8Slashing?.type == .slashing)
-        #expect((d8Slashing?.dice as? Dice)?.sides == 8)
+        #expect((d8Slashing?.dice.rollable as? Dice)?.sides == 8)
 
         let d12Piercing = DamageRoll(parsing: "1d12 piercing")
         #expect(d12Piercing?.type == .piercing)
 
         let twoD6Bludgeoning = DamageRoll(parsing: "2d6 bludgeoning")
         #expect(twoD6Bludgeoning?.type == .bludgeoning)
-        #expect((twoD6Bludgeoning?.dice as? Dice)?.sides == 6)
+        #expect((twoD6Bludgeoning?.dice.rollable as? Dice)?.sides == 6)
     }
 
     @Test("DamageRoll parses elemental damage types")

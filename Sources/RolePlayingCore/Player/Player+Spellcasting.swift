@@ -2,7 +2,7 @@
 //  Player+Spellcasting.swift
 //  RolePlayingCore
 //
-//  Copyright © 2017 Brian Arnold. All rights reserved.
+//  Copyright © 2017 Brian Arnold. Licensed under the MIT License.
 //
 
 extension Player {

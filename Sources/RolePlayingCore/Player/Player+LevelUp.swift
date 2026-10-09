@@ -2,7 +2,7 @@
 //  Player+LevelUp.swift
 //  RolePlayingCore
 //
-//  Copyright © 2026 Brian Arnold. All rights reserved.
+//  Copyright © 2026 Brian Arnold. Licensed under the MIT License.
 //
 
 extension Player {
@@ -52,9 +52,12 @@ extension Player {
 
         let featCategory: FeatTraits.Category?
         switch level {
-        case 20:            featCategory = .epicBoon
-        case 4, 8, 12, 16, 19: featCategory = .general
-        default:            featCategory = nil
+        case 20:
+            featCategory = .epicBoon
+        case 4, 8, 12, 16, 19:
+            featCategory = .general
+        default:
+            featCategory = nil
         }
 
         let requiresSubclassSelection =

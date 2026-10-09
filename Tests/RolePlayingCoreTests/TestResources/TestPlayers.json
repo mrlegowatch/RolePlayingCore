@@ -1,7 +1,7 @@
 {
     "players": [
                 {
-                "name": "Frodo",
+                "name": "Rowan",
                 "appearance": { "gender": "Male" },
                 "height": "3'9\"",
                 "background": "Sailor",
@@ -14,7 +14,7 @@
                 "maximum hit points": 10
                 },
                 {
-                "name": "Bilbo",
+                "name": "Garrick",
                 "appearance": { "gender": "Female" },
                 "height": "3'9\"",
                 "background": "Sailor",

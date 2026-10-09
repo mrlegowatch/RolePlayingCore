@@ -3,7 +3,7 @@
 //  RolePlayingCore
 //
 //  Created by Brian Arnold on 10/26/25.
-//  Copyright © 2025 Brian Arnold. All rights reserved.
+//  Copyright © 2025 Brian Arnold. Licensed under the MIT License.
 //
 
 import Foundation
@@ -33,22 +33,22 @@ extension BackgroundTraits: CodableWithConfiguration {
     }
     
     public init(from decoder: Decoder, configuration: GameData) throws {
-        let values = try decoder.container(keyedBy: CodingKeys.self)
-        self.name = try values.decode(String.self, forKey: .name)
-        self.abilityScores = try values.decode([Ability].self, forKey: .abilityScores)
-        let featName = try values.decode(String.self, forKey: .feat)
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.name = try container.decode(String.self, forKey: .name)
+        self.abilityScores = try container.decode([Ability].self, forKey: .abilityScores)
+        let featName = try container.decode(String.self, forKey: .feat)
         guard let feat = configuration.feats[featName] else {
             throw missingTypeError("feat", featName)
         }
         self.feat = feat
 
         // Decode skill proficiency names and resolve them using configuration
-        let skillNames = try values.decode([String].self, forKey: .skillProficiencies)
+        let skillNames = try container.decode([String].self, forKey: .skillProficiencies)
         self.skillProficiencies = try skillNames.skills(from: configuration.skills)
         
-        self.toolProficiency = try values.decode(String.self, forKey: .toolProficiency)
-        self.equipment = try values.decode(EquipmentOptions.self, forKey: .equipment, configuration: configuration)
-        self.descriptiveTraits = try values.decodeIfPresent([String: String].self, forKey: .descriptiveTraits) ?? [:]
+        self.toolProficiency = try container.decode(String.self, forKey: .toolProficiency)
+        self.equipment = try container.decode(EquipmentOptions.self, forKey: .equipment, configuration: configuration)
+        self.descriptiveTraits = try container.decodeIfPresent([String: String].self, forKey: .descriptiveTraits) ?? [:]
     }
     
     public func encode(to encoder: Encoder, configuration: GameData) throws {

@@ -3,7 +3,7 @@
 //  RolePlayingCore
 //
 //  Created by Brian Arnold on 10/26/25.
-//  Copyright © 2025 Brian Arnold. All rights reserved.
+//  Copyright © 2025 Brian Arnold. Licensed under the MIT License.
 //
 
 import Foundation
@@ -67,11 +67,11 @@ extension Backgrounds: CodableWithConfiguration {
     }
 
     public init(from decoder: Decoder, configuration: GameData) throws {
-        let values = try decoder.container(keyedBy: CodingKeys.self)
+        let container = try decoder.container(keyedBy: CodingKeys.self)
 
-        let backgrounds = try values.decode([BackgroundTraits].self, forKey: .backgrounds, configuration: configuration)
+        let backgrounds = try container.decode([BackgroundTraits].self, forKey: .backgrounds, configuration: configuration)
         add(backgrounds)
-        displayOrder = try values.decodeIfPresent([String].self, forKey: .displayOrder) ?? []
+        displayOrder = try container.decodeIfPresent([String].self, forKey: .displayOrder) ?? []
     }
 
     public func encode(to encoder: Encoder, configuration: GameData) throws {
