@@ -6,7 +6,7 @@
 
 A Swift package providing reusable core logic for role-playing games. It is a work in progress — capabilities are added incrementally.
 
-The short-term goal is to cover the key moving parts of a tabletop RPG character: species, class, background, ability scores, skills, spells, equipment, and the random-generation plumbing that ties them together. The architecture is designed to be flexible enough to support Open Game Content and similar game systems, and to minimize upstream dependencies.
+The short-term goal is to cover the key moving parts of a tabletop RPG character: species, class, background, ability scores, skills, spells, equipment, and the random-generation plumbing that ties them together. The architecture is designed to be flexible enough to support the SRD 5.2.1 and similar game systems, and to minimize upstream dependencies.
 
 The library is a generic Swift Package. The included CharacterGenerator example app demonstrates iOS/macOS usage with a full SwiftUI character-builder workflow.
 
